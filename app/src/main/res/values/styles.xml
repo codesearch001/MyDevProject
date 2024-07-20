@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+        <style name="TextRobotoNormal">
+            <item name="android:typeface">normal</item>
+            <item name="android:textStyle">normal</item>
+        </style>
+
+    <style name="TabTextStyle" parent="Widget.Design.TabLayout">
+        <item name="android:textSize">12sp</item> <!-- Adjust the text size as per your requirement -->
+        <item name="android:textStyle">bold</item>
+    </style>
+
+
+</resources>

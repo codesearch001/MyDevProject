@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="120dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_marginTop="60dp"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/backBtn"
+            android:layout_width="wrap_content"
+            android:layout_weight="0.3"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content"
+            android:src="@drawable/back_btn" />
+
+        <TextView
+            android:id="@+id/signInTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="0.2"
+            android:text="@string/menu"
+            android:textColor="@color/black"
+            android:textSize="28dp" />
+
+    </LinearLayout>
+      <View
+        android:background="@color/grey_light11"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height=".4dp"/>
+</RelativeLayout>

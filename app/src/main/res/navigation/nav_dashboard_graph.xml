@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_dashboard_graph"
+    app:startDestination="@id/home_fragment">
+
+
+    <fragment
+        android:id="@+id/home_fragment"
+        android:name="com.snofed.publicapp.ui.dashboardFragment.HomeFragment"
+        tools:layout="@layout/fragment_home"
+        android:label="HomeFragment" >
+        <action
+            android:id="@+id/action_homeFragment_to_noteFragment"
+            app:destination="@id/noteFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/noteFragment"
+        android:name="com.snofed.publicapp.ui.note.NoteFragment"
+        android:label="NoteFragment" />
+    <fragment
+        android:id="@+id/feed_fragment"
+        android:name="com.snofed.publicapp.FeedFragment"
+        android:label="fragment_feed"
+        tools:layout="@layout/fragment_feed" />
+    <fragment
+        android:id="@+id/video_fragment"
+        android:name="com.snofed.publicapp.VideoFragment"
+        android:label="fragment_video"
+        tools:layout="@layout/fragment_video" />
+    <fragment
+        android:id="@+id/eventFragment"
+        android:name="com.snofed.publicapp.ui.event.EventFragment"
+        android:label="EventFragment" />
+    <fragment
+        android:id="@+id/resorts_fragment"
+        android:name="com.snofed.publicapp.ui.dashboardFragment.BrowseClubFragment"
+        android:label="BrowseClubFragment" />
+    <fragment
+        android:id="@+id/browseAllClubFragment"
+        android:name="com.snofed.publicapp.ui.dashboardFragment.BrowseAllClubFragment"
+        android:label="fragment_browse_all_club"
+        tools:layout="@layout/fragment_browse_all_club" />
+
+    <fragment
+        android:id="@+id/expriedFragment"
+        android:name="com.snofed.publicapp.membership.ExpriedFragment"
+        android:label="ExpriedFragment" />
+    <fragment
+        android:id="@+id/proTrailsFragment"
+        android:name="com.snofed.publicapp.ui.note.ProTrailsFragment"
+        android:label="fragment_pro_trails"
+        tools:layout="@layout/fragment_pro_trails" />
+    <fragment
+        android:id="@+id/membershipFragment"
+        android:name="com.snofed.publicapp.membership.MembershipFragment"
+        android:label="MembershipFragment" />
+    <fragment
+        android:id="@+id/activeFragment"
+        android:name="com.snofed.publicapp.ui.note.ActiveFragment"
+        android:label="fragment_expried"
+        tools:layout="@layout/fragment_expried" />
+    <fragment
+        android:id="@+id/orderHistoryFragment"
+        android:name="com.snofed.publicapp.ui.note.OrderHistoryFragment"
+        android:label="fragment_order_history"
+        tools:layout="@layout/fragment_order_history" />
+    <fragment
+        android:id="@+id/purchaseHistoryFragment2"
+        android:name="com.snofed.publicapp.purchasehistory.PurchaseHistoryFragment"
+        android:label="PurchaseHistoryFragment" />
+    <fragment
+        android:id="@+id/supportingMemberFragment"
+        android:name="com.snofed.publicapp.membership.SupportingMemberFragment"
+        android:label="SupportingMemberFragment" />
+    <fragment
+        android:id="@+id/buyMembershipFragment"
+        android:name="com.snofed.publicapp.membership.BuyMembershipFragment"
+        android:label="BuyMembershipFragment" />
+    <fragment
+        android:id="@+id/bacomeAMemberFragment"
+        android:name="com.snofed.publicapp.membership.BacomeAMemberFragment"
+        android:label="BacomeAMemberFragment" />
+    <fragment
+        android:id="@+id/supportingMemberListFragment"
+        android:name="com.snofed.publicapp.membership.SupportingMemberListFragment"
+        android:label="SupportingMemberListFragment" />
+    <fragment
+        android:id="@+id/supportingMemDetailsFragment"
+        android:name="com.snofed.publicapp.membership.SupportingMemDetailsFragment"
+        android:label="SupportingMemDetailsFragment" />
+    <fragment
+        android:id="@+id/clubSubMembersFragment"
+        android:name="com.snofed.publicapp.ui.clubsubmember.ClubSubMembersFragment"
+        android:label="ClubSubMembersFragment" />
+    <fragment
+        android:id="@+id/singleEventDetailsFragment"
+        android:name="com.snofed.publicapp.ui.event.SingleEventDetailsFragment"
+        android:label="fragment_single_event_details"
+        tools:layout="@layout/fragment_single_event_details" />
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.snofed.publicapp.ui.setting.SettingFragment"
+        android:label="fragment_setting"
+        tools:layout="@layout/fragment_setting" />
+    <fragment
+        android:id="@+id/helpFragment"
+        android:name="com.snofed.publicapp.ui.help.HelpFragment"
+        android:label="fragment_help"
+        tools:layout="@layout/fragment_help" />
+    <fragment
+        android:id="@+id/profileSettingFragment"
+        android:name="com.snofed.publicapp.ui.setting.ProfileSettingFragment"
+        android:label="fragment_profile_setting"
+        tools:layout="@layout/fragment_profile_setting" />
+    <fragment
+        android:id="@+id/appSettingFragment"
+        android:name="com.snofed.publicapp.ui.setting.AppSettingFragment"
+        android:label="fragment_app_setting"
+        tools:layout="@layout/fragment_app_setting" />
+
+</navigation>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="light_gray">#a2a2a2</color>
+    <color name="edit_gray">#e0e0e0</color>
+    <color name="text_gray">#666666</color>
+    <color name="highlight_text_color">#2196F3</color>
+    <color name="holo_blue_light">#ff33b5e5</color>
+    <color name="t4t_bg">#005387</color>
+    <color name="t_bg">#00000000</color>
+    <color name="lavender">#8692f7</color>
+
+    <color name="error_color">#FF0000</color>
+    <color name="card_bg_color">#F8F8F8</color>
+    <color name="grey_light11">#a2a2a2</color>
+    <color name="blue_txt_light">#2E405A</color>
+    <color name="active_txt">#011737</color>
+    <color name="dark_blue">#011737</color>
+
+    <color name="transparent_white">#00FFFFFF</color>
+    <color name="transparent_black">#00000000</color>
+    <color name="transparent">#00000000</color>
+    <color name="card_background">#F4F4F4</color> <!-- White background -->
+    <color name="text_color">#333333</color> <!-- Dark gray text color -->
+
+
+    <color name="colorTabTextSelected">#FFFFFF</color>
+    <color name="colorButtonSelected">#FFFFFF</color>
+    <color name="colorTabTextUnselected">#8A000000</color>
+    <color name="darkblue">#011737</color>
+
+    <color name="blue">#03A9F4</color>
+    <color name="gray">#808080</color>
+    <color name="divider_color">#E0E0E0</color> <!-- Red -->
+    <color name="unChecked_thumb">#E8E8E9</color> <!-- Red -->
+    <color name="checked_thumb">#E0E0E0</color> <!-- Red -->
+    <color name="toggle_on_color">#03A9F4</color> <!-- Green -->
+    <color name="toggle_off_color">#E0E0E0</color> <!-- Red -->
+
+</resources>

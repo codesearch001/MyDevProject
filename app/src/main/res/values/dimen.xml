@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="marginMedium">8dp</dimen>
+        <dimen name="marginMedium12dp">12dp</dimen>
+        <dimen name="marginLarge">16dp</dimen>
+    <dimen name="marginXXLarge">32dp</dimen>
+        
+        <dimen name="paddingSmall">4dp</dimen>
+        <dimen name="paddingMedium">8dp</dimen>
+        <dimen name="paddingMedium12dp">12dp</dimen>
+
+    <dimen name="fontMedium">12sp</dimen>
+	    <dimen name="fontLMedium">14sp</dimen>
+	    <dimen name="fontLarge">16sp</dimen>
+
+    <dimen name="tab_text_size">12sp</dimen>
+    <dimen name="_100sdp">100sp</dimen>
+    <dimen name="_120sdp">120sp</dimen>
+    <dimen name="_20ssp">20sp</dimen>
+
+
+</resources>

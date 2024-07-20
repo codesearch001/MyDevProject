@@ -1,0 +1,40 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/t4t_bg">
+
+    <ImageView
+        android:id="@+id/ivSplashLogo"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_centerInParent="true"
+        android:layout_margin="20dp"
+        android:src="@drawable/ic_skotersverige_logo_white" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ivSplashLogo"
+        android:orientation="vertical">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/tvSplashText"
+            style="@style/TextRobotoNormal"
+            android:layout_width="2dp"
+            android:layout_height="6dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/marginMedium"
+            android:gravity="center_vertical"
+            android:textColor="@color/white"
+            android:textSize="@dimen/fontMedium" />
+
+    </LinearLayout>
+
+</RelativeLayout>

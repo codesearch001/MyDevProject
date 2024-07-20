@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/home_fragment"
+        android:icon="@drawable/dashboard_bg"
+        android:title="Home" />
+
+    <item
+        android:id="@+id/resorts_fragment"
+        android:icon="@drawable/mountain"
+        android:title="Resorts" />
+
+    <item
+        android:id="@+id/feed_fragment"
+        android:icon="@drawable/list"
+        android:title="Feed" />
+    <item
+        android:id="@+id/eventFragment"
+        android:icon="@drawable/calendar"
+        android:title="Event" />
+
+</menu>

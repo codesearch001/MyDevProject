@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group>
+        <item
+            android:id="@+id/nav_drawer_setting"
+            android:icon="@drawable/settings"
+            android:title="@string/setting" />
+
+
+        <item
+            android:id="@+id/nav_drawer_help"
+            android:icon="@drawable/question"
+            android:title="@string/help" />
+
+    </group>
+</menu>

@@ -1,0 +1,42 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.NoteSample" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">#64B5F6</item>
+        <item name="colorPrimaryVariant">#2196F3</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">#64B5F6</item>
+        <item name="colorSecondaryVariant">#2196F3</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorOnPrimary</item>
+        <!-- Customize your theme here. -->
+    </style>
+
+    <!-- styles.xml -->
+    <style name="YourButtonTheme" parent="Theme.AppCompat.Light"> <!-- Adjust parent theme as per your app's theme -->
+        <!-- Customize attributes specific to your button -->
+        <item name="android:textColor">@android:color/white</item> <!-- Text color -->
+        <item name="android:background">@drawable/white_outline_button</item> <!-- Background drawable -->
+        <!-- Add more customizations if needed -->
+    </style>
+
+    <!-- styles.xml -->
+    <style name="YourTabTheme" parent="Theme.AppCompat.Light"> <!-- Adjust parent theme as per your app's theme -->
+        <!-- Customize attributes specific to your button -->
+        <item name="android:textColor">@android:color/white</item> <!-- Text color -->
+        <!--        <item name="android:background">@drawable/white_outline_button</item> &lt;!&ndash; Background drawable &ndash;&gt;-->
+        <!-- Add more customizations if needed -->
+    </style>
+
+    <!-- styles.xml -->
+    <style name="homeButtonTheme" parent="Theme.AppCompat.Light"> <!-- Adjust parent theme as per your app's theme -->
+        <!-- Customize attributes specific to your button -->
+        <item name="android:textColor">@android:color/holo_blue_light</item> <!-- Text color -->
+        <item name="android:background">@drawable/blue_outline_button</item> <!-- Background drawable -->
+        <!-- Add more customizations if needed -->
+    </style>
+
+
+</resources>

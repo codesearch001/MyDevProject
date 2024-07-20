@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/main_appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/darkblue">
+
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/main_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:contentInsetLeft="0dp"
+                app:contentInsetStart="0dp"
+                app:contentInsetStartWithNavigation="0dp"
+                app:popupTheme="@style/AppTheme.PopupOverlay">
+
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+
+
+
+
+                        <!-- Hamburger Icon -->
+                        <androidx.appcompat.widget.AppCompatImageButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="20dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/white_back_btn" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="Become a member"
+                            android:textColor="@color/white"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+
+
+                </RelativeLayout>
+
+
+            </androidx.appcompat.widget.Toolbar>
+
+
+        </com.google.android.material.appbar.AppBarLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Supporting member 2024"
+        android:textAllCaps="false"
+        android:layout_marginTop="14dp"
+        android:layout_gravity="center"
+        android:textStyle="bold"
+        android:textColor="@color/active_txt"
+        android:textSize="22sp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/main_appbar"
+            android:orientation="vertical"
+            android:padding="@dimen/marginLarge">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/first_name"
+                    android:textColor="@color/grey_light11"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:visibility="visible" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/txtEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/rounded_edittext_white_background"
+                    android:backgroundTint="@color/edit_gray"
+                    android:hint="@string/enter_your_fname"
+                    android:inputType="text"
+                    android:padding="12dp"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/last_name"
+                    android:textColor="@color/grey_light11"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:visibility="visible" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/rounded_edittext_white_background"
+                    android:backgroundTint="@color/edit_gray"
+                    android:hint="@string/enter_your_lname"
+                    android:inputType="textEmailAddress"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/mem_email"
+                    android:textColor="@color/grey_light11"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:visibility="visible" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/rounded_edittext_white_background"
+                    android:backgroundTint="@color/edit_gray"
+                    android:hint="@string/enter_your_eMail"
+                    android:inputType="textEmailAddress"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="vertical">-->
+
+<!--                <TextView-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="16dp"-->
+<!--                    android:text="@string/membership"-->
+<!--                    android:textColor="@color/grey_light11"-->
+<!--                    android:textSize="12sp"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:visibility="visible" />-->
+
+<!--                <EditText-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="6dp"-->
+<!--                    android:background="@drawable/rounded_edittext_white_background"-->
+<!--                    android:backgroundTint="@color/edit_gray"-->
+<!--                    android:hint="@string/enter_your_memb"-->
+<!--                    android:inputType="textEmailAddress"-->
+<!--                    android:padding="16dp"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    android:textSize="16sp" />-->
+<!--            </LinearLayout>-->
+
+<!--            <androidx.appcompat.widget.AppCompatButton-->
+<!--                android:id="@+id/become_member_button"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="58dp"-->
+<!--                android:background="@drawable/blue_bg_color"-->
+<!--                android:backgroundTint="@color/blue"-->
+<!--                android:text="Become a member"-->
+<!--                android:textAllCaps="false"-->
+<!--                android:textColor="@android:color/white"-->
+<!--                android:textSize="14sp" />-->
+
+<!--            <androidx.appcompat.widget.AppCompatButton-->
+<!--                android:id="@+id/become_member_button"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="58dp"-->
+<!--                android:background="@drawable/blue_bg_color"-->
+<!--                android:backgroundTint="@color/blue"-->
+<!--                android:text="Become a member"-->
+<!--                android:textAllCaps="false"-->
+<!--                android:textColor="@android:color/white"-->
+<!--                android:textSize="14sp"-->
+<!--                android:gravity="center_horizontal"-->
+<!--                android:paddingVertical="16dp"-->
+<!--                android:drawableLeft="@drawable/ic_add"-->
+<!--                android:drawablePadding="10dp" />-->
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:gravity="bottom"
+                android:layout_height="match_parent">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/blue_bg_color"
+                    android:backgroundTint="@color/blue"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal"
+                    android:paddingVertical="8dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="6dp"
+                        android:src="@drawable/swish_logo" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pay with Swish"
+                        android:textAllCaps="false"
+                        android:layout_marginStart="4dp"
+                        android:layout_gravity="center"
+                        android:padding="4dp"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/blue_bg_color"
+                    android:backgroundTint="@color/blue"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal"
+                    android:paddingVertical="8dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="4dp"
+                        android:src="@drawable/debit_card" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pay with credit card"
+                        android:textAllCaps="false"
+                        android:layout_marginStart="4dp"
+                        android:layout_gravity="center"
+                        android:padding="4dp"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+        <!--        <androidx.coordinatorlayout.widget.CoordinatorLayout-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="match_parent">-->
+
+        <!--            <com.google.android.material.bottomnavigation.BottomNavigationView-->
+        <!--                android:id="@+id/bottomNavigationView"-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="50dp"-->
+        <!--                android:layout_gravity="bottom"-->
+        <!--                android:backgroundTint="@color/transparent"-->
+        <!--                app:labelVisibilityMode="labeled"-->
+        <!--                app:menu="@menu/bottom_navigation" />-->
+
+        <!--            &lt;!&ndash;                <com.google.android.material.bottomappbar.BottomAppBar&ndash;&gt;-->
+        <!--            &lt;!&ndash;                    android:id="@+id/bottomBar"&ndash;&gt;-->
+        <!--            &lt;!&ndash;                    android:layout_width="match_parent"&ndash;&gt;-->
+        <!--            &lt;!&ndash;                    android:layout_height="wrap_content"&ndash;&gt;-->
+        <!--            &lt;!&ndash;                    android:layout_gravity="bottom">&ndash;&gt;-->
+
+
+        <!--            &lt;!&ndash;                </com.google.android.material.bottomappbar.BottomAppBar>&ndash;&gt;-->
+
+
+        <!--        </androidx.coordinatorlayout.widget.CoordinatorLayout>-->
+
+        <!--        <RelativeLayout-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_alignParentBottom="true"-->
+        <!--            android:padding="22dp">-->
+
+        <!--            <LinearLayout-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:orientation="vertical"-->
+        <!--                android:weightSum="2">-->
+
+        <!--                <androidx.appcompat.widget.AppCompatButton-->
+        <!--                    android:id="@+id/btnBuyMemberships"-->
+        <!--                    android:layout_width="match_parent"-->
+        <!--                    android:layout_height="wrap_content"-->
+        <!--                    android:layout_weight="0.9"-->
+        <!--                    android:background="@drawable/blue_outline_button"-->
+        <!--                    android:gravity="center"-->
+        <!--                    android:paddingTop="1dp"-->
+        <!--                    android:paddingBottom="1dp"-->
+        <!--                    android:text="@string/buy_memberships"-->
+        <!--                    android:textAllCaps="false"-->
+        <!--                    android:layout_marginBottom="8dp"-->
+        <!--                    android:textColor="@android:color/holo_blue_light"-->
+        <!--                    android:textSize="16sp"-->
+        <!--                    android:textStyle="bold"-->
+        <!--                    android:theme="@style/homeButtonTheme" />-->
+
+        <!--                <androidx.appcompat.widget.AppCompatButton-->
+        <!--                    android:id="@+id/btnActivateMemberships"-->
+        <!--                    android:layout_width="match_parent"-->
+        <!--                    android:layout_height="wrap_content"-->
+        <!--                    android:layout_weight="1.1"-->
+        <!--                    android:background="@drawable/blue_outline_button"-->
+        <!--                    android:gravity="center"-->
+        <!--                    android:paddingTop="1dp"-->
+        <!--                    android:paddingBottom="1dp"-->
+        <!--                    android:text="@string/Activate_memberships"-->
+        <!--                    android:textAllCaps="false"-->
+        <!--                    android:textColor="@android:color/holo_blue_light"-->
+        <!--                    android:textSize="16sp"-->
+        <!--                    android:textStyle="bold"-->
+        <!--                    android:theme="@style/homeButtonTheme" />-->
+        <!--            </LinearLayout>-->
+
+
+        <!--        </RelativeLayout>-->
+
+
+
+</LinearLayout>
