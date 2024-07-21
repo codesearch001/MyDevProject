@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.snofed.publicapp.models.ClubListRequest
 import com.snofed.publicapp.models.ClubListResponse
 import com.snofed.publicapp.models.NewClubData
-import com.snofed.publicapp.models.OuterItem
+
 import com.snofed.publicapp.models.UserRegRequest
 import com.snofed.publicapp.models.UserRequest
 import com.snofed.publicapp.models.UserResponse
@@ -48,10 +48,7 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
 
     fun clubRequestUser() {
         viewModelScope.launch {
-            Log.e("ddddd", "hhfhh")
             userRepository.getClub()
-
-
         }
     }
 

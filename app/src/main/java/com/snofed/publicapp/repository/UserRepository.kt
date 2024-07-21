@@ -16,11 +16,9 @@ import javax.inject.Inject
 
 class UserRepository @Inject constructor(private val userAPI: UserAPI) {
     private val acceptLanguage = "en-US"
-    private val _notesLiveData = MutableLiveData<NetworkResult<List<NewClubData>>>()
+    private val _notesLiveData = MutableLiveData<NetworkResult<NewClubData>>()
     val clubLiveData get() = _notesLiveData
 
-    private val _data = MutableLiveData<List<NewClubData>>()
-    val data: LiveData<List<NewClubData>> get() = _data
 
     private val _userResponseLiveData = MutableLiveData<NetworkResult<UserResponse>>()
     val userResponseLiveData: LiveData<NetworkResult<UserResponse>>
@@ -47,16 +45,16 @@ class UserRepository @Inject constructor(private val userAPI: UserAPI) {
     suspend fun getClub()  {
         _notesLiveData.postValue(NetworkResult.Loading())
         val response = userAPI.club(acceptLanguage)
-        Log.e("response_KDDD ", response.isSuccessful.toString())
-        Log.e("response_KDDD22 ", response.body().toString())
-        /*if (response.isSuccessful && response.body() != null) {
+        Log.e("response","jjjj "+response)
+        if (response.isSuccessful && response.body() != null) {
+            Log.e("jsondata","jjjj "+response.body())
             _notesLiveData.postValue(NetworkResult.Success(response.body()!!))
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
              _notesLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
         } else {
             _notesLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
-        }*/
+        }
     }
 
 

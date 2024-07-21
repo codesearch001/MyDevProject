@@ -10,6 +10,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttp
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -21,6 +22,7 @@ class NetworkModule {
     @Singleton
     @Provides
     fun providesRetrofit(): Retrofit.Builder {
+
         return Retrofit.Builder().baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
     }
@@ -28,6 +30,9 @@ class NetworkModule {
     @Singleton
     @Provides
     fun provideOkHttpClient(interceptor: AuthInterceptor): OkHttpClient {
+         interceptor.apply {
+          HttpLoggingInterceptor.Level.BODY
+        }
         return OkHttpClient.Builder().addInterceptor(interceptor).build()
     }
 /*

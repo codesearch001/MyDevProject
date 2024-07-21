@@ -88,6 +88,7 @@ dependencies {
     val navigation_version = "2.5.3"
     implementation("androidx.navigation:navigation-fragment-ktx:$navigation_version")
     implementation("androidx.navigation:navigation-ui-ktx:$navigation_version")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 /*
     //2.3.0
     val gropi_version = "2.5.3"

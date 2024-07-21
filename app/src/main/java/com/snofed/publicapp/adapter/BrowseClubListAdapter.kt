@@ -1,24 +1,28 @@
 package com.snofed.publicapp.adapter
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.snofed.publicapp.R
-import com.snofed.publicapp.models.ClubListResponse
-import com.snofed.publicapp.models.Data
+import com.snofed.publicapp.models.Client
 import com.snofed.publicapp.models.NewClubData
-import com.snofed.publicapp.models.OuterItem
+
 
 class BrowseClubListAdapter : RecyclerView.Adapter<BrowseClubListAdapter.ClubViewHolder>() {
 
     //private var clubs: List<NewClubData> = listOf()
-    private var outerArray: List<OuterItem> = listOf()
+    private var outerArray: List<Client> = listOf()
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setClubs(clubs: List<OuterItem>) {
-        this.outerArray = clubs
+    fun setClubs(clubs: List<Client>?) {
+        if (clubs != null) {
+            this.outerArray = clubs
+        }
+        Log.i("test","sizearr "+outerArray.size)
         notifyDataSetChanged()
     }
 
@@ -28,18 +32,18 @@ class BrowseClubListAdapter : RecyclerView.Adapter<BrowseClubListAdapter.ClubVie
     }
 
     override fun onBindViewHolder(holder: ClubViewHolder, position: Int) {
-        holder.bind(outerArray[position])
+        val reslult =outerArray[position]
+       //val reslult=holder.bind(outerArray[position])
+        holder.tvName.text = reslult.publicName
+
+
     }
 
     override fun getItemCount(): Int = outerArray.size
 
     class ClubViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val tvName: TextView = itemView.findViewById(R.id.lable1)
 
 
-        fun bind(club: OuterItem) {
-//            name.text = club.name
-//            description.text = club.description
-//            image.setImageResource(club.imageResId)
-        }
     }
 }

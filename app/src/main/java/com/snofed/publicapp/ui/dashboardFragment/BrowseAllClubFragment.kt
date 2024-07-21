@@ -5,19 +5,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.snofed.publicapp.adapter.BrowseClubListAdapter
 import com.snofed.publicapp.databinding.FragmentBrowseAllClubBinding
-import com.snofed.publicapp.models.ClubListResponse
 import com.snofed.publicapp.models.NewClubData
-import com.snofed.publicapp.models.NoteResponse
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.NetworkResult
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,7 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class BrowseAllClubFragment : Fragment() {
 
     private var _binding: FragmentBrowseAllClubBinding? = null
-
+    private var clublist: NewClubData? = null
     private val binding get() = _binding!!
 
     private val clubViewModel by viewModels<AuthViewModel>()
@@ -52,10 +46,25 @@ class BrowseAllClubFragment : Fragment() {
 
         fetchResponse()
         //bindObservers()
-//        clubViewModel.clubLiveData.observe(viewLifecycleOwner, Observer {
-//            //initPopResListItem(it)
-//
-//        })
+        clubViewModel.clubLiveData.observe(viewLifecycleOwner, Observer {
+            when (it) {
+                is NetworkResult.Success -> {
+                   // findNavController().popBackStack()
+                    val adapter = BrowseClubListAdapter()
+                    binding.recyclerView.layoutManager = LinearLayoutManager(requireActivity())
+                    binding.recyclerView.adapter = adapter
+
+                     Log.i("it.data?.clients","it.data?.clients "+it.data?.data?.clients)
+                    adapter.setClubs(it.data?.data?.clients)
+                }
+                is NetworkResult.Error -> {
+
+                }
+                is NetworkResult.Loading -> {
+
+                }
+            }
+        })
 
         //bindObservers()
 
@@ -70,7 +79,7 @@ class BrowseAllClubFragment : Fragment() {
 
     private fun bindObservers() {
         clubViewModel.clubLiveData.observe(viewLifecycleOwner, Observer {
-            /*when (it) {
+            when (it) {
                 is NetworkResult.Success -> {
                     Log.i("brijesh ","test  "+it)
                    // findNavController().popBackStack()
@@ -81,9 +90,11 @@ class BrowseAllClubFragment : Fragment() {
                 is NetworkResult.Loading -> {
 
                 }
-            }*/
+            }
         })
     }
+
+
 
     private fun initPopResListItem(items: List<NewClubData>) {
         //initialize groupie's group adapter class and add the list of items
