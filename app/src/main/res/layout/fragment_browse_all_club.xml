@@ -7,17 +7,6 @@
     android:orientation="vertical"
     tools:context=".ui.dashboardFragment.BrowseAllClubFragment">
 
-
-    <!-- android:numColumns=2 is the number of columns for Grid View
-         android:horizontalSpacing is the space between horizontal grid items -->
-    <!--    <GridView-->
-    <!--        android:id="@+id/idGVcourses"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="match_parent"-->
-    <!--        android:horizontalSpacing="6dp"-->
-    <!--        android:numColumns="2"-->
-    <!--        android:verticalSpacing="6dp" />-->
-
     <EditText
         android:id="@+id/editTextSearch"
         android:layout_width="match_parent"
@@ -36,22 +25,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:id="@+id/cardIdLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <include layout="@layout/card_item" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:padding="4dp"/>
 
 
-        </LinearLayout>
 
-    </androidx.core.widget.NestedScrollView>
+
+
 
 </LinearLayout>

@@ -1,8 +1,10 @@
 package com.snofed.publicapp.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.snofed.publicapp.api.UserAPI
+import com.snofed.publicapp.models.NewClubData
 import com.snofed.publicapp.models.UserRegRequest
 import com.snofed.publicapp.models.UserRequest
 import com.snofed.publicapp.models.UserResponse
@@ -11,11 +13,20 @@ import org.json.JSONObject
 import retrofit2.Response
 import javax.inject.Inject
 
+
 class UserRepository @Inject constructor(private val userAPI: UserAPI) {
     private val acceptLanguage = "en-US"
+    private val _notesLiveData = MutableLiveData<NetworkResult<List<NewClubData>>>()
+    val clubLiveData get() = _notesLiveData
+
+    private val _data = MutableLiveData<List<NewClubData>>()
+    val data: LiveData<List<NewClubData>> get() = _data
+
     private val _userResponseLiveData = MutableLiveData<NetworkResult<UserResponse>>()
     val userResponseLiveData: LiveData<NetworkResult<UserResponse>>
         get() = _userResponseLiveData
+
+
 
     suspend fun registerUser(userRequest: UserRegRequest) {
         _userResponseLiveData.postValue(NetworkResult.Loading())
@@ -29,18 +40,41 @@ class UserRepository @Inject constructor(private val userAPI: UserAPI) {
         handleResponse(response)
     }
 
-    suspend fun clubList(userRequest: UserRequest) {
-        _userResponseLiveData.postValue(NetworkResult.Loading())
-        val response =userAPI.club(acceptLanguage)
-        handleResponse(response)
+
+
+
+
+    suspend fun getClub()  {
+        _notesLiveData.postValue(NetworkResult.Loading())
+        val response = userAPI.club(acceptLanguage)
+        Log.e("response_KDDD ", response.isSuccessful.toString())
+        Log.e("response_KDDD22 ", response.body().toString())
+        /*if (response.isSuccessful && response.body() != null) {
+            _notesLiveData.postValue(NetworkResult.Success(response.body()!!))
+        } else if (response.errorBody() != null) {
+            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+             _notesLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+        } else {
+            _notesLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+        }*/
     }
 
-   /* suspend fun feedList(workoutRequest: Workout) {
-        _userResponseLiveData.postValue(NetworkResult.Loading())
-        val response =userAPI.feed(acceptLanguage, "token")
-      //  handleResponse(response)
-    }*/
 
+
+
+//    private fun handleClubListResponse(response: Response<ClubListResponse>) {
+//        if (response.isSuccessful && response.body() != null) {
+//            _clubListResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+//
+//        }
+//        else if(response.errorBody()!=null){
+//            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+//            _clubListResponseLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+//        }
+//        else{
+//            _clubListResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+//        }
+//    }
 
 
 

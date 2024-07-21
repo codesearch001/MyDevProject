@@ -5,7 +5,6 @@ import com.snofed.publicapp.api.NoteAPI
 import com.snofed.publicapp.models.NoteRequest
 import com.snofed.publicapp.models.NoteResponse
 import com.snofed.publicapp.utils.NetworkResult
-import org.json.JSONObject
 import retrofit2.Response
 import javax.inject.Inject
 

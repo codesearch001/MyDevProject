@@ -88,9 +88,15 @@ dependencies {
     val navigation_version = "2.5.3"
     implementation("androidx.navigation:navigation-fragment-ktx:$navigation_version")
     implementation("androidx.navigation:navigation-ui-ktx:$navigation_version")
+/*
+    //2.3.0
+    val gropi_version = "2.5.3"
+    implementation ("com.xwray:groupie:$gropi_version")
+    implementation ("com.xwray:groupie-kotlin-android-extensions:$gropi_version")
+    implementation ("com.xwray:groupie-databinding:$gropi_version")*/
 
-
-
+   // implementation ("com.xwray:groupie:2.10.1")
+   // implementation  ("com.xwray:groupie-viewbinding:2.10.1")
 
 }
 kapt {

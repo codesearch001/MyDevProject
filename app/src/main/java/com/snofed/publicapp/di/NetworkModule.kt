@@ -30,12 +30,22 @@ class NetworkModule {
     fun provideOkHttpClient(interceptor: AuthInterceptor): OkHttpClient {
         return OkHttpClient.Builder().addInterceptor(interceptor).build()
     }
+/*
 
     @Singleton
     @Provides
     fun providesUserAPI(retrofitBuilder: Retrofit.Builder): UserAPI {
         return retrofitBuilder.build().create(UserAPI::class.java)
     }
+*/
+
+
+    @Singleton
+    @Provides
+    fun providesUserAPI(retrofitBuilder: Retrofit.Builder, okHttpClient: OkHttpClient): UserAPI {
+        return retrofitBuilder.client(okHttpClient).build().create(UserAPI::class.java)
+    }
+
 
     @Singleton
     @Provides

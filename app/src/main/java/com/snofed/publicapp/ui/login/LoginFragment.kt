@@ -93,7 +93,7 @@ class LoginFragment : Fragment() {
             binding.progressBar.isVisible = false
             when (it) {
                 is NetworkResult.Success -> {
-                    // tokenManager.saveToken(it.data!!.token)
+                     tokenManager.saveToken(it.data!!.token)
                     println("loginSuccess... " + it.data.toString())
                     Toast.makeText(requireActivity(), it.data?.success.toString(), Toast.LENGTH_SHORT).show()
                     // findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
