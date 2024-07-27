@@ -23,6 +23,8 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
 
     var mutableData =MutableData()
+
+
     val userResponseLiveData: LiveData<NetworkResult<UserResponse>>
         get() = userRepository.userResponseLiveData
 

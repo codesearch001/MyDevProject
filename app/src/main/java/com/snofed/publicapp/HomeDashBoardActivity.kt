@@ -29,7 +29,9 @@ import com.snofed.publicapp.ui.dashboardFragment.HomeFragment
 import com.snofed.publicapp.ui.note.MainFragment
 import com.snofed.publicapp.ui.note.NoteFragment
 import com.snofed.publicapp.utils.DrawerController
+import com.snofed.publicapp.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeDashBoardActivity : AppCompatActivity(), DrawerController {
@@ -38,13 +40,14 @@ class HomeDashBoardActivity : AppCompatActivity(), DrawerController {
     /*private lateinit var fragmentManager: FragmentManager*/
     private lateinit var navController: NavController
     private lateinit var navigationView: NavigationView
-
+    @Inject
+    lateinit var tokenManager: TokenManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //setContentView(R.layout.activity_main_home)
         binding = ActivityMainHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        tokenManager.getClientId().toString()
         // setSupportActionBar(binding.toolbar)
         val drawerLayout: DrawerLayout = binding.drawerLayout//navigation_view
 

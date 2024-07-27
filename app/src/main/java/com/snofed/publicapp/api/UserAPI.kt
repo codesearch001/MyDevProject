@@ -5,6 +5,7 @@ import com.snofed.publicapp.models.UserRegRequest
 import com.snofed.publicapp.models.UserRequest
 import com.snofed.publicapp.models.UserResponse
 import com.snofed.publicapp.models.browseSubClub.BrowseSubClubResponse
+import com.snofed.publicapp.models.clubActivities.ActivitiesResponse
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.utils.Constants.GET_ALL_FEEDS
 import retrofit2.Response
@@ -33,6 +34,11 @@ interface UserAPI {
     @GET("public-app/sync/client?")
     suspend fun subClub(@Header("Accept-Language") acceptLanguage: String, @Query("ClientId") clientId: String, @Query("HasProTrails") hasProTrails: Boolean = false, ): Response<BrowseSubClubResponse>
 
+    //Feed List
     @GET(GET_ALL_FEEDS)
     suspend fun feed(@Header("Accept-Language") acceptLanguage: String, @Query("limit") limit: Int) : Response<FeedListResponse>
+
+    //Activities
+    @GET("activities/c9bfde61-4c56-401b-2363-08d97e915295")
+    suspend fun activities(@Header("Accept-Language") acceptLanguage: String) : Response<ActivitiesResponse>
 }

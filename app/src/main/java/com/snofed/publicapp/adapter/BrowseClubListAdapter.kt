@@ -70,6 +70,8 @@ class BrowseClubListAdapter(private val listener: OnItemClickListener) : Recycle
     override fun onBindViewHolder(holder: ClubViewHolder, position: Int) {
         //val reslult=holder.bind(outerArray[position])
         val reslult =filteredClubs[position]
+        holder.clientRating.text = reslult.clientRating.toString()
+        holder.totalRatings.text = reslult.totalRatings.toString()
         holder.tvName.text = reslult.publicName
         holder.tvLable.text = reslult.county
         holder.cardIdLayout.setOnClickListener {
@@ -89,6 +91,8 @@ class BrowseClubListAdapter(private val listener: OnItemClickListener) : Recycle
     //override fun getItemCount(): Int = outerArray.size
     override fun getItemCount(): Int = filteredClubs.size
     class ClubViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val clientRating: TextView = itemView.findViewById(R.id.txtIdClubRating)
+        val totalRatings: TextView = itemView.findViewById(R.id.txtIdTotalRating)
         val tvName: TextView = itemView.findViewById(R.id.lable1)
         val tvLable: TextView = itemView.findViewById(R.id.lable2)
         val cardIdLayout: LinearLayout = itemView.findViewById(R.id.cardIdLayout)

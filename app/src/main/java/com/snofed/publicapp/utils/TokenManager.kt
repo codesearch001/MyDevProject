@@ -43,4 +43,14 @@ class TokenManager @Inject constructor(@ApplicationContext context: Context) {
     fun getDesc(): String? {
         return prefs.getString(CLUB_DESC, null)
     }
+
+    fun saveClientId(userClient: String) {
+        val editor = prefs.edit()
+        editor.putString(CLUB_CLIENT_ID, userClient)
+        editor.apply()
+    }
+
+    fun getClientId(): String? {
+        return prefs.getString(CLUB_CLIENT_ID, null)
+    }
 }

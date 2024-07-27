@@ -50,13 +50,13 @@ class FeedFragment : Fragment(),WorkoutFeedAdapter.OnItemClickListener {
              binding.progressBar.isVisible = false
             when (it) {
                 is NetworkResult.Success -> {
-                    //binding.recyclerView.layoutManager = LinearLayoutManager(requireActivity())
-                    //Set up the RecyclerView with GridLayoutManager
+
                     feedAdapter = WorkoutFeedAdapter(this)
                     binding.feedRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
                     binding.feedRecyclerView.adapter = feedAdapter
-                    feedAdapter.setFeed(it.data?.data)
                     //Log.i("it.data?.feed","it.data?.feed "+it.data?.data)
+                    feedAdapter.setFeed(it.data?.data)
+
                 }
                 is NetworkResult.Error -> {
                     Toast.makeText(requireActivity(), it.message.toString(), Toast.LENGTH_SHORT).show()

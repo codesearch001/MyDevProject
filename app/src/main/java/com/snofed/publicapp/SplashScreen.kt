@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.provider.Settings
+import com.snofed.publicapp.utils.TokenManager
+import javax.inject.Inject
 
 @SuppressLint("CustomSplashScreen")
 class SplashScreen : AppCompatActivity() {

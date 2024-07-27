@@ -20,7 +20,9 @@ import com.snofed.publicapp.databinding.FragmentFeedBinding
 import com.snofed.publicapp.databinding.FragmentSupportingMemDetailsBinding
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.NetworkResult
+import com.snofed.publicapp.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class EventFragment : Fragment() {
@@ -30,11 +32,10 @@ class EventFragment : Fragment() {
     private val eventViewModel by viewModels<AuthViewModel>()
 
     private lateinit var feedAdapter: EventFeedAdapter
+    @Inject
+    lateinit var tokenManager: TokenManager
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_event, container, false)
         _binding = FragmentEventBinding.inflate(inflater, container, false)
@@ -42,23 +43,21 @@ class EventFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         binding.backBtn.setOnClickListener {
             it.findNavController().popBackStack()
         }
-       /* binding.eventCardId.setOnClickListener {
-            it.findNavController().navigate(R.id.singleEventDetailsFragment)
-        }*/
 
+        fetchResponse()
         eventViewModel.subClubLiveData.observe(viewLifecycleOwner, Observer {
             binding.progressBar.isVisible = false
             when (it) {
                 is NetworkResult.Success -> {
-                    //binding.recyclerView.layoutManager = LinearLayoutManager(requireActivity())
-                    // Set up the RecyclerView with GridLayoutManager
-                    /*feedAdapter = EventFeedAdapter(this)
+                    Log.i("Event", "Event " + it.data?.data?.events)
+                    feedAdapter = EventFeedAdapter()
                     binding.eventRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
-                    binding.eventRecyclerView.adapter = feedAdapter*/
-                    //feedAdapter.setFeed(it.data?.data)
+                    binding.eventRecyclerView.adapter = feedAdapter
+                    feedAdapter.setEvent(it.data?.data?.events)
 
                 }
                 is NetworkResult.Error -> {
@@ -69,6 +68,9 @@ class EventFragment : Fragment() {
                 }
             }
         })
+    }
 
+    private fun fetchResponse() {
+        eventViewModel.subClubRequestUser(tokenManager.getClientId().toString())
     }
 }

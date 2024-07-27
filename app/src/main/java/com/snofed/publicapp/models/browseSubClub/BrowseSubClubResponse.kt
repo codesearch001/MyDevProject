@@ -24,6 +24,7 @@ data class Data(
     val hasManintenance: Boolean,
     val visibility: Long,
     val clientRating: Double,
+    val totalRatings: Double,
     val totalTrails: Long,
     val totalTrailsLength: Long,
     val isSubscribed: Boolean,
@@ -104,7 +105,7 @@ data class Trail(
     val activity: Activity2,
     val trailQuality: TrailQuality,
     val difficulty: Difficulty,
-    val images: List<Image>,
+    val images: List<Imagee>,
     val intervalType: Long,
     val trailRatings: List<TrailRating>,
     val averageRating: Double,
@@ -197,7 +198,7 @@ data class NameTranslates3(
     val no: Any?,
 )
 
-data class Image(
+data class Imagee(
     val id: String,
     val path: String,
     val tempPath: Any?,
@@ -380,9 +381,22 @@ data class License(
 data class PublicData(
     val description: String,
     val videoPath: Any?,
-    val coverImagePath: Any?,
-    val images: List<Any?>,
-    val links: List<Any?>,
+    val coverImagePath: String,
+    val images: List<Image>,
+    val links: List<Link>,
     val id: String,
     val syncAction: Long,
+)
+
+data class Image(
+    val path: String,
+    val publicDataId: String,
+    val id: String,
+    val syncAction: Long,
+)
+
+data class Link(
+    val id: String,
+    val linkName: String,
+    val link: String,
 )

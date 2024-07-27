@@ -230,6 +230,7 @@
                         android:layout_marginRight="2dp"
                         android:src="@drawable/star" />
                     <TextView
+                        android:id="@+id/idTotalRatings"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="2dp"

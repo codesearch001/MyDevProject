@@ -60,7 +60,9 @@ class ActionsFragment : Fragment(),OnItemClickListener {
     override fun onItemClick(itemId: Int) {
         ToastUtils.showToast(requireActivity(), "Item clicked with id: ${itemId}")
         Log.i("Click","Clickbbbbb "+itemId.toString())
-
+        if (itemId==1){
+            findNavController().navigate(R.id.singleResortsActivitiesFragment)
+        }
         if (itemId==3){
             findNavController().navigate(R.id.trailsStatusFragment)
         }

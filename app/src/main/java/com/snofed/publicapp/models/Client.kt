@@ -16,6 +16,8 @@ data class Client(
     val location: String,
     val logoPath: String,
     val publicName: String,
+    val clientRating: Double,
+    val totalRatings: Double,
     val startLatitude: String,
     val startLongitude: String,
     val syncAction: Int,

@@ -10,6 +10,7 @@ import com.snofed.publicapp.models.UserRequest
 import com.snofed.publicapp.models.UserResponse
 import com.snofed.publicapp.models.browseSubClub.BrowseSubClubResponse
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
+import com.snofed.publicapp.utils.MutableData
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.TokenManager
 import org.json.JSONObject
@@ -32,6 +33,8 @@ class UserRepository @Inject constructor(private val userAPI: UserAPI) {
     private val _subClubLiveData = MutableLiveData<NetworkResult<BrowseSubClubResponse>>()
     val subClubLiveData: LiveData<NetworkResult<BrowseSubClubResponse>>
         get() = _subClubLiveData
+
+
 
     private val _feedLiveData = MutableLiveData<NetworkResult<FeedListResponse>>()
     val feedLiveData: LiveData<NetworkResult<FeedListResponse>>
@@ -77,6 +80,8 @@ class UserRepository @Inject constructor(private val userAPI: UserAPI) {
         if (response.isSuccessful && response.body() != null) {
             Log.e("jsonResponseData", "subClubResponse " + response.body())
             _subClubLiveData.postValue(NetworkResult.Success(response.body()!!))
+            //_subClubLiveData_gallery_l.postValue(response.body())
+
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
             _subClubLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
