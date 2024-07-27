@@ -6,8 +6,6 @@ import com.snofed.publicapp.ui.dashboardFragment.BrowseAllClubFragment
 import com.snofed.publicapp.ui.dashboardFragment.BrowseByActivitiesFragment
 import com.snofed.publicapp.ui.dashboardFragment.BrowseFavFragment
 
-
-
 class TabBrowseClubsAdapter(private val fragment: Fragment, private val tabs: List<String>) : FragmentStateAdapter(fragment) {
 
     override fun getItemCount(): Int = tabs.size
@@ -16,8 +14,8 @@ class TabBrowseClubsAdapter(private val fragment: Fragment, private val tabs: Li
         // Create a new fragment for each tab
         return when (position) {
             0 -> BrowseAllClubFragment()
-            1 -> BrowseByActivitiesFragment()
-            2 -> BrowseFavFragment()
+            /*1 -> BrowseByActivitiesFragment()*/
+            1 -> BrowseFavFragment()
             else -> BrowseAllClubFragment()
         }
 

@@ -44,15 +44,16 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         binding.txtSignUp.setOnClickListener {
             it.findNavController().popBackStack()
         }
 
         binding.forgotText.setOnClickListener {
-            // it.findNavController().navigate(R.id.action_loginFragment_to_recoverPasswordFragment)
+             it.findNavController().navigate(R.id.recoverFragment)
             //it.findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
-            val intent = Intent(requireActivity(), HomeDashBoardActivity::class.java)
-            startActivity(intent)
+            /*val intent = Intent(requireActivity(), HomeDashBoardActivity::class.java)
+            startActivity(intent)*/
         }
 
         binding.btnLogin.setOnClickListener {
@@ -73,8 +74,7 @@ class LoginFragment : Fragment() {
             UserRequest(
                 txtEmail.text.toString(),
                 txtPassword.text.toString(),
-                true
-            )
+                true)
         }
     }
 
@@ -93,7 +93,7 @@ class LoginFragment : Fragment() {
             binding.progressBar.isVisible = false
             when (it) {
                 is NetworkResult.Success -> {
-                     tokenManager.saveToken(it.data!!.token)
+                    // tokenManager.saveToken(it.data!!.token)
                     println("loginSuccess... " + it.data.toString())
                     Toast.makeText(requireActivity(), it.data?.success.toString(), Toast.LENGTH_SHORT).show()
                     // findNavController().navigate(R.id.action_loginFragment_to_mainFragment)

@@ -120,5 +120,29 @@
         android:name="com.snofed.publicapp.ui.setting.AppSettingFragment"
         android:label="fragment_app_setting"
         tools:layout="@layout/fragment_app_setting" />
+    <fragment
+        android:id="@+id/linksFragment"
+        android:name="com.snofed.publicapp.ui.links.LinksFragment"
+        android:label="fragment_links"
+        tools:layout="@layout/fragment_links" />
+    <fragment
+        android:id="@+id/purchaseOptionsFragment"
+        android:name="com.snofed.publicapp.ui.shop.PurchaseOptionsFragment"
+        android:label="PurchaseOptionsFragment" />
+    <fragment
+        android:id="@+id/trailsStatusFragment"
+        android:name="com.snofed.publicapp.ui.trailsstatus.TrailsStatusFragment"
+        android:label="fragment_trails_status"
+        tools:layout="@layout/fragment_trails_status" />
+    <fragment
+        android:id="@+id/feedBackFragment"
+        android:name="com.snofed.publicapp.ui.feedback.FeedBackFragment"
+        android:label="fragment_feed_back"
+        tools:layout="@layout/fragment_feed_back" />
+    <fragment
+        android:id="@+id/singleResortsActivitiesFragment"
+        android:name="com.snofed.publicapp.ui.resortsinglectivities.SingleResortsActivitiesFragment"
+        android:label="fragment_single_resorts_activities"
+        tools:layout="@layout/fragment_single_resorts_activities" />
 
 </navigation>

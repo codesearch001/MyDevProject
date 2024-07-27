@@ -12,13 +12,16 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.newdemoapp"
+        applicationId = "com.snofed.publicapp"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
         multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary = true
+        }
     }
 
     buildTypes {
@@ -55,6 +58,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    //implementation("com.github.pedroSG94.RootEncoder:library:2.4.3")
 
     //val hilt_version="2.44"
    // val hilt_version="2.38.1"
@@ -89,15 +93,22 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:$navigation_version")
     implementation("androidx.navigation:navigation-ui-ktx:$navigation_version")
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
-/*
-    //2.3.0
-    val gropi_version = "2.5.3"
-    implementation ("com.xwray:groupie:$gropi_version")
-    implementation ("com.xwray:groupie-kotlin-android-extensions:$gropi_version")
-    implementation ("com.xwray:groupie-databinding:$gropi_version")*/
+    
+    implementation ("com.facebook.android:facebook-android-sdk:5.11.0")
+    implementation ("com.google.android.gms:play-services-auth:21.2.0")
 
-   // implementation ("com.xwray:groupie:2.10.1")
-   // implementation  ("com.xwray:groupie-viewbinding:2.10.1")
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+
+    implementation("io.coil-kt:coil-compose:2.7.0")
+     /*   //2.3.0
+        //val gropi_version = "2.5.3"
+        val gropi_version = "2.3.0"
+        implementation ("com.xwray:groupie:$gropi_version")
+        implementation ("com.xwray:groupie-kotlin-android-extensions:$gropi_version")
+        implementation ("com.xwray:groupie-databinding:$gropi_version")*/
+
+    /*implementation ("com.xwray:groupie:2.10.1")
+    implementation  ("com.xwray:groupie-viewbinding:2.10.1")*/
 
 }
 kapt {

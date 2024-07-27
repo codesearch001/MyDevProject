@@ -1,20 +1,19 @@
 package com.snofed.publicapp.ui.login
 
 import android.text.TextUtils
-import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.snofed.publicapp.models.ClubListRequest
-import com.snofed.publicapp.models.ClubListResponse
 import com.snofed.publicapp.models.NewClubData
 
 import com.snofed.publicapp.models.UserRegRequest
 import com.snofed.publicapp.models.UserRequest
 import com.snofed.publicapp.models.UserResponse
+import com.snofed.publicapp.models.browseSubClub.BrowseSubClubResponse
+import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.repository.UserRepository
 import com.snofed.publicapp.utils.Helper
+import com.snofed.publicapp.utils.MutableData
 import com.snofed.publicapp.utils.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -23,14 +22,20 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
 
+    var mutableData =MutableData()
     val userResponseLiveData: LiveData<NetworkResult<UserResponse>>
         get() = userRepository.userResponseLiveData
 
-//    val clubResponseLiveData: LiveData<NewClubData>
-//        get() = userRepository.data
-    val clubLiveData get() = userRepository.clubLiveData
+    val clubLiveData: LiveData<NetworkResult<NewClubData>>
+        get() = userRepository.clubLiveData
 
+  val subClubLiveData: LiveData<NetworkResult<BrowseSubClubResponse>>
+        get() = userRepository.subClubLiveData
 
+    val feedLiveData: LiveData<NetworkResult<FeedListResponse>>
+        get() = userRepository.feedLiveData
+
+//    val clubLiveData get() = userRepository.clubLiveData
   /*  val clubResponseLiveData: LiveData<NewClubData>
         get() = userRepository.clubListResponseLiveData*/
 
@@ -49,6 +54,18 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
     fun clubRequestUser() {
         viewModelScope.launch {
             userRepository.getClub()
+            //userRepository.saveData(userRepository)
+        }
+    }
+
+    fun subClubRequestUser(clientId: String) {
+        viewModelScope.launch {
+            userRepository.getSubClub(clientId)
+        }
+    }
+    fun feedRequestUser() {
+        viewModelScope.launch {
+            userRepository.getFeedClub()
         }
     }
 

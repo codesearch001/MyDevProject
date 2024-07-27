@@ -2,6 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+
         <variable
             name="browseClub"
             type="com.snofed.publicapp.models.ClubListResponse" />
@@ -9,8 +10,9 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:gravity="center">
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="wrap_content"
@@ -20,17 +22,15 @@
                 android:id="@+id/cardIdLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@color/white"
                 android:orientation="vertical">
 
                 <!-- card_layout.xml -->
-                <androidx.cardview.widget.CardView
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                <androidx.cardview.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/card_view"
-                    android:layout_width="162dp"
-                    android:layout_height="200dp"
-                    android:layout_margin="8dp"
-                    app:cardCornerRadius="8dp"
-                    app:cardElevation="4dp">
+                    android:layout_width="wrap_content"
+                    android:layout_height="220dp"
+                    app:cardCornerRadius="8dp">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -38,9 +38,9 @@
 
                         <!-- Background Image -->
                         <ImageView
-                            android:id="@+id/background_image"
+                            android:id="@+id/clubBackgroundIdImage"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:scaleType="centerCrop"
                             android:src="@drawable/resort_card_bg" />
 
@@ -60,19 +60,19 @@
                                 <LinearLayout
                                     android:layout_width="0dp"
                                     android:layout_height="22dp"
+                                    android:layout_weight="1.5"
                                     android:background="@drawable/rectangle_white_background"
                                     android:gravity="center"
-                                    android:layout_weight="1.5"
                                     android:orientation="horizontal"
                                     android:padding="2dp">
 
                                     <TextView
-                                        android:id="@+id/text_horizontal_1"
+                                        android:id="@+id/txtIdClubRating"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="5"
                                         android:layout_marginLeft="2dp"
                                         android:layout_marginRight="2dp"
+                                        android:text="0"
                                         android:textColor="@color/black"
                                         android:textSize="12sp" />
 
@@ -85,9 +85,9 @@
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="(185)"
                                         android:layout_marginLeft="2dp"
                                         android:layout_marginRight="2dp"
+                                        android:text="(0)"
                                         android:textColor="@color/black"
                                         android:textSize="12sp" />
 
@@ -97,13 +97,13 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:gravity="end"
                                 android:layout_marginTop="6dp"
+                                android:gravity="end"
                                 android:padding="4dp">
 
                                 <ImageView
-                                    android:layout_width="38dp"
-                                    android:layout_height="38dp"
+                                    android:layout_width="32dp"
+                                    android:layout_height="32dp"
                                     android:background="@drawable/circle_white_background"
                                     android:padding="6dp"
                                     android:scaleType="centerCrop"
@@ -115,23 +115,25 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_alignParentBottom="true"
-                            android:padding="8dp"
-                            android:orientation="vertical">
+                            android:layout_margin="6dp"
+                            android:orientation="vertical"
+                            android:padding="6dp">
 
                             <TextView
                                 android:id="@+id/lable1"
-                                android:layout_width="match_parent"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="22sp"
+                                android:text="Lable1"
                                 android:textColor="@color/white"
-                                android:text="Lable 1" />
+                                android:textSize="18sp" />
 
                             <TextView
+                                android:id="@+id/lable2"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:text="Lable"
                                 android:textColor="@color/white"
-                                android:textSize="16sp"
-                                android:text="Lable" />
+                                android:textSize="12sp" />
                         </LinearLayout>
 
 

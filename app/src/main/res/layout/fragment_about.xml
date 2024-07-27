@@ -10,12 +10,28 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/cardActionIdLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:padding="@dimen/marginLarge"
+            android:layout_height="wrap_content">
 
-            <include layout="@layout/about_us_list" />
+            <TextView
+                android:id="@+id/idDescription"
+                android:layout_width="wrap_content"
+                android:textSize="16sp"
+                android:text="Vast number of activities"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_height="wrap_content"/>
+
+           <!-- <TextView
+                android:layout_width="match_parent"
+                android:textSize="14sp"
+                android:layout_marginTop="6dp"
+                android:text="Copper Mountain is a mountain and ski resort located in Summit County, Colorado, about 75 miles west of Denver on Interstate 70.\n
+\nThe resort has 2,465 acres of in-bounds terrain under lease from the U.S. Forest Service, White River National Forest, Dillon Ranger District. It is operated by POWDR.\n
+\nPeople who ski and ride Copper love to tout its perfect layout. They have Mother Nature to thank for arranging its slopes so adeptly: Beginner, intermediate and expert runs are each clustered."
+                android:layout_height="wrap_content"/>-->
 
         </LinearLayout>
 

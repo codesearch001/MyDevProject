@@ -6,10 +6,17 @@
     tools:context=".ui.clubsubmember.GalleryFragment">
 
     <androidx.core.widget.NestedScrollView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/galleryRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:padding="8dp"
+            android:scrollbars="vertical" />
+        <!--<LinearLayout
             android:id="@+id/cardActionIdLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -17,7 +24,7 @@
 
             <include layout="@layout/gallery_list_items" />
 
-        </LinearLayout>
+        </LinearLayout>-->
 
     </androidx.core.widget.NestedScrollView>
 

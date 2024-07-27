@@ -20,6 +20,7 @@
             android:orientation="horizontal">
 
             <LinearLayout
+                android:id="@+id/humburger"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
@@ -92,58 +93,6 @@
         </LinearLayout>
 
     </RelativeLayout>
-
-
-    <!--    <com.google.android.material.appbar.AppBarLayout-->
-    <!--        android:id="@+id/actionBar"-->
-    <!--        android:layout_width="0dp"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toTopOf="parent">-->
-
-    <!--        <androidx.appcompat.widget.Toolbar-->
-    <!--            android:id="@+id/toolbar"-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="?attr/actionBarSize"-->
-    <!--            app:contentInsetStartWithNavigation="0dp"-->
-    <!--            app:contentInsetStart="0dp">-->
-
-    <!--            &lt;!&ndash; Left Icon &ndash;&gt;-->
-    <!--            <ImageButton-->
-    <!--                android:id="@+id/leftIcon"-->
-    <!--                android:layout_width="wrap_content"-->
-    <!--                android:layout_height="wrap_content"-->
-    <!--                android:src="@drawable/ic_add"-->
-    <!--                android:background="?attr/selectableItemBackgroundBorderless"-->
-    <!--                android:contentDescription="Left Icon"-->
-    <!--                android:padding="16dp"-->
-    <!--                android:layout_gravity="start" />-->
-
-    <!--            &lt;!&ndash; Title (if needed) &ndash;&gt;-->
-    <!--            <TextView-->
-    <!--                android:id="@+id/toolbar_title"-->
-    <!--                android:layout_width="wrap_content"-->
-    <!--                android:layout_height="wrap_content"-->
-    <!--                android:text="Title"-->
-    <!--                android:textColor="#FFFFFF"-->
-    <!--                android:textSize="18sp"-->
-    <!--                android:layout_gravity="center" />-->
-
-    <!--            &lt;!&ndash; Right Icon &ndash;&gt;-->
-    <!--            <ImageButton-->
-    <!--                android:id="@+id/rightIcon"-->
-    <!--                android:layout_width="wrap_content"-->
-    <!--                android:layout_height="wrap_content"-->
-    <!--                android:src="@drawable/ic_add"-->
-    <!--                android:background="?attr/selectableItemBackgroundBorderless"-->
-    <!--                android:contentDescription="Right Icon"-->
-    <!--                android:padding="16dp"-->
-    <!--                android:layout_gravity="end" />-->
-
-    <!--        </androidx.appcompat.widget.Toolbar>-->
-
-    <!--    </com.google.android.material.appbar.AppBarLayout>-->
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"

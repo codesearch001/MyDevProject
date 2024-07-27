@@ -20,7 +20,5 @@ class TabClubsSubMemAdapter (private val fragment: Fragment, private val tabs: L
             3 -> SubmembersFragment()
             else -> ActionsFragment()
         }
-
-
     }
 }

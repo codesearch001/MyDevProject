@@ -28,13 +28,14 @@ import com.snofed.publicapp.databinding.NavHeaderMainBinding
 import com.snofed.publicapp.ui.dashboardFragment.HomeFragment
 import com.snofed.publicapp.ui.note.MainFragment
 import com.snofed.publicapp.ui.note.NoteFragment
+import com.snofed.publicapp.utils.DrawerController
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class HomeDashBoardActivity : AppCompatActivity(){
+class HomeDashBoardActivity : AppCompatActivity(), DrawerController {
     private lateinit var binding: ActivityMainHomeBinding // Generated binding class
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var fragmentManager: FragmentManager
+    /*private lateinit var fragmentManager: FragmentManager*/
     private lateinit var navController: NavController
     private lateinit var navigationView: NavigationView
 
@@ -43,9 +44,13 @@ class HomeDashBoardActivity : AppCompatActivity(){
         //setContentView(R.layout.activity_main_home)
         binding = ActivityMainHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        //setSupportActionBar(binding.toolbar)
+
         // setSupportActionBar(binding.toolbar)
         val drawerLayout: DrawerLayout = binding.drawerLayout//navigation_view
+
+        // Disable drawer gesture (swipe-to-open)
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+
         // Set up the navigation header
         navigationView = binding.navigationView
 
@@ -55,9 +60,6 @@ class HomeDashBoardActivity : AppCompatActivity(){
         headerBinding.backBtn.setOnClickListener {
             // Handle back button click
             onBackPressed()
-        }
-        binding.ddd.setOnClickListener {
-            drawerLayout.openDrawer(GravityCompat.START)
         }
 
         val navigation_view: NavigationView = binding.navigationView
@@ -90,7 +92,6 @@ class HomeDashBoardActivity : AppCompatActivity(){
                     navController.navigate(R.id.helpFragment)
                     true
                 }
-
                 else -> false
             }.also {
                 drawerLayout.closeDrawers() // Close the drawer after selecting an item
@@ -112,20 +113,22 @@ class HomeDashBoardActivity : AppCompatActivity(){
                 R.id.profileSettingFragment -> hideBottomNav()
                 R.id.settingFragment -> hideBottomNav()
                 R.id.helpFragment -> hideBottomNav()
+                R.id.linksFragment -> hideBottomNav()
+                R.id.purchaseOptionsFragment -> hideBottomNav()
+                R.id.trailsStatusFragment -> hideBottomNav()
+                R.id.feedBackFragment -> hideBottomNav()
+                R.id.singleResortsActivitiesFragment -> hideBottomNav()
                 else -> showBottomNav()
             }
         }
-
     }
 
     private fun showBottomNav() {
         binding.bottomNavigationView.visibility = View.VISIBLE
-
     }
 
     private fun hideBottomNav() {
         binding.bottomNavigationView.visibility = View.GONE
-
     }
 
     override fun onBackPressed() {
@@ -136,9 +139,11 @@ class HomeDashBoardActivity : AppCompatActivity(){
         }
     }
 
-
-
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    override fun openDrawer() {
+        binding.drawerLayout.openDrawer(GravityCompat.START)
     }
 }

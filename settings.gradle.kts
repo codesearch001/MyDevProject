@@ -16,10 +16,11 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-
+        maven {
+            url = uri("https://jitpack.io") //As of Android Koala, the format should be like this
+        }
     }
 }
-
 rootProject.name = "Snofed"
 include(":app")
  

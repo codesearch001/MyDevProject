@@ -8,10 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import com.snofed.publicapp.HomeDashBoardActivity
 import com.snofed.publicapp.HomeNewActivity
 import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.FragmentHomeBinding
+import com.snofed.publicapp.utils.DrawerController
+import com.snofed.publicapp.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -21,12 +25,17 @@ class HomeFragment : Fragment() {
   //  private val noteViewModel by viewModels<NoteViewModel>()
 
    // private lateinit var adapter: NoteAdapter
+   @Inject
+   lateinit var tokenManager: TokenManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View? {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
        // adapter = NoteAdapter(::onNoteClicked)
+        binding.humburger.setOnClickListener {
+            (activity as? DrawerController)?.openDrawer()
+        }
         return binding.root
        // val view = binding.root
       //  return view
@@ -34,7 +43,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
+        binding.nameTextView.text =tokenManager.getUser()
         binding.btnPurchase.setOnClickListener {
             findNavController().navigate(R.id.purchaseHistoryFragment2)
             //startActivity(Intent(requireActivity(), HomeNewActivity::class.java))

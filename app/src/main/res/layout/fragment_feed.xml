@@ -65,25 +65,20 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <LinearLayout
+                android:id="@+id/humburger"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:padding="6dp">
-
                 <ImageView
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:background="@drawable/circle_white_background"
-                    android:padding="6dp"
+                    android:padding="8dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/menu" />
             </LinearLayout>
@@ -104,10 +99,10 @@
                 android:padding="6dp">
 
                 <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:background="@drawable/circle_white_background"
-                    android:padding="6dp"
+                    android:padding="8dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/chart" />
             </LinearLayout>
@@ -119,10 +114,10 @@
                 android:padding="6dp">
 
                 <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:background="@drawable/circle_white_background"
-                    android:padding="6dp"
+                    android:padding="8dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/view_image" />
             </LinearLayout>
@@ -146,8 +141,49 @@
         </LinearLayout>
 
     </RelativeLayout>
-
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/topScroll"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/idFeed"
+        android:layout_height="wrap_content">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/feedRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:padding="8dp"
+            android:scrollbars="vertical" />
+
+
+    </androidx.core.widget.NestedScrollView>
+    <LinearLayout
+        android:id="@+id/progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/topScroll"
+        android:visibility="gone"
+        android:orientation="vertical">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/tvSplashText"
+            style="@style/TextRobotoNormal"
+            android:layout_width="2dp"
+            android:layout_height="6dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/marginMedium"
+            android:gravity="center_vertical"
+            android:textColor="@color/white"
+            android:textSize="@dimen/fontMedium" />
+
+    </LinearLayout>
+   <!-- <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_below="@+id/idFeed"
         android:layout_height="wrap_content">
@@ -159,7 +195,7 @@
             <include layout="@layout/note_item"/>
 
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>-->
 
 
 

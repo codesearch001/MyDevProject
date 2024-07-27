@@ -26,6 +26,7 @@
             android:orientation="horizontal">
 
             <LinearLayout
+                android:id="@+id/backBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
@@ -96,9 +97,10 @@
                 android:layout_marginTop="20dp">
 
                 <TextView
+                    android:id="@+id/idPublicName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Copper Mountain"
+                    android:text=""
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -121,11 +123,12 @@
                     android:padding="2dp">
 
                     <TextView
+                        android:id="@+id/idTotalTrails"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
-                        android:text="5"
+                        android:text="0"
                         android:textColor="@color/blue_txt_light"
                         android:textSize="8sp" />
 
@@ -165,12 +168,12 @@
                     android:padding="2dp">
 
                     <TextView
-                        android:id="@+id/text_horizontal_1"
+                        android:id="@+id/idTotalTrailsLength"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
-                        android:text="34.950 m"
+                        android:text="0"
                         android:textColor="@color/blue_txt_light"
                         android:textSize="8sp" />
 
@@ -194,6 +197,7 @@
 
             </LinearLayout>
 
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_marginTop="6dp"
@@ -205,32 +209,34 @@
                     android:layout_weight="3"
                     android:background="@drawable/rectangle_white_background"
                     android:gravity="center"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:padding="2dp">
 
                     <TextView
+                        android:id="@+id/idClientRating"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
-                        android:text="5"
+                        android:text="0"
                         android:textColor="@color/blue_txt_light"
                         android:textSize="8sp" />
 
                     <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
                         android:scaleType="centerCrop"
+                        android:layout_marginLeft="2dp"
+                        android:layout_marginRight="2dp"
                         android:src="@drawable/star" />
-
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
-                        android:text="(185)"
+                        android:text="(0)"
                         android:textColor="@color/blue_txt_light"
                         android:textSize="8sp" />
-
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
