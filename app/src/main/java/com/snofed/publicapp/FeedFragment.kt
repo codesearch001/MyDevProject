@@ -11,8 +11,12 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.snofed.publicapp.adapter.BrowseClubListAdapter
+import com.snofed.publicapp.adapter.GalleryAdapter
 import com.snofed.publicapp.adapter.WorkoutFeedAdapter
 import com.snofed.publicapp.databinding.FragmentBrowseClubBinding
 import com.snofed.publicapp.databinding.FragmentFeedBinding
@@ -40,6 +44,13 @@ class FeedFragment : Fragment(),WorkoutFeedAdapter.OnItemClickListener {
         binding.humburger.setOnClickListener {
             (activity as? DrawerController)?.openDrawer()
         }
+        binding.imgFeedId.setOnClickListener {
+            it.findNavController().navigate(R.id.feedViewImageFragment)
+        }
+
+        binding.imgFeedIdChart.setOnClickListener {
+            it.findNavController().navigate(R.id.mapFeedFragment)
+        }
        return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -50,12 +61,39 @@ class FeedFragment : Fragment(),WorkoutFeedAdapter.OnItemClickListener {
              binding.progressBar.isVisible = false
             when (it) {
                 is NetworkResult.Success -> {
+                    val data = it.data?.data
+                    if (data.isNullOrEmpty()) {
+                        //Log.i("it.data?.feed","it.data?.feed "+it.data?.data)
+                        // Handle the "data not found" case
+                        // Assuming this is inside a Fragment
+                        it.data?.message?.let { message ->
+                            binding.tvSplashText.apply {
+                                isVisible = true
+                                text = message
+                            }
+                        }
 
-                    feedAdapter = WorkoutFeedAdapter(this)
-                    binding.feedRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
-                    binding.feedRecyclerView.adapter = feedAdapter
-                    //Log.i("it.data?.feed","it.data?.feed "+it.data?.data)
-                    feedAdapter.setFeed(it.data?.data)
+                        feedAdapter = WorkoutFeedAdapter(this)
+                        binding.feedRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
+                        binding.feedRecyclerView.adapter = feedAdapter
+                        feedAdapter.setFeed(data)
+                    } else {
+                        // Normal case: data is present
+                        Log.i("PraveenGallery22222", "Data: $data")
+                        binding.tvSplashText.isVisible = false
+                        feedAdapter = WorkoutFeedAdapter(this)
+                        binding.feedRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
+                        binding.feedRecyclerView.adapter = feedAdapter
+                        //Log.i("it.data?.feed","it.data?.feed "+it.data?.data)
+                        feedAdapter.setFeed(data)
+
+                    }
+
+//                    feedAdapter = WorkoutFeedAdapter(this)
+//                    binding.feedRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
+//                    binding.feedRecyclerView.adapter = feedAdapter
+//                    //Log.i("it.data?.feed","it.data?.feed "+it.data?.data)
+//                    feedAdapter.setFeed(it.data?.data)
 
                 }
                 is NetworkResult.Error -> {
@@ -73,5 +111,9 @@ class FeedFragment : Fragment(),WorkoutFeedAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(clientId: String) {
+        val bundle = Bundle()
+        bundle.putString("eventId", clientId)
+        val destination = R.id.mapFeedFragment
+        findNavController().navigate(destination, bundle)
     }
 }

@@ -1,7 +1,8 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Snofed</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="mapbox_access_token" translatable="false" tools:ignore="UnusedResources">sk.eyJ1Ijoic3lzdGFpbmFkZXYiLCJhIjoiY2x6ZjUzZW41MTBiZjJpcXplYWR6b3hvMyJ9.NK5-whs-iNzysW9WktKRJg</string>
     <string name="txt_no_account_signup">Don\'t have an account? <font color="#2196F3">Register Now</font></string>
     <string name="txt_register_header">Create New Account</string>
     <string name="txt_register_subheader">Please provide all the required information</string>

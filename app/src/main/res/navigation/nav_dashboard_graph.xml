@@ -144,5 +144,14 @@
         android:name="com.snofed.publicapp.ui.resortsinglectivities.SingleResortsActivitiesFragment"
         android:label="fragment_single_resorts_activities"
         tools:layout="@layout/fragment_single_resorts_activities" />
+    <fragment
+        android:id="@+id/feedViewImageFragment"
+        android:name="com.snofed.publicapp.ui.feedImage.FeedViewImageFragment"
+        android:label="FeedViewImageFragment" />
+    <fragment
+        android:id="@+id/mapFeedFragment"
+        android:name="com.snofed.publicapp.ui.feedImage.MapFeedFragment"
+        android:label="fragment_map_feed"
+        tools:layout="@layout/fragment_map_feed" />
 
 </navigation>

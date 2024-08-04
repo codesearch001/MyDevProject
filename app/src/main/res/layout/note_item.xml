@@ -14,6 +14,7 @@
         app:cardCornerRadius="8dp">
 
         <LinearLayout
+            android:id="@+id/llFeed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -63,6 +64,7 @@
                         android:gravity="end">
 
                         <ImageView
+                            android:id="@+id/imgActivitesIcon"
                             android:layout_width="50dp"
                             android:layout_height="50dp"
                             android:background="@drawable/circle_blue_background"
@@ -89,6 +91,7 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/activityType"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="end"

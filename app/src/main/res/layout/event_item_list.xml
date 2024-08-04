@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,14 +25,14 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/eventDate"
+                    android:id="@+id/txtStartEventDate"
                     android:layout_width="100dp"
                     android:layout_height="120dp"
                     android:background="@color/active_txt"
                     android:gravity="center"
-                    android:text="01\nDec"
+                    android:text="01 Jan"
                     android:textColor="@color/white"
-                    android:textSize="28sp" />
+                    android:textSize="24sp" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -53,10 +53,10 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/textdate"
+                        android:id="@+id/textEventLocation"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Movie Date" />
+                        android:text="" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -72,11 +72,12 @@
                             android:text="Max nmbr of attendees:" />
 
                         <TextView
+                            android:id="@+id/txtMaxAttendees"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="4dp"
                             android:textSize="12sp"
-                            android:text="101" />
+                            android:text="0" />
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -91,11 +92,12 @@
                             android:text="Ticket fee:" />
 
                         <TextView
+                            android:id="@+id/txtTicketPrice"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="4dp"
                             android:textSize="12sp"
-                            android:text="15.0 SEK" />
+                            android:text="0.0" />
                     </LinearLayout>
 
 

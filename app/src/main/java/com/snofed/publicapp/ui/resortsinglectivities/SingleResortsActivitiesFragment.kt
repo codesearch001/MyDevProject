@@ -28,5 +28,4 @@ class SingleResortsActivitiesFragment : Fragment() {
         _binding = FragmentSingleResortsActivitiesBinding.inflate(inflater, container, false)
         return binding.root
     }
-
 }

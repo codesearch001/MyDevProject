@@ -6,6 +6,8 @@ import com.snofed.publicapp.models.UserRequest
 import com.snofed.publicapp.models.UserResponse
 import com.snofed.publicapp.models.browseSubClub.BrowseSubClubResponse
 import com.snofed.publicapp.models.clubActivities.ActivitiesResponse
+import com.snofed.publicapp.models.events.EventDetailsResponse
+import com.snofed.publicapp.models.events.EventResponse
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.utils.Constants.GET_ALL_FEEDS
 import retrofit2.Response
@@ -14,6 +16,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 
@@ -38,7 +41,10 @@ interface UserAPI {
     @GET(GET_ALL_FEEDS)
     suspend fun feed(@Header("Accept-Language") acceptLanguage: String, @Query("limit") limit: Int) : Response<FeedListResponse>
 
-    //Activities
-    @GET("activities/c9bfde61-4c56-401b-2363-08d97e915295")
-    suspend fun activities(@Header("Accept-Language") acceptLanguage: String) : Response<ActivitiesResponse>
+    //Event
+    @GET("public-app/sync/events")
+    suspend fun event(@Header("Accept-Language") acceptLanguage: String) : Response<EventResponse>
+
+    @GET("events/{id}")
+    suspend fun eventDetails(@Header("Accept-Language") acceptLanguage: String,@Path("id") id: String) : Response<EventDetailsResponse>
 }

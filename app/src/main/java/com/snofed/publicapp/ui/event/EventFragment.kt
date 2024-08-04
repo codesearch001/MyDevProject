@@ -11,6 +11,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.EventFeedAdapter
@@ -25,7 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class EventFragment : Fragment() {
+class EventFragment : Fragment(),EventFeedAdapter.OnItemClickListener {
 
     private var _binding: FragmentEventBinding? = null
     private val binding get() = _binding!!
@@ -49,15 +50,15 @@ class EventFragment : Fragment() {
         }
 
         fetchResponse()
-        eventViewModel.subClubLiveData.observe(viewLifecycleOwner, Observer {
+        eventViewModel.eventLiveData.observe(viewLifecycleOwner, Observer {
             binding.progressBar.isVisible = false
             when (it) {
                 is NetworkResult.Success -> {
-                    Log.i("Event", "Event " + it.data?.data?.events)
-                    feedAdapter = EventFeedAdapter()
+                    Log.i("Event", "Event " + it.data?.data)
+                    feedAdapter = EventFeedAdapter(this)
                     binding.eventRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
                     binding.eventRecyclerView.adapter = feedAdapter
-                    feedAdapter.setEvent(it.data?.data?.events)
+                    feedAdapter.setEvent(it.data?.data)
 
                 }
                 is NetworkResult.Error -> {
@@ -71,6 +72,14 @@ class EventFragment : Fragment() {
     }
 
     private fun fetchResponse() {
-        eventViewModel.subClubRequestUser(tokenManager.getClientId().toString())
+        eventViewModel.eventRequestUser()
+    }
+
+    override fun onItemClick(eventId: String) {
+        //Log.i("Club","Id " + clientId )
+        val bundle = Bundle()
+        bundle.putString("eventId", eventId)
+        val destination = R.id.singleEventDetailsFragment
+        findNavController().navigate(destination, bundle)
     }
 }

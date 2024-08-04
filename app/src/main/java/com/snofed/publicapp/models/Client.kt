@@ -3,21 +3,19 @@ package com.snofed.publicapp.models
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity( tableName = "Client")
+@Entity(tableName = "wishlist")
 data class Client(
-    @PrimaryKey(autoGenerate = true)
-    val ids: Int? = null,
+    @PrimaryKey val id: String,
     val country: String,
     val county: String,
     val coverImagePath: String,
     val description: Any,
     val hasTicketing: Boolean,
-    val id: String,
     val location: String,
     val logoPath: String,
     val publicName: String,
-    val clientRating: Double,
-    val totalRatings: Double,
+    val clientRating: String,
+    val totalRatings: String,
     val startLatitude: String,
     val startLongitude: String,
     val syncAction: Int,

@@ -21,6 +21,7 @@
     <color name="transparent_white">#00FFFFFF</color>
     <color name="transparent_black">#00000000</color>
     <color name="transparent">#00000000</color>
+    <color name="chart_transparent">#e4ffffff</color>
     <color name="card_background">#F4F4F4</color> <!-- White background -->
     <color name="text_color">#333333</color> <!-- Dark gray text color -->
 

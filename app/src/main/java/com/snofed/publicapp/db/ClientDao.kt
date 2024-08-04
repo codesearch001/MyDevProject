@@ -3,15 +3,22 @@ package com.snofed.publicapp.db
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.snofed.publicapp.models.Client
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ClientDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsert(client: Client): Long
+    @Insert
+    suspend fun insertWishlistItem(item: Client)
 
-    @Query("SELECT * FROM client")
-    fun getAllClient(): LiveData<List<Client>>
+    @Update
+    suspend fun updateWishlistItem(item: Client)
 
-    @Delete
-    suspend fun deleteArticle(client: Client)
+    @Query("DELETE FROM wishlist WHERE id = :id")
+    suspend fun deleteWishlistItem(id: Long)
+
+    @Query("SELECT * FROM wishlist")
+    fun getAllWishlistItems(): LiveData<List<Client>>
+
+    @Query("SELECT * FROM wishlist WHERE id = :id")
+    fun getWishlistItemById(id: Long): LiveData<Client>
 }

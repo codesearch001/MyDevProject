@@ -3,7 +3,6 @@ package com.snofed.publicapp.ui.dashboardFragment
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,17 +11,19 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.findNavController
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.BrowseClubListAdapter
 import com.snofed.publicapp.databinding.FragmentBrowseAllClubBinding
-import com.snofed.publicapp.models.NewClubData
+import com.snofed.publicapp.models.Client
+import com.snofed.publicapp.repository.UserRepository
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.NetworkResult
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListener {
@@ -30,7 +31,6 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
     private var _binding: FragmentBrowseAllClubBinding? = null
     private val binding get() = _binding!!
     private val clubViewModel by viewModels<AuthViewModel>()
-
     private lateinit var clubAdapter: BrowseClubListAdapter
 
     override fun onCreateView(
@@ -43,20 +43,30 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // Initialize Retrofit ApiService
 
         fetchResponse()
         clubViewModel.clubLiveData.observe(viewLifecycleOwner, Observer {
             binding.progressBar.isVisible = false
             when (it) {
                 is NetworkResult.Success -> {
+                    // Log.i("it.data?.clients","it.data?.clients "+it.data?.data?.clients)
+                    val data = it.data?.data?.clients
+                    if (data.isNullOrEmpty()){
+                        clubAdapter = BrowseClubListAdapter(this)
+                        // Set up the RecyclerView with GridLayoutManager
+                        binding.recyclerView.layoutManager = GridLayoutManager(requireActivity(), 2)
+                        binding.recyclerView.adapter = clubAdapter
+                        clubAdapter.setClubs(data)
+                    }else{
+                        clubAdapter = BrowseClubListAdapter(this)
+                        // Set up the RecyclerView with GridLayoutManager
+                        binding.recyclerView.layoutManager = GridLayoutManager(requireActivity(), 2)
+                        binding.recyclerView.adapter = clubAdapter
+                        clubAdapter.setClubs(data)
+                    }
 
-                    // Set up the RecyclerView with GridLayoutManager
-                    //binding.recyclerView.layoutManager = LinearLayoutManager(requireActivity())
-                    clubAdapter = BrowseClubListAdapter(this)
-                    binding.recyclerView.layoutManager = GridLayoutManager(requireActivity(), 2)
-                    binding.recyclerView.adapter = clubAdapter
-                    clubAdapter.setClubs(it.data?.data?.clients)
-                   // Log.i("it.data?.clients","it.data?.clients "+it.data?.data?.clients)
+                    //Apply search Filter
                     binding.editTextClubSearch.addTextChangedListener(object : TextWatcher {
                         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -86,40 +96,11 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
 
     override fun onItemClick(clientId: String) {
         binding.editTextClubSearch.text?.clear()
+        //Log.i("Club","Id " + clientId )
         val bundle = Bundle()
         bundle.putString("clientId", clientId)
-        Log.i("Club","Id " + clientId )
         val destination = R.id.clubSubMembersFragment
         findNavController().navigate(destination, bundle)
 
     }
-
-
-    /*   private fun bindObservers() {
-           clubViewModel.clubLiveData.observe(viewLifecycleOwner, Observer {
-               when (it) {
-                   is NetworkResult.Success -> {
-                       Log.i("brijesh ","test  "+it)
-                      // findNavController().popBackStack()
-                   }
-                   is NetworkResult.Error -> {
-
-                   }
-                   is NetworkResult.Loading -> {
-
-                   }
-               }
-           })
-       }
-       private fun initPopResListItem(items: List<NewClubData>) {
-           //initialize groupie's group adapter class and add the list of items
-           Log.e("dddd " ," "+items)
-   //        val groupAdapter = GroupAdapter<RecyclerView.ViewHolder>().apply {
-   //            addAll(items)
-   //        }
-   //        binding.recyclerView?.apply {
-   //            layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
-   //            adapter = groupAdapter
-   //        }
-       }*/
 }

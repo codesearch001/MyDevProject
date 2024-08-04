@@ -60,7 +60,7 @@
 
         <ImageButton
             android:layout_width="wrap_content"
-            android:layout_height="165dp"
+            android:layout_height="145dp"
             android:background="@drawable/feed_bg"/>
 
         <LinearLayout
@@ -93,6 +93,7 @@
             android:orientation="horizontal">
 
             <LinearLayout
+                android:id="@+id/imgFeedIdChart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
@@ -108,6 +109,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/imgFeedId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
@@ -136,7 +138,7 @@
                 android:text="Feed"
                 android:padding="8dp"
                 android:textColor="@color/white"
-                android:textSize="32sp"
+                android:textSize="24sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -150,7 +152,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/feedRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:clipToPadding="false"
             android:padding="8dp"
             android:scrollbars="vertical" />
@@ -158,28 +160,29 @@
 
     </androidx.core.widget.NestedScrollView>
     <LinearLayout
-        android:id="@+id/progressBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/topScroll"
-        android:visibility="gone"
+        android:layout_gravity="center_vertical"
+        android:layout_centerInParent="true"
         android:orientation="vertical">
 
         <ProgressBar
+            android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
+            android:visibility="gone"
             android:layout_gravity="center" />
 
         <TextView
             android:id="@+id/tvSplashText"
             style="@style/TextRobotoNormal"
-            android:layout_width="2dp"
-            android:layout_height="6dp"
-            android:layout_gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/marginMedium"
-            android:gravity="center_vertical"
-            android:textColor="@color/white"
+            android:text="No Record Found"
+            android:visibility="gone"
+            android:gravity="center"
+            android:textColor="@color/black"
             android:textSize="@dimen/fontMedium" />
 
     </LinearLayout>

@@ -121,6 +121,8 @@ class HomeDashBoardActivity : AppCompatActivity(), DrawerController {
                 R.id.trailsStatusFragment -> hideBottomNav()
                 R.id.feedBackFragment -> hideBottomNav()
                 R.id.singleResortsActivitiesFragment -> hideBottomNav()
+                R.id.feedViewImageFragment -> hideBottomNav()
+                R.id.mapFeedFragment -> hideBottomNav()
                 else -> showBottomNav()
             }
         }

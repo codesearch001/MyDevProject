@@ -259,7 +259,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="Number of logs"
+                            android:text="Total Distance"
                             android:textColor="@color/grey_light11"
                             android:textSize="12sp"
                             android:textStyle="bold" />

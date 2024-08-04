@@ -17,7 +17,8 @@ import com.snofed.publicapp.models.Client
 import com.snofed.publicapp.utils.Constants
 
 
-class BrowseClubListAdapter(private val listener: OnItemClickListener) : RecyclerView.Adapter<BrowseClubListAdapter.ClubViewHolder>() {
+class BrowseClubListAdapter(private val listener: OnItemClickListener) :
+    RecyclerView.Adapter<BrowseClubListAdapter.ClubViewHolder>() {
 
     //private var clubs: List<NewClubData> = listOf()
     private var outerArray: List<Client> = listOf()
@@ -26,6 +27,8 @@ class BrowseClubListAdapter(private val listener: OnItemClickListener) : Recycle
     interface OnItemClickListener {
         fun onItemClick(clientId: String)
     }
+
+
 
     init {
         filteredClubs = outerArray
@@ -56,34 +59,41 @@ class BrowseClubListAdapter(private val listener: OnItemClickListener) : Recycle
                 }
                 return filteredResults
             }
+
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
                 filteredClubs = results?.values as List<Client>
                 notifyDataSetChanged()
             }
         }
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClubViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.browse_club_list, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.browse_club_list, parent, false)
         return ClubViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ClubViewHolder, position: Int) {
         //val reslult=holder.bind(outerArray[position])
-        val reslult =filteredClubs[position]
+        val reslult = filteredClubs[position]
         holder.clientRating.text = reslult.clientRating.toString()
-        holder.totalRatings.text = reslult.totalRatings.toString()
+        holder.totalRatings.text = "(" + reslult.totalRatings.toString() + ")"
         holder.tvName.text = reslult.publicName
         holder.tvLable.text = reslult.county
+
         holder.cardIdLayout.setOnClickListener {
-            Log.e("click.." , "clickClubItem")
+            Log.e("click..", "clickClubItem")
             listener.onItemClick(reslult.id) // Assuming Client has an 'id' property
         }
-        if (reslult.coverImagePath == null ) {
-            Glide.with(holder.backgroundImage).load(R.drawable.resort_card_bg).into(holder.backgroundImage)
+        if (reslult.coverImagePath == null) {
+            Glide.with(holder.backgroundImage).load(R.drawable.resort_card_bg)
+                .into(holder.backgroundImage)
             //Glide.with(holder.background_image).load(Constants.BASE_URL_IMAGE).into(holder.background_image)
         } else {
-            Glide.with(holder.backgroundImage).load(Constants.BASE_URL_IMAGE + reslult.coverImagePath).diskCacheStrategy(
-                DiskCacheStrategy.ALL).fitCenter()
+            Glide.with(holder.backgroundImage)
+                .load(Constants.BASE_URL_IMAGE + reslult.coverImagePath).diskCacheStrategy(
+                DiskCacheStrategy.ALL
+            ).fitCenter()
                 .into(holder.backgroundImage)
         }
     }
@@ -97,5 +107,6 @@ class BrowseClubListAdapter(private val listener: OnItemClickListener) : Recycle
         val tvLable: TextView = itemView.findViewById(R.id.lable2)
         val cardIdLayout: LinearLayout = itemView.findViewById(R.id.cardIdLayout)
         val backgroundImage: ImageView = itemView.findViewById(R.id.clubBackgroundIdImage)
+        val imgIdWishlist: ImageView = itemView.findViewById(R.id.imgIdWishlist)
     }
 }

@@ -267,6 +267,30 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/tabLayout" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
 
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/tvSplashText"
+            style="@style/TextRobotoNormal"
+            android:layout_width="2dp"
+            android:layout_height="6dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/marginMedium"
+            android:gravity="center_vertical"
+            android:textColor="@color/white"
+            android:textSize="@dimen/fontMedium" />
+
+    </LinearLayout>
 </RelativeLayout>
 

@@ -11,6 +11,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.BrowseClubListAdapter
@@ -54,8 +55,6 @@ class GalleryFragment : Fragment() {
         fetchResponse()
         galleryViewModel.subClubLiveData.observe(viewLifecycleOwner, Observer {
             binding.progressBar.isVisible = false
-
-
             when (it) {
                 is NetworkResult.Success -> {
 
@@ -65,11 +64,30 @@ class GalleryFragment : Fragment() {
                     Log.i("PraveenGallery22222" , "gggggg222 " +it.data?.data?.publicData?.images)
                     //Log.i("it.data?.clients/publicData", "it.data?.clients.publicData " + it.data?.data?.publicData?.images)
 
-                    galleryAdapter = GalleryAdapter()
-                    //binding.galleryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-                    binding.galleryRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
-                    binding.galleryRecyclerView.adapter = galleryAdapter
-                    galleryAdapter.setGallery(it.data?.data?.publicData?.images)
+//                    galleryAdapter = GalleryAdapter()
+//                    //binding.galleryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+//                    binding.galleryRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+//                    binding.galleryRecyclerView.adapter = galleryAdapter
+//                    galleryAdapter.setGallery(it.data?.data?.publicData?.images)
+                    // Check if the data is null or empty
+                    val images = it.data?.data?.publicData?.images
+                    if (images.isNullOrEmpty()) {
+                        // Handle the "data not found" case
+                        binding.tvSplashText.isVisible = true
+                        //Toast.makeText(requireActivity(), "No data available", Toast.LENGTH_SHORT).show()
+                        galleryAdapter = GalleryAdapter()
+                        binding.galleryRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+                        binding.galleryRecyclerView.adapter = galleryAdapter
+                        galleryAdapter.setGallery(emptyList()) // Pass an empty list to the adapter
+                    } else {
+                        // Normal case: data is present
+                        Log.i("PraveenGallery22222", "Data: $images")
+                        binding.tvSplashText.isVisible = false
+                        galleryAdapter = GalleryAdapter()
+                        binding.galleryRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+                        binding.galleryRecyclerView.adapter = galleryAdapter
+                        galleryAdapter.setGallery(images)
+                    }
                 }
 
                 is NetworkResult.Error -> {

@@ -4,13 +4,16 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.snofed.publicapp.api.UserAPI
+import com.snofed.publicapp.db.ClientDao
+import com.snofed.publicapp.models.Client
 import com.snofed.publicapp.models.NewClubData
 import com.snofed.publicapp.models.UserRegRequest
 import com.snofed.publicapp.models.UserRequest
 import com.snofed.publicapp.models.UserResponse
 import com.snofed.publicapp.models.browseSubClub.BrowseSubClubResponse
+import com.snofed.publicapp.models.events.EventDetailsResponse
+import com.snofed.publicapp.models.events.EventResponse
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
-import com.snofed.publicapp.utils.MutableData
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.TokenManager
 import org.json.JSONObject
@@ -18,11 +21,12 @@ import retrofit2.Response
 import javax.inject.Inject
 
 
-class UserRepository @Inject constructor(private val userAPI: UserAPI) {
+class UserRepository @Inject constructor(private val userAPI: UserAPI?) {
     private val acceptLanguage = "en-US"
 
     //    private val _notesLiveData = MutableLiveData<NetworkResult<NewClubData>>()
 //    val clubLiveData get() = _notesLiveData
+
     @Inject
     lateinit var tokenManager: TokenManager
 
@@ -33,6 +37,14 @@ class UserRepository @Inject constructor(private val userAPI: UserAPI) {
     private val _subClubLiveData = MutableLiveData<NetworkResult<BrowseSubClubResponse>>()
     val subClubLiveData: LiveData<NetworkResult<BrowseSubClubResponse>>
         get() = _subClubLiveData
+
+ private val _eventLiveData = MutableLiveData<NetworkResult<EventResponse>>()
+    val eventLiveData: LiveData<NetworkResult<EventResponse>>
+        get() = _eventLiveData
+
+ private val _eventDetailsLiveData = MutableLiveData<NetworkResult<EventDetailsResponse>>()
+    val eventDetailsLiveData: LiveData<NetworkResult<EventDetailsResponse>>
+        get() = _eventDetailsLiveData
 
 
 
@@ -47,20 +59,20 @@ class UserRepository @Inject constructor(private val userAPI: UserAPI) {
 
     suspend fun registerUser(userRequest: UserRegRequest) {
         _userResponseLiveData.postValue(NetworkResult.Loading())
-        val response = userAPI.register(acceptLanguage, userRequest)
+        val response = userAPI!!.register(acceptLanguage, userRequest)
         handleResponse(response)
     }
 
     suspend fun loginUser(userRequest: UserRequest) {
         _userResponseLiveData.postValue(NetworkResult.Loading())
-        val response = userAPI.signIn(acceptLanguage, userRequest)
+        val response = userAPI!!.signIn(acceptLanguage, userRequest)
         handleResponse(response)
     }
 
 
     suspend fun getClub() {
         _clubLiveData.postValue(NetworkResult.Loading())
-        val response = userAPI.club(acceptLanguage)
+        val response = userAPI!!.club(acceptLanguage)
         Log.e("response", "clubResponse " + response)
         if (response.isSuccessful && response.body() != null) {
             Log.e("jsonResponseData", "clubResponse " + response.body())
@@ -75,7 +87,7 @@ class UserRepository @Inject constructor(private val userAPI: UserAPI) {
 
     suspend fun getSubClub(clientId: String) {
         _subClubLiveData.postValue(NetworkResult.Loading())
-        val response = userAPI.subClub(acceptLanguage, clientId, false)
+        val response = userAPI!!.subClub(acceptLanguage, clientId, false)
         Log.e("response", "subClubResponse " + response)
         if (response.isSuccessful && response.body() != null) {
             Log.e("jsonResponseData", "subClubResponse " + response.body())
@@ -90,9 +102,43 @@ class UserRepository @Inject constructor(private val userAPI: UserAPI) {
         }
     }
 
+
+    suspend fun getEvent() {
+        _eventLiveData.postValue(NetworkResult.Loading())
+        val response = userAPI!!.event(acceptLanguage)
+        Log.e("response", "subClubResponse " + response)
+        if (response.isSuccessful && response.body() != null) {
+            Log.e("jsonResponseData", "subClubResponse " + response.body())
+            _eventLiveData.postValue(NetworkResult.Success(response.body()!!))
+            //_subClubLiveData_gallery_l.postValue(response.body())
+
+        } else if (response.errorBody() != null) {
+            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+            _eventLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+        } else {
+            _eventLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+        }
+    }
+
+    suspend fun getEventDetails(eventId: String) {
+        _eventDetailsLiveData.postValue(NetworkResult.Loading())
+        val response = userAPI!!.eventDetails(acceptLanguage,eventId)
+        Log.e("response", "subClubResponse " + response)
+        if (response.isSuccessful && response.body() != null) {
+            Log.e("jsonResponseData", "subClubResponse " + response.body())
+            _eventDetailsLiveData.postValue(NetworkResult.Success(response.body()!!))
+            //_subClubLiveData_gallery_l.postValue(response.body())
+
+        } else if (response.errorBody() != null) {
+            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+            _eventDetailsLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+        } else {
+            _eventDetailsLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+        }
+    }
     suspend fun getFeedClub() {
         _feedLiveData.postValue(NetworkResult.Loading())
-        val response = userAPI.feed(acceptLanguage, 150)
+        val response = userAPI!!.feed(acceptLanguage, 150)
         Log.e("response", "subClubResponse " + response)
         if (response.isSuccessful && response.body() != null) {
             Log.e("jsonResponseData", "subClubResponse " + response.body())

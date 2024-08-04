@@ -13,23 +13,27 @@ import javax.inject.Inject
 @SuppressLint("CustomSplashScreen")
 class SplashScreen : AppCompatActivity() {
 
-
+    val tokenManager: TokenManager by lazy {
+        TokenManager(this) // Initialization code here
+    }
     @SuppressLint("HardwareIds")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-      // pref = SharePreferenceProvider(this)
+        // pref = SharePreferenceProvider(this)
         val deviceID = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
-       // Common.app_id=deviceID
+        // Common.app_id=deviceID
         //toast(Common.app_id)
         //Toast.makeText(this,""+pref?.userid,Toast.LENGTH_LONG).show()
         window.statusBarColor = Color.parseColor("#FFE0E0")
 
+
+        print("ss"+ tokenManager.getToken())
         Handler().postDelayed({
             val intent = Intent(this, OnBoarding::class.java)
             startActivity(intent)
             finish()
-//            if (pref?.userid.isNullOrEmpty()) {
+//            if (tokenManager.getToken()!!.isEmpty()) {
 //                val intent = Intent(this, OnBoarding::class.java)
 //                startActivity(intent)
 //                finish()
@@ -38,8 +42,9 @@ class SplashScreen : AppCompatActivity() {
 //                startActivity(intent)
 //                finish()
 //            }
-        }, 2000) // delaying for 2 seconds...
+//            val intent = Intent(this, HomeDashBoardActivity::class.java)
+//            startActivity(intent)
+//            finish()
+        }, 3000) // delaying for 2 seconds...
     }
-
-
 }

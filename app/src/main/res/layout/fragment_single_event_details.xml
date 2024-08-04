@@ -6,21 +6,23 @@
 
     <RelativeLayout
         android:id="@+id/idBrowseClub"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
         <ImageButton
+            android:id="@+id/imgEventBannerImagePath"
             android:layout_width="match_parent"
-            android:layout_height="230dp"
-            android:background="@drawable/event_banner_details" />
+            android:scaleType="centerCrop"
+            android:background="@color/white"
+            android:layout_height="200dp" />
 
 
         <ImageView
             android:id="@+id/backBtn"
             android:layout_width="38dp"
             android:layout_height="38dp"
-            android:layout_marginStart="14dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/circle_white_background"
             android:padding="6dp"
             android:scaleType="centerCrop"
@@ -29,16 +31,17 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="160dp">
+            android:layout_marginTop="140dp">
 
             <TextView
+                android:id="@+id/txtEventBannerDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
                 android:padding="8dp"
-                android:text="December Event"
+                android:text="N/A"
                 android:textColor="@color/white"
-                android:textSize="32sp"
+                android:textSize="26sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -50,6 +53,7 @@
         android:layout_below="@+id/idBrowseClub">
 
         <LinearLayout
+            android:id="@+id/eventLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -61,7 +65,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/eventDate"
+                    android:id="@+id/textStartEventDetailsDate"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:background="@drawable/rectangle_dark_blue_background"
@@ -76,11 +80,10 @@
                     android:layout_margin="12dp"
                     android:layout_marginTop="@dimen/marginLarge"
                     android:layout_weight="1"
-                    android:gravity="center"
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/textName"
+                        android:id="@+id/txtEventName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="December Event"
@@ -102,10 +105,12 @@
                             android:textSize="14sp" />
 
                         <TextView
+                            android:id="@+id/txtEventLocation"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="4dp"
-                            android:text="Novi Sad"
+                            android:text=""
+                            android:textColor="@color/blue_txt_light"
                             android:textSize="12sp" />
                     </LinearLayout>
 
@@ -123,15 +128,17 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_margin="@dimen/marginLarge"
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/txtEventdescription"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore.Veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non."
-                    android:textSize="16sp" />
+                    android:text="N/A"
+                    android:textColor="@color/blue_txt_light"
+                    android:textSize="14sp" />
 
 
 
@@ -167,7 +174,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
-                        android:text="Copper Mountain"
+                        android:text="N/A"
                         android:textSize="12sp" />
 
                 </LinearLayout>
@@ -195,16 +202,22 @@
                     android:textStyle="bold"
                     android:textSize="14sp" />
 
-                <TextView
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+              <!--  <TextView
+                    android:id="@+id/txtTrail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="4dp"
                     android:layout_marginTop="2dp"
+                    android:textColor="@color/active_txt"
                     android:text="2,5 km Bruksvallarna
                 \n2 km Tannaskroket
                 \n3 km Funasdalen Sjosling  and barflackar
                 \n4,5 an Tanndalen\n4 motion-sparet 8 km"
-                    android:textSize="12sp" />
+                    android:textSize="12sp" />-->
 
             </LinearLayout>
 
@@ -235,10 +248,12 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/txtEventStartDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="4dp"
-                        android:text="Copper Mountain"
+                        android:text=""
+                        android:textColor="@color/active_txt"
                         android:textSize="12sp" />
 
                 </LinearLayout>
@@ -259,10 +274,12 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/txtEventEndDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="4dp"
-                        android:text="Copper Mountain"
+                        android:textColor="@color/active_txt"
+                        android:text=""
                         android:textSize="12sp" />
 
                 </LinearLayout>
@@ -283,10 +300,12 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/txtMaxAttendees"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="4dp"
-                        android:text="Copper Mountain"
+                        android:textColor="@color/active_txt"
+                        android:text=""
                         android:textSize="12sp" />
 
                 </LinearLayout>
@@ -308,10 +327,12 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/txtEventPrice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="4dp"
-                        android:text="Copper Mountain"
+                        android:textColor="@color/active_txt"
+                        android:text=""
                         android:textSize="12sp" />
 
                 </LinearLayout>
@@ -332,10 +353,12 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/txtEventLink"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="4dp"
-                        android:text="https://www.npfruskagora.co.rs/"
+                        android:textColor="@color/active_txt"
+                        android:text=""
                         android:textSize="12sp" />
 
                 </LinearLayout>
@@ -356,9 +379,11 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/txtEventSponsors"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="4dp"
+                        android:textColor="@color/active_txt"
                         android:text=""
                         android:textSize="12sp" />
 
@@ -377,7 +402,7 @@
                 android:layout_margin="8dp">
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnBuyMemberships"
+                    android:id="@+id/btnBuyEventTicket"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.9"
@@ -399,6 +424,14 @@
 
     </ScrollView>
 
+    <TextView
+        android:id="@+id/txtIdNoRecordFound"
+        android:layout_width="match_parent"
+        android:text="No Recond Found"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:layout_height="wrap_content"/>
 
 </RelativeLayout>
 

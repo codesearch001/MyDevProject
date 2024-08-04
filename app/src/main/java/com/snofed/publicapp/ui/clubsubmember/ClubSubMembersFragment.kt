@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
@@ -67,7 +68,7 @@ class ClubSubMembersFragment : Fragment() {
         }
         fetchResponse()
         clubViewModel.subClubLiveData.observe(viewLifecycleOwner, Observer {
-            //binding.progressBar.isVisible = false
+            binding.progressBar.isVisible = false
             when (it) {
                 is NetworkResult.Success -> {
 
@@ -101,7 +102,7 @@ class ClubSubMembersFragment : Fragment() {
                 }
 
                 is NetworkResult.Loading -> {
-                    //binding.progressBar.isVisible = true
+                    binding.progressBar.isVisible = true
                 }
             }
         })

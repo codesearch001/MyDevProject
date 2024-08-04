@@ -2,20 +2,27 @@ package com.snofed.publicapp.ui.login
 
 import android.text.TextUtils
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.snofed.publicapp.db.ClientDao
+import com.snofed.publicapp.models.Client
 import com.snofed.publicapp.models.NewClubData
 
 import com.snofed.publicapp.models.UserRegRequest
 import com.snofed.publicapp.models.UserRequest
 import com.snofed.publicapp.models.UserResponse
 import com.snofed.publicapp.models.browseSubClub.BrowseSubClubResponse
+import com.snofed.publicapp.models.browseSubClub.PublicData
+import com.snofed.publicapp.models.events.EventDetailsResponse
+import com.snofed.publicapp.models.events.EventResponse
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.repository.UserRepository
 import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.MutableData
 import com.snofed.publicapp.utils.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,7 +30,6 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
 
     var mutableData =MutableData()
-
 
     val userResponseLiveData: LiveData<NetworkResult<UserResponse>>
         get() = userRepository.userResponseLiveData
@@ -33,6 +39,13 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
 
   val subClubLiveData: LiveData<NetworkResult<BrowseSubClubResponse>>
         get() = userRepository.subClubLiveData
+
+    val eventLiveData: LiveData<NetworkResult<EventResponse>>
+        get() = userRepository.eventLiveData
+
+
+    val eventDetailsLiveData: LiveData<NetworkResult<EventDetailsResponse>>
+        get() = userRepository.eventDetailsLiveData
 
     val feedLiveData: LiveData<NetworkResult<FeedListResponse>>
         get() = userRepository.feedLiveData
@@ -63,6 +76,18 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
     fun subClubRequestUser(clientId: String) {
         viewModelScope.launch {
             userRepository.getSubClub(clientId)
+        }
+    }
+
+    fun eventDetailsRequestUser(eventId: String) {
+        viewModelScope.launch {
+            userRepository.getEventDetails(eventId)
+        }
+    }
+
+    fun eventRequestUser() {
+        viewModelScope.launch {
+            userRepository.getEvent()
         }
     }
     fun feedRequestUser() {
