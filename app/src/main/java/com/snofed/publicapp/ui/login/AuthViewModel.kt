@@ -17,6 +17,7 @@ import com.snofed.publicapp.models.browseSubClub.PublicData
 import com.snofed.publicapp.models.events.EventDetailsResponse
 import com.snofed.publicapp.models.events.EventResponse
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
+import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
 import com.snofed.publicapp.repository.UserRepository
 import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.MutableData
@@ -29,7 +30,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
 
-    var mutableData =MutableData()
+    var mutableData = MutableData()
 
     val userResponseLiveData: LiveData<NetworkResult<UserResponse>>
         get() = userRepository.userResponseLiveData
@@ -37,7 +38,7 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
     val clubLiveData: LiveData<NetworkResult<NewClubData>>
         get() = userRepository.clubLiveData
 
-  val subClubLiveData: LiveData<NetworkResult<BrowseSubClubResponse>>
+    val subClubLiveData: LiveData<NetworkResult<BrowseSubClubResponse>>
         get() = userRepository.subClubLiveData
 
     val eventLiveData: LiveData<NetworkResult<EventResponse>>
@@ -47,12 +48,15 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
     val eventDetailsLiveData: LiveData<NetworkResult<EventDetailsResponse>>
         get() = userRepository.eventDetailsLiveData
 
+    val feedWorkoutLiveData: LiveData<NetworkResult<WorkoutActivites>>
+        get() = userRepository.feedWorkoutLiveData
+
     val feedLiveData: LiveData<NetworkResult<FeedListResponse>>
         get() = userRepository.feedLiveData
 
 //    val clubLiveData get() = userRepository.clubLiveData
-  /*  val clubResponseLiveData: LiveData<NewClubData>
-        get() = userRepository.clubListResponseLiveData*/
+    /*  val clubResponseLiveData: LiveData<NewClubData>
+          get() = userRepository.clubListResponseLiveData*/
 
     fun registerUser(userRequest: UserRegRequest) {
         viewModelScope.launch {
@@ -90,9 +94,16 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
             userRepository.getEvent()
         }
     }
+
     fun feedRequestUser() {
         viewModelScope.launch {
             userRepository.getFeedClub()
+        }
+    }
+
+    fun feedWorkoutRequestUser(workoutId: String) {
+        viewModelScope.launch {
+            userRepository.getFeedWorkout(workoutId)
         }
     }
 

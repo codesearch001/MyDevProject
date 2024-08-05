@@ -8,6 +8,7 @@ import com.snofed.publicapp.models.browseSubClub.PublicData
 
 
 class MutableData {
+    var publicUserId = ObservableField<String>()
     var clientId = ObservableField<String>()
     var description = ObservableField<String>()
     var galleryImage = MutableLiveData<PublicData>()

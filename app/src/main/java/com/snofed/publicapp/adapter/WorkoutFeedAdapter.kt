@@ -32,7 +32,7 @@ class WorkoutFeedAdapter(private val listener: OnItemClickListener) :
 
 
     interface OnItemClickListener {
-        fun onItemClick(clientId: String)
+        fun onItemClick(publicUserId: String)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -73,7 +73,7 @@ class WorkoutFeedAdapter(private val listener: OnItemClickListener) :
 
         holder.llFeed.setOnClickListener {
             Log.e("click..", "clickClubItem")
-            listener.onItemClick(reslult.id) // Assuming Client has an 'id' property
+            listener.onItemClick(reslult.publicUserId) // Assuming Client has an 'id' property
         }
     }
 

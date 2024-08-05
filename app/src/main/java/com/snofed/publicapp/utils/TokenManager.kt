@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import com.snofed.publicapp.R
 import com.snofed.publicapp.utils.Constants.CLUB_CLIENT_ID
 import com.snofed.publicapp.utils.Constants.CLUB_DESC
+import com.snofed.publicapp.utils.Constants.CLUB_PUBLIC_ID
 import com.snofed.publicapp.utils.Constants.PREFS_TOKEN_FILE
 import com.snofed.publicapp.utils.Constants.USER_FIRST_NAME
 import com.snofed.publicapp.utils.Constants.USER_TOKEN
@@ -52,5 +53,15 @@ class TokenManager @Inject constructor(@ApplicationContext context: Context) {
 
     fun getClientId(): String? {
         return prefs.getString(CLUB_CLIENT_ID, null)
+    }
+
+    fun savePublicUserId(userPublicID: String) {
+        val editor = prefs.edit()
+        editor.putString(CLUB_PUBLIC_ID, userPublicID)
+        editor.apply()
+    }
+
+    fun getPublicUserId(): String? {
+        return prefs.getString(CLUB_PUBLIC_ID, null)
     }
 }

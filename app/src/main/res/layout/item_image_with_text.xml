@@ -12,15 +12,18 @@
         android:scaleType="centerCrop" />
 
     <!-- Close icon in the top right corner -->
+    <!-- Initially hidden -->
     <ImageView
         android:id="@+id/closeIcon"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="16dp"
+        android:padding="6dp"
+        android:background="@drawable/circle_white_background"
         android:layout_marginEnd="16dp"
         android:src="@drawable/close"
-        android:visibility="gone" /> <!-- Initially hidden -->
+        android:visibility="gone" />
 
 
 </RelativeLayout>

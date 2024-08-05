@@ -110,9 +110,9 @@ class FeedFragment : Fragment(),WorkoutFeedAdapter.OnItemClickListener {
         feedViewModel.feedRequestUser()
     }
 
-    override fun onItemClick(clientId: String) {
+    override fun onItemClick(publicUserId: String) {
         val bundle = Bundle()
-        bundle.putString("eventId", clientId)
+        bundle.putString("publicUserId", publicUserId)
         val destination = R.id.mapFeedFragment
         findNavController().navigate(destination, bundle)
     }

@@ -14,6 +14,7 @@ import com.snofed.publicapp.models.browseSubClub.BrowseSubClubResponse
 import com.snofed.publicapp.models.events.EventDetailsResponse
 import com.snofed.publicapp.models.events.EventResponse
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
+import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.TokenManager
 import org.json.JSONObject
@@ -45,6 +46,10 @@ class UserRepository @Inject constructor(private val userAPI: UserAPI?) {
  private val _eventDetailsLiveData = MutableLiveData<NetworkResult<EventDetailsResponse>>()
     val eventDetailsLiveData: LiveData<NetworkResult<EventDetailsResponse>>
         get() = _eventDetailsLiveData
+
+ private val _feedWorkoutLiveData = MutableLiveData<NetworkResult<WorkoutActivites>>()
+    val feedWorkoutLiveData: LiveData<NetworkResult<WorkoutActivites>>
+        get() = _feedWorkoutLiveData
 
 
 
@@ -134,6 +139,22 @@ class UserRepository @Inject constructor(private val userAPI: UserAPI?) {
             _eventDetailsLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
         } else {
             _eventDetailsLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+        }
+    }
+    suspend fun getFeedWorkout(workoutId: String) {
+        _feedWorkoutLiveData.postValue(NetworkResult.Loading())
+        val response = userAPI!!.workout(acceptLanguage,workoutId)
+        Log.e("response", "subClubResponse " + response)
+        if (response.isSuccessful && response.body() != null) {
+            Log.e("jsonResponseData", "subClubResponse " + response.body())
+            _feedWorkoutLiveData.postValue(NetworkResult.Success(response.body()!!))
+            //_subClubLiveData_gallery_l.postValue(response.body())
+
+        } else if (response.errorBody() != null) {
+            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+            _feedWorkoutLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+        } else {
+            _feedWorkoutLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
     }
     suspend fun getFeedClub() {

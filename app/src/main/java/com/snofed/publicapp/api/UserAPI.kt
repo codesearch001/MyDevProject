@@ -9,6 +9,7 @@ import com.snofed.publicapp.models.clubActivities.ActivitiesResponse
 import com.snofed.publicapp.models.events.EventDetailsResponse
 import com.snofed.publicapp.models.events.EventResponse
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
+import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
 import com.snofed.publicapp.utils.Constants.GET_ALL_FEEDS
 import retrofit2.Response
 import retrofit2.http.Body
@@ -47,4 +48,9 @@ interface UserAPI {
 
     @GET("events/{id}")
     suspend fun eventDetails(@Header("Accept-Language") acceptLanguage: String,@Path("id") id: String) : Response<EventDetailsResponse>
+
+    //http://161.97.121.63:5000/api/public-app/workouts/for-user/38bf9f83-c07e-4ac1-9910-96a9a5f2977d
+
+    @GET("public-app/workouts/for-user/{id}")
+    suspend fun workout(@Header("Accept-Language") acceptLanguage: String,@Path("id") id: String) : Response<WorkoutActivites>
 }

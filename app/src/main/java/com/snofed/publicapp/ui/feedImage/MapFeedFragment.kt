@@ -5,10 +5,15 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
@@ -19,28 +24,33 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.snofed.publicapp.databinding.FragmentMapFeedBinding
+import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.DrawerController
+import com.snofed.publicapp.utils.NetworkResult
+import com.snofed.publicapp.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class MapFeedFragment : Fragment() {
     private var _binding: FragmentMapFeedBinding? = null
     private val binding get() = _binding!!
+    private val feedWorkoutViewModel by viewModels<AuthViewModel>()
     private lateinit var polylineManager: PolylineManager
     private lateinit var mapView: MapView
     private val route = listOf(
         Point.fromLngLat(86.2516482, 22.7897874), // Point A
-        Point.fromLngLat( 86.2516321,  22.7898061), // Point B28°33'17.3"N 77°03'05.2"E
-        Point.fromLngLat( 86.2516321,  22.7898061), // Point B28°33'17.3"N 77°03'05.2"E
-        Point.fromLngLat( 86.2516322,  22.7898061), // Point B28°33'17.3"N 77°03'05.2"E
-        Point.fromLngLat( 86.2516323,  22.7898061), // Point B28°33'17.3"N 77°03'05.2"E
-        Point.fromLngLat( 86.2516324,  22.7898061), // Point B28°33'17.3"N 77°03'05.2"E
-        Point.fromLngLat( 86.251635,  22.7898061), // Point B28°33'17.3"N 77°03'05.2"E
-        Point.fromLngLat( 86.2516326,  22.7898061), // Point B28°33'17.3"N 77°03'05.2"E
-        Point.fromLngLat( 86.2516327,  22.7898061), // Point B28°33'17.3"N 77°03'05.2"E
+        Point.fromLngLat(86.2516321, 22.7898061), // Point B28°33'17.3"N 77°03'05.2"E
+        Point.fromLngLat(86.2516321, 22.7898061), // Point B28°33'17.3"N 77°03'05.2"E
+        Point.fromLngLat(86.2516322, 22.7898061), // Point B28°33'17.3"N 77°03'05.2"E
+        Point.fromLngLat(86.2516323, 22.7898061), // Point B28°33'17.3"N 77°03'05.2"E
+        Point.fromLngLat(86.2516324, 22.7898061), // Point B28°33'17.3"N 77°03'05.2"E
+        Point.fromLngLat(86.251635, 22.7898061), // Point B28°33'17.3"N 77°03'05.2"E
+        Point.fromLngLat(86.2516326, 22.7898061), // Point B28°33'17.3"N 77°03'05.2"E
+        Point.fromLngLat(86.2516327, 22.7898061), // Point B28°33'17.3"N 77°03'05.2"E
         Point.fromLngLat(86.2516138, 22.7898143), // Point C
-        Point.fromLngLat( 86.2516308, 22.7898066), // Point D
+        Point.fromLngLat(86.2516308, 22.7898066), // Point D
 //        Point.fromLngLat(77.2351, 28.5834), // Point E
 //        Point.fromLngLat(77.2361, 28.5836), // Point F
 //        Point.fromLngLat(77.2371, 28.5838), // Point G
@@ -51,7 +61,9 @@ class MapFeedFragment : Fragment() {
     private val handler = Handler(Looper.getMainLooper())
     private val updateInterval: Long = 1000 // Update interval in milliseconds
     private var isGraphVisible = false
-
+    private var publicUserId: String = ""
+    @Inject
+    lateinit var tokenManager: TokenManager
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -60,6 +72,9 @@ class MapFeedFragment : Fragment() {
         binding.humburger.setOnClickListener {
             (activity as? DrawerController)?.openDrawer()
         }
+        // Retrieve data from arguments
+        publicUserId = arguments?.getString("publicUserId").toString()
+        tokenManager.savePublicUserId(publicUserId)
         return binding.root
     }
 
@@ -74,6 +89,33 @@ class MapFeedFragment : Fragment() {
                 View.GONE
             }
         }
+
+
+        fetchResponse()
+        feedWorkoutViewModel.feedWorkoutLiveData.observe(viewLifecycleOwner, Observer {
+            when (it) {
+                is NetworkResult.Success -> {
+                    val data = it.data?.data
+                    // Normal case: data is present
+                    Log.i("PraveenGallery22222", "Data: $data")
+
+
+                 /*   binding.feedName.text = it.data?.data?.publisherFullname
+                    binding.feedWorkoutDec.text = it.data?.data?.description
+                    binding.txtCaloriesId.text = it.data?.data?.calories.toString()*/
+                }
+
+                is NetworkResult.Error -> {
+                    Toast.makeText(requireActivity(), it.message.toString(), Toast.LENGTH_SHORT)
+                        .show()
+                }
+
+                is NetworkResult.Loading -> {
+
+                }
+            }
+        })
+
 
         mapView = binding.mapView
         polylineManager = PolylineManager(requireActivity(), mapView)
@@ -147,6 +189,10 @@ class MapFeedFragment : Fragment() {
         lineChart.invalidate() // refresh
     }
 
+    private fun fetchResponse() {
+        feedWorkoutViewModel.feedWorkoutRequestUser(tokenManager.getPublicUserId().toString())
+    }
+
     private fun startCameraAnimation() {
         handler.postDelayed(object : Runnable {
             override fun run() {
@@ -154,7 +200,7 @@ class MapFeedFragment : Fragment() {
                     val point = route[routeIndex]
                     val cameraOptions = CameraOptions.Builder()
                         .center(point)
-                        .zoom(14.0)
+                        .zoom(12.0)
                         .build()
                     mapView.getMapboxMap().setCamera(cameraOptions)
                     routeIndex++
