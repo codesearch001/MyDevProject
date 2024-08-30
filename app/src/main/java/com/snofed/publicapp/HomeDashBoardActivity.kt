@@ -1,33 +1,22 @@
 package com.snofed.publicapp
 
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.view.MenuItem
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.core.view.GravityCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
-import androidx.navigation.Navigation.findNavController
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-
 import com.google.android.material.navigation.NavigationView
 import com.snofed.publicapp.databinding.ActivityMainHomeBinding
 import com.snofed.publicapp.databinding.NavHeaderMainBinding
-import com.snofed.publicapp.ui.dashboardFragment.HomeFragment
-import com.snofed.publicapp.ui.note.MainFragment
-import com.snofed.publicapp.ui.note.NoteFragment
 import com.snofed.publicapp.utils.DrawerController
 import com.snofed.publicapp.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,11 +31,39 @@ class HomeDashBoardActivity : AppCompatActivity(), DrawerController {
     private lateinit var navigationView: NavigationView
     @Inject
     lateinit var tokenManager: TokenManager
+
+
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Set up full-screen mode
+        enterFullScreenMode()
         //setContentView(R.layout.activity_main_home)
         binding = ActivityMainHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Get the root view of the layout
+        val rootView = window.decorView
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            // Apply insets listener for Android KitKat (API 19) and above
+            rootView.setOnApplyWindowInsetsListener { view, insets ->
+                // Get the insets for system gestures (bottom navigation bar, etc.)
+                val systemGestureInsets = insets.getInsets(WindowInsetsCompat.Type.systemGestures())
+                // Adjust the bottom padding of the view to avoid overlap with the navigation bar
+                view.setPadding(view.paddingLeft, view.paddingTop, view.paddingRight, systemGestureInsets.bottom)
+                // Return the insets to allow other insets to be handled by default
+                insets
+            }
+        } else {
+            // For older versions, use alternative methods if necessary
+            // For example, manually adjust padding or margins if needed
+        }
+        // Optionally, apply fullscreen and immersive mode
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN
+                            or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+        }
         tokenManager.getClientId().toString()
         // setSupportActionBar(binding.toolbar)
         val drawerLayout: DrawerLayout = binding.drawerLayout//navigation_view
@@ -68,7 +85,8 @@ class HomeDashBoardActivity : AppCompatActivity(), DrawerController {
         val navigation_view: NavigationView = binding.navigationView
 
         val navView: BottomNavigationView = binding.bottomNavigationView
-        navController = findNavController(R.id.fragment_container)
+
+        navController = findNavController(R.id.fragmentContainer)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
@@ -123,9 +141,30 @@ class HomeDashBoardActivity : AppCompatActivity(), DrawerController {
                 R.id.singleResortsActivitiesFragment -> hideBottomNav()
                 R.id.feedViewImageFragment -> hideBottomNav()
                 R.id.mapFeedFragment -> hideBottomNav()
+                R.id.startMapRideFragment -> hideBottomNav()
+                R.id.mapExploreFragment -> hideBottomNav()
+                R.id.twitterFragment -> hideBottomNav()
+                R.id.orderTicketFragment -> hideBottomNav()
+                R.id.newTicketFragment -> hideBottomNav()
+                R.id.resortTrailStatusMapFragment -> hideBottomNav()
+                R.id.resortSingleTrailsStatusDetailsFragment -> hideBottomNav()
+                R.id.customDialogFragmentFragment -> hideBottomNav()
+                R.id.clubEventFragment -> hideBottomNav()
+
                 else -> showBottomNav()
             }
         }
+    }
+
+    private fun enterFullScreenMode() {
+        // Optionally, apply fullscreen and immersive mode
+        window.decorView.systemUiVisibility = (
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                )
     }
 
     private fun showBottomNav() {

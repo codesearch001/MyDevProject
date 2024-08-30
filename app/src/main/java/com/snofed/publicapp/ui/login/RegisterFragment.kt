@@ -1,5 +1,6 @@
 package com.snofed.publicapp.ui.login
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -49,7 +50,7 @@ class RegisterFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.txtLogin.setOnClickListener {
-            it.findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+            it.findNavController().navigate(R.id.loginFragment)
         }
         binding.btnSignUp.setOnClickListener {
             hideKeyboard(it)
@@ -73,6 +74,7 @@ class RegisterFragment : Fragment() {
         return authViewModel.validateCredentials(userName, emailAddress,  password, retpassword,false)
     }
 
+    @SuppressLint("StringFormatMatches")
     private fun showValidationErrors(error: String) {
         binding.txtError.text = String.format(resources.getString(R.string.txt_error_message, error))
     }
@@ -97,7 +99,7 @@ class RegisterFragment : Fragment() {
                 is NetworkResult.Success -> {
                     // tokenManager.saveToken(it.data!!.token)
                     // Toast.makeText(requireActivity(), it.data!!.token, Toast.LENGTH_SHORT).show()
-                    findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+                    findNavController().navigate(R.id.loginFragment)
                 }
                 is NetworkResult.Error -> {
                     //showValidationErrors(it.message.toString())

@@ -41,16 +41,18 @@ class FeedFragment : Fragment(),WorkoutFeedAdapter.OnItemClickListener {
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_feed, container, false)
         _binding = FragmentFeedBinding.inflate(inflater, container, false)
+
         binding.humburger.setOnClickListener {
             (activity as? DrawerController)?.openDrawer()
         }
-        binding.imgFeedId.setOnClickListener {
-            it.findNavController().navigate(R.id.feedViewImageFragment)
-        }
 
-        binding.imgFeedIdChart.setOnClickListener {
+      /*  binding.imgFeedId.setOnClickListener {
+            it.findNavController().navigate(R.id.feedViewImageFragment)
+        }*/
+
+       /* binding.imgFeedIdChart.setOnClickListener {
             it.findNavController().navigate(R.id.mapFeedFragment)
-        }
+        }*/
        return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -110,9 +112,9 @@ class FeedFragment : Fragment(),WorkoutFeedAdapter.OnItemClickListener {
         feedViewModel.feedRequestUser()
     }
 
-    override fun onItemClick(publicUserId: String) {
+    override fun onItemClick(id: String) {
         val bundle = Bundle()
-        bundle.putString("publicUserId", publicUserId)
+        bundle.putString("feedId", id)
         val destination = R.id.mapFeedFragment
         findNavController().navigate(destination, bundle)
     }

@@ -3,10 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.trailsstatus.TrailsStatusFragment">
 
     <RelativeLayout
-        android:id="@+id/idFeed"
+        android:id="@+id/idTopBanner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -15,7 +16,7 @@
             android:layout_height="165dp"
             android:background="@drawable/feed_bg" />
         <LinearLayout
-            android:id="@+id/humburger"
+            android:id="@+id/backBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
@@ -33,7 +34,7 @@
             android:id="@+id/idBannerTxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/humburger"
+            android:layout_below="@+id/backBtn"
             android:layout_marginTop="28dp"
             android:padding="6dp">
 
@@ -69,6 +70,7 @@
                     android:padding="2dp">
 
                     <TextView
+                        android:id="@+id/txtTotalTrails"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="2dp"
@@ -113,7 +115,7 @@
                     android:padding="2dp">
 
                     <TextView
-                        android:id="@+id/text_horizontal_1"
+                        android:id="@+id/txtTotalLength"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="2dp"
@@ -138,54 +140,28 @@
                         android:textSize="8sp" />
 
                 </LinearLayout>
-
-
             </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:background="@drawable/rectangle_white_background"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:padding="2dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="2dp"
-                        android:layout_marginRight="2dp"
-                        android:text="0"
-                        android:textColor="@color/blue_txt_light"
-                        android:textSize="8sp" />
-
-                    <com.google.android.material.divider.MaterialDivider
-                        android:layout_width="1dp"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/dotted_lin" />
-
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="2dp"
-                        android:layout_marginRight="2dp"
-                        android:text="Activities"
-                        android:textColor="@color/blue_txt_light"
-                        android:textSize="8sp" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
         </LinearLayout>
 
     </RelativeLayout>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/idTopBanner"
+        android:background="?attr/colorOnPrimary"
+        app:tabIndicatorColor="@color/active_txt"
+        app:tabSelectedTextColor="@color/active_txt"
+        app:tabTextAppearance="@style/TabTextStyle"
+        android:elevation="6dp"
+        />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tabLayout" />
+
 
 </RelativeLayout>

@@ -9,7 +9,8 @@
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.snofed.publicapp.ui.login.RegisterFragment"
-        android:label="RegisterFragment">
+        android:label="RegisterFragment"
+        tools:layout="@layout/fragment_register">
         <action
             android:id="@+id/action_registerFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
@@ -19,7 +20,7 @@
         android:id="@+id/loginFragment"
         android:name="com.snofed.publicapp.ui.login.LoginFragment"
         android:label="fragment_register"
-        tools:layout="@layout/fragment_register">
+        tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_loginFragment_to_mainFragment"
             app:popUpTo="@id/loginFragment"
@@ -46,5 +47,9 @@
     <fragment
         android:id="@+id/recoverFragment"
         android:name="com.snofed.publicapp.ui.login.RecoverPasswordFragment"
-        android:label="RecoverFragment" />
+        android:label="RecoverFragment" >
+        <action
+            android:id="@+id/action_recoverFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
 </navigation>

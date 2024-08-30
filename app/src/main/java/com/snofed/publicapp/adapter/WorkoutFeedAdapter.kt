@@ -1,6 +1,5 @@
 package com.snofed.publicapp.adapter
 
-import android.R.attr.data
 import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Log
@@ -16,15 +15,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.snofed.publicapp.R
 import com.snofed.publicapp.models.workoutfeed.Daum
-import com.snofed.publicapp.utils.Constants.BASE_URL_IMAGE
 import com.snofed.publicapp.utils.DateTimeConverter
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 
-class WorkoutFeedAdapter(private val listener: OnItemClickListener) :
-    RecyclerView.Adapter<WorkoutFeedAdapter.ClubViewHolder>() {
+class WorkoutFeedAdapter(private val listener: OnItemClickListener) : RecyclerView.Adapter<WorkoutFeedAdapter.ClubViewHolder>() {
 
     //private var clubs: List<NewClubData> = listOf()
     private var feedArray: List<Daum> = listOf()
@@ -32,7 +26,7 @@ class WorkoutFeedAdapter(private val listener: OnItemClickListener) :
 
 
     interface OnItemClickListener {
-        fun onItemClick(publicUserId: String)
+        fun onItemClick(id: String)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -55,8 +49,9 @@ class WorkoutFeedAdapter(private val listener: OnItemClickListener) :
         //val reslult=holder.bind(outerArray[position])
         val reslult = feedArray[position]
         holder.feedName.text = reslult.publisherFullname
-        holder.feedDistance.text = String.format("%.1f", reslult.distance).toDouble().toString() + " Km"
-        holder.feedDuration.text = reslult.duration.toString()
+        holder.feedDistance.text = String.format("%.1f", reslult.distance).toDouble().toString() + " m"
+        val formattedDateTimeHMS = dateTimeConverter.formatSecondsToHMS(reslult.duration)
+        holder.feedDuration.text = formattedDateTimeHMS
         val formattedDateTime = dateTimeConverter.convertDateTime(reslult.startTime)
         holder.feedStartTime.text = dateTimeConverter.datePart
         holder.feedTime.text = dateTimeConverter.timePart
@@ -72,8 +67,8 @@ class WorkoutFeedAdapter(private val listener: OnItemClickListener) :
         }
 
         holder.llFeed.setOnClickListener {
-            Log.e("click..", "clickClubItem")
-            listener.onItemClick(reslult.publicUserId) // Assuming Client has an 'id' property
+            Log.e("click..", "clickClubItem" + reslult.id)
+            listener.onItemClick(reslult.id) // Assuming Client has an 'id' property
         }
     }
 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.feedImage.MapFeedFragment">
 
     <RelativeLayout
@@ -12,15 +12,15 @@
         android:layout_height="wrap_content">
 
         <ImageButton
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="145dp"
-            android:background="@drawable/feed_bg"/>
+            android:background="@drawable/feed_bg" />
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:orientation="vertical"
+            android:layout_height="match_parent"
             android:layout_below="@+id/jj"
-            android:layout_marginTop="10dp"
-            android:layout_height="match_parent">
+            android:orientation="vertical">
 
             <com.mapbox.maps.MapView
                 android:id="@+id/mapView"
@@ -29,6 +29,7 @@
 
 
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -40,6 +41,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:padding="6dp">
+
                 <ImageView
                     android:layout_width="35dp"
                     android:layout_height="35dp"
@@ -51,6 +53,7 @@
 
 
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/topIcon"
             android:layout_width="match_parent"
@@ -91,18 +94,19 @@
             </LinearLayout>
 
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/jj"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"
-            android:layout_below="@+id/topIcon">
+            android:layout_below="@+id/topIcon"
+            android:layout_marginTop="48dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Feed"
                 android:padding="8dp"
+                android:text="Feed"
                 android:textColor="@color/white"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -117,9 +121,9 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="14dp"
-                android:elevation="0dp"
                 android:layout_gravity="bottom"
+                android:layout_margin="@dimen/_8sdp"
+                android:elevation="0dp"
                 app:cardBackgroundColor="@color/card_bg_color"
                 app:cardCornerRadius="8dp">
 
@@ -149,9 +153,9 @@
                                     android:id="@+id/feedName"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="John Smith"
+                                    android:text=""
                                     android:textColor="@color/blue_txt_light"
-                                    android:textSize="14sp"
+                                    android:textSize="@dimen/_12sdp"
                                     android:textStyle="bold" />
 
                                 <TextView
@@ -159,9 +163,9 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="match_parent"
                                     android:gravity="center"
-                                    android:text="Workout 1"
+                                    android:text=""
                                     android:textColor="@color/active_txt"
-                                    android:textSize="18dp"
+                                    android:textSize="@dimen/_14sdp"
                                     android:textStyle="bold" />
 
 
@@ -173,11 +177,11 @@
                                 android:gravity="end">
 
                                 <ImageView
-                                    android:id="@+id/imgActivitesIcon"
-                                    android:layout_width="50dp"
-                                    android:layout_height="50dp"
+                                    android:id="@+id/imgActivitiesIcon"
+                                    android:layout_width="@dimen/_38sdp"
+                                    android:layout_height="@dimen/_38sdp"
                                     android:background="@drawable/circle_blue_background"
-                                    android:padding="9dp"
+                                    android:padding="@dimen/_8sdp"
                                     android:src="@drawable/bicycle"
                                     app:tint="@color/white" />
                             </LinearLayout>
@@ -195,18 +199,18 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Description"
+                                android:text=""
                                 android:textColor="@color/blue_txt_light"
-                                android:textSize="14sp" />
+                                android:textSize="@dimen/_8sdp" />
 
                             <TextView
-                                android:id="@+id/activityType"
+                                android:id="@+id/txtIdWorkoutType"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:gravity="end"
-                                android:text="Mountain Bike Riding"
+                                android:layout_gravity="end"
+                                android:text=""
                                 android:textColor="@color/active_txt"
-                                android:textSize="14dp"
+                                android:textSize="@dimen/_8sdp"
                                 android:textStyle="normal" />
 
 
@@ -234,11 +238,12 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/txtIdStartTime"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="00:07:37"
+                                android:text=""
                                 android:textColor="@color/blue_txt_light"
-                                android:textSize="16sp"
+                                android:textSize="@dimen/_12sdp"
                                 android:textStyle="bold" />
 
                             <TextView
@@ -246,7 +251,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="Time"
                                 android:textColor="@color/active_txt"
-                                android:textSize="13dp"
+                                android:textSize="@dimen/_11sdp"
                                 android:textStyle="normal" />
 
 
@@ -254,9 +259,9 @@
 
                         <LinearLayout
                             android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1.2"
-                            android:gravity="center"
-                            android:layout_height="wrap_content">
+                            android:gravity="center">
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
@@ -264,11 +269,12 @@
                                 android:orientation="vertical">
 
                                 <TextView
+                                    android:id="@+id/txtIdDistance"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="0.00 km"
+                                    android:text=""
                                     android:textColor="@color/blue_txt_light"
-                                    android:textSize="16sp"
+                                    android:textSize="@dimen/_12sdp"
                                     android:textStyle="bold" />
 
                                 <TextView
@@ -276,17 +282,18 @@
                                     android:layout_height="wrap_content"
                                     android:text="Distance"
                                     android:textColor="@color/active_txt"
-                                    android:textSize="13dp"
+                                    android:textSize="@dimen/_11sdp"
                                     android:textStyle="normal" />
 
 
                             </LinearLayout>
                         </LinearLayout>
+
                         <LinearLayout
                             android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1.2"
-                            android:gravity="end"
-                            android:layout_height="wrap_content">
+                            android:gravity="end">
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
@@ -297,9 +304,10 @@
                                     android:id="@+id/txtCaloriesId"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="33.0"
+                                    android:layout_gravity="end"
+                                    android:text=""
                                     android:textColor="@color/blue_txt_light"
-                                    android:textSize="16sp"
+                                    android:textSize="@dimen/_12sdp"
                                     android:textStyle="bold" />
 
                                 <TextView
@@ -307,7 +315,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Calories"
                                     android:textColor="@color/active_txt"
-                                    android:textSize="13dp"
+                                    android:textSize="@dimen/_11sdp"
                                     android:textStyle="normal" />
 
 
@@ -316,12 +324,14 @@
 
 
                     </LinearLayout>
+
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_marginTop="@dimen/marginLarge"
                         android:layout_marginBottom="@dimen/marginLarge"
                         android:background="@color/grey_light11" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -333,12 +343,12 @@
                             android:orientation="vertical">
 
                             <TextView
-                                android:id="@+id/feedDistance"
+                                android:id="@+id/feedSpeed"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="0.00 km/h"
+                                android:text=""
                                 android:textColor="@color/blue_txt_light"
-                                android:textSize="16sp"
+                                android:textSize="@dimen/_12sdp"
                                 android:textStyle="bold" />
 
                             <TextView
@@ -346,7 +356,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="Speed"
                                 android:textColor="@color/active_txt"
-                                android:textSize="13dp"
+                                android:textSize="@dimen/_11sdp"
                                 android:textStyle="normal" />
 
 
@@ -363,20 +373,22 @@
                                 android:orientation="vertical">
 
                                 <TextView
-                                    android:id="@+id/feedDuration"
+                                    android:id="@+id/txtIdAveragePace"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="10.72 min/km"
+                                    android:text=""
+                                    android:textAlignment="textStart"
                                     android:textColor="@color/blue_txt_light"
-                                    android:textSize="16sp"
+                                    android:textSize="@dimen/_12sdp"
                                     android:textStyle="bold" />
 
                                 <TextView
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:gravity="end"
                                     android:text="Avg. Pace"
                                     android:textColor="@color/active_txt"
-                                    android:textSize="13dp"
+                                    android:textSize="@dimen/_11sdp"
                                     android:textStyle="normal" />
 
 
@@ -400,14 +412,14 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:background="#1a1a2e"
-            android:visibility="gone"
-            android:elevation="10dp">
+            android:elevation="10dp"
+            android:visibility="gone">
 
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/chartWorkout"
                 android:layout_width="match_parent"
-                android:layout_margin="8dp"
-                android:layout_height="300dp"/>
+                android:layout_height="300dp"
+                android:layout_margin="8dp" />
 
         </RelativeLayout>
 

@@ -11,6 +11,8 @@ data class UserRegRequest(
     val email: String,
     val password: String,
     val lastName: String
+)
 
-
+data class UserRecoverRequest(
+    val email: String,
 )

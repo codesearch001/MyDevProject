@@ -16,15 +16,15 @@
         android:layout_width="match_parent"
         android:gravity="center"
         android:orientation="vertical"
-        android:layout_marginBottom="150dp"
+        android:layout_marginBottom="@dimen/_100sdp"
         android:layout_centerInParent="true"
         android:layout_height="wrap_content">
 
         <ImageView
-            android:layout_width="150dp"
-            android:layout_height="80dp"
+            android:layout_width="@dimen/_90sdp"
+            android:layout_height="@dimen/_50sdp"
             android:scaleType="centerInside"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="@dimen/_4sdp"
             android:src="@drawable/home_logo" />
         <TextView
             android:id="@+id/title"
@@ -34,53 +34,36 @@
             android:gravity="center_horizontal"
             android:textColor="@color/white"
             android:textStyle="bold"
-            android:textSize="28sp" />
+            android:textSize="@dimen/_22sdp" />
 
         <TextView
             android:id="@+id/description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/_4sdp"
             android:gravity="center_horizontal"
             android:text="@string/t_2"
             android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:textSize="@dimen/_12sdp" />
     </LinearLayout>
-
-
-
-
-    <!--    <Button-->
-    <!--        android:id="@+id/signUpButton"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_below="@id/logo"-->
-    <!--        android:layout_centerHorizontal="true"-->
-    <!--        android:layout_marginTop="100dp"-->
-    <!--        android:background="@android:color/holo_red_light"-->
-    <!--        android:text="Sign Up"-->
-    <!--        android:textColor="@color/white"-->
-    <!--        android:textStyle="bold" />-->
 
 
     <Button
         android:id="@+id/homeSignUpButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/sign_up"
+        android:text="@string/home_sign_up"
         android:layout_below="@id/logo"
         android:background="@drawable/white_outline_button"
         android:textColor="@android:color/white"
-        android:textSize="16sp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
+        android:textSize="@dimen/_12sdp"
+        android:paddingStart="@dimen/_12sdp"
+        android:paddingEnd="@dimen/_12sdp"
         android:textAllCaps="false"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
-        android:layout_margin="16dp"
-        android:theme="@style/YourButtonTheme"
-        android:gravity="center" />
+        android:paddingTop="@dimen/_8sdp"
+        android:layout_margin="@dimen/_14sdp"
+        android:theme="@style/YourButtonTheme"/>
 
     <TextView
         android:id="@+id/loginText"
@@ -88,9 +71,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/homeSignUpButton"
         android:layout_centerHorizontal="true"
-        android:text="@string/Dont_have_an_account_yet"
+        android:text="@string/home_dont_have_an_account_yet"
         android:textColor="@color/white"
-        android:textSize="14sp" />
+        android:textSize="@dimen/_11sdp" />
 
 
 </RelativeLayout>

@@ -6,13 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.GridLayoutManager
-import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.BrowseClubListAdapter
-import com.snofed.publicapp.databinding.FragmentBrowseAllClubBinding
 import com.snofed.publicapp.databinding.FragmentBrowseByActivitiesBinding
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.NetworkResult

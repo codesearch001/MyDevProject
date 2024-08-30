@@ -153,5 +153,53 @@
         android:name="com.snofed.publicapp.ui.feedImage.MapFeedFragment"
         android:label="fragment_map_feed"
         tools:layout="@layout/fragment_map_feed" />
+    <fragment
+        android:id="@+id/startMapRideFragment"
+        android:name="com.snofed.publicapp.maps.StartMapRideFragment"
+        android:label="fragment_start_map_ride"
+        tools:layout="@layout/fragment_start_map_ride" />
+    <fragment
+        android:id="@+id/mapExploreFragment"
+        android:name="com.snofed.publicapp.maps.MapExploreFragment"
+        android:label="fragment_map_explore"
+        tools:layout="@layout/fragment_map_explore" />
+    <fragment
+        android:id="@+id/twitterFragment"
+        android:name="com.snofed.publicapp.ui.socialmedia.TwitterFragment"
+        android:label="fragment_twitter"
+        tools:layout="@layout/fragment_twitter" />
+    <fragment
+        android:id="@+id/newTicketFragment"
+        android:name="com.snofed.publicapp.ui.newticket.NewTicketFragment"
+        android:label="fragment_new_ticket"
+        tools:layout="@layout/fragment_new_ticket" />
+    <fragment
+        android:id="@+id/orderTicketFragment"
+        android:name="com.snofed.publicapp.ui.order.OrderTicketFragment"
+        android:label="fragment_order_ticket"
+        tools:layout="@layout/fragment_order_ticket" />
+    <fragment
+        android:id="@+id/resortTrailStatusMapFragment"
+        android:name="com.snofed.publicapp.maps.ResortTrailStatusMapFragment"
+        android:label="fragment_resort_trail_status_map"
+        tools:layout="@layout/fragment_resort_trail_status_map" />
+    <fragment
+        android:id="@+id/resortSingleTrailsStatusDetailsFragment"
+        android:name="com.snofed.publicapp.ui.trailsstatus.ResortSingleTrailsStatusDetailsFragment"
+        android:label="fragment_resort_single_trails_status_details"
+        tools:layout="@layout/fragment_resort_single_trails_status_details" />
+    <dialog
+        android:id="@+id/customDialogFragmentFragment"
+        android:name="com.snofed.publicapp.maps.CustomDialogFragmentFragment"
+        android:label="CustomDialogFragmentFragment" />
+    <fragment
+        android:id="@+id/clubEventFragment"
+        android:name="com.snofed.publicapp.ui.event.ClubEventFragment"
+        android:label="fragment_club_event"
+        tools:layout="@layout/fragment_club_event" />
+    <fragment
+        android:id="@+id/browseAllClubFragmentTwo"
+        android:name="com.snofed.publicapp.ui.dashboardFragment.BrowseAllClubFragmentTwo"
+        android:label="BrowseAllClubFragmentTwo" />
 
 </navigation>

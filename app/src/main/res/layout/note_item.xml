@@ -8,10 +8,10 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="14dp"
+        android:layout_margin="@dimen/_11sdp"
         android:elevation="0dp"
         app:cardBackgroundColor="@color/card_bg_color"
-        app:cardCornerRadius="8dp">
+        app:cardCornerRadius="0dp">
 
         <LinearLayout
             android:id="@+id/llFeed"
@@ -40,19 +40,19 @@
                             android:id="@+id/feedName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="John Smith"
+                            android:text=""
                             android:textColor="@color/blue_txt_light"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/_10sdp"
                             android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/feedStartTime"
                             android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="Sep 29, 2021"
+                            android:text=""
                             android:textColor="@color/active_txt"
-                            android:textSize="16dp"
+                            android:textSize="@dimen/_12sdp"
                             android:textStyle="bold" />
 
 
@@ -65,8 +65,8 @@
 
                         <ImageView
                             android:id="@+id/imgActivitesIcon"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
+                            android:layout_width="@dimen/_38sdp"
+                            android:layout_height="@dimen/_38sdp"
                             android:background="@drawable/circle_blue_background"
                             android:padding="9dp"
                             android:src="@drawable/bicycle"
@@ -86,18 +86,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="10:40 h"
+                        android:text=""
                         android:textColor="@color/blue_txt_light"
-                        android:textSize="14sp" />
+                        android:textSize="@dimen/_9sdp" />
 
                     <TextView
                         android:id="@+id/activityType"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="end"
-                        android:text="Mountain Bike Riding"
+                        android:text=""
                         android:textColor="@color/active_txt"
-                        android:textSize="14dp"
+                        android:textSize="@dimen/_9sdp"
                         android:textStyle="normal" />
 
 
@@ -125,9 +125,9 @@
                         android:id="@+id/feedDistance"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0.00 km"
+                        android:text=""
                         android:textColor="@color/blue_txt_light"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/_11sdp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -135,7 +135,7 @@
                         android:layout_height="wrap_content"
                         android:text="Distance"
                         android:textColor="@color/active_txt"
-                        android:textSize="13dp"
+                        android:textSize="@dimen/_9sdp"
                         android:textStyle="normal" />
 
 
@@ -155,17 +155,18 @@
                             android:id="@+id/feedDuration"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="00:07:37"
+                            android:text=""
                             android:textColor="@color/blue_txt_light"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/_11sdp"
                             android:textStyle="bold" />
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Duration"
+                            android:gravity="end"
                             android:textColor="@color/active_txt"
-                            android:textSize="13dp"
+                            android:textSize="@dimen/_9sdp"
                             android:textStyle="normal" />
 
 

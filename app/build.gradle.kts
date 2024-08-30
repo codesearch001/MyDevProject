@@ -60,9 +60,12 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.play.services.location)
+    implementation(libs.play.services.maps)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
 
     //implementation("com.github.pedroSG94.RootEncoder:library:2.4.3")
 
@@ -70,6 +73,8 @@ dependencies {
     // val hilt_version="2.38.1"
     //implementation("com.google.dagger:hilt-android:$hilt_version")
     //kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
+    implementation ("com.intuit.sdp:sdp-android:1.1.1")
+
     implementation("com.google.dagger:hilt-android:2.48")
     kapt("com.google.dagger:hilt-android-compiler:2.48")
 
@@ -77,6 +82,7 @@ dependencies {
     val room_version = "2.6.1"
     implementation("androidx.room:room-runtime:$room_version")
     annotationProcessor("androidx.room:room-compiler:$room_version")
+    implementation ("androidx.room:room-ktx:$room_version")
     kapt("androidx.room:room-compiler:$room_version")
 
 
@@ -111,6 +117,20 @@ dependencies {
 
     // Mapbox Maps SDK v11 (lower version)
     implementation("com.mapbox.maps:android:11.4.0")
+
+    implementation ("com.mapbox.navigationcore:navigation:3.3.0")
+    implementation("com.mapbox.mapboxsdk:mapbox-sdk-turf:5.9.0-alpha.1")
+
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
+
+    implementation ("com.google.android.gms:play-services-auth:20.5.0")
+
+
+    // CameraX core library
+    implementation ("androidx.camera:camera-core:1.1.0")
+    implementation ("androidx.camera:camera-camera2:1.1.0")
+    implementation ("androidx.camera:camera-lifecycle:1.1.0")
+    implementation ("androidx.camera:camera-view:1.1.0")
 
 
     // Mapbox SDK dependencies

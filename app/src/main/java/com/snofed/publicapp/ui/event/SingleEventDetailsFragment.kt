@@ -26,6 +26,7 @@ import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.NetworkResult
 import dagger.hilt.android.AndroidEntryPoint
 import android.text.Spannable
+import androidx.activity.OnBackPressedCallback
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.snofed.publicapp.R
@@ -55,9 +56,30 @@ class SingleEventDetailsFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        // Handle back press
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Check if there's any fragment in the back stack
+                if (requireFragmentManager().backStackEntryCount > 0) {
+                    // Pop the fragment from the back stack
+                    requireFragmentManager().popBackStack()
+                } else {
+                    // If no fragments in the back stack, you can exit the activity or perform another action
+                    // For example, exit the app:
+                    requireActivity().finish()
+                    // Or handle navigation to a specific fragment or screen
+                    // findNavController().navigate(R.id.someOtherFragment)
+                }
+            }
+        })
         binding.backBtn.setOnClickListener {
             it.findNavController().popBackStack()
+        }
+        binding.btnBuyEventTicket.setOnClickListener {
+            it.findNavController().navigate(R.id.purchaseOptionsFragment)
+            //it.findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+            /*val intent = Intent(requireActivity(), HomeDashBoardActivity::class.java)
+            startActivity(intent)*/
         }
 
         fetchResponse()
@@ -66,7 +88,7 @@ class SingleEventDetailsFragment : Fragment() {
             when (it) {
                 is NetworkResult.Success -> {
 
-                    Log.i("EventDetails", "EventDetails... " + it.data?.data)
+                    Log.d("EventDetails", "EventDetails... " + it.data?.data)
 
                     if (it.data?.data == null) {
 
@@ -76,31 +98,23 @@ class SingleEventDetailsFragment : Fragment() {
                     } else {
 
                         binding.eventLayout.isVisible = true
-
                         binding.txtIdNoRecordFound.isVisible = false
 
                         dateTimeConverter.convertDateTime(it.data.data.startDate)//convert data
                         val getDate=dateTimeConverter.datePartOnly
-                        val getMonthOnly=dateTimeConverter.dateMonthPartOnly
-                        val newDate = SpannableString(getDate)
-                        newDate.setSpan(RelativeSizeSpan(2f), 0, 2, 0) // set size
-
-                        binding.textStartEventDetailsDate.text = newDate
-
+                        val getMonthOnly=dateTimeConverter.dateOfMonthPartOnly
+                        binding.textStartEventDetailsDate.text = getDate
+                        binding.textMonth.text = getMonthOnly
                         binding.txtEventBannerDate.text = getMonthOnly + " Event"
-
                         binding.txtEventName.text = it.data.data.name
 
                         if (it.data.data.coverImagePath == null) {
                             Glide.with(binding.imgEventBannerImagePath).load(R.drawable.event_banner_details)
                                 .into(binding.imgEventBannerImagePath)
-                            //Glide.with(holder.background_image).load(Constants.BASE_URL_IMAGE).into(holder.background_image)
                         } else {
                             Glide.with(binding.imgEventBannerImagePath)
-                                .load(Constants.BASE_URL_IMAGE + it.data.data.coverImagePath ).diskCacheStrategy(
-                                    DiskCacheStrategy.ALL
-                                ).fitCenter()
-                                .into(binding.imgEventBannerImagePath)
+                                .load(Constants.BASE_URL_IMAGE + it.data.data.coverImagePath )
+                                .diskCacheStrategy(DiskCacheStrategy.ALL).fitCenter().into(binding.imgEventBannerImagePath)
                         }
 
                         if (it.data.data.location == "") {
@@ -165,6 +179,7 @@ class SingleEventDetailsFragment : Fragment() {
                 is NetworkResult.Loading -> {
                     // binding.progressBar.isVisible = true
                 }
+
             }
         })
     }

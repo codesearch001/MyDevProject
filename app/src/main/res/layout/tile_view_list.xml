@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_130sdp"
+    android:layout_margin="@dimen/_8sdp"
+    app:cardCornerRadius="8dp"
+    android:elevation="0dp"
+    app:cardElevation="0dp">
+
+    <RelativeLayout
+        android:id="@+id/trailRL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Background Image with Gradient Overlay -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- Background Image -->
+            <ImageView
+                android:id="@+id/background_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/resort_card_bg" />
+
+            <!-- Gradient Overlay -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/gradient_overlay" />
+        </FrameLayout>
+
+        <!-- Text Elements: Two horizontal and two bottom-aligned -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_margin="@dimen/_8sdp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/trailName"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="2,5 km Bruksvallarna"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="@dimen/_14sdp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="end"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:padding="4dp">
+
+                <ImageView
+                    android:id="@+id/trailsMaps"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/circle_white_background"
+                    android:padding="8dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/map" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_margin="@dimen/_8sdp"
+            android:paddingBottom="@dimen/_12sdp"
+            android:layout_alignParentBottom="true"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:paddingBottom="@dimen/_4sdp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textSize="12sp"
+                    android:textStyle="normal"
+                    android:textColor="@color/white"
+                    android:text="Total Length:" />
+
+                <TextView
+                    android:id="@+id/length"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:layout_marginStart="@dimen/_2sdp"
+                    android:textStyle="bold"
+                    android:text="2540m" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="@dimen/_4sdp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"
+                    android:textStyle="normal"
+                    android:text="Last Prepared:" />
+
+                <TextView
+                    android:id="@+id/lastUpdateDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:layout_marginStart="@dimen/_2sdp"
+                    android:textStyle="bold"
+                    android:text="22/07/2021 13:00" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:textStyle="normal"
+                    android:textColor="@color/white"
+                    android:text="Status:" />
+
+                <LinearLayout
+                    android:id="@+id/idOpen"
+                    android:layout_width="wrap_content"
+                    android:layout_marginStart="@dimen/_2sdp"
+                    android:visibility="gone"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/rectangle_green_background"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="Open"
+                            android:padding="@dimen/_1sdp"
+                            android:gravity="center"
+                            android:layout_marginLeft="2dp"
+                            android:layout_marginRight="2dp"
+                            android:textColor="@color/white"
+                            android:textStyle="bold"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/idClose"
+                    android:layout_width="wrap_content"
+                    android:layout_marginStart="@dimen/_2sdp"
+                    android:visibility="gone"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/rectangle_red_background"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="Closed"
+                            android:gravity="center"
+                            android:padding="@dimen/_1sdp"
+                            android:textStyle="bold"
+                            android:layout_marginLeft="2dp"
+                            android:layout_marginRight="2dp"
+                            android:textColor="@color/white"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

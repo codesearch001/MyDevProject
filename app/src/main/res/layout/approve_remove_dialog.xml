@@ -1,0 +1,91 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@drawable/rounded_background"
+    android:padding="@dimen/_16sdp">
+
+    <!-- Close Button -->
+    <ImageView
+        android:id="@+id/iv_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/cross_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Title Text -->
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Ice on trail!"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_close" />
+
+    <!-- Description Text 1 -->
+    <TextView
+        android:id="@+id/tv_description1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:padding="@dimen/_4sdp"
+        android:text="Some of the previous visitors of this location reported an ice on trail."
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+    <!-- Description Text 2 -->
+    <TextView
+        android:id="@+id/tv_description2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:padding="@dimen/_4sdp"
+        android:text="If the situation hasn’t been changed, please approve this feedback. Otherwise, you can remove it."
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_description1" />
+
+    <!-- Approve Feedback Button -->
+    <Button
+        android:id="@+id/btn_approve"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_38sdp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/blue"
+        android:text="Approve feedback"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_description2" />
+
+    <!-- Remove Feedback Button -->
+    <Button
+        android:id="@+id/btn_remove"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/blue_outline_button"
+        android:backgroundTint="@android:color/white"
+        android:text="Remove feedback"
+        android:textAllCaps="false"
+        android:textColor="@color/blue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_approve" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

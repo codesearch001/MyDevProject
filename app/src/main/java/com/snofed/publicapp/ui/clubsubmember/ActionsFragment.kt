@@ -20,6 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ActionsFragment : Fragment(),OnItemClickListener {
+
     private var _binding: FragmentActionsBinding? = null
     private val binding get() = _binding!!
 
@@ -30,23 +31,26 @@ class ActionsFragment : Fragment(),OnItemClickListener {
         // Inflate the layout for this fragment
        // return inflater.inflate(R.layout.fragment_actions, container, false)
         _binding = FragmentActionsBinding.inflate(inflater, container, false)
+
         return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.goexplore.setOnClickListener {
+            findNavController().navigate(R.id.mapExploreFragment)
+        }
+
         fun getItems(): List<GridItem> {
             return listOf(
-            GridItem(1, R.drawable.activitiess,R.drawable.activities, "Activities"),
-            //GridItem(2, R.drawable.maps,R.drawable.mapbg, "Map"),
-            GridItem(3, R.drawable.signs, R.drawable.trailstatus,"Trails Status"),
-            GridItem(4, R.drawable.eventss, R.drawable.events,"Events"),
-            GridItem(5, R.drawable.card, R.drawable.shop,"Shops"),
-            GridItem(6, R.drawable.document, R.drawable.linksanddocuments,"Links and Documents"),
-            GridItem(7, R.drawable.world,  R.drawable.socialmedia, "Social Media"),
-            GridItem(8, R.drawable.information, R.drawable.feedback,"FeedBack"),
-            )
+            GridItem(1, R.drawable.signs, R.drawable.trailstatus,"Trails Status"),
+            GridItem(2, R.drawable.eventss, R.drawable.events,"Events"),
+            GridItem(3, R.drawable.card, R.drawable.shop,"Shops"),
+            GridItem(4, R.drawable.document, R.drawable.linksanddocuments,"Links and Documents"),
+            GridItem(5, R.drawable.world,  R.drawable.socialmedia, "Social Media"),
+            GridItem(6, R.drawable.information, R.drawable.feedback,"FeedBack"),)
         }
+
         binding.recyclerView.layoutManager = GridLayoutManager(context, 2) // 2 columns
         binding.recyclerView.adapter = ClubActionAdapter(getItems(),this,requireActivity())
     }
@@ -58,26 +62,27 @@ class ActionsFragment : Fragment(),OnItemClickListener {
 
 
     override fun onItemClick(itemId: Int) {
+
         ToastUtils.showToast(requireActivity(), "Item clicked with id: ${itemId}")
         Log.i("Click","Clickbbbbb "+itemId.toString())
+
         if (itemId==1){
-            findNavController().navigate(R.id.singleResortsActivitiesFragment)
-        }
-        if (itemId==3){
             findNavController().navigate(R.id.trailsStatusFragment)
         }
-        if (itemId==4){
-            findNavController().navigate(R.id.eventFragment)
+        if (itemId==2){
+            findNavController().navigate(R.id.clubEventFragment)
         }
-        if (itemId==5){
+        if (itemId==3){
             findNavController().navigate(R.id.purchaseOptionsFragment)
         }
-        if (itemId==6){
+        if (itemId==4){
             findNavController().navigate(R.id.linksFragment)
         }
-        if (itemId==8){
+        if (itemId==5){
+            findNavController().navigate(R.id.twitterFragment)
+        }
+        if (itemId==6){
             findNavController().navigate(R.id.feedBackFragment)
         }
-
     }
 }

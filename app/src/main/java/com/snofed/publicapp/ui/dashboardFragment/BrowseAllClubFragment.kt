@@ -3,6 +3,7 @@ package com.snofed.publicapp.ui.dashboardFragment
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,24 +47,32 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
         // Initialize Retrofit ApiService
 
         fetchResponse()
+       // clubViewModel.fetchClients() // Trigger data fetch
         clubViewModel.clubLiveData.observe(viewLifecycleOwner, Observer {
             binding.progressBar.isVisible = false
             when (it) {
                 is NetworkResult.Success -> {
                     // Log.i("it.data?.clients","it.data?.clients "+it.data?.data?.clients)
-                    val data = it.data?.data?.clients
-                    if (data.isNullOrEmpty()){
+                   // val data = it.data?.data?.clients
+
+                    val filteredClients = it.data?.data?.clients?.filter { client ->
+                        client.visibility == 0
+                    }
+
+                    Log.e("filter","filterSize " +filteredClients?.size)
+
+                    if (filteredClients.isNullOrEmpty()){
                         clubAdapter = BrowseClubListAdapter(this)
                         // Set up the RecyclerView with GridLayoutManager
                         binding.recyclerView.layoutManager = GridLayoutManager(requireActivity(), 2)
                         binding.recyclerView.adapter = clubAdapter
-                        clubAdapter.setClubs(data)
+                        clubAdapter.setClubs(filteredClients)
                     }else{
                         clubAdapter = BrowseClubListAdapter(this)
                         // Set up the RecyclerView with GridLayoutManager
                         binding.recyclerView.layoutManager = GridLayoutManager(requireActivity(), 2)
                         binding.recyclerView.adapter = clubAdapter
-                        clubAdapter.setClubs(data)
+                        clubAdapter.setClubs(filteredClients)
                     }
 
                     //Apply search Filter
@@ -101,6 +110,12 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
         bundle.putString("clientId", clientId)
         val destination = R.id.clubSubMembersFragment
         findNavController().navigate(destination, bundle)
+
+    }
+
+    override fun onWishlistClick(clientId: String) {
+        Log.d("TAG_WishList","Wishlist_Item " + clientId )
+       // clubViewModel.toggleWishlistStatus(clientId)
 
     }
 }

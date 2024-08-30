@@ -1,0 +1,13 @@
+<!-- rectangle_white_background.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <solid android:color="@color/txt_green" />
+
+    <corners android:radius="@dimen/_1sdp" />
+
+    <stroke
+        android:width="2dp"
+        android:color="@color/txt_green" />
+
+</shape>

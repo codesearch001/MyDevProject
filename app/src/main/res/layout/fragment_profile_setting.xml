@@ -46,14 +46,20 @@
                     android:orientation="horizontal"
                     android:paddingStart="16dp">
 
-                    <TextView
-                        android:id="@+id/nameTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Choose profile picture"
-                        android:textColor="@color/blue_txt_light"
-                        android:textSize="12sp"/>
+
+                 <!--   <androidx.camera.view.PreviewView
+                        android:id="@+id/viewFinder"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />-->
+
+                     <TextView
+                         android:id="@+id/nameTextView"
+                         android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:layout_weight="1"
+                         android:text="Choose profile picture"
+                         android:textColor="@color/blue_txt_light"
+                         android:textSize="12sp"/>
 
                     <ImageView
                         android:layout_width="20dp"
@@ -87,7 +93,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:hint="@string/enter_your_fname"
+                android:hint="@string/t_h_enter_your_fname"
                 android:inputType="textEmailAddress"
                 android:text="Jone"
                 android:textSize="16sp" />
@@ -97,7 +103,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:hint="@string/enter_your_lname"
+                android:hint="@string/t_h_enter_your_lname"
                 android:inputType="textEmailAddress"
                 android:text="Smith"
                 android:textSize="16sp" />

@@ -13,7 +13,7 @@
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="200dp"
-            android:background="@drawable/trails_banner" />
+            android:background="@drawable/links_banner" />
 
 
         <ImageView

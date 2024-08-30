@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -26,26 +27,35 @@
                 android:orientation="vertical">
 
                 <!-- card_layout.xml -->
-                <androidx.cardview.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
+                <androidx.cardview.widget.CardView
                     android:id="@+id/card_view"
                     android:layout_width="wrap_content"
-                    android:layout_height="220dp"
+                    android:layout_height="@dimen/_158sdp"
+                    app:cardElevation="0dp"
+                    android:elevation="0dp"
                     app:cardCornerRadius="8dp">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
+                        <!-- Background Image with Gradient Overlay -->
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
 
                         <!-- Background Image -->
                         <ImageView
                             android:id="@+id/clubBackgroundIdImage"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/resort_card_bg" />
-
+                            android:scaleType="centerCrop"/>
+                        <!-- Gradient Overlay -->
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/gradient_overlay" />
                         <!-- Text Elements: Two horizontal and two bottom-aligned -->
-
+                        </FrameLayout>
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -125,7 +135,7 @@
                                 android:id="@+id/lable1"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Lable1"
+                                android:text="@string/txt_label"
                                 android:textColor="@color/white"
                                 android:textSize="18sp" />
 
@@ -133,7 +143,7 @@
                                 android:id="@+id/lable2"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Lable"
+                                android:text="@string/txt_label"
                                 android:textColor="@color/white"
                                 android:textSize="12sp" />
                         </LinearLayout>

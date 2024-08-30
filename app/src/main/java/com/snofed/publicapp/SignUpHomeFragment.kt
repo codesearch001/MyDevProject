@@ -20,18 +20,26 @@ class SignUpHomeFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentSignUpHomeBinding.inflate(inflater, container, false)
+
         return binding.root
     }
+
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         binding.homeSignUpButton.setOnClickListener {
-            it.findNavController().navigate(R.id.action_signUpHomeFragment_to_registerFragment)
+            it.findNavController().navigate(R.id.registerFragment)
         }
 
         binding.loginText.setOnClickListener {
-            it.findNavController().navigate(R.id.action_signUpHomeFragment_to_loginFragment)
+            it.findNavController().navigate(R.id.loginFragment)
         }
+    }
+
+    private fun enterFullScreenMode() {
+        TODO("Not yet implemented")
     }
 }

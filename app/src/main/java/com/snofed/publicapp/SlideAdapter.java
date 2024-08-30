@@ -21,9 +21,6 @@ public class SlideAdapter extends PagerAdapter {
     }
 
 
-
-
-
     int image[] = {
             R.drawable.onboarding_step1,
             R.drawable.onboarding_step2,

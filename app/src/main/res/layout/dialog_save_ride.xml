@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/_8sdp"
+    android:background="@drawable/all_corner_rounded"
+    android:elevation="0dp"
+    android:orientation="vertical"
+    app:cardCornerRadius="@dimen/_19sdp"
+    app:cardElevation="0dp">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/transparent_white"
+        android:padding="@dimen/_8sdp">
+        <!-- Close Icon -->
+        <ImageView
+            android:id="@+id/closeIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:padding="4dp"
+            android:src="@drawable/close" />
+
+        <LinearLayout
+            android:id="@+id/topLL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <!-- Dialog Title -->
+            <TextView
+                android:id="@+id/dialogTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="You finished your ride"
+                android:textSize="@dimen/_12sdp"
+                android:textStyle="bold" />
+
+            <!-- Dialog Title -->
+            <TextView
+                android:id="@+id/dialogSubTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="You can tell us how it was."
+                android:textSize="@dimen/_8sdp"
+                android:textStyle="normal" />
+
+        </LinearLayout>
+
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/editTextComment"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_290sdp"
+            android:layout_below="@id/topLL"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/rounded_edittext_lightgray_background"
+            android:gravity="top"
+            android:hint="@string/leave_your_comment"
+            android:inputType="textMultiLine"
+            android:padding="16dp"
+            android:textSize="16sp" />
+
+
+        <!-- Radio Buttons for Public and Private -->
+        <RadioGroup
+            android:id="@+id/radioGroupPrivacy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/editTextComment"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/radioButtonPublic"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_30sdp"
+                android:text="Make it public" />
+
+            <RadioButton
+                android:id="@+id/radioButtonPrivate"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_30sdp"
+                android:text="Leave it private" />
+        </RadioGroup>
+
+        <!-- Save Button -->
+        <Button
+            android:id="@+id/buttonSaveRide"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/radioGroupPrivacy"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:background="@drawable/blue_bg_color"
+            android:elevation="0dp"
+            android:text="@string/Save"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white" />
+    </RelativeLayout>
+
+
+</androidx.cardview.widget.CardView>

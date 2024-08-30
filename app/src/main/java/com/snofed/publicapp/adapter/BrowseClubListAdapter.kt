@@ -17,19 +17,17 @@ import com.snofed.publicapp.models.Client
 import com.snofed.publicapp.utils.Constants
 
 
-class BrowseClubListAdapter(private val listener: OnItemClickListener) :
-    RecyclerView.Adapter<BrowseClubListAdapter.ClubViewHolder>() {
+class BrowseClubListAdapter(private val listener: OnItemClickListener) : RecyclerView.Adapter<BrowseClubListAdapter.ClubViewHolder>() {
 
     //private var clubs: List<NewClubData> = listOf()
     private var outerArray: List<Client> = listOf()
     private var filteredClubs: List<Client> = listOf()
+    private val wishlistItems: MutableSet<String> = mutableSetOf()
 
     interface OnItemClickListener {
         fun onItemClick(clientId: String)
+        fun onWishlistClick(clientId: String) // Callback for wishlist icon clicks
     }
-
-
-
     init {
         filteredClubs = outerArray
     }
@@ -68,8 +66,7 @@ class BrowseClubListAdapter(private val listener: OnItemClickListener) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClubViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.browse_club_list, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.browse_club_list, parent, false)
         return ClubViewHolder(view)
     }
 
@@ -85,6 +82,27 @@ class BrowseClubListAdapter(private val listener: OnItemClickListener) :
             Log.e("click..", "clickClubItem")
             listener.onItemClick(reslult.id) // Assuming Client has an 'id' property
         }
+        // Set wishlist icon based on the wishlist state
+        if (wishlistItems.contains(reslult.id)) {
+            holder.imgIdWishlist.setImageResource(R.drawable.hearth_filled)
+        } else {
+            holder.imgIdWishlist.setImageResource(R.drawable.hearth_empty)
+        }
+       /* holder.imgIdWishlist.setOnClickListener {
+            listener.onWishlistClick(reslult.id)
+        }*/
+        // Handle wishlist icon click
+        holder.imgIdWishlist.setOnClickListener {
+            val clientId = reslult.id
+            if (wishlistItems.contains(clientId)) {
+                wishlistItems.remove(clientId)
+            } else {
+                wishlistItems.add(clientId)
+            }
+            notifyItemChanged(position) // Notify that the item at this position has changed
+            listener.onWishlistClick(clientId) // Notify the listener
+        }
+
         if (reslult.coverImagePath == null) {
             Glide.with(holder.backgroundImage).load(R.drawable.resort_card_bg)
                 .into(holder.backgroundImage)

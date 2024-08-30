@@ -32,13 +32,7 @@ class HomeNewActivity : AppCompatActivity() {
         setContentView(R.layout.activity_home_new)
 
     }
-
-
-
     override fun onBackPressed() {
         super.onBackPressed()
     }
-
-
-
 }

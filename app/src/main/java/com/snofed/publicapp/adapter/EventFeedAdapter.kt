@@ -2,9 +2,7 @@ package com.snofed.publicapp.adapter
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.text.SpannableString
 
-import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +12,7 @@ import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.snofed.publicapp.R
+import com.snofed.publicapp.models.browseSubClub.Event
 import com.snofed.publicapp.models.events.EventResponseList
 import com.snofed.publicapp.utils.DateTimeConverter
 
@@ -47,9 +46,11 @@ class EventFeedAdapter(private val listener: OnItemClickListener) : RecyclerView
         val reslult =feedArray[position]
         dateTimeConverter.convertDateTime(reslult.startDate)//convert data
         val getDate=dateTimeConverter.datePartOnly
-        val newDate = SpannableString(getDate)
-        newDate.setSpan(RelativeSizeSpan(2f), 0, 2, 0) // set size
-        holder.textStartDate.text = newDate
+        val getDateOfMonth=dateTimeConverter.dateOfMonthPartOnly
+       /* val newDate = SpannableString(getDate)
+        newDate.setSpan(RelativeSizeSpan(2f), 0, newDate.length, 0) // set size*/
+        holder.textStartDate.text = getDate
+        holder.textDateOfMonth.text = getDateOfMonth
         holder.textEventName.text = reslult.name
 
         if (reslult.location == ""){
@@ -78,6 +79,7 @@ class EventFeedAdapter(private val listener: OnItemClickListener) : RecyclerView
         val textMaxAttendees: TextView = itemView.findViewById(R.id.txtMaxAttendees)
         val textTicketPrice: TextView = itemView.findViewById(R.id.txtTicketPrice)
         val textStartDate: TextView = itemView.findViewById(R.id.txtStartEventDate)
+        val textDateOfMonth: TextView = itemView.findViewById(R.id.textDateOfMonth)
         val eventCardId: CardView = itemView.findViewById(R.id.eventCardId)
     }
 

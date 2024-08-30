@@ -6,19 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import com.snofed.publicapp.R
-import com.snofed.publicapp.adapter.BrowseClubListAdapter
 import com.snofed.publicapp.adapter.GalleryAdapter
 import com.snofed.publicapp.databinding.FragmentGalleryBinding
 import com.snofed.publicapp.ui.login.AuthViewModel
-import com.snofed.publicapp.utils.NetworkResult
+import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -28,8 +22,8 @@ class GalleryFragment : Fragment() {
 
     private var _binding: FragmentGalleryBinding? = null
     private val binding get() = _binding!!
-
     private val galleryViewModel by viewModels<AuthViewModel>()
+    private val sharedViewModel by activityViewModels<SharedViewModel>()
 
     private lateinit var galleryAdapter: GalleryAdapter
     @Inject
@@ -52,7 +46,7 @@ class GalleryFragment : Fragment() {
 //        binding.galleryRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
 //        binding.galleryRecyclerView.adapter = galleryAdapter
 
-        fetchResponse()
+     /*   fetchResponse()
         galleryViewModel.subClubLiveData.observe(viewLifecycleOwner, Observer {
             binding.progressBar.isVisible = false
             when (it) {
@@ -99,33 +93,43 @@ class GalleryFragment : Fragment() {
                 }
 
             }
-        })
+        })*/
         return binding.root
     }
 
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        super.onViewCreated(view, savedInstanceState)
-//
-//        //fetchResponse()
-//
-//       /* val itemList = listOf(
-//            GalleryAdapter.MyItem(R.drawable.gallery1),
-//            GalleryAdapter.MyItem(R.drawable.gallery2),
-//            GalleryAdapter.MyItem(R.drawable.gallery1),
-//            GalleryAdapter.MyItem(R.drawable.gallery1),
-//            GalleryAdapter.MyItem(R.drawable.gallery2),
-//            GalleryAdapter.MyItem(R.drawable.gallery1),
-//            GalleryAdapter.MyItem(R.drawable.gallery1),
-//            GalleryAdapter.MyItem(R.drawable.gallery2),
-//            GalleryAdapter.MyItem(R.drawable.gallery1),
-//            GalleryAdapter.MyItem(R.drawable.gallery1),
-//            GalleryAdapter.MyItem(R.drawable.gallery1),
-//            GalleryAdapter.MyItem(R.drawable.gallery2),
-//        )*/
-//    }
-    private fun fetchResponse() {
-        galleryViewModel.subClubRequestUser(tokenManager.getClientId().toString())
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Initialize RecyclerView and Adapter
+        galleryAdapter = GalleryAdapter()
+        binding.galleryRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+        binding.galleryRecyclerView.adapter = galleryAdapter
+
+
+        // Observe the SharedViewModel for data updates
+        sharedViewModel.browseSubClubResponse.observe(viewLifecycleOwner) { response ->
+            val images = response?.data?.publicData?.images ?: emptyList()
+
+            Log.d("Tag_Gallery", "GalleryImages size: ${images.size}")
+
+            if (images.isEmpty()) {
+
+                // Show the "Data Not data" message and hide RecyclerView
+                binding.tvSplashText.visibility = View.VISIBLE
+                binding.galleryRecyclerView.visibility = View.GONE
+
+            } else {
+
+                // Hide the "No data" message and show RecyclerView
+                binding.tvSplashText.visibility = View.GONE
+                binding.galleryRecyclerView.visibility = View.VISIBLE
+                galleryAdapter.setGallery(images) // Pass the list to the adapter
+            }
+        }
     }
+  /*  private fun fetchResponse() {
+        galleryViewModel.subClubRequestUser(tokenManager.getClientId().toString())
+    }*/
 
     override fun onDestroyView() {
         super.onDestroyView()

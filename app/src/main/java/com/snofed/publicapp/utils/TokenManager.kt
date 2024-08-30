@@ -6,9 +6,11 @@ import com.snofed.publicapp.R
 import com.snofed.publicapp.utils.Constants.CLUB_CLIENT_ID
 import com.snofed.publicapp.utils.Constants.CLUB_DESC
 import com.snofed.publicapp.utils.Constants.CLUB_PUBLIC_ID
+import com.snofed.publicapp.utils.Constants.CLUB_TRAILS_ID
 import com.snofed.publicapp.utils.Constants.PREFS_TOKEN_FILE
 import com.snofed.publicapp.utils.Constants.USER_FIRST_NAME
 import com.snofed.publicapp.utils.Constants.USER_TOKEN
+import com.snofed.publicapp.utils.Constants.USER_USER_ID
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
@@ -35,6 +37,16 @@ class TokenManager @Inject constructor(@ApplicationContext context: Context) {
         return prefs.getString(USER_FIRST_NAME, null)
     }
 
+    fun saveUserId(saveUserId: String) {
+        val editor = prefs.edit()
+        editor.putString(USER_USER_ID, saveUserId)
+        editor.apply()
+    }
+
+    fun getUserId(): String? {
+        return prefs.getString(USER_USER_ID, null)
+    }
+
     fun saveDesc(userDesc: String) {
         val editor = prefs.edit()
         editor.putString(CLUB_DESC, userDesc)
@@ -53,6 +65,16 @@ class TokenManager @Inject constructor(@ApplicationContext context: Context) {
 
     fun getClientId(): String? {
         return prefs.getString(CLUB_CLIENT_ID, null)
+    }
+
+    fun saveTrailsId(userTrails: String) {
+        val editor = prefs.edit()
+        editor.putString(CLUB_TRAILS_ID, userTrails)
+        editor.apply()
+    }
+
+    fun getTrailsId(): String? {
+        return prefs.getString(CLUB_TRAILS_ID, null)
     }
 
     fun savePublicUserId(userPublicID: String) {

@@ -1,24 +1,38 @@
 package com.snofed.publicapp.db
 
-import androidx.lifecycle.LiveData
+
 import androidx.room.*
 import com.snofed.publicapp.models.Client
-import kotlinx.coroutines.flow.Flow
+import com.snofed.publicapp.models.NewClubData
+import com.snofed.publicapp.models.PublicData
 
 @Dao
-interface ClientDao {
-    @Insert
-    suspend fun insertWishlistItem(item: Client)
+interface RoomDao {
+    /*@Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertClient(client: Client)
 
-    @Update
-    suspend fun updateWishlistItem(item: Client)
+    @Query("SELECT * FROM clients WHERE id = :clientId")
+    suspend fun getClientById(clientId: String): Client?
 
-    @Query("DELETE FROM wishlist WHERE id = :id")
-    suspend fun deleteWishlistItem(id: Long)
+    @Query("SELECT * FROM clients WHERE isInWishlist = 1")
+    suspend fun getWishlistClients(): List<Client>*/
 
-    @Query("SELECT * FROM wishlist")
-    fun getAllWishlistItems(): LiveData<List<Client>>
 
-    @Query("SELECT * FROM wishlist WHERE id = :id")
-    fun getWishlistItemById(id: Long): LiveData<Client>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertClients(clients: NewClubData)
+
+    @Query("SELECT * FROM clients WHERE id = :id")
+    suspend fun getClientById(id: String): Client?
+
+    @Query("SELECT * FROM clients")
+    suspend fun getAllClients(): List<Client>
+
+    @Query("SELECT * FROM clients")
+    suspend fun getAllPublicData(): List<PublicData>
+
+    @Query("SELECT * FROM clients WHERE visibility = 0")
+    suspend fun getVisibleClients(): List<Client>
+
+    @Query("UPDATE clients SET isInWishlist = :status WHERE id = :id")
+    suspend fun updateWishlistStatus(id: String, status: Boolean)
 }

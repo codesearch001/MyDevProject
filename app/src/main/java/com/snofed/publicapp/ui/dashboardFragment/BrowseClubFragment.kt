@@ -17,10 +17,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class BrowseClubFragment : Fragment() {
+
     private var _binding: FragmentBrowseClubBinding? = null
     private val binding get() = _binding!!
-
-    private val clubViewModel by viewModels<AuthViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,10 +47,6 @@ class BrowseClubFragment : Fragment() {
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = tabs[position]
         }.attach()
-       // clubViewModel.clubRequestUser()
         return binding.root
-
     }
-
-
 }

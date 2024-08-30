@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -11,7 +10,7 @@
 
         <ImageButton
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
+            android:layout_height="@dimen/_138sdp"
             android:background="@drawable/event_banner" />
 
 
@@ -36,27 +35,29 @@
         android:padding="4dp"/>
 
     <LinearLayout
-        android:id="@+id/progressBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:layout_gravity="center_vertical"
         android:layout_centerInParent="true"
         android:orientation="vertical">
 
         <ProgressBar
+            android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:layout_gravity="center" />
 
         <TextView
             android:id="@+id/tvSplashText"
             style="@style/TextRobotoNormal"
-            android:layout_width="2dp"
-            android:layout_height="6dp"
-            android:layout_gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/marginMedium"
-            android:gravity="center_vertical"
-            android:textColor="@color/white"
+            android:text="No Record Found"
+            android:visibility="gone"
+            android:gravity="center"
+            android:textColor="@color/black"
             android:textSize="@dimen/fontMedium" />
 
     </LinearLayout>

@@ -7,10 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.findNavController
 import com.google.android.material.tabs.TabLayoutMediator
-import com.snofed.publicapp.R
-import com.snofed.publicapp.adapter.TabBrowseClubsAdapter
 import com.snofed.publicapp.adapter.TabSettingAdapter
-import com.snofed.publicapp.databinding.FragmentBrowseClubBinding
 import com.snofed.publicapp.databinding.FragmentSettingBinding
 import dagger.hilt.android.AndroidEntryPoint
 

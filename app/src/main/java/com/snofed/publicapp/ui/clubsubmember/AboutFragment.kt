@@ -26,11 +26,11 @@ class AboutFragment : Fragment() {
 
     private var _binding: FragmentAboutBinding? = null
     private val binding get() = _binding!!
-    private val clubViewModel by viewModels<AuthViewModel>()
+
     @Inject
     lateinit var tokenManager: TokenManager
     // Create an instance of MyFunctions
-    val myFunctions = AccessFunctions()
+    private val myFunctions = AccessFunctions()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

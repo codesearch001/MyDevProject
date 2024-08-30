@@ -7,13 +7,13 @@
 
 
 
-    <fragment
+ <!--   <fragment
         android:id="@+id/nav_host_login_signup"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:defaultNavHost="true"
-        app:navGraph="@navigation/nav_after_bottom_graph" />
+        app:navGraph="@navigation/nav_after_bottom_graph" />-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

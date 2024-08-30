@@ -7,6 +7,7 @@
     <color name="text_gray">#666666</color>
     <color name="highlight_text_color">#2196F3</color>
     <color name="holo_blue_light">#ff33b5e5</color>
+    <color name="start_btn">#0080C8</color>
     <color name="t4t_bg">#005387</color>
     <color name="t_bg">#00000000</color>
     <color name="lavender">#8692f7</color>
@@ -17,6 +18,8 @@
     <color name="blue_txt_light">#2E405A</color>
     <color name="active_txt">#011737</color>
     <color name="dark_blue">#011737</color>
+    <color name="fab_bg">#052650</color>
+
 
     <color name="transparent_white">#00FFFFFF</color>
     <color name="transparent_black">#00000000</color>
@@ -24,7 +27,7 @@
     <color name="chart_transparent">#e4ffffff</color>
     <color name="card_background">#F4F4F4</color> <!-- White background -->
     <color name="text_color">#333333</color> <!-- Dark gray text color -->
-
+    <color name="colorPrimaryDark">#FF0000</color> <!-- Replace with your desired color -->
 
     <color name="colorTabTextSelected">#FFFFFF</color>
     <color name="colorButtonSelected">#FFFFFF</color>
@@ -36,7 +39,10 @@
     <color name="divider_color">#E0E0E0</color> <!-- Red -->
     <color name="unChecked_thumb">#E8E8E9</color> <!-- Red -->
     <color name="checked_thumb">#E0E0E0</color> <!-- Red -->
-    <color name="toggle_on_color">#03A9F4</color> <!-- Green -->
+    <color name="toggle_on_color">#03A9F4</color> <!-- blue -->
     <color name="toggle_off_color">#E0E0E0</color> <!-- Red -->
+    <color name="txt_green">#6FCF97</color> <!-- Red -->
+    <color name="txt_red">#EB5757</color> <!-- Red -->
+    <color name="star_color_yellow">#FABD21</color> <!-- Red -->
 
 </resources>
