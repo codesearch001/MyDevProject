@@ -2,33 +2,38 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/_8sdp"
+    android:layout_marginStart="@dimen/_12sdp"
+    android:layout_marginEnd="@dimen/_12sdp"
+    android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/card1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="12dp"
-        app:cardElevation="4dp">
+        android:elevation="0dp"
+        app:cardElevation="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center"
-            android:background="@color/card_background"
-            android:padding="16dp">
+            android:padding="@dimen/_14sdp"
+            android:background="@color/card_background">
 
             <TextView
+                android:id="@+id/txt_membership_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Supporting member 2024"
-                android:textSize="24sp"
+                android:text=""
+                android:textSize="@dimen/_14sdp"
                 android:textColor="@color/black"
                 android:textStyle="bold" />
 
-            <Button
+           <!-- <Button
                 android:id="@+id/become_member_button"
                 android:layout_width="match_parent"
                 android:layout_height="58dp"
@@ -37,6 +42,16 @@
                 android:textSize="14sp"
                 android:layout_marginTop="16dp"
                 android:backgroundTint="@color/blue"
+                android:textColor="@android:color/white" />-->
+            <Button
+                android:id="@+id/become_member_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_14sdp"
+                android:background="@drawable/blue_bg_color"
+                android:elevation="0dp"
+                android:text="@string/t_become_a_member"
+                android:textAllCaps="false"
                 android:textColor="@android:color/white" />
 
             <LinearLayout
@@ -46,69 +61,82 @@
                 android:gravity="center_horizontal"
                 android:layout_height="match_parent">
                 <TextView
+                    android:id="@+id/txt_membership_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="99"
-                    android:textSize="28sp"
+                    android:text=""
+                    android:textSize="@dimen/_16sdp"
                     android:textStyle="bold"
                     android:textColor="@color/black"
                     android:layout_marginTop="24dp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=" kr / year"
-                    android:textSize="18sp"
-                    android:textStyle="normal"
-                    android:textColor="@color/gray"
-                    android:layout_marginTop="24dp" />
             </LinearLayout>
 
 
             <TextView
+                android:id="@+id/txt_benefits_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Note that this membership does not replace your membership in your local association. Here, however, you can (in the near future) get global benefits that your association cannot offer."
-                android:layout_marginTop="16dp"
+                android:text=""
+                android:textAlignment="textStart"
+                android:layout_marginTop="@dimen/_14sdp"
                 android:textSize="12sp" />
 
+<LinearLayout
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:weightSum="2">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_Buy_Memberships"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.9"
+            android:background="@drawable/blue_outline_button"
+            android:gravity="center"
+            android:paddingTop="1dp"
+            android:paddingBottom="1dp"
+            android:text="@string/show_benefits"
+            android:textAllCaps="false"
+            android:layout_marginBottom="8dp"
+            android:textColor="@android:color/holo_blue_light"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
+            android:theme="@style/homeButtonTheme"
+            android:drawablePadding="8dp" />
 
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:weightSum="2">
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnBuyMemberships"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.9"
-                    android:background="@drawable/blue_outline_button"
-                    android:gravity="center"
-                    android:paddingTop="1dp"
-                    android:paddingBottom="1dp"
-                    android:text="@string/show_benefits"
-                    android:textAllCaps="false"
-                    android:layout_marginBottom="8dp"
-                    android:textColor="@android:color/holo_blue_light"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="24dp"
-                    android:theme="@style/homeButtonTheme" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/view2"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:background="@color/edit_gray"
+        android:layout_marginBottom="@dimen/_8sdp"
+        android:layout_height="@dimen/_1sdp"/>
+
+    <!-- Benefits List, initially hidden -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/benefitsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible" /> <!-- Initially hidden -->
+</LinearLayout>
 
 
-            </LinearLayout>
-<!--            <Button-->
-<!--                android:id="@+id/show_benefits_button"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="55dp"-->
-<!--                android:text="Show benefits (3)"-->
-<!--                android:layout_marginTop="24dp"-->
-<!--                android:backgroundTint="@color/gray_button" />-->
+
 
         </LinearLayout>
+
+
 
     </androidx.cardview.widget.CardView>
 

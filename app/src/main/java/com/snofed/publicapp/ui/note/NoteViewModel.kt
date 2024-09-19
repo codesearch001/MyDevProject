@@ -1,3 +1,4 @@
+/*
 package com.snofed.publicapp.ui.note
 
 import androidx.lifecycle.MutableLiveData
@@ -43,4 +44,4 @@ class NoteViewModel @Inject constructor(private val noteRepository: NoteReposito
 
 
 
-}
+}*/

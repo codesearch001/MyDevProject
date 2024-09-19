@@ -25,7 +25,7 @@ class MainFragment : Fragment() {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
-    private val noteViewModel by viewModels<NoteViewModel>()
+   // private val noteViewModel by viewModels<NoteViewModel>()
 
     private lateinit var adapter: NoteAdapter
 
@@ -40,7 +40,7 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        noteViewModel.getAllNotes()
+        //noteViewModel.getAllNotes()
 
 
     }

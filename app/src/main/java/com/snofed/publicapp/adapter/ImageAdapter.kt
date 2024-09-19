@@ -18,6 +18,7 @@ import com.snofed.publicapp.models.workoutfeed.Daum
 import com.snofed.publicapp.models.workoutfeed.WorkoutImage
 import com.snofed.publicapp.models.workoutfeed.WorkoutPointResponse
 import com.snofed.publicapp.utils.Constants
+import com.snofed.publicapp.utils.ServiceUtil
 
 /*class ImageAdapter(private val imageList: List<Int>) : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
 
@@ -69,7 +70,7 @@ class ImageAdapter( private val itemCount: Int) : RecyclerView.Adapter<ImageAdap
         if (item.path.equals("")) {
             Glide.with(holder.imageView).load(R.drawable.feed_view1).into(holder.imageView)
         } else {
-            Glide.with(holder.imageView).load(Constants.BASE_URL_IMAGE+item.path).diskCacheStrategy(
+            Glide.with(holder.imageView).load(ServiceUtil.BASE_URL_IMAGE+item.path).diskCacheStrategy(
                 DiskCacheStrategy.ALL).fitCenter().into(holder.imageView)
         }
 

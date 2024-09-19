@@ -21,7 +21,9 @@ import com.snofed.publicapp.models.UserRecoverRequest
 import com.snofed.publicapp.models.UserRequest
 import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.NetworkResult
+import com.snofed.publicapp.utils.isEmailValid
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class RecoverPasswordFragment : Fragment() {
@@ -30,10 +32,7 @@ class RecoverPasswordFragment : Fragment() {
 
     //private val authViewModel by activityViewModels<AuthViewModel>()
     private val authViewModel by viewModels<AuthViewModel>()
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         _binding = FragmentRecoverPasswordBinding.inflate(inflater, container, false)
         return binding.root
@@ -42,40 +41,52 @@ class RecoverPasswordFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        init()
+        bindObservers()
 
         binding.cancelText.setOnClickListener {
             it.findNavController().popBackStack()
         }
+    }
 
-        binding.sendButton.setOnClickListener {
-            Helper.hideKeyboard(it)
-            val validationResult = validateUserInput()
-            if (validationResult.first) {
-                val userRequest = getUserRequest()
-                authViewModel.recoverPassword(userRequest)
-            } else {
-                showValidationErrors(validationResult.second)
+    private fun init() {
+        binding.sendButton.setOnClickListener{
+            if (validateFields()) {
+                handleLogin() // Only attempt login if validation passes
             }
         }
-        bindObservers()
     }
 
-    private fun getUserRequest(): UserRecoverRequest {
-        return binding.run {
-            UserRecoverRequest(
-                emailEditText.text.toString())
+    // Validation logic to ensure fields are correctly filled out
+    private fun validateFields(): Boolean {
+        val email = binding.emailEditText.text.toString().trim()
+
+        return when {
+            email.isEmpty() -> {
+                showToast(getString(R.string.please_enter_email_id))
+                false
+            }
+            !email.isEmailValid() -> {
+                showToast(getString(R.string.please_enter_valid_email_id))
+                false
+            }
+            else -> true // Validation passed
         }
     }
 
-    @SuppressLint("StringFormatMatches")
-    private fun showValidationErrors(error: String) {
-        Toast.makeText(requireActivity(), String.format(resources.getString(R.string.txt_error_message, error)), Toast.LENGTH_SHORT).show()
-        //binding.txtError.text = String.format(resources.getString(R.string.txt_error_message, error))
+    // Helper method to display toast messages
+    private fun showToast(message: String) {
+        Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show()
     }
+    // Handle login process after validation
+    private fun handleLogin() {
+        val email = binding.emailEditText.text.toString().trim()
 
-    private fun validateUserInput(): Pair<Boolean, String> {
-        val emailAddress = binding.emailEditText.text.toString()
-        return authViewModel.validateEmailForPasswordReset(emailAddress)
+        binding.progressBar.isVisible = true
+        authViewModel.recoverPassword(
+            userRequest = UserRecoverRequest(
+                email = email)
+        )
     }
 
     private fun bindObservers() {
@@ -83,21 +94,16 @@ class RecoverPasswordFragment : Fragment() {
             binding.progressBar.isVisible = false
             when (it) {
                 is NetworkResult.Success -> {
-                    // tokenManager.saveToken(it.data!!.token)
-                    println("RecoverSuccess... " + it.data.toString())
+
                     Toast.makeText(requireActivity(), "Link is sent to your Email address.\n" +
                             "Please follow the instructions in the email to access your account.", Toast.LENGTH_LONG).show()
+                    findNavController().popBackStack()
 
-                    findNavController().navigate(R.id.action_recoverFragment_to_loginFragment)
-                   /* val intent = Intent(requireActivity(), HomeDashBoardActivity::class.java)
-                    startActivity(intent)*/
                 }
                 is NetworkResult.Error -> {
-                    // showValidationErrors(it.message.toString())
 
                     Toast.makeText(requireActivity(), "User Does Not Exist", Toast.LENGTH_SHORT).show()
 
-                    println("RecoverSuccess-response... " + it.message.toString())
                 }
                 is NetworkResult.Loading ->{
                     binding.progressBar.isVisible = true
@@ -105,9 +111,6 @@ class RecoverPasswordFragment : Fragment() {
             }
         })
     }
-
-
-
 
     override fun onDestroyView() {
         super.onDestroyView()

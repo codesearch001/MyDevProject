@@ -2,6 +2,9 @@ buildscript {
 
     dependencies {
         classpath ("com.google.dagger:hilt-android-gradle-plugin:2.48")
+        classpath ("io.realm:realm-gradle-plugin:10.18.0")
+        classpath ("com.android.tools.build:gradle:8.0.2") // Use the latest stable version compatible with targetSdkVersion 34
+        classpath ("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20") // Kotlin plugin if using Kotlin
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -13,5 +16,7 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.jetbrains.kotlin.android) apply false
     id("com.google.dagger.hilt.android") version "2.44" apply false
+    kotlin("plugin.serialization") version "1.8.10" // Use the appropriate Kotlin version
+
 
 }

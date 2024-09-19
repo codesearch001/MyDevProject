@@ -1,6 +1,5 @@
 package com.snofed.publicapp.utils
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -23,7 +22,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.Fragment
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -31,7 +33,9 @@ import java.util.Date
 /**
  * MediaReader handles picking and capturing images, and processes them for display.
  */
-class MediaReader(private val fragment: Fragment) {
+class MediaReader(private val fragment: Fragment, private val imageUriCallback: ImageUriCallback) {
+
+
 
     private var imageView: ImageView? = null
     private var imageUri: Uri? = null // Store the current URI
@@ -138,20 +142,26 @@ class MediaReader(private val fragment: Fragment) {
      * - Sets the processed image to the ImageView.
      */
     private fun handleImage(uri: Uri) {
-        Log.d("imageView11","imageView11 "+uri)
+        Log.d("imageView11", "imageView11 $uri")
         imageUri = uri // Save the URI
+
+
         val context = fragment.requireContext()
         val correctedBitmap = getCorrectedBitmap(uri, context)
         val circularBitmap = getCircularBitmap(correctedBitmap)
-        imageView?.setImageBitmap(circularBitmap)
+       // imageView?.setImageBitmap(circularBitmap)
 
+        // Compress and save image to a size below 1000 KB
+        createAndSaveCompressedImage(context, imageUri!!, 1000 * 1024) // 1000 KB = 1000 * 1024 bytes
         getImageUri(imageUri!!)
+
+        // Notify the callback with the image URI
+        imageUriCallback.onImageUriReceived(uri)
     }
 
     fun getImageUri(imageUri: Uri): Uri {
         return imageUri
     }
-
 
     /**
      * Reads the image from the provided URI, corrects its orientation based on EXIF data.
@@ -220,6 +230,66 @@ class MediaReader(private val fragment: Fragment) {
             ".jpg", /* suffix */
             storageDir /* directory */
         )
+    }
+
+    /**
+     * Compresses the bitmap and saves it to a file.
+     * @param bitmap The bitmap to compress.
+     * @param file The file to save the compressed bitmap.
+     * @param maxFileSize The maximum file size in KB.
+     * @throws IOException If an error occurs while saving the file.
+     */
+    private fun saveCompressedBitmap(bitmap: Bitmap, file: File, maxFileSize: Int = 1000) {
+        var quality = 90
+        var compressedBitmap: ByteArray? = null
+        val outputStream = ByteArrayOutputStream()
+
+        do {
+            outputStream.reset() // Reset the stream for each compression attempt
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
+            compressedBitmap = outputStream.toByteArray()
+            val currentFileSize = compressedBitmap.size / 1024 // Convert size to KB
+
+            // If the image size is less than or equal to maxFileSize KB, stop compressing
+            if (currentFileSize <= maxFileSize) {
+                break
+            }
+
+            quality -= 5 // Reduce quality to reduce file size
+        } while (quality > 0)
+
+        // Save the compressed image to file
+        FileOutputStream(file).use {
+            it.write(compressedBitmap)
+        }
+
+        // Print the compressed image size
+        val finalFileSize = file.length() / 1024 // Size in KB
+        Log.d("ImageSize", "Compressed image size: ${finalFileSize}KB")
+        println("Compressed image size: ${finalFileSize}KB")
+    }
+
+    /**
+     * Creates and saves a compressed image to a file.
+     * @param context The context to access external files.
+     * @param imageUri The URI of the image to be compressed.
+     * @param maxFileSize The maximum file size in bytes.
+     */
+    private fun createAndSaveCompressedImage(context: Context, imageUri: Uri, maxFileSize: Int): File? {
+        val file = createImageFile(context) ?: return null
+        val bitmap = getCorrectedBitmap(imageUri, context)
+
+        try {
+            saveCompressedBitmap(bitmap, file, maxFileSize / 1024) // Convert to KB
+            // Get the file size in kilobytes (KB)
+            val fileSizeInKB = file.length() / 1024
+            Log.d("ImageSize", "Compressed image size: ${fileSizeInKB}KB")
+            println("Compressed image size: ${fileSizeInKB}KB")  // Prints the size in console
+        } catch (e: IOException) {
+            e.printStackTrace()
+            return null
+        }
+        return file
     }
 
     fun getRealPathFromUri(imageUri: Uri): String? {

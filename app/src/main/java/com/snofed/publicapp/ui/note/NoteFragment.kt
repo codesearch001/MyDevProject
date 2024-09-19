@@ -22,7 +22,7 @@ class NoteFragment : Fragment() {
 
     private var _binding: FragmentNoteBinding? = null
     private val binding get() = _binding!!
-    private val noteViewModel by viewModels<NoteViewModel>()
+    //private val noteViewModel by viewModels<NoteViewModel>()
     private var note: NoteResponse? = null
 
     override fun onCreateView(
@@ -35,12 +35,12 @@ class NoteFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setInitialData()
-        bindHandlers()
-        bindObservers()
+//        setInitialData()
+//        bindHandlers()
+//        bindObservers()
     }
 
-    private fun bindObservers() {
+   /* private fun bindObservers() {
         noteViewModel.statusLiveData.observe(viewLifecycleOwner, Observer {
             when (it) {
                 is NetworkResult.Success -> {
@@ -86,7 +86,7 @@ class NoteFragment : Fragment() {
         else{
             binding.addEditText.text = resources.getString(R.string.add_note)
         }
-    }
+    }*/
 
 
     override fun onDestroyView() {

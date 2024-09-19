@@ -17,10 +17,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.snofed.publicapp.HomeDashBoardActivity
 import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.FragmentLoginBinding
+import com.snofed.publicapp.models.UserRecoverRequest
 import com.snofed.publicapp.models.UserRequest
+import com.snofed.publicapp.models.UserResponse
 import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.TokenManager
+import com.snofed.publicapp.utils.isEmailValid
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -34,6 +37,8 @@ class LoginFragment : Fragment() {
     private lateinit var googleSignInClient: GoogleSignInClient
     private val RC_SIGN_IN = 9001
     private lateinit var callbackManager: CallbackManager
+    // Define a nullable property for the observer
+    private var loginObserver: Observer<NetworkResult<UserResponse>>? = null
 
     @Inject
     lateinit var tokenManager: TokenManager
@@ -49,7 +54,8 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        init()
+        //bindObservers() // Move observer binding here to ensure it's ready to listen
 
         binding.txtSignUp.setOnClickListener {
             // it.findNavController().popBackStack()
@@ -58,196 +64,129 @@ class LoginFragment : Fragment() {
 
         binding.forgotText.setOnClickListener {
             it.findNavController().navigate(R.id.recoverFragment)
-            //it.findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
-            /*val intent = Intent(requireActivity(), HomeDashBoardActivity::class.java)
-            startActivity(intent)*/
+
         }
 
-        binding.btnLogin.setOnClickListener {
-            Helper.hideKeyboard(it)
-            val validationResult = validateUserInput()
-            if (validationResult.first) {
-                val userRequest = getUserRequest()
-                authViewModel.loginUser(userRequest)
-            } else {
-                showValidationErrors(validationResult.second)
+    }
+
+    private fun init() {
+        binding.btnLogin.setOnClickListener{
+            if (validateFields()) {
+                handleLogin() // Only attempt login if validation passes
             }
         }
-        bindObservers()
-    }
-       /* // Initialize Facebook SDK
-        FacebookSdk.sdkInitialize(requireActivity().applicationContext)
-        AppEventsLogger.activateApp(requireActivity().application)
-
-        // Initialize Facebook Callback Manager
-        callbackManager = com.facebook.CallbackManager.Factory.create()
-
-        // Configure Google Sign-In
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestEmail()
-            .build()
-
-        googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
-
-        // Set up Google Sign-In button
-        binding.googleSignInButton.setOnClickListener {
-            signInWithGoogle()
-        }
-
-        // Set up custom Facebook Login button
-        binding.facebookLoginButton.setOnClickListener {
-            loginWithFacebook()
-        }
     }
 
-    private fun signInWithGoogle() {
-        try {
-            val signInIntent: Intent = googleSignInClient.signInIntent
-            startActivityForResult(signInIntent, RC_SIGN_IN)
-        } catch (e: Exception) {
-            Log.e("GoogleSignIn", "Error starting Google Sign-In: ${e.message}")
-            // Handle the error (e.g., show an error message to the user)
-        }
-    }
+    // Validation logic to ensure fields are correctly filled out
+    private fun validateFields(): Boolean {
+        val email = binding.emailEditText.text.toString().trim()
+        val password = binding.passwordEditText.text.toString().trim()
 
-    private fun loginWithFacebook() {
-        try {
-            LoginManager.getInstance().logInWithReadPermissions(this, listOf("email", "public_profile"))
-            LoginManager.getInstance().registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
-                override fun onSuccess(loginResult: LoginResult) {
-                    // Handle successful Facebook login
-                    handleFacebookSignInResult(loginResult)
-                }
-
-                override fun onCancel() {
-                    Log.i("FacebookLogin", "Facebook login cancelled")
-                    // Handle Facebook login cancel (e.g., show a message to the user)
-                }
-
-                override fun onError(exception: FacebookException) {
-                    Log.e("FacebookLogin", "Facebook login error: ${exception.message}")
-                    // Handle Facebook login error (e.g., show an error message to the user)
-                }
-            })
-        } catch (e: Exception) {
-            Log.e("FacebookLogin", "Error starting Facebook Login: ${e.message}")
-            // Handle the error (e.g., show an error message to the user)
-        }
-    }
-
-    private fun handleFacebookSignInResult(loginResult: LoginResult) {
-        // Get the access token
-        val accessToken = loginResult.accessToken
-
-        // Create a new GraphRequest
-        val request = GraphRequest.newMeRequest(
-            accessToken
-        ) { jsonObject, response ->
-            // Handle the response from the Graph API
-            try {
-                if (response.error != null) {
-                    Log.e("FacebookGraphRequest", "GraphRequest error: ${response.error.errorMessage}")
-                    // Handle GraphRequest error
-                } else {
-                    // Extract user data from jsonObject
-                    val id = jsonObject.optString("id")
-                    val name = jsonObject.optString("name")
-                    val email = jsonObject.optString("email")
-
-                    Log.i("FacebookGraphRequest", "ID: $id")
-                    Log.i("FacebookGraphRequest", "Name: $name")
-                    Log.i("FacebookGraphRequest", "Email: $email")
-
-                    // Handle the user data (e.g., update UI or send it to your backend)
-                }
-            } catch (e: Exception) {
-                Log.e("FacebookGraphRequest", "Error parsing GraphRequest response: ${e.message}")
-                // Handle parsing error
+        return when {
+            email.isEmpty() -> {
+                showToast(getString(R.string.please_enter_email_id))
+                false
             }
-        }
-
-        // Set the parameters for the GraphRequest
-        val parameters = Bundle()
-        parameters.putString("fields", "id,name,email")
-        request.parameters = parameters
-        request.executeAsync()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RC_SIGN_IN) {
-            val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                val account: GoogleSignInAccount = task.getResult(ApiException::class.java)
-                handleGoogleSignInResult(account)
-            } catch (e: ApiException) {
-                Log.w("GoogleSignIn", "signInResult:failed code=${e.statusCode}")
-                // Handle the error (e.g., show an error message to the user)
+            !email.isEmailValid() -> {
+                showToast(getString(R.string.please_enter_valid_email_id))
+                false
             }
-        }
-        callbackManager.onActivityResult(requestCode, resultCode, data)
-
-
-
-
-
-
-    }
-
-    private fun handleGoogleSignInResult(account: GoogleSignInAccount) {
-        // Extract user information from account
-        Log.i("GoogleSignIn", "User ID: ${account.id}")
-        Log.i("GoogleSignIn", "Email: ${account.email}")
-        Log.i("GoogleSignIn", "Display Name: ${account.displayName}")
-        // You can use the user information to authenticate with your backend or update the UI
-    }
-*/
-
-    private fun getUserRequest(): UserRequest {
-        return binding.run {
-            UserRequest(
-                txtEmail.text.toString(),
-                txtPassword.text.toString(),
-                true)
+            password.isEmpty() -> {
+                showToast(getString(R.string.t_h_enter_your_password)) // Empty password message
+                false
+            }
+            password.length < 6 -> {
+                showToast(getString(R.string.password_must_be_6_chars)) // Password length message
+                false
+            }
+            else -> true // Validation passed
         }
     }
 
-    @SuppressLint("StringFormatMatches")
-    private fun showValidationErrors(error: String) {
-        binding.txtError.text = String.format(resources.getString(R.string.txt_error_message, error))
+    // Helper method to display toast messages
+    private fun showToast(message: String) {
+        Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun validateUserInput(): Pair<Boolean, String> {
-        val emailAddress = binding.txtEmail.text.toString()
-        val password = binding.txtPassword.text.toString()
-        return authViewModel.validateLoginCredentials(emailAddress,  password, true)
+
+    // Handle login process after validation
+    private fun handleLogin() {
+        val email = binding.emailEditText.text.toString().trim()
+        val password = binding.passwordEditText.text.toString().trim()
+
+        binding.progressBar.isVisible = true
+        // Initialize and register the observer
+        loginObserver = createLoginObserver()
+        loginObserver?.let { observer ->
+            authViewModel.userResponseLiveData.observe(viewLifecycleOwner, observer)
+        }
+
+        authViewModel.loginUser(
+            userRequest = UserRequest(
+                email = email,
+                password = password,
+                rememberMe = true
+            )
+        )
+
     }
 
-    private fun bindObservers() {
-        authViewModel.userResponseLiveData.observe(viewLifecycleOwner, Observer {
+    // Method to create the observer
+    private fun createLoginObserver(): Observer<NetworkResult<UserResponse>> {
+        return Observer { response ->
             binding.progressBar.isVisible = false
-            when (it) {
+            when (response) {
                 is NetworkResult.Success -> {
-                    // tokenManager.saveToken(it.data!!.token)
-                    println("loginSuccess... " + it.data.toString())
-                    Toast.makeText(requireActivity(), it.data?.success.toString(), Toast.LENGTH_SHORT).show()
-                    // findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+                    Toast.makeText(requireActivity(), response.data?.success.toString(), Toast.LENGTH_SHORT).show()
                     val intent = Intent(requireActivity(), HomeDashBoardActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
+                    requireActivity().finish()
+
+                    // Remove the observer after handling the result
+                    authViewModel.userResponseLiveData.removeObserver(loginObserver!!)
+                    loginObserver = null
                 }
                 is NetworkResult.Error -> {
-                    // showValidationErrors(it.message.toString())
-
-                    Toast.makeText(requireActivity(), it.message.toString(), Toast.LENGTH_SHORT).show()
-
-                    println("login-response... " + it.message.toString())
+                    Toast.makeText(requireActivity(), response.message.toString(), Toast.LENGTH_SHORT).show()
+                    authViewModel.userResponseLiveData.removeObserver(loginObserver!!)
+                    loginObserver = null
                 }
-                is NetworkResult.Loading ->{
+                is NetworkResult.Loading -> {
                     binding.progressBar.isVisible = true
                 }
             }
-        })
+        }
     }
+
+    /*  private fun bindObservers() {
+          authViewModel.userResponseLiveData.observe(viewLifecycleOwner, Observer {
+              binding.progressBar.isVisible = false
+              when (it) {
+                  is NetworkResult.Success -> {
+
+                      println("loginSuccess... " + it.data.toString())
+                      Toast.makeText(requireActivity(), it.data?.success.toString(), Toast.LENGTH_SHORT).show()
+
+                      val intent = Intent(requireActivity(), HomeDashBoardActivity::class.java)
+                      intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                      startActivity(intent)
+
+                      // Optionally, finish the current activity to remove it from the back stack
+                      requireActivity().finish()
+                  }
+                  is NetworkResult.Error -> {
+
+                      Toast.makeText(requireActivity(), it.message.toString(), Toast.LENGTH_SHORT).show()
+
+                      println("login-response... " + it.message.toString())
+                  }
+                  is NetworkResult.Loading ->{
+                      binding.progressBar.isVisible = true
+                  }
+              }
+          })
+      }*/
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -27,6 +27,7 @@ import com.snofed.publicapp.models.browseSubClub.PublicData
 import com.snofed.publicapp.models.workoutfeed.Daum
 import com.snofed.publicapp.utils.Constants
 import com.snofed.publicapp.utils.DateTimeConverter
+import com.snofed.publicapp.utils.ServiceUtil
 
 /*class GalleryAdapter {}*/
 class GalleryAdapter():RecyclerView.Adapter<GalleryAdapter.GridViewHolder>() {
@@ -57,7 +58,7 @@ class GalleryAdapter():RecyclerView.Adapter<GalleryAdapter.GridViewHolder>() {
         if (reslult.path == "") {
             Glide.with(holder.imageViewGrid).load(R.drawable.gallery1).into(holder.imageViewGrid)
         } else {
-            Glide.with(holder.imageViewGrid).load(Constants.BASE_URL_IMAGE + reslult.path)
+            Glide.with(holder.imageViewGrid).load(ServiceUtil.BASE_URL_IMAGE + reslult.path)
                 .diskCacheStrategy(
                     DiskCacheStrategy.ALL
                 ).fitCenter()

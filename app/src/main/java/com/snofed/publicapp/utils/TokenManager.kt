@@ -8,6 +8,7 @@ import com.snofed.publicapp.utils.Constants.CLUB_DESC
 import com.snofed.publicapp.utils.Constants.CLUB_PUBLIC_ID
 import com.snofed.publicapp.utils.Constants.CLUB_TRAILS_ID
 import com.snofed.publicapp.utils.Constants.PREFS_TOKEN_FILE
+import com.snofed.publicapp.utils.Constants.RECORDING_WORKOUT_ID
 import com.snofed.publicapp.utils.Constants.USER_FIRST_NAME
 import com.snofed.publicapp.utils.Constants.USER_TOKEN
 import com.snofed.publicapp.utils.Constants.USER_USER_ID
@@ -85,5 +86,16 @@ class TokenManager @Inject constructor(@ApplicationContext context: Context) {
 
     fun getPublicUserId(): String? {
         return prefs.getString(CLUB_PUBLIC_ID, null)
+    }
+
+////save workout UDID
+    fun saveWorkoutUdId(uDID: String) {
+        val editor = prefs.edit()
+        editor.putString(RECORDING_WORKOUT_ID, uDID)
+        editor.apply()
+    }
+
+    fun getWorkoutUdId(): String? {
+        return prefs.getString(RECORDING_WORKOUT_ID, null)
     }
 }

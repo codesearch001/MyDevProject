@@ -15,6 +15,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.snofed.publicapp.R
 import com.snofed.publicapp.models.Client
 import com.snofed.publicapp.utils.Constants
+import com.snofed.publicapp.utils.ServiceUtil
 
 
 class BrowseClubListAdapter(private val listener: OnItemClickListener) : RecyclerView.Adapter<BrowseClubListAdapter.ClubViewHolder>() {
@@ -55,6 +56,7 @@ class BrowseClubListAdapter(private val listener: OnItemClickListener) : Recycle
                         it.publicName.lowercase().contains(filterPattern)
                     }
                 }
+
                 return filteredResults
             }
 
@@ -109,7 +111,7 @@ class BrowseClubListAdapter(private val listener: OnItemClickListener) : Recycle
             //Glide.with(holder.background_image).load(Constants.BASE_URL_IMAGE).into(holder.background_image)
         } else {
             Glide.with(holder.backgroundImage)
-                .load(Constants.BASE_URL_IMAGE + reslult.coverImagePath).diskCacheStrategy(
+                .load(ServiceUtil.BASE_URL_IMAGE + reslult.coverImagePath).diskCacheStrategy(
                 DiskCacheStrategy.ALL
             ).fitCenter()
                 .into(holder.backgroundImage)

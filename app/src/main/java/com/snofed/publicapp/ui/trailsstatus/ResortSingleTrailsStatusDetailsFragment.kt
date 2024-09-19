@@ -31,6 +31,7 @@ import com.snofed.publicapp.databinding.FragmentResortSingleTrailsStatusDetailsB
 import com.snofed.publicapp.ui.event.EventTrailsFeedAdapter
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.DateTimeConverter
+import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.TokenManager
@@ -134,10 +135,17 @@ class ResortSingleTrailsStatusDetailsFragment : Fragment(),EventTrailsFeedAdapte
                     }
 
                     binding.trailsName.text = name.toString()
-                    binding.idTxtLength.text = it.data?.data?.length.toString() + "m"
+                    //binding.idTxtLength.text = it.data?.data?.length.toString() + "m"
+                    binding.idTxtLength.text = Helper.m2Km(it.data?.data?.length?.toDouble()).toString() + " km"
                     dateTimeConverter.convertDateTime(it.data?.data?.lastPreparedDate!!)//convert data
                     val getDate = dateTimeConverter.dateandtimePart
-                    binding.idTxtDateTime.text = getDate
+
+                    if (getDate== null){
+                        binding.idTxtDateTime.text =resources.getString(R.string.trail_info_preparation_datete_not_yet_prepared)
+                    }else{
+                        binding.idTxtDateTime.text = getDate
+                    }
+                   // binding.idTxtDateTime.text = getDate
                     binding.idtxtRating.text = it.data.data.averageRating.toString()
                    binding.idRating.rating = it.data?.data?.averageRating!!.toFloat()
                     binding.tvReviewCount.text = "(" + it.data.data.trailRatings.count().toString() + ")"

@@ -4,7 +4,10 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.snofed.publicapp.api.UserAPI
+import com.snofed.publicapp.db.WorkoutResponse
+import com.snofed.publicapp.membership.model.BuyMembership
 import com.snofed.publicapp.models.NewClubData
+import com.snofed.publicapp.models.RideApiResponse
 import com.snofed.publicapp.models.TrailGraphData
 import com.snofed.publicapp.models.TrailPolyLinesResponse
 import com.snofed.publicapp.models.TrailsDetilsResponse
@@ -19,12 +22,14 @@ import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.TokenManager
+import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Response
 import javax.inject.Inject
+import javax.inject.Named
 
 
-class UserRepository @Inject constructor(private val userAPI: UserAPI? /*, private val roomRepository: RoomDbRepo*/) {
+class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: UserAPI?) {
     private val acceptLanguage = "en-US"
 
 
@@ -40,9 +45,17 @@ class UserRepository @Inject constructor(private val userAPI: UserAPI? /*, priva
     val clubLiveData: LiveData<NetworkResult<NewClubData>>
         get() = _clubLiveData
 
+    private val _userDashBoardLiveData = MutableLiveData<NetworkResult<FeedListResponse>>()
+    val userDashBoardLiveData: LiveData<NetworkResult<FeedListResponse>>
+        get() = _userDashBoardLiveData
+
     private val _subClubLiveData = MutableLiveData<NetworkResult<BrowseSubClubResponse>>()
     val subClubLiveData: LiveData<NetworkResult<BrowseSubClubResponse>>
         get() = _subClubLiveData
+
+    private val _membershipLiveData = MutableLiveData<NetworkResult<BuyMembership>>()
+    val membershipLiveData: LiveData<NetworkResult<BuyMembership>>
+        get() = _membershipLiveData
 
     private val _eventLiveData = MutableLiveData<NetworkResult<EventResponse>>()
     val eventLiveData: LiveData<NetworkResult<EventResponse>>
@@ -69,6 +82,11 @@ class UserRepository @Inject constructor(private val userAPI: UserAPI? /*, priva
     val userResponseLiveData: LiveData<NetworkResult<UserResponse>>
         get() = _userResponseLiveData
 
+
+    private val _userWorkoutRideLiveData = MutableLiveData<NetworkResult<RideApiResponse>>()
+    val userWorkoutRideLiveData: LiveData<NetworkResult<RideApiResponse>>
+        get() = _userWorkoutRideLiveData
+
     private val _trailsDetailsLiveData = MutableLiveData<NetworkResult<TrailsDetilsResponse>>()
     val trailsDetailsLiveData: LiveData<NetworkResult<TrailsDetilsResponse>>
         get() = _trailsDetailsLiveData
@@ -79,12 +97,14 @@ class UserRepository @Inject constructor(private val userAPI: UserAPI? /*, priva
         get() = _trailsDrawPolyLinesByIDLiveData
 
 
+    //REGISTER
     suspend fun registerUser(userRequest: UserRegRequest) {
         _userResponseLiveData.postValue(NetworkResult.Loading())
         val response = userAPI!!.register(acceptLanguage, userRequest)
         handleResponse(response)
     }
 
+    //LOGIN
     suspend fun loginUser(userRequest: UserRequest) {
         _userResponseLiveData.postValue(NetworkResult.Loading())
         val response = userAPI!!.signIn(acceptLanguage, userRequest)
@@ -98,7 +118,67 @@ class UserRepository @Inject constructor(private val userAPI: UserAPI? /*, priva
     }
 
 
+    //Start Ride Request
+  suspend fun workOutRideRequest(workoutRequest: List<WorkoutResponse>) {
+        _userWorkoutRideLiveData.postValue(NetworkResult.Loading())
+        val response = userAPI!!.workoutRide(acceptLanguage, workoutRequest)
+        handleResponse3(response)
+    }
 
+ /*   private fun handleResponse3(response: Response<UserRideResponse>) {
+            if (response.isSuccessful && response.body() != null) {
+                _userWorkoutRideLiveData.postValue(NetworkResult.Success(response.body()!!))
+                Log.e("loginResponsedddd", "loginResponseddd " + response.body())
+
+            } else if (response.errorBody() != null) {
+                val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+//                _userWorkoutRideLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+            } else {
+                _userWorkoutRideLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            }
+    }*/
+
+
+    private fun handleResponse3(response: Response<RideApiResponse>) {
+        if (response.isSuccessful && response.body() != null) {
+            _userWorkoutRideLiveData.postValue(NetworkResult.Success(response.body()!!))
+            Log.e("StartRide", "StartRideResponse " + response.body())
+
+        } else if (response.errorBody() != null) {
+            try {
+                val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+                val errorMessage = errorObj.optString("message", "Unknown Error")
+                _userWorkoutRideLiveData.postValue(NetworkResult.Error(response.body()?.message.toString()))
+                Log.e("StartRide", "StartRideResponse " + response.body()?.message)
+            } catch (e: JSONException) {
+                _userWorkoutRideLiveData.postValue(NetworkResult.Error("Error parsing error response"))
+                Log.e("handleResponse3", "JSON parsing error", e)
+            }
+        } else {
+            _userWorkoutRideLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+        }
+    }
+
+
+    suspend fun getUserDasBoard(userId: String) {
+        _userDashBoardLiveData.postValue(NetworkResult.Loading())
+        val response = userAPI!!.userDashBoard(acceptLanguage,userId)
+        Log.e("response", "clubResponse " + response)
+        if (response.isSuccessful && response.body() != null) {
+            // Save to Room database
+            //roomRepository.saveClients(response.body()!!)
+            // clientDatabase.clientDao().insertClient(response.body()!!.data.clients)
+            Log.e("jsonResponseData", "clubResponse " + response.body())
+            _userDashBoardLiveData.postValue(NetworkResult.Success(response.body()!!))
+
+
+        } else if (response.errorBody() != null) {
+            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+            _userDashBoardLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+        } else {
+            _userDashBoardLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+        }
+    }
 
     suspend fun getClub() {
         _clubLiveData.postValue(NetworkResult.Loading())
@@ -136,6 +216,8 @@ class UserRepository @Inject constructor(private val userAPI: UserAPI? /*, priva
             _subClubLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
     }
+
+
 
 
     suspend fun getEvent() {

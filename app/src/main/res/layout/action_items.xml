@@ -6,6 +6,7 @@
     android:layout_height="162dp"
     android:layout_margin="8dp"
     app:cardCornerRadius="8dp"
+    android:elevation="@dimen/_2sdp"
     app:cardElevation="4dp">
 
     <RelativeLayout
@@ -38,7 +39,7 @@
                     android:layout_width="wrap_content"
                     android:text="Activities\n"
                     android:textStyle="bold"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/_14sdp"
                     android:textColor="@color/white"
                     android:layout_height="wrap_content"/>
             </LinearLayout>

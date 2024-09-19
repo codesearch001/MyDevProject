@@ -12,7 +12,7 @@ package com.snofed.publicapp.models
 
 data class UserResponse(
     val success: Boolean,
-    val message: Any?,
+    val message: String?,
     val data: userData,
     val statusCode: Long,
     val totalItems: Long,

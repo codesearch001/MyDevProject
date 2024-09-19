@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-kapt")
+    id("realm-android")
+    id("kotlin-parcelize")
     id("com.google.dagger.hilt.android")
 }
 
@@ -65,14 +67,18 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.toasty)
 
-
+    implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.8.10") // Update with the version you use
     //implementation("com.github.pedroSG94.RootEncoder:library:2.4.3")
 
     //val hilt_version="2.44"
     // val hilt_version="2.38.1"
     //implementation("com.google.dagger:hilt-android:$hilt_version")
     //kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1") // Ensure this version matches the Kotlin plugin
+
     implementation ("com.intuit.sdp:sdp-android:1.1.1")
 
     implementation("com.google.dagger:hilt-android:2.48")
@@ -85,10 +91,13 @@ dependencies {
     implementation ("androidx.room:room-ktx:$room_version")
     kapt("androidx.room:room-compiler:$room_version")
 
+  /*  implementation("io.realm:realm-gradle-plugin:10.18.0")*/
+   // implementation ("io.realm:realm-android-library:10.13.0")
 
     val lifecycle_version = "2.5.0-beta01"
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-livedata-core:2.8.4")
 
 
     val retrofit_version = "2.9.0"
@@ -115,14 +124,14 @@ dependencies {
 
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
-    // Mapbox Maps SDK v11 (lower version)
+    //Mapbox Maps SDK v11 (lower version)
     implementation("com.mapbox.maps:android:11.4.0")
-
-    implementation ("com.mapbox.navigationcore:navigation:3.3.0")
+    implementation("com.mapbox.navigationcore:navigation:3.3.0")
     implementation("com.mapbox.mapboxsdk:mapbox-sdk-turf:5.9.0-alpha.1")
 
-    implementation ("com.google.android.gms:play-services-location:21.0.1")
 
+
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
     implementation ("com.google.android.gms:play-services-auth:20.5.0")
 
 

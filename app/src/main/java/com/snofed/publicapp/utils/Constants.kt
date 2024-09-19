@@ -3,8 +3,6 @@ package com.snofed.publicapp.utils
 object Constants {
     const val TAG = "SNOFED_TAG"
 
-    const val BASE_URL = "http://161.97.121.63:5000/api/"
-    const val BASE_URL_IMAGE = "http://161.97.121.63:5000"
     const val USER_TOKEN = "token"
     const val USER_FIRST_NAME = "fullName"
     const val USER_USER_ID = "id"
@@ -13,19 +11,22 @@ object Constants {
     const val CLUB_PUBLIC_ID = "feedId"
     const val CLUB_DESC = "description"
     const val PREFS_TOKEN_FILE = "prefs_token_file"
+    const val ACTIVITIES_ID = "43F56128-88AA-497D-2365-08D97E915295"
+    const val CATEGORY_ID= "9DD44008-DFD0-4517-A3FA-08D9BE2972B4"
+    const val RECORDING_WORKOUT_ID = "recording_workout_id"
+    const val MAX_HEIGHT_WIDTH: Int = 800
+
+    // DATETIME FORMAT
+    const val FIRST_TIME_APP_SYNC = "app_sync_for_a_first_time"
+
+    const val DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"//"yyyy-MM-dd'T'HH:mm:ss"
+
+    const val DATETIME_FORMAT_RETROFIT = "yyyy-MM-dd HH:mm:ss.SSS"
+
+    const val DATETIME_SERVER_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS"
 
 
-    const val REGISTER = "account/register-public-user"
-    const val LOGIN = "account/public-app/sign-in"
-    //const val RECOVER_PASSWORD = "account/forgot-password"
-    const val RECOVER_PASSWORD = "account/mobile-apps/forgot-password"
-    const val BROWSE_CLUB_LIST = "public-app/sync/system-data?HasProTrails=false"
-    const val BROWSE_CLUB_DETAILS= "public-app/sync/client?"
-    const val GET_ALL_FEEDS = "public-app/workouts/feed?"
-    const val GET_ALL_FEEDS_DETAILS= "public-app/workouts/{id}"
-    const val CLUB_EVENT= "public-app/sync/events"
-    const val CLUB_EVENT_DETAILS= "events/{id}"
-    const val CLUB_TRAILS_DETAILS= "public-app/sync/trail/{id}"
-    const val CLUB_TRAILS_DRAW_POLYLINES= "trails/getTrailPolyLinesOnRequest/{id}"
-    const val CLUB_TRAILS_CHART= "trails/get-graph-data/{id}"
+
+
+
 }

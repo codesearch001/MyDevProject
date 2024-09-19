@@ -46,6 +46,7 @@ import com.snofed.publicapp.models.workoutfeed.WorkoutPointResponse
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.DateTimeConverter
 import com.snofed.publicapp.utils.DrawerController
+import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.TokenManager
@@ -63,17 +64,19 @@ class MapFeedFragment : Fragment(){
     private val binding get() = _binding!!
     private val feedWorkoutViewModel by viewModels<AuthViewModel>()
     private val sharedViewModel by activityViewModels<SharedViewModel>()
+
     private var isGraphVisible = false
     private var publicUserId: String = ""
     private lateinit var mapView: MapView
     private lateinit var mapboxMap: MapboxMap
     val dateTimeConverter = DateTimeConverter()
-    var feeSpeed =""
-    val entries = ""
+
     @Inject
     lateinit var tokenManager: TokenManager
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMapFeedBinding.inflate(inflater, container, false)
+
         binding.humburger.setOnClickListener {
             (activity as? DrawerController)?.openDrawer()
         }
@@ -88,23 +91,7 @@ class MapFeedFragment : Fragment(){
     @SuppressLint("SuspiciousIndentation", "DefaultLocale")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //startCameraAnimation()
-        // Handle back press
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                // Check if there's any fragment in the back stack
-                if (requireFragmentManager().backStackEntryCount > 0) {
-                    // Pop the fragment from the back stack
-                    requireFragmentManager().popBackStack()
-                } else {
-                    // If no fragments in the back stack, you can exit the activity or perform another action
-                    // For example, exit the app:
-                    requireActivity().finish()
-                    // Or handle navigation to a specific fragment or screen
-                    // findNavController().navigate(R.id.someOtherFragment)
-                }
-            }
-        })
+
         binding.imgIdChartIcon.setOnClickListener {
             isGraphVisible = !isGraphVisible
             binding.rlGraphContainer.visibility = if (isGraphVisible) {
@@ -139,14 +126,15 @@ class MapFeedFragment : Fragment(){
 
                     binding.txtIdWorkoutType.text = data?.activity?.name ?: "N/A"
 
-                    binding.txtIdDistance.text = String.format("%.1f", data?.distance).toDouble().toString() + " m"
+                    binding.txtIdDistance.text = String.format("%.2f", (data?.distance?.div(1000))).toDouble().toString() + "km"
 
                     binding.txtCaloriesId.text = data?.calories.toString() ?: "N/A"
 
-                    binding.txtIdAveragePace.text = String.format("%.1f", data?.averagePace).toDouble().toString() + " min/km"
+                    binding.txtIdAveragePace.text = String.format("%.2f", data?.averagePace).toDouble().toString() + " min/km"
 
                     //binding.feedSpeed.text = dateTimeConverter.calculateSpeedFromPace(String.format("%.2f",data.averagePace).toDouble()).toString() + " km/h"
 
+                    val averageSpeed = calculateAverage(data.workoutPoints)
                     // Assuming `data.averagePace` is a number you want to format
                     val formattedPace = String.format("%.2f", data.averagePace)
 
@@ -157,7 +145,7 @@ class MapFeedFragment : Fragment(){
                     val speed = dateTimeConverter.calculateSpeedFromPace(paceAsDouble)
 
                     // Set the text with the speed formatted to two decimal places and "km/h"
-                    binding.feedSpeed.text = String.format("%.2f", speed) + " km/h"
+                    binding.feedSpeed.text = String.format("%.2f", averageSpeed) + " km/h"
 
 
                     if (data.activity.iconPath == "") {
@@ -175,14 +163,20 @@ class MapFeedFragment : Fragment(){
                     }
 
                     Log.d("feedWorkoutViewModel2 ", "workoutPoints" + workoutPoints)
-                    workoutPoints?.let { points ->
+                   /* workoutPoints?.let { points ->
                         drawRoute(points)
+                    }*/
+
+                    workoutPoints?.let { points ->
+                        if (points.isNotEmpty()) {
+                            drawRoute(points)
+                        } else {
+                            Log.e("MapFeedFragment", "Workout points list is empty")
+                        }
                     }
                     val workoutStartDate = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse(it.data.data.startTime) ?: Date()
 
                     setUpChart(it.data.data.workoutPoints,workoutStartDate)
-
-
 
                  //   processWorkoutPoints(it.data.data.workoutPoints, workoutStartDate)
 
@@ -198,6 +192,14 @@ class MapFeedFragment : Fragment(){
             }
         })
     }
+
+    private fun calculateAverage(workoutPoints: List<WorkoutPointResponse>): Double {
+        val sum = workoutPoints.sumOf { it.speed }
+        val average = if (workoutPoints.isNotEmpty()) sum / workoutPoints.size else 0.0
+
+        return Helper.round(average, 2)
+    }
+
 
     private fun setUpChart(workoutPoints: List<WorkoutPointResponse>, workoutStartDate: Date) {
         val entries = mutableListOf<Entry>()
@@ -363,33 +365,35 @@ class MapFeedFragment : Fragment(){
               )
   */
             // Add images to the map style
-           /* addImageToStyle(style, "circle-icon", R.drawable.star,12,12)
+            /* addImageToStyle(style, "circle-icon", R.drawable.star,12,12)
             addImageToStyle(style, "star-icon", R.drawable.star,12,12)*/
 
             // Calculate the bounding box to include the start and end points
-            val startPoint = workoutPoints.first()
-            val endPoint = workoutPoints.last()
+            if (workoutPoints.isNotEmpty()) {
+                val startPoint = workoutPoints.first()
+                val endPoint = workoutPoints.last()
 
-            val boundsBuilder = LatLngBounds.Builder()
-            boundsBuilder.include(startPoint.toLatLng())
-            boundsBuilder.include(endPoint.toLatLng())
-            val bounds = boundsBuilder.build()
+                val boundsBuilder = LatLngBounds.Builder()
+                boundsBuilder.include(startPoint.toLatLng())
+                boundsBuilder.include(endPoint.toLatLng())
+                val bounds = boundsBuilder.build()
 
-            // Add margin to the bounding box
-            val marginRatio = 1.0 // Adjust this ratio to fit your margin needs
-            val expandedBounds = expandBounds(bounds, marginRatio)
-            // Access the CameraAnimationsPlugin
-            val cameraAnimationsPlugin = mapView.camera
-            cameraAnimationsPlugin.easeTo(
-                CameraOptions.Builder()
-                    .center(expandedBounds.center.toPoint()) // Center the camera on the expanded bounding box center
-                    .zoom(calculateZoomLevel(expandedBounds)) // Set zoom level to fit the expanded bounding box
-                    .build(),
-                MapAnimationOptions.Builder()
-                    .startDelay(500)
-                    .duration(800) // Duration in milliseconds (e.g., 3 seconds)
-                    .build()
-            )
+                // Add margin to the bounding box
+                val marginRatio = 1.0 // Adjust this ratio to fit your margin needs
+                val expandedBounds = expandBounds(bounds, marginRatio)
+                // Access the CameraAnimationsPlugin
+                val cameraAnimationsPlugin = mapView.camera
+                cameraAnimationsPlugin.easeTo(
+                    CameraOptions.Builder()
+                        .center(expandedBounds.center.toPoint()) // Center the camera on the expanded bounding box center
+                        .zoom(calculateZoomLevel(expandedBounds)) // Set zoom level to fit the expanded bounding box
+                        .build(),
+                    MapAnimationOptions.Builder()
+                        .startDelay(500)
+                        .duration(800) // Duration in milliseconds (e.g., 3 seconds)
+                        .build()
+                )
+            }
         }
     }
 

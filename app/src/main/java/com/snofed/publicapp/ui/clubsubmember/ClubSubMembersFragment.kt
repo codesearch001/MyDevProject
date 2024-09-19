@@ -16,6 +16,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.snofed.publicapp.adapter.TabClubsSubMemAdapter
 import com.snofed.publicapp.databinding.FragmentClubSubMembersBinding
 import com.snofed.publicapp.ui.login.AuthViewModel
+import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.TokenManager
@@ -87,7 +88,7 @@ class ClubSubMembersFragment : Fragment() {
                         binding.idPublicName.text = it.data.data.publicName.toString()
                     }
                     binding.idTotalTrails.text = it.data?.data?.totalTrails.toString()
-                    binding.idTotalTrailsLength.text = it.data?.data?.totalTrailsLength.toString()
+                    binding.idTotalTrailsLength.text = Helper.m2Km(it.data?.data?.totalTrailsLength?.toDouble()).toString() + " km"
                     binding.idClientRating.text = it.data?.data?.clientRating.toString()
                     binding.idTotalRatings.text = it.data?.data?.totalRatings.toString()
                     description = it.data?.data?.publicData?.description.toString()
@@ -116,5 +117,11 @@ class ClubSubMembersFragment : Fragment() {
         clubViewModel.subClubRequestUser(tokenManager.getClientId().toString())
        // clubViewModel.subClubRequestUser(clubViewModel.mutableData.clientId.get().toString())
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 }
 

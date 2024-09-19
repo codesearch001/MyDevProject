@@ -1,5 +1,7 @@
 package com.snofed.publicapp.utils
 
+import android.net.Uri
+
 interface DrawerController {
     fun openDrawer()
 }
@@ -10,4 +12,8 @@ interface OnItemClickListener {
 
 interface DataPassListener {
     fun onDataPassed(data: String)
+}
+
+interface ImageUriCallback {
+    fun onImageUriReceived(uri: Uri)
 }

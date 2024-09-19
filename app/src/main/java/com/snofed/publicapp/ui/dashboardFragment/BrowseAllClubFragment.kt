@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -22,6 +23,7 @@ import com.snofed.publicapp.models.Client
 import com.snofed.publicapp.repository.UserRepository
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.NetworkResult
+import com.snofed.publicapp.utils.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -33,7 +35,7 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
     private val binding get() = _binding!!
     private val clubViewModel by viewModels<AuthViewModel>()
     private lateinit var clubAdapter: BrowseClubListAdapter
-
+    private val sharedViewModel by activityViewModels<SharedViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -53,7 +55,8 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
             when (it) {
                 is NetworkResult.Success -> {
                     // Log.i("it.data?.clients","it.data?.clients "+it.data?.data?.clients)
-                   // val data = it.data?.data?.clients
+                    //val data = it.data?.data?.clients
+                    sharedViewModel.browseClubResponse.value = it.data
 
                     val filteredClients = it.data?.data?.clients?.filter { client ->
                         client.visibility == 0

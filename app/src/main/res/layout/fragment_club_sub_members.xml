@@ -7,18 +7,13 @@
     <RelativeLayout
         android:id="@+id/idBrowseClube"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="@dimen/_138sdp">
 
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="@dimen/_138sdp"
             android:background="@drawable/club_submem_banner" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -87,13 +82,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/topIcon"
-            android:orientation="vertical"
-            android:padding="@dimen/marginMedium">
+            android:layout_marginStart="@dimen/_4sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/subClubTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_2sdp"
                 android:layout_marginTop="20dp">
 
                 <TextView
@@ -110,7 +107,7 @@
             <LinearLayout
                 android:id="@+id/title1"
                 android:layout_width="wrap_content"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:layout_height="wrap_content">
 
                 <LinearLayout
@@ -120,7 +117,7 @@
                     android:background="@drawable/rectangle_white_background"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:padding="2dp">
+                    android:padding="@dimen/_2sdp">
 
                     <TextView
                         android:id="@+id/idTotalTrails"
@@ -130,7 +127,7 @@
                         android:layout_marginRight="2dp"
                         android:text="0"
                         android:textColor="@color/blue_txt_light"
-                        android:textSize="8sp" />
+                        android:textSize="@dimen/_8sdp" />
 
                     <com.google.android.material.divider.MaterialDivider
                         android:layout_width="1dp"
@@ -145,7 +142,7 @@
                         android:layout_marginRight="2dp"
                         android:text="Trails"
                         android:textColor="@color/blue_txt_light"
-                        android:textSize="8sp" />
+                        android:textSize="@dimen/_8sdp" />
 
                 </LinearLayout>
 
@@ -165,7 +162,7 @@
                     android:background="@drawable/rectangle_white_background"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:padding="2dp">
+                    android:padding="@dimen/_2sdp">
 
                     <TextView
                         android:id="@+id/idTotalTrailsLength"
@@ -175,7 +172,7 @@
                         android:layout_marginRight="2dp"
                         android:text="0"
                         android:textColor="@color/blue_txt_light"
-                        android:textSize="8sp" />
+                        android:textSize="@dimen/_8sdp" />
 
                     <com.google.android.material.divider.MaterialDivider
                         android:layout_width="1dp"
@@ -190,7 +187,7 @@
                         android:layout_marginRight="2dp"
                         android:text="Length of all trails"
                         android:textColor="@color/blue_txt_light"
-                        android:textSize="8sp" />
+                        android:textSize="@dimen/_8sdp" />
 
                 </LinearLayout>
 
@@ -210,7 +207,7 @@
                     android:background="@drawable/rectangle_white_background"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:padding="2dp">
+                    android:padding="@dimen/_2sdp">
 
                     <TextView
                         android:id="@+id/idClientRating"
@@ -220,7 +217,7 @@
                         android:layout_marginRight="2dp"
                         android:text="0"
                         android:textColor="@color/blue_txt_light"
-                        android:textSize="8sp" />
+                        android:textSize="@dimen/_8sdp" />
 
                     <ImageView
                         android:layout_width="12dp"
@@ -237,7 +234,7 @@
                         android:layout_marginRight="2dp"
                         android:text="(0)"
                         android:textColor="@color/blue_txt_light"
-                        android:textSize="8sp" />
+                        android:textSize="@dimen/_8sdp" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

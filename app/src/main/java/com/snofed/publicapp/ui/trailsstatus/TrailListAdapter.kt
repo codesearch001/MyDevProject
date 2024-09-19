@@ -13,6 +13,7 @@ import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.TileViewListBinding
 import com.snofed.publicapp.models.browseSubClub.Trail
 import com.snofed.publicapp.utils.DateTimeConverter
+import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.enums.PageType
 
 class TrailListAdapter(private var trails: List<Trail>, private val onItemClick: (Trail) -> Unit, private val onMapClick: (Trail) -> Unit, private val pageType: PageType) : RecyclerView.Adapter<TrailListAdapter.TrailViewHolder>() {
@@ -48,7 +49,8 @@ class TrailListAdapter(private var trails: List<Trail>, private val onItemClick:
             pageType: PageType
         ) {
             binding.trailName.text = trail.name
-            binding.length.text = trail.length.toString() + " m"
+            //binding.length.text = trail.length.toString() + " m"
+            binding.length.text = Helper.m2Km(trail.length.toDouble()).toString() + " km"
 
             val dateTimeConverter = DateTimeConverter()//Date format
             dateTimeConverter.convertDateTime(trail.lastUpdateDate)//convert data

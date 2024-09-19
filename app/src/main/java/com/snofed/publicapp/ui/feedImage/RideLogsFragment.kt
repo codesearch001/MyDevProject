@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.WorkoutFeedAdapter
@@ -18,32 +19,37 @@ import com.snofed.publicapp.databinding.FragmentRideLogsBinding
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.DrawerController
 import com.snofed.publicapp.utils.NetworkResult
+import com.snofed.publicapp.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class RideLogsFragment : Fragment() {
     private var _binding: FragmentRideLogsBinding? = null
     private val binding get() = _binding!!
     private val feedViewModel by viewModels<AuthViewModel>()
-
+    private lateinit var feedAdapter: WorkoutRideLogFeedAdapter
+    @Inject
+    lateinit var tokenManager: TokenManager
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_ride_logs, container, false)
         _binding = FragmentRideLogsBinding.inflate(inflater, container, false)
-        binding.humburger.setOnClickListener { (activity as? DrawerController)?.openDrawer() }
+        binding.backBtn.setOnClickListener {
+            it.findNavController().popBackStack()
+        }
         return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         fetchResponse()
-        feedViewModel.feedLiveData.observe(viewLifecycleOwner, Observer {
+        feedViewModel.userDashBoardLiveData.observe(viewLifecycleOwner, Observer {
             binding.progressBar.isVisible = false
             when (it) {
                 is NetworkResult.Success -> {
                     val data = it.data?.data
                     if (data.isNullOrEmpty()) {
-                        //Log.i("it.data?.feed","it.data?.feed "+it.data?.data)
                         // Handle the "data not found" case
                         // Assuming this is inside a Fragment
                         it.data?.message?.let { message ->
@@ -53,28 +59,19 @@ class RideLogsFragment : Fragment() {
                             }
                         }
 
-//                        feedAdapter = WorkoutFeedAdapter(this)
-//                        binding.feedRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
-//                        binding.feedRecyclerView.adapter = feedAdapter
-//                        feedAdapter.setFeed(data)
+                        feedAdapter = WorkoutRideLogFeedAdapter()
+                        binding.feedRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
+                        binding.feedRecyclerView.adapter = feedAdapter
+                        feedAdapter.setFeed(data)
                     } else {
                         // Normal case: data is present
-                        Log.i("PraveenGallery22222", "Data: $data")
-//                        binding.tvSplashText.isVisible = false
-//                        feedAdapter = WorkoutFeedAdapter(this)
-//                        binding.feedRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
-//                        binding.feedRecyclerView.adapter = feedAdapter
-//                        //Log.i("it.data?.feed","it.data?.feed "+it.data?.data)
-//                        feedAdapter.setFeed(data)
+                        binding.tvSplashText.isVisible = false
+                        feedAdapter = WorkoutRideLogFeedAdapter()
+                        binding.feedRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
+                        binding.feedRecyclerView.adapter = feedAdapter
+                        feedAdapter.setFeed(data)
 
                     }
-
-//                    feedAdapter = WorkoutFeedAdapter(this)
-//                    binding.feedRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
-//                    binding.feedRecyclerView.adapter = feedAdapter
-//                    //Log.i("it.data?.feed","it.data?.feed "+it.data?.data)
-//                    feedAdapter.setFeed(it.data?.data)
-
                 }
                 is NetworkResult.Error -> {
                     Toast.makeText(requireActivity(), it.message.toString(), Toast.LENGTH_SHORT).show()
@@ -87,7 +84,8 @@ class RideLogsFragment : Fragment() {
     }
 
     private fun fetchResponse() {
-       // feedViewModel.feedRequestUser()
+        feedViewModel.userDashBoardRequestUser(tokenManager.getUserId().toString())
+        //feedViewModel.userDashBoardRequestUser("38bf9f83-c07e-4ac1-9910-96a9a5f2977d")
     }
 
 }

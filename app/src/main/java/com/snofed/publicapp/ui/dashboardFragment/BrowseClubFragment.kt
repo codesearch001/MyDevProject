@@ -7,8 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import com.google.android.material.tabs.TabLayoutMediator
 import com.snofed.publicapp.HomeDashBoardActivity
+import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.TabBrowseClubsAdapter
 import com.snofed.publicapp.databinding.FragmentBrowseClubBinding
 import com.snofed.publicapp.ui.login.AuthViewModel
@@ -30,6 +32,9 @@ class BrowseClubFragment : Fragment() {
         _binding = FragmentBrowseClubBinding.inflate(inflater, container, false)
         binding.humburger.setOnClickListener {
             (activity as? DrawerController)?.openDrawer()
+        }
+        binding.browseClubMapIcon.setOnClickListener {
+            it.findNavController().navigate(R.id.browseClubMapFragment)
         }
         // Initialize the tab layout and ViewPager
         val tabLayout = binding.tabLayout

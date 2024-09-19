@@ -54,7 +54,7 @@ class EventFragment : Fragment(),EventFeedAdapter.OnItemClickListener {
                 } else {
                     // If no fragments in the back stack, you can exit the activity or perform another action
                     // For example, exit the app:
-                    requireActivity().finish()
+                    //requireActivity().finish()
                     // Or handle navigation to a specific fragment or screen
                     // findNavController().navigate(R.id.someOtherFragment)
                 }
@@ -78,6 +78,7 @@ class EventFragment : Fragment(),EventFeedAdapter.OnItemClickListener {
                 }
 
                 is NetworkResult.Error -> {
+
                     Toast.makeText(requireActivity(), it.message.toString(), Toast.LENGTH_SHORT)
                         .show()
                 }

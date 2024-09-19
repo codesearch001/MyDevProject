@@ -5,6 +5,7 @@ import com.snofed.publicapp.models.NoteResponse
 import retrofit2.Response
 import retrofit2.http.*
 
+/*
 interface NoteAPI {
 
     @POST("/note")
@@ -21,4 +22,4 @@ interface NoteAPI {
         @Path("noteId") noteId: String,
         @Body noteRequest: NoteRequest
     ): Response<NoteResponse>
-}
+}*/

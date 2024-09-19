@@ -1,3 +1,4 @@
+/*
 package com.snofed.publicapp.repository
 
 import androidx.lifecycle.MutableLiveData
@@ -7,8 +8,9 @@ import com.snofed.publicapp.models.NoteResponse
 import com.snofed.publicapp.utils.NetworkResult
 import retrofit2.Response
 import javax.inject.Inject
+import javax.inject.Named
 
-class NoteRepository @Inject constructor(private val noteAPI: NoteAPI) {
+class NoteRepository @Inject constructor(@Named("NoteAPI") private val noteAPI: NoteAPI) {
 
     private val _notesLiveData = MutableLiveData<NetworkResult<List<NoteResponse>>>()
     val notesLiveData get() = _notesLiveData
@@ -54,4 +56,4 @@ class NoteRepository @Inject constructor(private val noteAPI: NoteAPI) {
             _statusLiveData.postValue(NetworkResult.Success(Pair(false, "Something went wrong")))
         }
     }
-}
+}*/

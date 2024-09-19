@@ -201,5 +201,40 @@
         android:id="@+id/browseAllClubFragmentTwo"
         android:name="com.snofed.publicapp.ui.dashboardFragment.BrowseAllClubFragmentTwo"
         android:label="BrowseAllClubFragmentTwo" />
+    <fragment
+        android:id="@+id/browseClubMapFragment"
+        android:name="com.snofed.publicapp.ui.dashboardFragment.BrowseClubMapFragment"
+        android:label="fragment_browse_club_map"
+        tools:layout="@layout/fragment_browse_club_map" />
+    <fragment
+        android:id="@+id/singleResortReportProblemChooseLocationFragment"
+        android:name="com.snofed.publicapp.ui.feedback.SingleResortReportProblemChooseLocationFragment"
+        android:label="SingleResortReportProblemChooseLocationFragment" />
+    <fragment
+        android:id="@+id/singleResortReportProblemFragment"
+        android:name="com.snofed.publicapp.ui.feedback.SingleResortReportProblemFragment"
+        android:label="SingleResortReportProblemFragment" />
+    <fragment
+        android:id="@+id/rideLogsFragment"
+        android:name="com.snofed.publicapp.ui.feedImage.RideLogsFragment"
+        android:label="fragment_ride_logs"
+        tools:layout="@layout/fragment_ride_logs" />
+
+    <fragment
+        android:id="@+id/feedBackDefaultCategoryListFragment"
+        android:name="com.snofed.publicapp.ui.feedback.FeedBackDefaultCategoryListFragment"
+        android:label="fragment_feed_back_default_category_list"
+        tools:layout="@layout/fragment_feed_back_default_category_list" />
+    <fragment
+        android:id="@+id/actionsFragment"
+        android:name="com.snofed.publicapp.ui.clubsubmember.ActionsFragment"
+        android:label="fragment_actions"
+        tools:layout="@layout/fragment_actions" />
+    <fragment
+        android:id="@+id/feedBackDetailsFragment"
+        android:name="com.snofed.publicapp.ui.feedback.FeedBackDetailsFragment"
+        android:label="fragment_feed_back_details"
+        tools:layout="@layout/fragment_feed_back_details" />
+
 
 </navigation>

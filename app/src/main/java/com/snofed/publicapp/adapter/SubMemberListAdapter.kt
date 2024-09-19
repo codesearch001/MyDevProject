@@ -18,6 +18,7 @@ import com.snofed.publicapp.models.Client
 import com.snofed.publicapp.models.browseSubClub.ParentOrganisation
 import com.snofed.publicapp.models.browseSubClub.SubOrganisation
 import com.snofed.publicapp.utils.Constants
+import com.snofed.publicapp.utils.ServiceUtil
 
 class SubMemberListAdapter(private val listener: OnItemClickListener):  RecyclerView.Adapter<SubMemberListAdapter.ClubViewHolder>() {
 
@@ -64,7 +65,7 @@ class SubMemberListAdapter(private val listener: OnItemClickListener):  Recycler
             //Glide.with(holder.background_image).load(Constants.BASE_URL_IMAGE).into(holder.background_image)
         } else {
             Glide.with(holder.backgroundImage)
-                .load(Constants.BASE_URL_IMAGE + reslult.logoPath).diskCacheStrategy(
+                .load(ServiceUtil.BASE_URL_IMAGE + reslult.logoPath).diskCacheStrategy(
                     DiskCacheStrategy.ALL
                 ).fitCenter()
                 .into(holder.backgroundImage)

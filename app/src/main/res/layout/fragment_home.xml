@@ -151,6 +151,7 @@
                 android:padding="@dimen/_14sdp">
 
                 <LinearLayout
+                    android:id="@+id/txtNoOfLog"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/_6sdp">
@@ -177,6 +178,7 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/txtIdNoOfLog"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
@@ -214,6 +216,7 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/txtIdTotalTime"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
@@ -268,6 +271,7 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/txtIdTotalDistance"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
@@ -305,6 +309,7 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/txtIdPreviousDistance"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
@@ -348,7 +353,7 @@
                     android:text="@string/t_purchase_history"
                     android:textAllCaps="false"
                     android:textColor="@android:color/holo_blue_light"
-                    android:textSize="@dimen/_12sdp"
+                    android:textSize="@dimen/_11sdp"
                     android:textStyle="bold"
                     android:theme="@style/homeButtonTheme" />
 
@@ -363,7 +368,7 @@
                     android:text="@string/t_memberships"
                     android:textAllCaps="false"
                     android:textColor="@android:color/holo_blue_light"
-                    android:textSize="@dimen/_12sdp"
+                    android:textSize="@dimen/_11sdp"
                     android:textStyle="bold"
                     android:theme="@style/homeButtonTheme" />
             </LinearLayout>
@@ -447,6 +452,7 @@
             android:layout_marginTop="@dimen/_12sdp"
             android:contentDescription="Profile Image"
             android:elevation="@dimen/_2sdp"
+            android:fadingEdgeLength="@dimen/_4sdp"
             android:scaleType="fitCenter"
             android:src="@drawable/start_btn" />
     </LinearLayout>

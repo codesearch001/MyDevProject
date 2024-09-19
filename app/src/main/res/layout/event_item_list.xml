@@ -9,7 +9,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/idBrowseClub"
-        android:layout_margin="@dimen/marginLarge"
+        android:layout_marginTop="@dimen/_6sdp"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:layout_marginEnd="@dimen/_8sdp"
         android:orientation="vertical">
 
         <androidx.cardview.widget.CardView

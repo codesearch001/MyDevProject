@@ -16,7 +16,7 @@
             android:background="@drawable/feed_bg"/>
 
         <LinearLayout
-            android:id="@+id/humburger"
+            android:id="@+id/backBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
@@ -27,7 +27,7 @@
                 android:background="@drawable/circle_white_background"
                 android:padding="8dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/menu" />
+                android:src="@drawable/back_btn" />
         </LinearLayout>
 
 
@@ -35,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="48dp"
-            android:layout_below="@+id/humburger">
+            android:layout_below="@+id/backBtn">
 
             <TextView
                 android:layout_width="match_parent"

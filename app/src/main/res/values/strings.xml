@@ -66,21 +66,27 @@
     <string name="resume">Resume</string>
     <string name="Save">Save</string>
     <string name="remember_me">Remember me</string>-->
-
+    <string name="please_enter_email_id">Please enter email Id</string>
+    <string name="please_enter_valid_email_id">Please enter valid email Id</string>
     <!--Common Edit hint text-->
     <string name="t_h_enter_your_name">Enter your name</string>
     <string name="t_h_enter_your_email">Enter your email</string>
     <string name="t_h_enter_your_password">Enter your password</string>
+    <string name="password_must_be_6_chars">Password must be at least 6 characters</string>
     <string name="t_h_enter_your_re_password">Repeat your password</string>
     <string name="t_h_enter_your_new_password">Enter your new password</string>
+    <string name="t_h_passwords_do_not_match">Passwords do not match</string>
     <string name="t_h_enter_your_re_new_password">Repeat your new password</string>
     <string name="t_h_enter_your_verify_code">Enter verification code</string>
     <string name="t_new_password">New password</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
 
-   <!-- <string name="t_h_email">dev@systaina.com</string>
-        <string name="t_h_pass">Admin123!!</string>-->
+    <string name="t_h_email">dev@systaina.com</string>
+    <string name="t_h_pass">Admin123!!</string>
+    <string name="t_please_enter_description">Please enter description</string>
+    <!-- <string name="t_h_pass">miD@3042</string>-->
+
 
     <!--Login-->
     <string name="t_s_Log_In_with_Facebook">Log In with Facebook</string>
@@ -148,7 +154,7 @@
     <string name="membership">MEMBERSHIP</string>
     <string name="buy_memberships">Buy Memberships</string>
     <string name="Activate_memberships">Activate Memberships</string>
-    <string name="show_benefits">Show benefits (3)</string>
+    <string name="show_benefits">Show benefits (0)</string>
 
     <!--Become a Mem-->
     <string name="first_name">FIRST NAME</string>
@@ -174,4 +180,58 @@
     <string name="t_h_enter_your_fname">Enter your first Name</string>
     <string name="t_h_enter_your_lname">Enter your last Name</string>
 
+    <string name="report_problem_confirm_and_send_btn">Confirm &amp; Send</string>
+    <string name="report_problem_choose_location_btn">Choose Location</string>
+    <string name="trail_info_preparation_datete_not_yet_prepared">Not yet prepared</string>
+
+
+    <!-- PREFERENCES -->
+    <string name="pref_theme_title">Theme</string>
+    <string name="pref_user_name">First name</string>
+    <string name="pref_user_last_name">Last name</string>
+    <string name="pref_set_user_name">Set first name</string>
+    <string name="pref_set_user_last_name">Set last name</string>
+    <string-array name="pref_theme_items">
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+
+    <string name="pref_autopause_speed_title">Auto pause speed</string>
+    <string-array name="pref_autopause_speed_items">
+        <item>2 km/h</item>
+        <item>4 km/h</item>
+    </string-array>
+
+    <string name="pref_sync_on_wifi_title">Sync on WiFi only</string>
+    <string name="pref_sync_on_wifi_summary_on">Sync will be performed over WiFi only.</string>
+    <string name="pref_sync_on_wifi_summary_off">Sync both on WiFi and mobile network.</string>
+    <string name="pref_units_title">Units</string>
+    <string-array name="pref_units_items">
+        <item>Metric</item>
+        <item>Imperial</item>
+    </string-array>
+    <string name="not_available">N/A</string>
+    <string name="pref_units_speed_metric">km/h</string>
+    <string name="pref_units_speed_imperial">mph</string>
+    <string name="pref_units_dist_metric">km</string>
+    <string name="pref_units_dist_imperial">mi</string>
+    <string name="pref_units_pace_metric">min/km</string>
+    <string name="pref_units_pace_imperial">min/mi</string>
+    <string name="pref_screen_on_wifi_title">Screen always ON during workout</string>
+    <string name="pref_screen_on_wifi_summary_on">Screen is always on.</string>
+    <string name="pref_screen_on_wifi_summary_off">Screen turns off automaticaly.</string>
+    <string name="pref_userdata_title">User information</string>
+    <string name="pref_gender_title">Gender</string>
+    <string-array name="pref_gender_items">
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+
+    <string name="pref_user_weight_title">Enter user weight in </string>
+    <string name="pref_user_weight_summary">User weight in kg</string>
+    <string name="pref_user_kg_units"> kgs</string>
+    <string name="pref_user_lbs_units"> lbs</string>
+    <string name="pref_user_age_title">Age</string>
+    <string name="pref_user_age_summary">User age</string>
+    <string name="pref_privacy_policy">Privacy Policy Info</string>
 </resources>

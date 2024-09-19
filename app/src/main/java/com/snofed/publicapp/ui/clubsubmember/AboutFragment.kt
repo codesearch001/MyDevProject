@@ -32,10 +32,7 @@ class AboutFragment : Fragment() {
     // Create an instance of MyFunctions
     private val myFunctions = AccessFunctions()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_about, container, false)
         _binding = FragmentAboutBinding.inflate(inflater, container, false)

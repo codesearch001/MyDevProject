@@ -16,6 +16,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.snofed.publicapp.R
 import com.snofed.publicapp.models.workoutfeed.Daum
 import com.snofed.publicapp.utils.DateTimeConverter
+import com.snofed.publicapp.utils.Helper
 
 
 class WorkoutFeedAdapter(private val listener: OnItemClickListener) : RecyclerView.Adapter<WorkoutFeedAdapter.ClubViewHolder>() {
@@ -49,13 +50,21 @@ class WorkoutFeedAdapter(private val listener: OnItemClickListener) : RecyclerVi
         //val reslult=holder.bind(outerArray[position])
         val reslult = feedArray[position]
         holder.feedName.text = reslult.publisherFullname
-        holder.feedDistance.text = String.format("%.1f", reslult.distance).toDouble().toString() + " m"
+
+        //holder.feedDistance.text = String.format("%.1f", reslult.distance).toDouble().toString() + " m"
+        holder.feedDistance.text = String.format("%.2f", Helper.m2Km(reslult.distance)).toDouble().toString() + " km"
+
         val formattedDateTimeHMS = dateTimeConverter.formatSecondsToHMS(reslult.duration)
         holder.feedDuration.text = formattedDateTimeHMS
         val formattedDateTime = dateTimeConverter.convertDateTime(reslult.startTime)
         holder.feedStartTime.text = dateTimeConverter.datePart
         holder.feedTime.text = dateTimeConverter.timePart
-        holder.activityType.text = reslult.activity.name
+        if(reslult.activity.name == "" ){
+            holder.activityType.text = "N/A"
+            }else{
+            holder.activityType.text = reslult.activity.name
+        }
+
         //println(timePart)
         println(formattedDateTime) // Output: "Jul 24, 2024, 14:30 h"
         println("Parsed LocalDateTime: ${formattedDateTime}")

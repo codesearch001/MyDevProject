@@ -3,18 +3,18 @@ package com.snofed.publicapp.ui.login
 
 import android.text.TextUtils
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.snofed.publicapp.db.RoomDbRepo
-import com.snofed.publicapp.models.Client
-import com.snofed.publicapp.models.DataResponse
+import com.snofed.publicapp.db.WorkoutResponse
+import com.snofed.publicapp.membership.model.BuyMembership
 import com.snofed.publicapp.models.NewClubData
+import com.snofed.publicapp.models.RideApiResponse
 import com.snofed.publicapp.models.TrailGraphData
 import com.snofed.publicapp.models.TrailPolyLinesResponse
 import com.snofed.publicapp.models.TrailsDetilsResponse
 import com.snofed.publicapp.models.UserRecoverRequest
 import com.snofed.publicapp.models.UserRegRequest
+import com.snofed.publicapp.models.UserReport
 import com.snofed.publicapp.models.UserRequest
 import com.snofed.publicapp.models.UserResponse
 import com.snofed.publicapp.models.browseSubClub.BrowseSubClubResponse
@@ -22,7 +22,14 @@ import com.snofed.publicapp.models.events.EventDetailsResponse
 import com.snofed.publicapp.models.events.EventResponse
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
+import com.snofed.publicapp.repository.MembershipRepository
+import com.snofed.publicapp.repository.UserFeedBackRepository
 import com.snofed.publicapp.repository.UserRepository
+import com.snofed.publicapp.ui.feedback.FeedApiResponse
+import com.snofed.publicapp.ui.feedback.adapter.FeedBackDetails
+import com.snofed.publicapp.ui.feedback.model.FeedBackCategories
+import com.snofed.publicapp.ui.feedback.model.FeedBackTaskCategories
+import com.snofed.publicapp.ui.feedback.model.FeedBackTaskCategoriesResponse
 import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.MutableData
 import com.snofed.publicapp.utils.NetworkResult
@@ -31,32 +38,44 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthViewModel @Inject constructor(private val userRepository: UserRepository /*private val roomRepo: RoomDbRepo,*/) :
+class AuthViewModel @Inject constructor(private val userRepository: UserRepository,
+                                        private val feedBackRepository: UserFeedBackRepository,
+                                        private val membershipRepository: MembershipRepository
+
+) :
     ViewModel() {
 
     var mutableData = MutableData()
-
-    /*  private val _clients = MutableLiveData<List<Client>>()
-      val clients: LiveData<List<Client>> get() = _clients
-
-      fun fetchClients() {
-          viewModelScope.launch {
-              try {
-                  val clientList = roomRepo.getClients()
-                  _clients.postValue(clientList)
-              } catch (e: Exception) {
-                  // Handle exceptions or show error state
-                  _clients.postValue(emptyList())
-              }
-          }
-          }*/
 
 
     val userResponseLiveData: LiveData<NetworkResult<UserResponse>>
         get() = userRepository.userResponseLiveData
 
+    val userWorkoutRideLiveData: LiveData<NetworkResult<RideApiResponse>>
+        get() = userRepository.userWorkoutRideLiveData
+
+   val userFeedBackResponseLiveData: LiveData<NetworkResult<FeedApiResponse>>
+        get() = feedBackRepository.userFeedBackResponseLiveData
+
+ val feedBackTaskCategoriesLiveData: LiveData<NetworkResult<FeedBackTaskCategories>>
+        get() = feedBackRepository.feedBackTaskCategoriesLiveData
+
+    val membershipResponseLiveData: LiveData<NetworkResult<BuyMembership>>
+        get() = membershipRepository.membershipResponseLiveData
+
+
+
+    val feedBackTaskByCategoriesIDLiveData: LiveData<NetworkResult<FeedBackCategories>>
+        get() = feedBackRepository.feedBackTaskByCategoriesIDLiveData
+
+    val feedBackTaskDetailsLiveData: LiveData<NetworkResult<FeedBackDetails>>
+        get() = feedBackRepository.feedBackTaskDetailsLiveData
+
     val clubLiveData: LiveData<NetworkResult<NewClubData>>
         get() = userRepository.clubLiveData
+
+    val userDashBoardLiveData: LiveData<NetworkResult<FeedListResponse>>
+        get() = userRepository.userDashBoardLiveData
 
     val subClubLiveData: LiveData<NetworkResult<BrowseSubClubResponse>>
         get() = userRepository.subClubLiveData
@@ -84,10 +103,6 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
         get() = userRepository.eventDetailsGraphLiveData
 
 
-//    val clubLiveData get() = userRepository.clubLiveData
-    /*  val clubResponseLiveData: LiveData<NewClubData>
-          get() = userRepository.clubListResponseLiveData*/
-
     fun registerUser(userRequest: UserRegRequest) {
         viewModelScope.launch {
             userRepository.registerUser(userRequest)
@@ -100,15 +115,61 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
         }
     }
 
+    //RECOVER_PASSWORD
     fun recoverPassword(userRequest: UserRecoverRequest) {
         viewModelScope.launch {
             userRepository.recoverPassword(userRequest)
         }
     }
 
+ fun userReportRequest(userRequest: List<UserReport>) {
+        viewModelScope.launch {
+            feedBackRepository.userReportRequest(userRequest)
+        }
+    }
+
+    fun getFeedBackTaskCategories() {
+        viewModelScope.launch {
+            feedBackRepository.getFeedBackTaskCategories()
+        }
+    }
+
+    fun getTaskByCategoriesID(categoriesID: String) {
+        viewModelScope.launch {
+            feedBackRepository.getTaskByCategoriesID(categoriesID)
+        }
+    }
+
+    fun getTaskDetails(feedBackID: String) {
+        viewModelScope.launch {
+            feedBackRepository.getTaskDetails(feedBackID)
+        }
+    }
+
+
+    fun getMembership(clientId: String) {
+        viewModelScope.launch {
+            membershipRepository.getMembership(clientId)
+        }
+    }
+
+
+    //Start Ride Request
+    fun workOutRideRequest(workoutRequest: List<WorkoutResponse>) {
+        viewModelScope.launch {
+            userRepository.workOutRideRequest(workoutRequest)
+        }
+    }
+
     fun clubRequestUser() {
         viewModelScope.launch {
             userRepository.getClub()
+        }
+    }
+
+    fun userDashBoardRequestUser(userid: String) {
+        viewModelScope.launch {
+            userRepository.getUserDasBoard(userid)
             //userRepository.saveData(userRepository)
         }
     }
@@ -154,6 +215,9 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
             userRepository.getFeedClub()
         }
     }
+
+
+
 
     fun feedWorkoutRequestUser(workoutId: String) {
         viewModelScope.launch {

@@ -16,13 +16,17 @@ import com.snofed.publicapp.databinding.FragmentActionsBinding
 import com.snofed.publicapp.models.browseclubaction.GridItem
 import com.snofed.publicapp.utils.OnItemClickListener
 import com.snofed.publicapp.utils.ToastUtils
+import com.snofed.publicapp.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ActionsFragment : Fragment(),OnItemClickListener {
 
     private var _binding: FragmentActionsBinding? = null
     private val binding get() = _binding!!
+    @Inject
+    lateinit var tokenManager: TokenManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,6 +40,13 @@ class ActionsFragment : Fragment(),OnItemClickListener {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.becomeMemberButton.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("clientId", tokenManager.getClientId().toString())
+            val destination = R.id.buyMembershipFragment
+            findNavController().navigate(destination, bundle)
+        }
 
         binding.goexplore.setOnClickListener {
             findNavController().navigate(R.id.mapExploreFragment)

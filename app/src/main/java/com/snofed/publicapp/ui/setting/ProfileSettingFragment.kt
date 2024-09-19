@@ -15,18 +15,20 @@ import android.app.Activity
 import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.provider.MediaStore
+import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
+import com.snofed.publicapp.utils.ImageUriCallback
 import com.snofed.publicapp.utils.MediaReader
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class ProfileSettingFragment : Fragment() {
+class ProfileSettingFragment : Fragment(),ImageUriCallback {
     private var _binding: FragmentProfileSettingBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var mediaReader: MediaReader
-
+    private var imageView: ImageView? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -37,7 +39,7 @@ class ProfileSettingFragment : Fragment() {
         val view = binding.root
 
         // Initialize MediaReader with this fragment
-        mediaReader = MediaReader(this)
+        mediaReader = MediaReader(this,this)
         mediaReader.setImageView(binding.profileImageView)
 
         // Set click listener on ImageView
@@ -66,5 +68,9 @@ class ProfileSettingFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onImageUriReceived(uri: Uri) {
+        imageView?.setImageURI(uri)
     }
 }

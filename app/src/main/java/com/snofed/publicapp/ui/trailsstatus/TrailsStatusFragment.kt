@@ -14,6 +14,7 @@ import com.snofed.publicapp.adapter.TabPurchaseHistoryAdapter
 import com.snofed.publicapp.adapter.TabTrailsTileStatusAdapter
 import com.snofed.publicapp.databinding.FragmentPurchaseHistoryBinding
 import com.snofed.publicapp.databinding.FragmentTrailsStatusBinding
+import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -62,7 +63,8 @@ class TrailsStatusFragment : Fragment() {
         sharedViewModel.browseSubClubResponse.observe(viewLifecycleOwner) { response ->
             response?.data?.trails.let {
                 binding.txtTotalTrails.text = response.data.totalTrails.toString()
-                binding.txtTotalLength.text = response.data.totalTrailsLength.toString()
+                //binding.txtTotalLength.text = response.data.totalTrailsLength.toString()
+                binding.txtTotalLength.text = Helper.m2Km(response.data.totalTrailsLength?.toDouble()).toString() + " km"
 
             }
         }

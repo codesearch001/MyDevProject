@@ -31,6 +31,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.snofed.publicapp.R
 import com.snofed.publicapp.utils.Constants
+import com.snofed.publicapp.utils.ServiceUtil
 
 @AndroidEntryPoint
 class SingleEventDetailsFragment : Fragment() {
@@ -113,7 +114,7 @@ class SingleEventDetailsFragment : Fragment() {
                                 .into(binding.imgEventBannerImagePath)
                         } else {
                             Glide.with(binding.imgEventBannerImagePath)
-                                .load(Constants.BASE_URL_IMAGE + it.data.data.coverImagePath )
+                                .load(ServiceUtil.BASE_URL_IMAGE + it.data.data.coverImagePath )
                                 .diskCacheStrategy(DiskCacheStrategy.ALL).fitCenter().into(binding.imgEventBannerImagePath)
                         }
 

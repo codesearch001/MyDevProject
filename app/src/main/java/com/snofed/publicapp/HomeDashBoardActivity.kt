@@ -37,7 +37,7 @@ class HomeDashBoardActivity : AppCompatActivity(), DrawerController {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Set up full-screen mode
-        enterFullScreenMode()
+        //enterFullScreenMode()
         //setContentView(R.layout.activity_main_home)
         binding = ActivityMainHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -150,6 +150,12 @@ class HomeDashBoardActivity : AppCompatActivity(), DrawerController {
                 R.id.resortSingleTrailsStatusDetailsFragment -> hideBottomNav()
                 R.id.customDialogFragmentFragment -> hideBottomNav()
                 R.id.clubEventFragment -> hideBottomNav()
+                R.id.browseClubMapFragment -> hideBottomNav()
+                R.id.singleResortReportProblemChooseLocationFragment -> hideBottomNav()
+                R.id.singleResortReportProblemFragment -> hideBottomNav()
+                R.id.rideLogsFragment -> hideBottomNav()
+                R.id.feedBackDefaultCategoryListFragment -> hideBottomNav()
+                R.id.feedBackDetailsFragment -> hideBottomNav()
 
                 else -> showBottomNav()
             }

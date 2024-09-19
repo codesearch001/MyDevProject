@@ -11,8 +11,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.Button
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -20,6 +23,7 @@ import androidx.navigation.findNavController
 
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.material.bottomsheet.BottomSheetDialog
 
 import com.mapbox.geojson.BoundingBox
 import com.mapbox.geojson.Feature
@@ -52,6 +56,7 @@ import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.gestures.OnMapClickListener
 import com.snofed.publicapp.R
+import com.snofed.publicapp.databinding.BottomSheetApartmentsBinding
 import com.snofed.publicapp.databinding.FragmentMapExploreBinding
 import com.snofed.publicapp.databinding.FragmentMapFeedBinding
 import com.snofed.publicapp.models.browseSubClub.Area
@@ -128,7 +133,7 @@ class MapExploreFragment : Fragment() {
 
         binding.fab2.setOnClickListener {
             animateFab()
-            showCustomDialog()
+
             Toast.makeText(requireContext(), "folder click", Toast.LENGTH_SHORT).show()
         }
         binding.fab3.setOnClickListener {
@@ -392,7 +397,10 @@ class MapExploreFragment : Fragment() {
     private fun showCustomDialog() {
         // Inflate the custom layout
         val dialogView = layoutInflater.inflate(R.layout.approve_remove_dialog, null)
-
+        // Reference the button from the custom layout
+        val btnImgClose: ImageView = dialogView.findViewById(R.id.iv_close)
+        val btnLeaveFeedback: Button = dialogView.findViewById(R.id.btn_approve)
+        val btnCancel: Button = dialogView.findViewById(R.id.btn_remove)
         // Create the AlertDialog and set the custom layout
         val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogView)
@@ -400,19 +408,49 @@ class MapExploreFragment : Fragment() {
 
         // Set the dialog attributes
         dialog.show()
+        // Add a click listener for the 'Leave Feedback' button
+        btnImgClose.setOnClickListener {
+            // Perform action for leaving feedback
+            Toast.makeText(requireContext(), "btnImgClose", Toast.LENGTH_SHORT).show()
+            dialog.dismiss()  // Close the dialog after feedback submission
+        }
 
+        // Add a click listener for the 'Leave Feedback' button
+        btnLeaveFeedback.setOnClickListener {
+            // Perform action for leaving feedback
+            Toast.makeText(requireContext(), "Feedback Submitted", Toast.LENGTH_SHORT).show()
+            dialog.dismiss()  // Close the dialog after feedback submission
+        }
 
-        /*   submitButton.setOnClickListener {
-               val input = dialogView.findViewById<EditText>(R.id.dialogInput).text.toString()
-               Toast.makeText(requireContext(), "You entered: $input", Toast.LENGTH_SHORT).show()
-               dialog.dismiss()
-           }*/
+// Add a click listener for the 'Cancel' button
+        btnCancel.setOnClickListener {
+            // Perform action for canceling
+            Toast.makeText(requireContext(), "Action Cancelled", Toast.LENGTH_SHORT).show()
+            dialog.dismiss()  // Close the dialog on cancel
+        }
     }
 
     private fun showCustomDialog2() {
-        val customDialog = CustomDialogFragmentFragment()
-        customDialog.show(parentFragmentManager, "CustomDialogTag")
-
+//        val customDialog = CustomDialogFragmentFragment()
+//        customDialog.show(parentFragmentManager, "CustomDialogTag")
+        val bottomSheetDialog = BottomSheetDialog(requireContext(),R.style.TransparentBottomSheetDialog)
+        val bottomSheetViewBinding = DataBindingUtil.inflate<BottomSheetApartmentsBinding>(
+            layoutInflater,
+            R.layout.bottom_sheet_apartments,
+            null,
+            false)
+        bottomSheetViewBinding?.btnLeaveFeedback?.setOnClickListener {
+            showCustomDialog()
+            bottomSheetDialog.dismiss()
+        }
+        bottomSheetViewBinding?.btnCancel?.setOnClickListener {
+            bottomSheetDialog.dismiss()
+        }
+        bottomSheetViewBinding?.close?.setOnClickListener {
+            bottomSheetDialog.dismiss()
+        }
+        bottomSheetDialog.setContentView(bottomSheetViewBinding.root)
+        bottomSheetDialog.show()
     }
 
     private fun animateFab() {

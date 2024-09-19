@@ -84,7 +84,7 @@
                                         android:layout_marginRight="2dp"
                                         android:text="0"
                                         android:textColor="@color/black"
-                                        android:textSize="12sp" />
+                                        android:textSize="@dimen/_11sdp" />
 
                                     <ImageView
                                         android:layout_width="19dp"
@@ -100,7 +100,7 @@
                                         android:layout_marginRight="2dp"
                                         android:text="(0)"
                                         android:textColor="@color/black"
-                                        android:textSize="12sp" />
+                                        android:textSize="@dimen/_11sdp" />
 
                                 </LinearLayout>
                             </LinearLayout>
