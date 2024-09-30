@@ -3,13 +3,6 @@ package com.snofed.publicapp.utils
 object ServiceUtil {
     const val TAG = "SNOFED_TAG"
 
-    const val BASE_URL = "http://161.97.121.63:5000/api/"
-    const val BASE_URL_IMAGE = "http://161.97.121.63:5000"
-    const val FEED_BACK_BASE_URL = "http://161.97.121.63:5005/api/"
-
-    const val MEMBERSHIP_BASE_URL = "http://161.97.121.63:5006/api/"
-    //FOR MEMBERSHIP IMAGE
-    const val BASE_URL_MEMB_IMAGE = "http://161.97.121.63:5006"
 
     //api/clients/{id}
 
