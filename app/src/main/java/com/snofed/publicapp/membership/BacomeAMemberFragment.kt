@@ -10,14 +10,22 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
+import com.google.gson.Gson
 import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.FragmentBacomeAMemberBinding
 import com.snofed.publicapp.membership.dto.MembershipOrderDto
 import com.snofed.publicapp.models.membership.Membership
 import com.snofed.publicapp.ui.login.AuthViewModel
+import com.snofed.publicapp.ui.order.model.TicketModel
+import com.snofed.publicapp.ui.order.ticketing.OrderDTO
+import com.snofed.publicapp.ui.order.ticketing.TicketDTO
+import com.snofed.publicapp.ui.order.ticketing.TicketTypeDTO
 import com.snofed.publicapp.utils.NetworkResult
+import com.snofed.publicapp.utils.PreferencesNames
+import com.snofed.publicapp.utils.SnofedConstants
 import com.snofed.publicapp.utils.SnofedUtils
 import com.snofed.publicapp.utils.TokenManager
+import com.snofed.publicapp.utils.enums.TicketOrderTypeEnum
 import com.snofed.publicapp.utils.isEmailValid
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -106,15 +114,59 @@ class BacomeAMemberFragment : Fragment() {
         val lName = binding.etLastName.text.toString().trim()
         val email = binding.etEmail.text.toString().trim()
 
-        Log.e("membershipOrderDto", "membershipOrderDto $membership")
+       // Log.e("membershipOrderDto", "membershipOrderDto $membership")
+        val membershipOrderDto = MembershipOrderDto(membership,email,fName,lName,getString(R.string.backend_localization),useId)
+        val membOrderDto = getPreparedMembershipOrder(membershipOrderDto)
+        // Convert object to JSON
+        val gson = Gson()
+        val json = gson.toJson(membOrderDto)
+        println("membershipOrderDto1 " + json)
 
-        val membershipOrderDto = MembershipOrderDto(membership,email,fName,lName,"sv",useId)
-
-        Log.e("membershipOrderDto", "membershipOrderDto $membershipOrderDto")
+        Log.e("membershipOrderDto2 ",  json)
             if (validateFields(fName, lName, email)) {
             buyTicket(isPaymentMethodSwish, fName, lName, email)
         }
     }
+
+    ///////////////////////////////////////
+    fun getPreparedMembershipOrder(membershipOrderDto: MembershipOrderDto): OrderDTO {
+        val ticketDTOs = arrayListOf(getPreparedTicket(membershipOrderDto))
+        val clientId = membershipOrderDto.membership!!.clientRef
+
+        return OrderDTO(
+            null,
+            TicketOrderTypeEnum.MEMBERSHIP.ordinal,
+            membershipOrderDto.localisation,
+            membershipOrderDto.userId,
+            ticketDTOs,
+            clientId,
+            "${PreferencesNames.CLIENT_CALLBACK_URL}$clientId"
+        )
+    }
+
+    fun getPreparedTicket(membershipOrderDto: MembershipOrderDto): TicketDTO {
+        val membership = membershipOrderDto.membership
+        val ticketTypeDto = TicketTypeDTO(
+            membership?.id,
+            membership?.membershipName,
+            membership?.totalPrice
+        )
+        val dateNow = SnofedUtils.getDateNow(SnofedConstants.DATETIME_SERVER_FORMAT)
+
+        return TicketDTO(
+            dateNow,
+            dateNow,
+            membershipOrderDto.email,
+            membershipOrderDto.firstName,
+            membershipOrderDto.lastName,
+           "","",
+            ticketTypeDto,
+        )
+    }
+
+
+    /////////////////////////////////////
+
 
     private fun buyTicket(isPaymentMethodSwish: Boolean, firstName: String, lastName: String, email: String) {
 
@@ -130,12 +182,12 @@ class BacomeAMemberFragment : Fragment() {
 
     private fun initiateSwishPayment(firstName: String, lastName: String, email: String) {
         // Your Swish payment logic
-        Toast.makeText(requireActivity(), "1", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireActivity(), "Payment Swish Order", Toast.LENGTH_SHORT).show()
     }
 
     private fun initiateCreditCardPayment(firstName: String, lastName: String, email: String) {
         // Your credit card payment logic
-        Toast.makeText(requireActivity(), "message2", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireActivity(), "Payment Credit Card Order", Toast.LENGTH_SHORT).show()
         SnofedUtils.startSwish(requireActivity(), "token", "callbackUrl", 1)
     }
 

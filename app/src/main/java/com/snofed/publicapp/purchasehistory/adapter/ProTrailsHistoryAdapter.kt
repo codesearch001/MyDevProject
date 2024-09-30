@@ -9,7 +9,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.RequiresApi
-import androidx.cardview.widget.CardView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.snofed.publicapp.R
@@ -17,8 +16,7 @@ import com.snofed.publicapp.purchasehistory.model.Daum
 import com.snofed.publicapp.utils.DateTimeConverter
 import com.snofed.publicapp.utils.enums.PaymentOrderStatus
 
-
-class OrderHistoryAdapter() : RecyclerView.Adapter<OrderHistoryAdapter.ClubViewHolder>(){
+class ProTrailsHistoryAdapter: RecyclerView.Adapter<ProTrailsHistoryAdapter.ClubViewHolder>(){
 
     private var orderHistoryArray: List<Daum> = listOf()
     val dateTimeConverter = DateTimeConverter()
@@ -100,6 +98,5 @@ class OrderHistoryAdapter() : RecyclerView.Adapter<OrderHistoryAdapter.ClubViewH
         val txt_valid_to: TextView = itemView.findViewById(R.id.txt_valid_to)
 
 
-
     }
-}
+    }

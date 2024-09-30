@@ -52,6 +52,8 @@ object ServiceUtil {
 
     const val GET_TICKET_TYPE = "ticket-type/client/{clientId}"
 
+    /**********************Payment Gateway API********************/
+
     const val SEND_ORDER_DIRECT = "direct2internet/new-order"
 
     const val SEND_ORDER_SWISH = "swish/new-order/m-commerce"

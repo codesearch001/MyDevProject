@@ -20,8 +20,10 @@ import androidx.navigation.fragment.findNavController
 import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.FragmentNewTicketBinding
 import com.snofed.publicapp.ui.login.AuthViewModel
-import com.snofed.publicapp.ui.order.model.Daum
-import com.snofed.publicapp.ui.order.model.TicketModel
+import com.snofed.publicapp.ui.order.model.TicketType
+
+import com.snofed.publicapp.ui.order.ticketing.TicketDTO
+import com.snofed.publicapp.ui.order.ticketing.TicketTypeDTO
 import com.snofed.publicapp.utils.AppPreference
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.SharedPreferenceKeys
@@ -38,11 +40,12 @@ class NewTicketFragment : Fragment() {
     private lateinit var viewModel: TicketViewModel
 
     private var clientId: String? = null
-    private var ticketTypes: List<Daum> = emptyList() // Initialize to an empty list
+    private var ticketTypes: List<TicketType> = emptyList() // Initialize to an empty list
     private var ticketTypeNames: List<String> = emptyList() // Initialize to an empty list
     private var ticketTypeIds: List<String> = emptyList() // Initialize to an empty list
 
     // Local variables to store selected ticket info
+    private lateinit var selectedTicket: TicketType
     private var selectedTicketName: String = ""
     private var selectedTicketId: String = ""
     private var selectedTicketPrice: Double = 0.0
@@ -118,7 +121,7 @@ class NewTicketFragment : Fragment() {
                              it.ticketCategory.toInt() == ticketCategory
                         }*/
 
-                        val filteredTicketTypes : List<Daum>
+                        val filteredTicketTypes : List<TicketType>
                         if (isMultipleTicket == true){
                             filteredTicketTypes = ticketTypes.filter {
                                 isMultipleTicket == true && it.ticketCategory.toInt() == ticketCategory
@@ -178,7 +181,7 @@ class NewTicketFragment : Fragment() {
     private fun validateMobile(mobile: String): Boolean {
         return mobile.matches(MOBILE_REGEX.toRegex())
     }
-    private fun setupSpinner(ticketTypeNames: List<String>, filteredTicketTypes: List<Daum>) {
+    private fun setupSpinner(ticketTypeNames: List<String>, filteredTicketTypes: List<TicketType>) {
         // Create a mutable list to add the default item
         val spinnerItems = mutableListOf("Choose ticket type") // Default item
         spinnerItems.addAll(ticketTypeNames) // Add the filtered ticket type names to the list
@@ -200,7 +203,7 @@ class NewTicketFragment : Fragment() {
                     } else {
                         // Get the selected ticket from the filtered list
                         // Adjust index due to default item
-                        val selectedTicket = filteredTicketTypes[position - 1]
+                        selectedTicket = filteredTicketTypes[position - 1]
                         selectedTicketName = selectedTicket.name
                         selectedTicketId = selectedTicket.id
                         selectedTicketPrice = selectedTicket.totalPrice
@@ -226,16 +229,17 @@ class NewTicketFragment : Fragment() {
         val startDate = binding.startDateEditText.text.toString()
         val email = binding.emailEditText.text.toString()
         val mobile = binding.mobileEditText.text.toString()
+
         // Retrieve input values
-        val ticket = TicketModel(
-            ticketType = selectedTicketName,
-            startDate = startDate,
-            firstName = binding.firstNameEditText.text.toString(),
-            lastName = binding.lastNameEditText.text.toString(),
-            email = email,
-            mobile = mobile,
-            price = selectedTicketPrice // Pass the selected price
+        val ticket = TicketDTO(
+            ticketType =  TicketTypeDTO(selectedTicket.id, selectedTicket.name, selectedTicket.totalPrice),
+            ticketStartDate = startDate,
+            buyerFirstName = binding.firstNameEditText.text.toString(),
+            buyerLastName = binding.lastNameEditText.text.toString(),
+            buyerEmail = email,
+            buyerMobileNumber = mobile
         )
+
         // Check if the selected ticket's category is valid (1 or 3)
         if (ticketCategory != 1 && ticketCategory != 3) {
             Toast.makeText(requireContext(), "Only tickets of category 1 or 3 can be added.", Toast.LENGTH_SHORT).show()
@@ -257,7 +261,6 @@ class NewTicketFragment : Fragment() {
             Toast.makeText(requireContext(), "Please enter a valid mobile number (10 digits).", Toast.LENGTH_SHORT).show()
             return
         }*/
-
 
         // Validate date selection
         if (startDate.isEmpty()) {

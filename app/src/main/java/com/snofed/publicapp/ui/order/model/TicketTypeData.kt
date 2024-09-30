@@ -3,12 +3,12 @@ package com.snofed.publicapp.ui.order.model
 data class TicketTypeData(
     val success: Boolean,
     val message: Any?,
-    val data: List<Daum>,
+    val data: List<TicketType>,
     val statusCode: Long,
     val totalItems: Long,
 )
 
-data class Daum(
+data class TicketType(
     val name: String,
     val nameTranslates: NameTranslates,
     val ticketCategory: Long,

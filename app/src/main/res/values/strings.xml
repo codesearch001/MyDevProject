@@ -3,9 +3,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
-    <!--App Setting key and text-->
-    <string name="mapbox_access_token" translatable="false" tools:ignore="UnusedResources">sk.eyJ1Ijoic3lzdGFpbmFkZXYiLCJhIjoiY2x6ZjUzZW41MTBiZjJpcXplYWR6b3hvMyJ9.NK5-whs-iNzysW9WktKRJg</string>
-    <string name="facebook_app_id" translatable="false">469138440399694</string>
+
 
     <string-array name="ticket_types">
         <item>Standard</item>
@@ -252,6 +250,7 @@
     <string name="pref_user_lbs_units"> lbs</string>
     <string name="pref_user_age_title">Age</string>
     <string name="pref_user_age_summary">User age</string>
+
     <string name="pref_privacy_policy">Privacy Policy Info</string>
     <string name="backend_localization">en-US</string>
     <string name="swish_application_not_installed_toast">Swish application is not installed on your device</string>

@@ -1,11 +1,14 @@
 package com.snofed.publicapp.ui.order.model
 
+import com.snofed.publicapp.ui.order.ticketing.TicketTypeDTO
+
 data class TicketModel(
-    var ticketType: String,
-    var startDate: String,
-    var firstName: String,
-    var lastName: String,
-    var email: String,
-    var mobile: String,
-    var price: Double
+    var createdDate: String,
+    var ticketStartDate: String,
+    var buyerEmail: String,
+    var buyerFirstName: String,
+    var buyerLastName: String,
+    var buyerMobileNumber: String,
+    var licensePlateNumber: String,
+    var ticketType: TicketTypeDTO,
 )

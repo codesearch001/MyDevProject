@@ -13,9 +13,7 @@ object AppPreference {
             sharedPreferences = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE).edit()
             sharedPreferences?.putString(key, value)
             sharedPreferences?.apply()
-
         }
-
     }
 
     fun getPreference(context: Context?, key: String?): String? {

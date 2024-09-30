@@ -8,9 +8,10 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.TicketListLayoutBinding
-import com.snofed.publicapp.ui.order.model.TicketModel
+import com.snofed.publicapp.ui.order.ticketing.TicketDTO
 
-class TicketAdapter(private var ticketList: List<TicketModel>,  private val onDeleteClick: (TicketModel) -> Unit ) : RecyclerView.Adapter<TicketAdapter.TicketViewHolder>() {
+
+class TicketAdapter(private var ticketList: List<TicketDTO>, private val onDeleteClick: (TicketDTO) -> Unit ) : RecyclerView.Adapter<TicketAdapter.TicketViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TicketViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -33,20 +34,20 @@ class TicketAdapter(private var ticketList: List<TicketModel>,  private val onDe
 
     // Method to update the list of tickets
     @SuppressLint("NotifyDataSetChanged")
-    fun updateTickets(newTickets: List<TicketModel>) {
+    fun updateTickets(newTickets: List<TicketDTO>) {
         ticketList = newTickets
         notifyDataSetChanged()
     }
 
     class TicketViewHolder(val binding: TicketListLayoutBinding) : RecyclerView.ViewHolder(binding.root) {
         val deleteButton: ImageView = itemView.findViewById(R.id.img_remove)
-        fun bind(ticket: TicketModel) {
-            binding.tvTitle.text = ticket.ticketType
-            binding.txtStartDate.text = ticket.startDate
-            binding.txtFirstName.text = ticket.firstName
-            binding.txtLastName.text = ticket.lastName
-            binding.txtEmail.text = ticket.email
-            binding.txtPrice.text = ticket.price.toString()
+        fun bind(ticket: TicketDTO) {
+            binding.tvTitle.text = ticket.ticketType!!.name
+            binding.txtStartDate.text = ticket.ticketStartDate
+            binding.txtFirstName.text = ticket.buyerFirstName
+            binding.txtLastName.text = ticket.buyerLastName
+            binding.txtEmail.text = ticket.buyerEmail
+            binding.txtPrice.text = ticket.ticketType!!.totalPrice.toString()
         }
     }
 }

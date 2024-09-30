@@ -1,18 +1,19 @@
 package com.snofed.publicapp.ui.newticket
 
 import androidx.lifecycle.ViewModel
-import com.snofed.publicapp.ui.order.model.TicketModel
+import com.snofed.publicapp.ui.order.ticketing.TicketDTO
+
 
 class TicketViewModel : ViewModel() {
 
-    private val _tickets = mutableListOf<TicketModel>()
-    val tickets: List<TicketModel> get() = _tickets.toList() // Expose an immutable list
+    private val _tickets = mutableListOf<TicketDTO>()
+    val tickets: List<TicketDTO> get() = _tickets.toList() // Expose an immutable list
 
-    fun addTicket(ticket: TicketModel) {
+    fun addTicket(ticket: TicketDTO) {
         _tickets.add(ticket)
     }
 
-    fun getTicketIndex(ticket: TicketModel): Int {
+    fun getTicketIndex(ticket: TicketDTO): Int {
         return _tickets.indexOf(ticket)
     }
     fun removeTicketByIndex(index: Int) {
@@ -20,8 +21,9 @@ class TicketViewModel : ViewModel() {
     }
 
     fun updatePrice(): Double {
-        return _tickets.sumOf { it.price }
+        return _tickets.sumOf { it.ticketType?.totalPrice ?: 0.0 }
     }
+
 
     fun removeAllTicket() {
         _tickets.clear()
@@ -31,11 +33,11 @@ class TicketViewModel : ViewModel() {
         return _tickets.size == 0
     }
     // New method to get all tickets
-    fun getAllTickets(): List<TicketModel> {
+    fun getAllTickets(): List<TicketDTO> {
         return _tickets.toList() // Returns an immutable copy
     }
 
-    fun removeTicket(ticket: TicketModel) {
+    fun removeTicket(ticket: TicketDTO) {
         _tickets.remove(ticket)
     }
 }

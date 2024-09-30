@@ -14,11 +14,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
 import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.FragmentOrderTicketBinding
 import com.snofed.publicapp.ui.newticket.TicketViewModel
 import com.snofed.publicapp.ui.order.adapter.TicketAdapter
-import com.snofed.publicapp.ui.order.model.TicketModel
 import com.snofed.publicapp.ui.order.ticketing.OrderDTO
 import com.snofed.publicapp.ui.order.ticketing.TicketDTO
 import com.snofed.publicapp.utils.PreferencesNames
@@ -38,7 +38,7 @@ class OrderTicketFragment : Fragment() {
     private var ticketCategory: Int? = null // To store the passed category value
     private var isMultipleTicket: Boolean? = false // To store the passed category value
 
-    val ticket :List<TicketDTO> = listOf()
+    var tickets :List<TicketDTO> = listOf()
 
 
     @Inject
@@ -74,7 +74,7 @@ class OrderTicketFragment : Fragment() {
         return binding.root
     }
 
-    private fun deleteTicket(ticket: TicketModel) {
+    private fun deleteTicket(ticket: TicketDTO) {
         val index = viewModel.getTicketIndex(ticket)
         if (index != -1) { // Check if the ticket exists
             viewModel.removeTicketByIndex(index) // Remove from ViewModel
@@ -110,20 +110,22 @@ class OrderTicketFragment : Fragment() {
         isMultipleTicket = arguments?.getBoolean("isMultipleTicket")
 
 
-       /* val allList = viewModel.getAllTickets()
-        for (ticket in allList) {
-            // Process each ticket
-            Log.e("payData"  ,"hello  "+ ticket)
-        }*/
+        tickets = viewModel.getAllTickets()
+
+        ///send order
       val prepareOrder =  OrderDTO(
           null,
           TicketOrderTypeEnum.SINGLE_TICKET.ordinal,
           getResources().getString(R.string.backend_localization),
           tokenManager.getUserId(),
-          viewModel.getAllTickets().toString(),
+          tickets,
           clientId, PreferencesNames.CLIENT_CALLBACK_URL + clientId)
 
-        Log.e("payData"  ,"hello  "+ prepareOrder)
+        // Convert object to JSON
+        val gson = Gson()
+        val json = gson.toJson(prepareOrder)
+        Log.e("payData"  ,"hello  "+ json)
+
         binding.btnPayWithSwish.setOnClickListener {
             if (!isFirstButtonClicked) {
                 // Activate the first button
