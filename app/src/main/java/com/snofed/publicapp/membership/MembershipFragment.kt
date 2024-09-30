@@ -1,5 +1,6 @@
 package com.snofed.publicapp.membership
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -18,7 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MembershipFragment : Fragment() {
     private var _binding: FragmentMembershipBinding? = null
     private val binding get() = _binding!!
-
+    private var isFirstButtonClicked = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -50,11 +51,38 @@ class MembershipFragment : Fragment() {
         binding.btnHamburger.setOnClickListener {
             it.findNavController().popBackStack()
         }
-        binding.btnBuyMemberships.setOnClickListener {
+       /* binding.btnBuyMemberships.setOnClickListener {
             it.findNavController().navigate(R.id.buyMembershipFragment)
         }
         binding.btnActivateMemberships.setOnClickListener {
           //  it.findNavController().navigate(R.id.action_membershipFragment_to_buyMembershipFragment)
+        }*/
+        binding.btnBuyMemberships.setOnClickListener {
+            if (!isFirstButtonClicked) {
+
+                // Activate the first button
+                binding.btnBuyMemberships.setBackgroundResource(R.drawable.btn_buy_memberships_active)
+                binding.btnBuyMemberships.setTextColor(Color.WHITE)
+
+                // Deactivate the second button
+                binding.btnActivateMemberships.setBackgroundResource(R.drawable.blue_outline_button) // Reset to inactive state
+                binding.btnActivateMemberships.setTextColor(Color.parseColor("#03A9F4"))
+                isFirstButtonClicked = true
+            }
+            it.findNavController().navigate(R.id.buyMembershipFragment)
+        }
+
+        binding.btnActivateMemberships.setOnClickListener {
+            if (isFirstButtonClicked) {
+                // Activate the second button
+                binding.btnActivateMemberships.setBackgroundResource(R.drawable.blue_bg_color)
+                binding.btnActivateMemberships.setTextColor(Color.WHITE) // Set text to blue
+
+                // Deactivate the first button
+                binding.btnBuyMemberships.setBackgroundResource(R.drawable.blue_outline_button) // Reset to inactive state
+                binding.btnBuyMemberships.setTextColor(Color.parseColor("#03A9F4")) // Set text to blue
+                isFirstButtonClicked = false
+            }
         }
 
 

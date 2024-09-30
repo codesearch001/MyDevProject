@@ -64,9 +64,7 @@ class LoginFragment : Fragment() {
 
         binding.forgotText.setOnClickListener {
             it.findNavController().navigate(R.id.recoverFragment)
-
         }
-
     }
 
     private fun init() {
@@ -108,7 +106,6 @@ class LoginFragment : Fragment() {
         Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show()
     }
 
-
     // Handle login process after validation
     private fun handleLogin() {
         val email = binding.emailEditText.text.toString().trim()
@@ -125,12 +122,9 @@ class LoginFragment : Fragment() {
             userRequest = UserRequest(
                 email = email,
                 password = password,
-                rememberMe = true
-            )
+                rememberMe = true)
         )
-
     }
-
     // Method to create the observer
     private fun createLoginObserver(): Observer<NetworkResult<UserResponse>> {
         return Observer { response ->
@@ -158,7 +152,6 @@ class LoginFragment : Fragment() {
             }
         }
     }
-
     /*  private fun bindObservers() {
           authViewModel.userResponseLiveData.observe(viewLifecycleOwner, Observer {
               binding.progressBar.isVisible = false
@@ -187,7 +180,6 @@ class LoginFragment : Fragment() {
               }
           })
       }*/
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

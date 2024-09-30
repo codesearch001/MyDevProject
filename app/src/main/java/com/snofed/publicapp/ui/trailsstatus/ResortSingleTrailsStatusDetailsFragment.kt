@@ -78,6 +78,9 @@ class ResortSingleTrailsStatusDetailsFragment : Fragment(),EventTrailsFeedAdapte
             it.findNavController().navigate(R.id.resortTrailStatusMapFragment,bundle)
         }
 
+        binding.backBtn.setOnClickListener {
+            it.findNavController().popBackStack()
+        }
         /*  binding.eventCardId.setOnClickListener {
               it.findNavController().navigate(R.id.singleEventDetailsFragment)
           }*/

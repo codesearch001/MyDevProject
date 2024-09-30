@@ -48,11 +48,12 @@
                             android:src="@drawable/white_back_btn" />
 
                         <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/toolbar_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.1"
                             android:gravity="center"
-                            android:text="Trade In Trailers 5%"
+                            android:text=""
                             android:textColor="@color/white"
                             android:textSize="18sp"
                             android:textStyle="bold" />
@@ -70,7 +71,7 @@
         </com.google.android.material.appbar.AppBarLayout>
 
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/buyMem"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -80,77 +81,76 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:padding="@dimen/_12sdp"
+                android:layout_marginBottom="@dimen/_24sdp"
+                android:orientation="vertical"
+                android:weightSum="2">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnBuyMemberships"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.9"
+                    android:background="@drawable/blue_outline_button"
+                    android:gravity="center"
+                    android:paddingTop="1dp"
+                    android:paddingBottom="1dp"
+                    android:text="Visit our website"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/holo_blue_light"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:theme="@style/homeButtonTheme" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:gravity="center"
                 android:padding="16dp">
 
                 <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/img_logo"
                     android:layout_width="122dp"
                     android:layout_height="120dp"
                     android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_45sdp"
                     android:background="@drawable/gray_outline_button"
                     android:padding="8dp"
                     android:src="@drawable/tread" />
 
                 <TextView
+                    android:id="@+id/txt_support_member_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Trade In Trailers 5%"
                     android:layout_gravity="center"
                     android:layout_marginTop="40dp"
+                    android:text=""
                     android:textColor="@color/black"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:padding="@dimen/marginLarge"
-                    android:text="We offer all members of Skotersverige -5% on the entire 3s Alutrailer range. The trailer is then picked up from the factory in Skellefteå, alternatively we can help book transport. Visit our website and build your trailer there and request a quote. Alternatively, you can call or email the address below and we will help you. Contact: 073-097 81 98 info@tradeintrailers.com Enter your membership number in Skotersverige in the comment field."
-                    android:textSize="12sp" />
-
-
-                <LinearLayout
+                <ScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="end"
-                    android:weightSum="2">
+                    android:layout_height="wrap_content">
 
-                    <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/btnBuyMemberships"
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:id="@+id/txt_support_member_description"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="24dp"
-                        android:layout_marginBottom="8dp"
-                        android:layout_weight="0.9"
-                        android:background="@drawable/blue_outline_button"
-                        android:gravity="center"
-                        android:paddingTop="1dp"
-                        android:paddingBottom="1dp"
-                        android:text="Visit our website"
-                        android:textAllCaps="false"
-                        android:textColor="@android:color/holo_blue_light"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:theme="@style/homeButtonTheme" />
+                        android:padding="@dimen/marginLarge"
+                        android:text=""
+                        android:textAlignment="textStart"
+                        android:textSize="12sp" />
+                </ScrollView>
 
-
-                </LinearLayout>
-                <!--            <Button-->
-                <!--                android:id="@+id/show_benefits_button"-->
-                <!--                android:layout_width="match_parent"-->
-                <!--                android:layout_height="55dp"-->
-                <!--                android:text="Show benefits (3)"-->
-                <!--                android:layout_marginTop="24dp"-->
-                <!--                android:backgroundTint="@color/gray_button" />-->
 
             </LinearLayout>
-        </LinearLayout>
-
+        </RelativeLayout>
 
     </RelativeLayout>
 </RelativeLayout>

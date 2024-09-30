@@ -85,34 +85,10 @@
             android:layout_below="@id/tabLayout" />
 
 
-        <!--        <androidx.coordinatorlayout.widget.CoordinatorLayout-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="match_parent">-->
-
-        <!--            <com.google.android.material.bottomnavigation.BottomNavigationView-->
-        <!--                android:id="@+id/bottomNavigationView"-->
-        <!--                android:layout_width="match_parent"-->
-        <!--                android:layout_height="50dp"-->
-        <!--                android:layout_gravity="bottom"-->
-        <!--                android:backgroundTint="@color/transparent"-->
-        <!--                app:labelVisibilityMode="labeled"-->
-        <!--                app:menu="@menu/bottom_navigation" />-->
-
-        <!--            &lt;!&ndash;                <com.google.android.material.bottomappbar.BottomAppBar&ndash;&gt;-->
-        <!--            &lt;!&ndash;                    android:id="@+id/bottomBar"&ndash;&gt;-->
-        <!--            &lt;!&ndash;                    android:layout_width="match_parent"&ndash;&gt;-->
-        <!--            &lt;!&ndash;                    android:layout_height="wrap_content"&ndash;&gt;-->
-        <!--            &lt;!&ndash;                    android:layout_gravity="bottom">&ndash;&gt;-->
-
-
-        <!--            &lt;!&ndash;                </com.google.android.material.bottomappbar.BottomAppBar>&ndash;&gt;-->
-
-
-        <!--        </androidx.coordinatorlayout.widget.CoordinatorLayout>-->
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/card_bg_color"
             android:layout_alignParentBottom="true"
             android:padding="22dp">
 
@@ -122,7 +98,7 @@
                 android:orientation="vertical"
                 android:weightSum="2">
 
-                <androidx.appcompat.widget.AppCompatButton
+<!--                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnBuyMemberships"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -153,7 +129,36 @@
                     android:textColor="@android:color/holo_blue_light"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:theme="@style/homeButtonTheme" />
+                    android:theme="@style/homeButtonTheme" />-->
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_buy_memberships"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_9sdp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/blue_outline_button"
+                    android:gravity="center"
+                    android:text="@string/buy_memberships"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/holo_blue_light"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_activate_memberships"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_9sdp"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:layout_marginBottom="@dimen/_6sdp"
+                    android:background="@drawable/blue_outline_button"
+                    android:text="@string/Activate_memberships"
+                    android:textAllCaps="false"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/holo_blue_light" />
+
             </LinearLayout>
 
 

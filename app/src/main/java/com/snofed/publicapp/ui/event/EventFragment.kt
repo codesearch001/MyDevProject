@@ -45,19 +45,9 @@ class EventFragment : Fragment(),EventFeedAdapter.OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // Handle back press
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true){
             override fun handleOnBackPressed() {
-                // Check if there's any fragment in the back stack
-                if (requireFragmentManager().backStackEntryCount > 0) {
-                    // Pop the fragment from the back stack
-                    requireFragmentManager().popBackStack()
-                } else {
-                    // If no fragments in the back stack, you can exit the activity or perform another action
-                    // For example, exit the app:
-                    //requireActivity().finish()
-                    // Or handle navigation to a specific fragment or screen
-                    // findNavController().navigate(R.id.someOtherFragment)
-                }
+                findNavController().popBackStack()
             }
         })
         binding.backBtn.setOnClickListener {

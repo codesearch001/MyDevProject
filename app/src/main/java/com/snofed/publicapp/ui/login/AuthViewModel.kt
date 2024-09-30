@@ -6,6 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.snofed.publicapp.db.WorkoutResponse
+import com.snofed.publicapp.membership.model.ActiveMembership
+import com.snofed.publicapp.membership.model.MembershipDetails
 import com.snofed.publicapp.membership.model.BuyMembership
 import com.snofed.publicapp.models.NewClubData
 import com.snofed.publicapp.models.RideApiResponse
@@ -20,8 +22,10 @@ import com.snofed.publicapp.models.UserResponse
 import com.snofed.publicapp.models.browseSubClub.BrowseSubClubResponse
 import com.snofed.publicapp.models.events.EventDetailsResponse
 import com.snofed.publicapp.models.events.EventResponse
+import com.snofed.publicapp.models.membership.Membership
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
+import com.snofed.publicapp.purchasehistory.model.TicketPurchaseHistory
 import com.snofed.publicapp.repository.MembershipRepository
 import com.snofed.publicapp.repository.UserFeedBackRepository
 import com.snofed.publicapp.repository.UserRepository
@@ -29,7 +33,10 @@ import com.snofed.publicapp.ui.feedback.FeedApiResponse
 import com.snofed.publicapp.ui.feedback.adapter.FeedBackDetails
 import com.snofed.publicapp.ui.feedback.model.FeedBackCategories
 import com.snofed.publicapp.ui.feedback.model.FeedBackTaskCategories
-import com.snofed.publicapp.ui.feedback.model.FeedBackTaskCategoriesResponse
+import com.snofed.publicapp.ui.order.model.TicketTypeData
+import com.snofed.publicapp.ui.order.ticketing.OrderDTO
+import com.snofed.publicapp.ui.order.ticketing.OrderResponseDTO
+import com.snofed.publicapp.ui.order.ticketing.SwishResponseDTO
 import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.MutableData
 import com.snofed.publicapp.utils.NetworkResult
@@ -64,6 +71,23 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
         get() = membershipRepository.membershipResponseLiveData
 
 
+    val activeMembershipResponseLiveData: LiveData<NetworkResult<ActiveMembership>>
+        get() = membershipRepository.activeMembershipResponseLiveData
+
+    val activeMembershipDetailsResponseLiveData: LiveData<NetworkResult<MembershipDetails>>
+        get() = membershipRepository.activeMembershipDetailsResponseLiveData
+
+   val purchaseOrderHistoryMembershipResponseLiveData: LiveData<NetworkResult<TicketPurchaseHistory>>
+        get() = membershipRepository.purchaseOrderHistoryMembershipResponseLiveData
+
+   val getTicketTypeResponseLiveData: LiveData<NetworkResult<TicketTypeData>>
+        get() = membershipRepository.getTicketTypeResponseLiveData
+
+   val getSendOrderDirectResponseLiveData: LiveData<NetworkResult<OrderResponseDTO>>
+        get() = membershipRepository.getSendOrderDirectResponseLiveData
+
+   val getSendOrderSwishResponseLiveData: LiveData<NetworkResult<SwishResponseDTO>>
+        get() = membershipRepository.getSendOrderSwishResponseLiveData
 
     val feedBackTaskByCategoriesIDLiveData: LiveData<NetworkResult<FeedBackCategories>>
         get() = feedBackRepository.feedBackTaskByCategoriesIDLiveData
@@ -153,6 +177,46 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
         }
     }
 
+    fun getActiveMembership(userId: String) {
+        viewModelScope.launch {
+            membershipRepository.getActiveMembership(userId)
+        }
+    }
+
+    fun getBenfitsMembership(userId: String) {
+        viewModelScope.launch {
+            membershipRepository.getBenfitsMembership(userId)
+        }
+    }
+    fun getPurchaseOrderHistory(userId: String) {
+        viewModelScope.launch {
+            membershipRepository.getPurchaseOrderHistory(userId)
+        }
+    }
+    fun getTicketType(userId: String) {
+        viewModelScope.launch {
+            membershipRepository.getTicketType(userId)
+        }
+    }
+
+    fun getSendOrderDirect(orderDTO: OrderDTO) {
+        viewModelScope.launch {
+            membershipRepository.getSendOrderDirect(orderDTO)
+        }
+    }
+
+    fun getSendOrderSwish(orderDTO: OrderDTO) {
+        viewModelScope.launch {
+            membershipRepository.getSendOrderSwish(orderDTO)
+        }
+    }
+
+ /*   fun getALLMembership() {
+        viewModelScope.launch {
+            membershipRepository.getALLMembership()
+        }
+    }
+*/
 
     //Start Ride Request
     fun workOutRideRequest(workoutRequest: List<WorkoutResponse>) {

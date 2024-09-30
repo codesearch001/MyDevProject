@@ -22,7 +22,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tv_title"
+                android:id="@+id/txt_order_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Copper Mountain"
@@ -106,13 +106,13 @@
                             android:layout_height="8dp"
                             android:layout_gravity="center"
                             android:layout_marginEnd="6dp"
-                            android:src="@drawable/dot" />
+                            android:src="@drawable/red_dot" />
 
                         <TextView
                             android:id="@+id/tv_status_approved"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Approved" />
+                            android:text="" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -137,6 +137,7 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/txt_total_price"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="22.00" />
@@ -158,6 +159,7 @@
                             android:text="Number of tickets:" />
 
                         <TextView
+                            android:id="@+id/txt_number_of_tickets"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="1" />
@@ -167,6 +169,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/id_valid_to"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -185,6 +188,7 @@
                         android:text="Valid to:" />
 
                     <TextView
+                        android:id="@+id/txt_valid_to"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="04/07/2024" />

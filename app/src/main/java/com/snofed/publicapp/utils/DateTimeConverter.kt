@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter
 class DateTimeConverter {
     // Property to hold the formatted time part
     var dateandtimePart: String = ""
+    var outputFormatterOnlyDate: String = ""
 
     var datePartOnly: String = ""
     var dateOfMonthPartOnly: String = ""
@@ -23,6 +24,9 @@ class DateTimeConverter {
     // Formatter for converting to desired format
     @RequiresApi(Build.VERSION_CODES.O)
     private val outputFormatterDateTime: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a")
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private val outputFormatterDate: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -62,6 +66,7 @@ class DateTimeConverter {
         val dateTime = LocalDateTime.parse(inputDateTimeString, inputFormatter)
         // Format date part
         dateandtimePart = dateTime.format(outputFormatterDateTime)
+        outputFormatterOnlyDate = dateTime.format(outputFormatterDate)
         datePart = dateTime.format(outputFormatter)
         // Format date part
         datePartOnly = dateTime.format(outputDateFormatter)

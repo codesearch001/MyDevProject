@@ -5,8 +5,9 @@ class SnofedConstants {
     // SERVICE ACTIONS
     companion object {
 
-        const val FIRST_TIME_APP_SYNC: String = "app_sync_for_a_first_time"
+        const val FIRST_TIME_APP_SYNC = "app_sync_for_a_first_time"
 
+        const val SNOFED_PREFS = "snofed_prefs"
          const val PREFS_NAME = "app_preferences"
          const val FIRST_TIME_APP_USE = "first_time_app_use"
 

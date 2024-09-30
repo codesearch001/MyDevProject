@@ -56,8 +56,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/backBtn">
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -68,6 +67,7 @@
                     android:textSize="@dimen/_14sdp"
                     android:textStyle="bold" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="16dp"
                     android:text="@string/t_s_ticket_types"
                     android:textAllCaps="true"
@@ -85,8 +85,8 @@
                     android:textStyle="bold"
                     android:visibility="visible" />
 
-                <EditText
-                    android:id="@+id/txtEmail"
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/ticketTypeSpinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
@@ -106,7 +106,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="16dp"
                     android:text="Start date"
                     android:textAllCaps="true"
@@ -115,14 +115,14 @@
                     android:textStyle="bold"
                     android:visibility="visible" />
 
-                <EditText
+                <TextView
+                    android:id="@+id/startDateEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:background="@drawable/rounded_edittext_lightgray_background"
-                    android:drawableLeft="@drawable/calendar_today"
-                    android:hint=" 20/10/2021"
-                    android:inputType="textEmailAddress"
+                    android:drawableStart="@drawable/calendar_today"
+                    android:hint="dd/MM/yyyy"
                     android:padding="@dimen/_11sdp"
                     android:textSize="@dimen/_12sdp" />
             </LinearLayout>
@@ -135,7 +135,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="16dp"
                     android:text="@string/t_s_first_name"
                     android:textAllCaps="true"
@@ -145,6 +145,7 @@
                     android:visibility="visible" />
 
                 <EditText
+                    android:id="@+id/firstNameEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
@@ -163,7 +164,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="16dp"
                     android:text="@string/t_s_last_name"
                     android:textAllCaps="true"
@@ -173,6 +174,7 @@
                     android:visibility="visible" />
 
                 <EditText
+                    android:id="@+id/lastNameEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
@@ -191,7 +193,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="16dp"
                     android:text="@string/t_s_email"
                     android:textAllCaps="true"
@@ -201,6 +203,7 @@
                     android:visibility="visible" />
 
                 <EditText
+                    android:id="@+id/emailEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
@@ -219,7 +222,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="16dp"
                     android:text="@string/t_s_mob_no"
                     android:textAllCaps="true"
@@ -229,12 +232,13 @@
                     android:visibility="visible" />
 
                 <EditText
+                    android:id="@+id/mobileEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:background="@drawable/rounded_edittext_lightgray_background"
                     android:hint="Mobile phone (e.g. +46 70 111 00 00)"
-                    android:inputType="textEmailAddress"
+                    android:inputType="number"
                     android:padding="@dimen/_11sdp"
                     android:textSize="@dimen/_12sdp" />
             </LinearLayout>
@@ -242,7 +246,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/_4sdp"
+                android:layout_marginStart="@dimen/_4sdp"
                 android:layout_marginTop="@dimen/_6sdp"
                 android:text="*If you need an SMS ticket enter your mobile number (3 kr per SMS)"
                 android:textColor="@color/grey_light11"
@@ -258,9 +262,10 @@
                 android:text="@string/t_s_rem_me"
                 android:textColor="@color/grey_light11"
                 android:textSize="@dimen/_8sdp"
-                android:textStyle="bold" /> <!-- Optional: Customize checkbox color -->
+                android:textStyle="bold" />
+
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/startButton"
+                android:id="@+id/btn_create_ticket"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"

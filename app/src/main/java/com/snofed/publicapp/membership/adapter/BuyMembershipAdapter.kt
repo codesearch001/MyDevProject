@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.snofed.publicapp.R
 import com.snofed.publicapp.membership.model.BuyMembershipResponse
-import java.util.Locale
 
 class BuyMembershipAdapter(private val listener: OnItemClickListener) : RecyclerView.Adapter<BuyMembershipAdapter.ClubViewHolder>(),
     Filterable {
@@ -28,7 +27,7 @@ class BuyMembershipAdapter(private val listener: OnItemClickListener) : Recycler
     }
 
     interface OnItemClickListener {
-        fun onItemClick(id: String)
+        fun onItemClick(id: String, name: String)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -58,29 +57,19 @@ class BuyMembershipAdapter(private val listener: OnItemClickListener) : Recycler
 
         holder.become_member_button.setOnClickListener {
             //Log.e("click..", "clickClubItem" + reslult.id)
-            listener.onItemClick(reslult.id) // Assuming Client has an 'id' property
+            listener.onItemClick(reslult.id,reslult.name) // Assuming Client has an 'id' property
         }
 
         // Set the initial text and icon for the "Show benefits" button
         if (reslult.benefits.isNotEmpty()) {
             holder.btn_Buy_Memberships.text = "Show benefits (${reslult.benefits.size})"
-            holder.btn_Buy_Memberships.setCompoundDrawablesWithIntrinsicBounds(
-                0,
-                0,
-                R.drawable.custom_drawable,
-                0
-            )
+            holder.btn_Buy_Memberships.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.custom_drawable, 0)
             holder.btn_Buy_Memberships.isClickable = true
             holder.btn_Buy_Memberships.isEnabled = true
         } else {
             // holder.btn_Buy_Memberships.text = "No benefits available"
             holder.btn_Buy_Memberships.text = "Show benefits (${reslult.benefits.size})"
-            holder.btn_Buy_Memberships.setCompoundDrawablesWithIntrinsicBounds(
-                0,
-                0,
-                0,
-                0
-            ) // No icon
+            holder.btn_Buy_Memberships.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0) // No icon
             holder.btn_Buy_Memberships.isClickable = false
             holder.btn_Buy_Memberships.isEnabled = false
         }
@@ -92,23 +81,21 @@ class BuyMembershipAdapter(private val listener: OnItemClickListener) : Recycler
 
         // Initially hide the benefits RecyclerView and the separator view
         holder.benefitsRecyclerView.visibility = View.GONE
-        holder.view2.visibility = View.GONE
+
 
         // Set click listener to toggle between "Show benefits" and "Hide benefits"
         holder.btn_Buy_Memberships.setOnClickListener {
             if (benefitsVisible) {
                 // Hide the benefits
                 holder.benefitsRecyclerView.visibility = View.GONE
-                holder.view2.visibility = View.GONE
                 holder.btn_Buy_Memberships.text = "Show benefits (${reslult.benefits.count()})"
-                holder.btn_Buy_Memberships.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.custom_up_drawable, 0)
+                holder.btn_Buy_Memberships.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.custom_drawable, 0)
                 // Optionally, hide the benefits RecyclerView or details here
             } else {
                 // Show the benefits
                 holder.benefitsRecyclerView.visibility = View.VISIBLE
-                holder.view2.visibility = View.VISIBLE
                 holder.btn_Buy_Memberships.text = "Hide benefits (${reslult.benefits.count()})"
-                holder.btn_Buy_Memberships.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.custom_drawable, 0)
+                holder.btn_Buy_Memberships.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.custom_up_drawable, 0)
                 // Optionally, show the benefits RecyclerView or details here
             }
 
@@ -120,6 +107,8 @@ class BuyMembershipAdapter(private val listener: OnItemClickListener) : Recycler
             // Toggle the benefitsVisible flag
             benefitsVisible = !benefitsVisible
         }
+
+
         /*   if (reslult.benefitsNames.isNotEmpty()){
                holder.btnBuyMemberships.text = reslult.benefitsNames.joinToString(", ")
            }else{
@@ -140,7 +129,7 @@ class BuyMembershipAdapter(private val listener: OnItemClickListener) : Recycler
         val btn_Buy_Memberships: Button = itemView.findViewById(R.id.btn_Buy_Memberships)
         val become_member_button: Button = itemView.findViewById(R.id.become_member_button)
         val benefitsRecyclerView: RecyclerView = itemView.findViewById(R.id.benefitsRecyclerView)
-        val view2: View = itemView.findViewById(R.id.view2)
+
     }
 
     // Implement the filtering method

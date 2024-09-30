@@ -1,5 +1,6 @@
 package com.snofed.publicapp.utils
 
+
 object PreferencesNames {
     const val PREF_THEME = "pref_theme"
     const val PREF_AUTOPAUSE_SPEED = "pref_autopause_speed"
@@ -11,6 +12,7 @@ object PreferencesNames {
     const val PREF_USER_AGE = "pref_user_age"
     const val PREF_USER_FIRST_NAME = "pref_user_first_name"
     const val PREF_USER_LAST_NAME = "pref_user_last_name"
+    const val CLIENT_CALLBACK_URL: String = ServiceUtil.MEMBERSHIP_BASE_URL + "resorts/"
     const val PREF_VISITOR = "visitor"
     const val PREF_WORKOUT_INFO = "workout_info"
     const val PREF_USER_IMAGE = "pref_user_image"

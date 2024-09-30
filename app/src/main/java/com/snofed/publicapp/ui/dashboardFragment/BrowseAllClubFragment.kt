@@ -59,7 +59,7 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
                     sharedViewModel.browseClubResponse.value = it.data
 
                     val filteredClients = it.data?.data?.clients?.filter { client ->
-                        client.visibility == 0
+                        client.visibility == 0 //true 1->false
                     }
 
                     Log.e("filter","filterSize " +filteredClients?.size)
@@ -108,7 +108,7 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
 
     override fun onItemClick(clientId: String) {
         binding.editTextClubSearch.text?.clear()
-        //Log.i("Club","Id " + clientId )
+        Log.i("dddddd","Id " + clientId )
         val bundle = Bundle()
         bundle.putString("clientId", clientId)
         val destination = R.id.clubSubMembersFragment

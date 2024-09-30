@@ -15,6 +15,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
+import com.snofed.publicapp.utils.TokenManager;
+
+import javax.inject.Inject;
+
+
 public class OnBoarding extends AppCompatActivity {
 
     //Variables
@@ -27,6 +32,10 @@ public class OnBoarding extends AppCompatActivity {
     int currentPos;
     private int dotsCount;
   //  SharePreferenceProvider pref;
+
+   private TokenManager tokenManager;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
@@ -55,7 +64,7 @@ public class OnBoarding extends AppCompatActivity {
 
 
     public void Skip(View view) {
-
+        tokenManager.getUserId();
         startActivity(new Intent(this, HomeDashBoardActivity.class));
         finishAffinity();
     }

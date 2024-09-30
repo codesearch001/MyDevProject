@@ -23,9 +23,9 @@ import javax.inject.Inject
 class WorkoutViewModel : ViewModel() {
 
     private val realm: Realm = Realm.getDefaultInstance()
-    val workoutPointsList: LiveData<List<NewWorkoutPoint>> by lazy {
+   /* val workoutPointsList: LiveData<List<NewWorkoutPoint>> by lazy {
         MutableLiveData<List<NewWorkoutPoint>>()
-    }
+    }*/
     private val _workout = MutableLiveData<NewRideWorkout>()
     val workout: LiveData<NewRideWorkout> get() = _workout
 
@@ -52,6 +52,7 @@ class WorkoutViewModel : ViewModel() {
     }
 
     private fun saveWorkoutToRealm() {
+        val realm = Realm.getDefaultInstance()
         realm.executeTransaction { transactionRealm ->
             _workout.value?.let {
                 transactionRealm.insertOrUpdate(it)

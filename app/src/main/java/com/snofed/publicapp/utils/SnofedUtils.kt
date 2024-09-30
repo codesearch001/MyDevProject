@@ -7,10 +7,14 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.ConnectivityManager
+import android.net.Uri
 import android.provider.Settings
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import com.snofed.publicapp.R
 import com.snofed.publicapp.utils.SnofedConstants.Companion.FIRST_TIME_APP_USE
 import com.snofed.publicapp.utils.SnofedConstants.Companion.PREFS_NAME
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -60,6 +64,7 @@ class SnofedUtils {
             return sdf.format(Date())
         }
 
+
         // Check if it's the first time the app is being used
         fun isFirstTimeAppUse(context: Context): Boolean {
             val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -74,12 +79,66 @@ class SnofedUtils {
             editor.apply()
         }
 
-        fun checkIfThereIsNetworkConnection(context: Context): Boolean {
+        fun isNetworkAvailable(context: Context): Boolean {
             val connectivityManager =
                 context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             val networkInfo = connectivityManager.activeNetworkInfo
             return networkInfo != null && networkInfo.isConnected
         }
+
+
+        /**
+         * Check if Swish is installed
+         */
+        /*# SWISH APP
+        SWISH_APP = "se.bankgirot.swish"*/
+        fun isSwishAppInstalled(context: Context): Boolean {
+            return try {
+                // context.packageManager.getPackageInfo(BuildConfig.SWISH_APP, 0)//se.bankgirot.swish.sandbox//se.bankgirot.swish
+                context.packageManager.getPackageInfo("se.bankgirot.swish.sandbox", 0)
+                true
+            } catch (e: PackageManager.NameNotFoundException) {
+                Toast.makeText(context, R.string.swish_application_not_installed_toast, Toast.LENGTH_LONG).show()
+                false
+            }
+        }
+
+
+        /**
+         * Method which will call Swish App
+         */
+        fun startSwish(activity: Activity?, token: String?, callBackUrl: String?, requestCode: Int): Boolean {
+            if (token.isNullOrEmpty() || callBackUrl.isNullOrEmpty() || activity == null) {
+                return false
+            }
+
+            val scheme = Uri.parse("swish://paymentrequest?token=$token")
+            val intent = Intent(Intent.ACTION_VIEW, scheme).apply {
+                //setPackage(BuildConfig.SWISH_APP)
+                setPackage("se.bankgirot.swish.sandbox")
+            }
+
+            return try {
+                activity.startActivityForResult(intent, requestCode)
+                true
+            } catch (e: Exception) {
+                false
+            }
+        }
+
+        fun checkIfThereIsNetworkConnection(activity: Activity?): Boolean {
+            val command = "ping -c 1 google.com"
+            return try {
+                Runtime.getRuntime().exec(command).waitFor() == 0
+            } catch (e: IOException) {
+                e.printStackTrace()
+                false
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
+                false
+            }
+        }
+
     }
 
 

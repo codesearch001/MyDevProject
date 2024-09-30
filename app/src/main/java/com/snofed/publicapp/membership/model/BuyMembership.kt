@@ -1,5 +1,7 @@
 package com.snofed.publicapp.membership.model
 
+import com.snofed.publicapp.models.membership.Benefit
+
 data class BuyMembership(
     val success: Boolean,
     val message: Any?,
@@ -42,9 +44,9 @@ data class DescriptionTranslates(
     val no: Any?,
 )
 
-data class Benefit(
+/*data class Benefit(
     val id: String,
     val name: String,
     val description: String,
     val partnerLogoPath: String,
-)
+)*/

@@ -19,7 +19,6 @@ import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
 import com.snofed.publicapp.utils.ServiceUtil.BROWSE_CLUB_DETAILS
 import com.snofed.publicapp.utils.ServiceUtil.BROWSE_CLUB_LIST
-import com.snofed.publicapp.utils.ServiceUtil.BUY_MEMBERSHIP
 import com.snofed.publicapp.utils.ServiceUtil.CLUB_EVENT
 import com.snofed.publicapp.utils.ServiceUtil.CLUB_EVENT_DETAILS
 import com.snofed.publicapp.utils.ServiceUtil.CLUB_TRAILS_CHART

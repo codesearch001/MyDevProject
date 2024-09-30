@@ -88,6 +88,7 @@
 
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/txt_benefit_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -108,6 +109,7 @@
                 android:textSize="14dp" />
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_benefit"
                 android:layout_width="122dp"
                 android:background="@drawable/gray_outline_button"
                 android:src="@drawable/logo"
@@ -128,7 +130,7 @@
                 android:textSize="14dp" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/userName"
+                android:id="@+id/txt_partner_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -144,7 +146,8 @@
                 android:layout_below="@+id/userName"
                 android:layout_margin="@dimen/marginXXLarge"
                 app:cardBackgroundColor="@color/dark_blue"
-                app:cardElevation="4dp">
+                android:elevation="0dp"
+                app:cardElevation="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -161,6 +164,7 @@
                         android:textStyle="bold" />
 
                     <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/txt_valid_to"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="31 Dec 2024 at 00:00"
@@ -182,6 +186,7 @@
                         android:textStyle="bold" />
 
                     <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/txt_valid_from"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="01 Feb 2024 at 00:00"

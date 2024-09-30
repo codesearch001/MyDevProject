@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="CustomTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:statusBarColor">#00000000</item>
+    </style>
 
-        <style name="TextRobotoNormal">
-            <item name="android:typeface">normal</item>
-            <item name="android:textStyle">normal</item>
-        </style>
 
     <style name="TabTextStyle" parent="Widget.Design.TabLayout">
         <item name="android:textSize">12sp</item> <!-- Adjust the text size as per your requirement -->
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="CustomTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:windowTranslucentStatus">false</item>
-        <item name="android:statusBarColor">#00000000</item>
+    <style name="TextRobotoNormal">
+        <item name="android:typeface">normal</item>
+        <item name="android:textStyle">normal</item>
     </style>
+
 
     <style name="TransparentBottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/TransparentBottomSheet</item>

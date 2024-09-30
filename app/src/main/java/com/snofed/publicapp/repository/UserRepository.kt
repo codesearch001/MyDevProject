@@ -1,5 +1,6 @@
 package com.snofed.publicapp.repository
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -20,8 +21,11 @@ import com.snofed.publicapp.models.events.EventDetailsResponse
 import com.snofed.publicapp.models.events.EventResponse
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
+import com.snofed.publicapp.utils.AppPreference
 import com.snofed.publicapp.utils.NetworkResult
+import com.snofed.publicapp.utils.SharedPreferenceKeys
 import com.snofed.publicapp.utils.TokenManager
+import dagger.hilt.android.qualifiers.ApplicationContext
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Response
@@ -29,7 +33,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 
-class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: UserAPI?) {
+class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: UserAPI?,@ApplicationContext private val context: Context) {
     private val acceptLanguage = "en-US"
 
 
@@ -165,6 +169,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
         val response = userAPI!!.userDashBoard(acceptLanguage,userId)
         Log.e("response", "clubResponse " + response)
         if (response.isSuccessful && response.body() != null) {
+
             // Save to Room database
             //roomRepository.saveClients(response.body()!!)
             // clientDatabase.clientDao().insertClient(response.body()!!.data.clients)
@@ -365,6 +370,9 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             tokenManager.saveUserId(response.body()!!.data.id)
             Log.e("UserId", "UserId " + response.body()!!.data.id)
 
+            AppPreference.savePreference(context, SharedPreferenceKeys.USER_TOKEN, response.body()!!.data.token)
+            AppPreference.savePreference(context, SharedPreferenceKeys.USER_USER_ID, response.body()!!.data.id)
+            AppPreference.savePreference(context, SharedPreferenceKeys.IS_USER_LOGGED_IN, "true")
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
             _userResponseLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))

@@ -62,6 +62,10 @@ class SingleResortReportProblemChooseLocationFragment : Fragment() {
     private var taskNote: List<TaskNote> = listOf()
     private var description: String? = null
     private var categoryID: String? = null
+    private var fName: String? = null
+    private var lName: String? = null
+    private var mPhone: String? = null
+    private var eMailId: String? = null
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
@@ -73,6 +77,12 @@ class SingleResortReportProblemChooseLocationFragment : Fragment() {
         _binding = FragmentSingleResortReportProblemChooseLocationBinding.inflate(inflater, container, false)
         description = arguments?.getString("description").toString()
         categoryID = arguments?.getString("CATEGORY_ID").toString()
+        fName = arguments?.getString("CATEGORY_F_NAME").toString()
+        lName = arguments?.getString("CATEGORY_L_NAME").toString()
+        mPhone = arguments?.getString("CATEGORY_M_NUMBER").toString()
+        eMailId = arguments?.getString("CATEGORY_EMAIL_ID").toString()
+        Log.e("MapView", "Location is null.$description")
+        Log.e("MapView", "Location is null.$categoryID")
         return binding.root
     }
 
@@ -233,12 +243,18 @@ class SingleResortReportProblemChooseLocationFragment : Fragment() {
             .withIconImage("YOUR_ICON_BITMAP")
             .withDraggable(false) // No dragging for the marker
 
-        fixedPointAnnotation = pointAnnotationManager?.create(pointAnnotationOptions)!!
+        // Initialize fixedPointAnnotation safely
+        fixedPointAnnotation = pointAnnotationManager?.create(pointAnnotationOptions) ?: return
+
     }
 
     private fun updateFixedPointAnnotation(point: Point) {
-        fixedPointAnnotation.point = point
-        pointAnnotationManager?.update(fixedPointAnnotation)
+        if (::fixedPointAnnotation.isInitialized) {
+            fixedPointAnnotation.point = point
+            pointAnnotationManager?.update(fixedPointAnnotation)
+        } else {
+            Log.e("MapView", "fixedPointAnnotation is not initialized.")
+        }
     }
     /*private fun addDraggablePointAnnotation(point: Point) {
         val pointAnnotationOptions = PointAnnotationOptions()

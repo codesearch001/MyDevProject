@@ -3,21 +3,7 @@ package com.snofed.publicapp.models
 import kotlinx.serialization.Serializable
 import java.util.Date
 
-/*data class UserReport(
-    val id: String,
-    val name: String,
-    val categoryId: String,
-    val categoryName: String,
-    val description: String,
-    val creatorFullName: String,
-    val status: Int,
-    val syncAction: Int,
-    val longitude: Double,
-    val latitude: Double,
-    val clientId: String,
-    val notes: List<TaskNote> = emptyList(),
 
-)*/
 @Serializable
 data class UserReport(
     val id: String,

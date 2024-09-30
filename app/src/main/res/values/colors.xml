@@ -11,6 +11,9 @@
     <color name="t4t_bg">#005387</color>
     <color name="t_bg">#00000000</color>
     <color name="lavender">#8692f7</color>
+    <color name="colorNormal">#FF6200EE</color> <!-- Normal state color -->
+    <color name="colorPressed">#FF3700B3</color> <!-- Pressed state color -->
+
 
     <color name="error_color">#FF0000</color>
     <color name="card_bg_color">#F8F8F8</color>

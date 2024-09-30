@@ -28,6 +28,7 @@ class ActionsFragment : Fragment(),OnItemClickListener {
     @Inject
     lateinit var tokenManager: TokenManager
 
+    private var clientId: String? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -35,7 +36,6 @@ class ActionsFragment : Fragment(),OnItemClickListener {
         // Inflate the layout for this fragment
        // return inflater.inflate(R.layout.fragment_actions, container, false)
         _binding = FragmentActionsBinding.inflate(inflater, container, false)
-
         return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -84,7 +84,11 @@ class ActionsFragment : Fragment(),OnItemClickListener {
             findNavController().navigate(R.id.clubEventFragment)
         }
         if (itemId==3){
-            findNavController().navigate(R.id.purchaseOptionsFragment)
+            val bundle = Bundle()
+            bundle.putString("clientId", tokenManager.getClientId().toString())
+            val destination = R.id.purchaseOptionsFragment
+            findNavController().navigate(destination, bundle)
+           // findNavController().navigate(R.id.purchaseOptionsFragment)
         }
         if (itemId==4){
             findNavController().navigate(R.id.linksFragment)

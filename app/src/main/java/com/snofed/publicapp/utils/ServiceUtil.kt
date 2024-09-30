@@ -6,10 +6,12 @@ object ServiceUtil {
     const val BASE_URL = "http://161.97.121.63:5000/api/"
     const val BASE_URL_IMAGE = "http://161.97.121.63:5000"
     const val FEED_BACK_BASE_URL = "http://161.97.121.63:5005/api/"
+
     const val MEMBERSHIP_BASE_URL = "http://161.97.121.63:5006/api/"
     //FOR MEMBERSHIP IMAGE
     const val BASE_URL_MEMB_IMAGE = "http://161.97.121.63:5006"
 
+    //api/clients/{id}
 
     //FOR REGISTER
     const val REGISTER = "account/register-public-user"
@@ -51,6 +53,22 @@ object ServiceUtil {
 
     const val SYNC_TASK_DETAILS = "tasking-service/tasks/{id}"
 
-    const val BUY_MEMBERSHIP = "membership?"
+    /**********************HISTORY********************/
+    const val TICKET_PURCHASE_ORDER_HISTORY = "ticket-order/history/{userRef}"
+    const val TICKET_PURCHASE_ORDER_HISTORY_PRO_TRAILS = "/api/tickets/pro-trails/{userId}"
+
+    const val GET_TICKET_TYPE = "ticket-type/client/{clientId}"
+
+    const val SEND_ORDER_DIRECT = "direct2internet/new-order"
+
+    const val SEND_ORDER_SWISH = "swish/new-order/m-commerce"
+
+    /**********************MEMBERSHIP********************/
+    const val GET_MEMBERSHIP = "membership?"
+    //const val GET_ALL_MEMBERSHIP = "membership"
+    const val GET_ACTIVE_MEMBERSHIP = "membership/active/{userRef}"
+    const val GET_BENIFET_MEMBERSHIP = "membership/{id}"
+    const val GET_PURCHASABLE_MEMBERSHIPS = "membership/active/{userRef}"
+    const val ACTIVATE_MEMBERSHIP_WITH_CODE = "membership/activate/{userRef}/{activationCode}"
 
 }

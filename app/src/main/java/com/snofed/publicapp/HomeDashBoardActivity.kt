@@ -65,6 +65,7 @@ class HomeDashBoardActivity : AppCompatActivity(), DrawerController {
                             or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
         }
         tokenManager.getClientId().toString()
+        tokenManager.getUserId().toString()
         // setSupportActionBar(binding.toolbar)
         val drawerLayout: DrawerLayout = binding.drawerLayout//navigation_view
 
@@ -162,7 +163,7 @@ class HomeDashBoardActivity : AppCompatActivity(), DrawerController {
         }
     }
 
-    private fun enterFullScreenMode() {
+    /*private fun enterFullScreenMode() {
         // Optionally, apply fullscreen and immersive mode
         window.decorView.systemUiVisibility = (
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -171,7 +172,7 @@ class HomeDashBoardActivity : AppCompatActivity(), DrawerController {
                         or View.SYSTEM_UI_FLAG_FULLSCREEN
                         or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                 )
-    }
+    }*/
 
     private fun showBottomNav() {
         binding.bottomNavigationView.visibility = View.VISIBLE

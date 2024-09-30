@@ -63,8 +63,10 @@
     <Button
         android:id="@+id/btn_approve"
         android:layout_width="0dp"
-        android:layout_height="@dimen/_38sdp"
+        android:layout_height="@dimen/_45sdp"
         android:layout_marginTop="16dp"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:layout_marginEnd="@dimen/_8sdp"
         android:backgroundTint="@color/blue"
         android:text="Approve feedback"
         android:textAllCaps="false"
@@ -77,8 +79,10 @@
     <Button
         android:id="@+id/btn_remove"
         android:layout_width="0dp"
-        android:layout_height="@dimen/_30sdp"
+        android:layout_height="@dimen/_35sdp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="@dimen/_8sdp"
+        android:layout_marginStart="@dimen/_8sdp"
         android:background="@drawable/blue_outline_button"
         android:backgroundTint="@android:color/white"
         android:text="Remove feedback"
