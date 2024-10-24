@@ -4,7 +4,9 @@ object Constants {
     const val TAG = "SNOFED_TAG"
 
     const val USER_TOKEN = "token"
-    const val USER_FIRST_NAME = "fullName"
+    const val USER_FIRST_NAME = "firstName"
+    const val USER_LAST_NAME = "lastName"
+    const val USER_FULL_NAME = "fullName"
     const val USER_USER_ID = "id"
     const val CLUB_CLIENT_ID = "clientId"
     const val CLUB_TRAILS_ID = "trailId"

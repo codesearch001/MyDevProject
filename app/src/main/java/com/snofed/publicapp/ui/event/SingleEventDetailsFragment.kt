@@ -27,6 +27,7 @@ import com.snofed.publicapp.utils.NetworkResult
 import dagger.hilt.android.AndroidEntryPoint
 import android.text.Spannable
 import androidx.activity.OnBackPressedCallback
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.snofed.publicapp.R
@@ -76,12 +77,7 @@ class SingleEventDetailsFragment : Fragment() {
         binding.backBtn.setOnClickListener {
             it.findNavController().popBackStack()
         }
-        binding.btnBuyEventTicket.setOnClickListener {
-            it.findNavController().navigate(R.id.purchaseOptionsFragment)
-            //it.findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
-            /*val intent = Intent(requireActivity(), HomeDashBoardActivity::class.java)
-            startActivity(intent)*/
-        }
+
 
         fetchResponse()
         eventDetailsViewModel.eventDetailsLiveData.observe(viewLifecycleOwner, Observer {
@@ -108,6 +104,13 @@ class SingleEventDetailsFragment : Fragment() {
                         binding.textMonth.text = getMonthOnly
                         binding.txtEventBannerDate.text = getMonthOnly + " Event"
                         binding.txtEventName.text = it.data.data.name
+                        val id = it.data.data.id
+
+                        binding.btnBuyEventTicket.setOnClickListener {
+                            val bundle = Bundle()
+                            bundle.putString("clientId",id)
+                            findNavController().navigate(R.id.purchaseOptionsFragment,bundle)
+                        }
 
                         if (it.data.data.coverImagePath == null) {
                             Glide.with(binding.imgEventBannerImagePath).load(R.drawable.event_banner_details)

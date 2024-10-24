@@ -1,9 +1,14 @@
 package com.snofed.publicapp
 
+import android.app.AlertDialog
+import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.view.WindowInsets
+import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.core.view.GravityCompat
 import androidx.core.view.WindowInsetsCompat
@@ -14,7 +19,9 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.FirebaseApp
 import com.snofed.publicapp.databinding.ActivityMainHomeBinding
 import com.snofed.publicapp.databinding.NavHeaderMainBinding
 import com.snofed.publicapp.utils.DrawerController
@@ -33,25 +40,19 @@ class HomeDashBoardActivity : AppCompatActivity(), DrawerController {
     lateinit var tokenManager: TokenManager
 
 
+    
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Set up full-screen mode
-        //enterFullScreenMode()
         //setContentView(R.layout.activity_main_home)
         binding = ActivityMainHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         // Get the root view of the layout
         val rootView = window.decorView
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            // Apply insets listener for Android KitKat (API 19) and above
             rootView.setOnApplyWindowInsetsListener { view, insets ->
-                // Get the insets for system gestures (bottom navigation bar, etc.)
                 val systemGestureInsets = insets.getInsets(WindowInsetsCompat.Type.systemGestures())
-                // Adjust the bottom padding of the view to avoid overlap with the navigation bar
                 view.setPadding(view.paddingLeft, view.paddingTop, view.paddingRight, systemGestureInsets.bottom)
-                // Return the insets to allow other insets to be handled by default
                 insets
             }
         } else {
@@ -66,6 +67,7 @@ class HomeDashBoardActivity : AppCompatActivity(), DrawerController {
         }
         tokenManager.getClientId().toString()
         tokenManager.getUserId().toString()
+
         // setSupportActionBar(binding.toolbar)
         val drawerLayout: DrawerLayout = binding.drawerLayout//navigation_view
 
@@ -112,6 +114,10 @@ class HomeDashBoardActivity : AppCompatActivity(), DrawerController {
 
                 R.id.nav_drawer_help -> {
                     navController.navigate(R.id.helpFragment)
+                    true
+                }
+                R.id.nav_drawer_logout -> { // Handle logout click
+                    handleLogout()
                     true
                 }
                 else -> false
@@ -162,6 +168,31 @@ class HomeDashBoardActivity : AppCompatActivity(), DrawerController {
             }
         }
     }
+
+    private fun handleLogout() {
+        val builder = AlertDialog.Builder(this, R.style.RoundedAlertDialog)
+        builder.setTitle("Confirm Logout")
+            .setMessage(getString(R.string.logout_from_track4))
+            .setPositiveButton(getString(R.string.ok)) { dialog, which ->
+                // User confirmed logout
+                tokenManager.clearSession() // Clear user session
+
+                // Show a message
+                Toast.makeText(this, R.string.t_logged_out, Toast.LENGTH_SHORT).show()
+
+                // Navigate to the login activity
+                val intent = Intent(this, OnBoarding::class.java)
+                startActivity(intent)
+                finish() // Optional: finish the current activity
+            }
+            .setNegativeButton(getString(R.string.cancel)) { dialog, which ->
+                // User cancelled the logout
+                dialog.dismiss() // Close the dialog
+            }
+            .setCancelable(true) // Make the dialog cancelable
+            .show() // Display the dialog
+    }
+
 
     /*private fun enterFullScreenMode() {
         // Optionally, apply fullscreen and immersive mode

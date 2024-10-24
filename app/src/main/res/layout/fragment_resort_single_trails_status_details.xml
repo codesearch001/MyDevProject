@@ -118,7 +118,7 @@
                                 <androidx.appcompat.widget.AppCompatTextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Length"
+                                    android:text="@string/t_length"
                                     android:textColor="@android:color/white" />
 
                                 <androidx.appcompat.widget.AppCompatTextView
@@ -140,7 +140,7 @@
                                 <androidx.appcompat.widget.AppCompatTextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Status"
+                                    android:text="@string/t_status"
                                     android:textColor="@android:color/white" />
 
                                 <androidx.appcompat.widget.AppCompatTextView
@@ -173,7 +173,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="end"
-                                    android:text="Last Prepared"
+                                    android:text="@string/t_last_prepared"
                                     android:textColor="@android:color/white" />
 
                                 <androidx.appcompat.widget.AppCompatTextView
@@ -275,7 +275,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_weight="1"
-                                        android:text="Total Quality:"
+                                        android:text="@string/total_quality"
                                         android:textColor="@color/active_txt"
                                         android:textSize="14sp"
                                         android:textStyle="bold" />
@@ -301,7 +301,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_weight="1"
-                                        android:text="Min Height:"
+                                        android:text="@string/min_height"
                                         android:textColor="@color/active_txt"
                                         android:textSize="14sp"
                                         android:textStyle="bold" />
@@ -327,7 +327,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_weight="1"
-                                        android:text="Max Height:"
+                                        android:text="@string/max_height"
                                         android:textColor="@color/active_txt"
                                         android:textSize="14sp"
                                         android:textStyle="bold" />
@@ -354,7 +354,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_weight="1"
-                                        android:text="Duration:"
+                                        android:text="@string/duration"
                                         android:textColor="@color/active_txt"
                                         android:textSize="14sp"
                                         android:textStyle="bold" />
@@ -380,7 +380,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_weight="1"
-                                        android:text="Difficulty:"
+                                        android:text="@string/difficulty"
                                         android:textColor="@color/active_txt"
                                         android:textSize="14sp"
                                         android:textStyle="bold" />
@@ -406,7 +406,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_weight="1"
-                                        android:text="Lighting:"
+                                        android:text="@string/lights"
                                         android:textColor="@color/active_txt"
                                         android:textSize="14sp"
                                         android:textStyle="bold" />
@@ -431,7 +431,7 @@
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="Trail Short Message:"
+                                        android:text="@string/trail_short_message"
                                         android:textColor="@color/active_txt"
                                         android:textSize="14sp"
 
@@ -459,7 +459,7 @@
                                             android:layout_width="0dp"
                                             android:layout_height="wrap_content"
                                             android:layout_weight="1"
-                                            android:text="Average Rating:"
+                                            android:text="@string/average_rating"
                                             android:textColor="@color/active_txt"
                                             android:textSize="14sp"
                                             android:textStyle="bold" />
@@ -484,7 +484,7 @@
                                         <TextView
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:text="Description:"
+                                            android:text="@string/description"
                                             android:textColor="@color/active_txt"
                                             android:textSize="14sp"
                                             android:textStyle="bold" />

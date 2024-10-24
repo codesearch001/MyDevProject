@@ -43,7 +43,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="Become a member"
+                    android:text="@string/t_become_a_member"
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold" />

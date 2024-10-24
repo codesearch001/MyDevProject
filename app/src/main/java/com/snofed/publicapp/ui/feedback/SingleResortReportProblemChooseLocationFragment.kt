@@ -25,25 +25,22 @@ import com.google.gson.Gson
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
-import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.Style
-import com.mapbox.maps.plugin.annotation.Annotation
-import com.mapbox.maps.plugin.annotation.AnnotationPlugin
 import com.mapbox.maps.plugin.annotation.annotations
-import com.mapbox.maps.plugin.annotation.generated.OnPointAnnotationDragListener
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotation
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
-import com.mapbox.maps.plugin.gestures.gestures
 import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.FragmentSingleResortReportProblemChooseLocationBinding
+import com.snofed.publicapp.models.TaskMedia
 import com.snofed.publicapp.models.TaskNote
 import com.snofed.publicapp.models.UserReport
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.Constants
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.TokenManager
+import com.snofed.publicapp.utils.enums.SyncActionEnum
 import com.snofed.publicapp.utils.enums.TaskStatus
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.UUID
@@ -60,12 +57,18 @@ class SingleResortReportProblemChooseLocationFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var fixedPointAnnotation: PointAnnotation
     private var taskNote: List<TaskNote> = listOf()
+    private var taskMedia: List<TaskMedia> = listOf()
     private var description: String? = null
+    private var categoryName: String? = null
     private var categoryID: String? = null
     private var fName: String? = null
     private var lName: String? = null
     private var mPhone: String? = null
     private var eMailId: String? = null
+    private var contactInformation: String? = null
+    private var taskId = UUID.randomUUID().toString()
+    private var noteUDID = UUID.randomUUID().toString()
+
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
@@ -75,19 +78,36 @@ class SingleResortReportProblemChooseLocationFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentSingleResortReportProblemChooseLocationBinding.inflate(inflater, container, false)
+
         description = arguments?.getString("description").toString()
+        categoryName = arguments?.getString("categoryName").toString()
         categoryID = arguments?.getString("CATEGORY_ID").toString()
         fName = arguments?.getString("CATEGORY_F_NAME").toString()
         lName = arguments?.getString("CATEGORY_L_NAME").toString()
         mPhone = arguments?.getString("CATEGORY_M_NUMBER").toString()
         eMailId = arguments?.getString("CATEGORY_EMAIL_ID").toString()
+
         Log.e("MapView", "Location is null.$description")
         Log.e("MapView", "Location is null.$categoryID")
+
+        contactInformation = createContactInformation()
+
         return binding.root
+    }
+
+    private fun createContactInformation(): String {
+        fName = arguments?.getString("CATEGORY_F_NAME").toString()
+        lName = arguments?.getString("CATEGORY_L_NAME").toString()
+        mPhone = arguments?.getString("CATEGORY_M_NUMBER").toString()
+        eMailId = arguments?.getString("CATEGORY_EMAIL_ID").toString()
+
+        return fName + "\n" + lName + "\n" + mPhone + "\n" + eMailId
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
         binding.backBtn.setOnClickListener {
             it.findNavController().popBackStack()
         }
@@ -101,13 +121,20 @@ class SingleResortReportProblemChooseLocationFragment : Fragment() {
         feedViewModel.userFeedBackResponseLiveData.observe(viewLifecycleOwner, Observer {
             when (it) {
                 is NetworkResult.Success -> {
-                    Toast.makeText(requireActivity(), "Your feedback sent successfully", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireActivity(),
+                        "Your feedback sent successfully",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     //findNavController().navigate(R.id.feedBackFragment)
                     findNavController().popBackStack(R.id.feedBackFragment, false)
                 }
+
                 is NetworkResult.Error -> {
-                    Toast.makeText(requireActivity(), it.message.toString(), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireActivity(), it.message.toString(), Toast.LENGTH_SHORT)
+                        .show()
                 }
+
                 is NetworkResult.Loading -> {
                     // Handle loading state
                 }
@@ -120,17 +147,32 @@ class SingleResortReportProblemChooseLocationFragment : Fragment() {
     }
 
     private fun checkLocationPermissions() {
-        if (ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
+        if (ContextCompat.checkSelfPermission(
+                requireActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
         } else {
             getCurrentLocation()
         }
     }
 
     private fun getCurrentLocation() {
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-            && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             return
         }
         fusedLocationClient.lastLocation
@@ -151,30 +193,36 @@ class SingleResortReportProblemChooseLocationFragment : Fragment() {
         val latitude = location.latitude
         val longitude = location.longitude
         Log.d("MapView", "Latitude: $latitude, Longitude: $longitude")
-        Toast.makeText(requireContext(), "Latitude: $latitude, Longitude: $longitude", Toast.LENGTH_LONG).show()
+        Toast.makeText(
+            requireContext(),
+            "Latitude: $latitude, Longitude: $longitude",
+            Toast.LENGTH_LONG
+        ).show()
 
 
     }
 
     private fun handleClicks(latitude: Double, longitude: Double) {
-        val userReport1 = UserReport(
-            UUID.randomUUID().toString(),
+        val userReport = UserReport(
+            taskId,
             tokenManager.getClientId().toString(),
-            Constants.CATEGORY_ID,
-            tokenManager.getUser().toString(),
-            "",
+            categoryID.toString(),
+            categoryName.toString(),
             description.toString(),
-            "",
-            0,
-            TaskStatus.PublicAppReport.statusValue,
             longitude,
             latitude,
+            tokenManager.getUserId().toString(),
+            tokenManager.getFullName().toString(),
+            TaskStatus.PublicAppReport.statusValue,
+            SyncActionEnum.NEW.statusValue,
             taskNote
         )
+        val gson = Gson()
+        val json = gson.toJson(userReport)
+        //Log.d("SingleResortReportProblemChooseLocationFragment", "sendReport: " +json)
+        Log.d("SingleResortReportProblemChooseLocationFragment", "sendReport: " +userReport)
 
-        Log.d("userReport1", "userReport1: $userReport1")
-
-        feedViewModel.userReportRequest(listOf(userReport1))
+        feedViewModel.userReportRequest(listOf(userReport))
     }
 
     private fun moveCameraToLocation(location: Location) {
@@ -227,8 +275,35 @@ class SingleResortReportProblemChooseLocationFragment : Fragment() {
                 val longitude = center.longitude()
                 updateFixedPointAnnotation(Point.fromLngLat(center.longitude(), center.latitude()))
                 // Print and Toast the updated map center
-                Log.d("MapView", "Map Center after drag - Latitude: $latitude, Longitude: $longitude")
+                Log.d(
+                    "MapView",
+                    "Map Center after drag - Latitude: $latitude, Longitude: $longitude"
+                )
                 //Toast.makeText(requireContext(), "Map Center - Latitude: $latitude, Longitude: $longitude", Toast.LENGTH_LONG).show()
+                taskNote = listOf(
+                    TaskNote(
+                        noteUDID,
+                        contactInformation.toString(),
+                        tokenManager.getUserId().toString(),
+                        tokenManager.getFullName().toString(),
+                        taskId,
+                        SyncActionEnum.NEW.statusValue,
+                        taskMedia
+                    )
+                )
+
+                /*taskMedia = listOf(
+                    TaskMedia(
+                        UUID.randomUUID().toString(),
+                        "",
+                        "",
+                        "",
+                        0,
+                        SyncActionEnum.NEW.statusValue,
+                        noteUDID
+                    )
+                )*/
+
                 binding.confirmSendButton.setOnClickListener {
                     handleClicks(latitude, longitude)
                 }
@@ -237,6 +312,7 @@ class SingleResortReportProblemChooseLocationFragment : Fragment() {
         }
 
     }
+
     private fun addFixedPointAnnotation(point: Point) {
         val pointAnnotationOptions = PointAnnotationOptions()
             .withPoint(point)
@@ -299,7 +375,11 @@ class SingleResortReportProblemChooseLocationFragment : Fragment() {
         })
     }*/
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

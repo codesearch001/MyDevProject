@@ -54,12 +54,12 @@ class ActionsFragment : Fragment(),OnItemClickListener {
 
         fun getItems(): List<GridItem> {
             return listOf(
-            GridItem(1, R.drawable.signs, R.drawable.trailstatus,"Trails Status"),
-            GridItem(2, R.drawable.eventss, R.drawable.events,"Events"),
-            GridItem(3, R.drawable.card, R.drawable.shop,"Shops"),
-            GridItem(4, R.drawable.document, R.drawable.linksanddocuments,"Links and Documents"),
-            GridItem(5, R.drawable.world,  R.drawable.socialmedia, "Social Media"),
-            GridItem(6, R.drawable.information, R.drawable.feedback,"FeedBack"),)
+            GridItem(1, R.drawable.signs, R.drawable.trailstatus,resources.getString(R.string.t_trails_status)),
+            GridItem(2, R.drawable.eventss, R.drawable.events,resources.getString(R.string.t_event)),
+            GridItem(3, R.drawable.card, R.drawable.shop,resources.getString(R.string.t_shops)),
+            GridItem(4, R.drawable.document, R.drawable.linksanddocuments,resources.getString(R.string.t_links_and_doc)),
+            GridItem(5, R.drawable.world,  R.drawable.socialmedia, resources.getString(R.string.t_social_media)),
+            GridItem(6, R.drawable.information, R.drawable.feedback,resources.getString(R.string.t_feedback)),)
         }
 
         binding.recyclerView.layoutManager = GridLayoutManager(context, 2) // 2 columns

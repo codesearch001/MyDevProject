@@ -3,7 +3,7 @@ package com.snofed.publicapp
 import android.app.Application
 import com.facebook.FacebookSdk
 import com.facebook.appevents.AppEventsLogger
-
+import com.google.firebase.FirebaseApp
 
 
 import dagger.hilt.android.HiltAndroidApp
@@ -17,7 +17,8 @@ class SnofedApplication : Application() {
     private var config: RealmConfiguration? = null
     override fun onCreate() {
         super.onCreate()
-
+        // Initialize Firebase
+        FirebaseApp.initializeApp(this)
         // Initialize the Facebook SDK
         FacebookSdk.sdkInitialize(applicationContext)
         AppEventsLogger.activateApp(this)

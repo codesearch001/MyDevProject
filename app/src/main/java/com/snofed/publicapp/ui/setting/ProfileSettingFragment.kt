@@ -17,8 +17,10 @@ import android.graphics.Bitmap
 import android.provider.MediaStore
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
+import com.snofed.publicapp.utils.AppPreference
 import com.snofed.publicapp.utils.ImageUriCallback
 import com.snofed.publicapp.utils.MediaReader
+import com.snofed.publicapp.utils.SharedPreferenceKeys
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -46,6 +48,12 @@ class ProfileSettingFragment : Fragment(),ImageUriCallback {
         binding.profileImageView.setOnClickListener {
             showImageOptionsDialog()
         }
+            binding.txtFirstName.text =  AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_FIRST_NAME)
+            binding.txtLastName.text =AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_LAST_NAME)
+            binding.txtUserAge.text = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_AGE)
+            binding.txtUserWeight.text = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_WEIGHT) + " Kg"
+            binding.txtUserGender.text = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_GENDER_TYPE)
+
 
         return view
     }

@@ -24,15 +24,17 @@ import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalDate
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class EventFragment : Fragment(),EventFeedAdapter.OnItemClickListener {
-
+    var lastName: String? = null
     private var _binding: FragmentEventBinding? = null
     private val binding get() = _binding!!
     private val eventViewModel by viewModels<AuthViewModel>()
     private lateinit var feedAdapter: EventFeedAdapter
+    val currentDate = LocalDate.now() // Get current date
     @Inject
     lateinit var tokenManager: TokenManager
 
@@ -59,12 +61,26 @@ class EventFragment : Fragment(),EventFeedAdapter.OnItemClickListener {
             binding.progressBar.isVisible = false
             when (it) {
                 is NetworkResult.Success -> {
+                    // Filter the events to find those where the endDate matches the current date
+                    val filteredEvents = it.data?.data?.filter { event ->
+                        val eventEndDate = LocalDate.parse(event.endDate.substring(0, 10)) // Extract "yyyy-MM-dd" from endDate
+                        eventEndDate == currentDate
+                    }
                     Log.i("Event", "Event " + it.data?.data)
                     feedAdapter = EventFeedAdapter(this)
                     binding.eventRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
                     binding.eventRecyclerView.adapter = feedAdapter
-                    feedAdapter.setEvent(it.data?.data)
+                    feedAdapter.setEvent(filteredEvents ?: emptyList())
 
+
+                    // Check if there are no filtered events
+                    if (filteredEvents.isNullOrEmpty()) {
+                        // Show the "not found" text
+                        binding.tvSplashText.visibility = View.VISIBLE
+                    } else {
+                        // Hide the "not found" text
+                        binding.tvSplashText.visibility = View.GONE
+                    }
                 }
 
                 is NetworkResult.Error -> {

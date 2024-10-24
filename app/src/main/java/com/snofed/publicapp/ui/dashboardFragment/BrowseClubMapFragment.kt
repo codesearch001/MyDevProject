@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -35,28 +37,19 @@ import com.mapbox.maps.viewannotation.geometry
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
 
 @AndroidEntryPoint
-class BrowseClubMapFragment : Fragment()  {
+class BrowseClubMapFragment : Fragment() {
     private var _binding: FragmentBrowseClubMapBinding? = null
     private val binding get() = _binding!!
     private val sharedViewModel by activityViewModels<SharedViewModel>()
     private lateinit var viewAnnotationManager: ViewAnnotationManager
     private lateinit var pointAnnotationManager: PointAnnotationManager
-    private lateinit var pointAnnotation: PointAnnotation
-    private lateinit var viewAnnotation: View
     private lateinit var mapView: MapView
     private lateinit var mapboxMap: MapboxMap
     private var pointsList: List<Point> = emptyList()
+    private lateinit var iconBitmap: Bitmap
 
-
-    private lateinit var iconBitmap : Bitmap
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-      //  return inflater.inflate(R.layout.fragment_browse_club_map, container, false)
-       _binding = FragmentBrowseClubMapBinding.inflate(inflater, container, false)
-
-      /*  binding.backBtn.setOnClickListener {
-            it.findNavController().popBackStack()
-        }*/
+        _binding = FragmentBrowseClubMapBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -67,111 +60,147 @@ class BrowseClubMapFragment : Fragment()  {
         // Initialize MapView and MapboxMap
         mapView = binding.mapView
         mapboxMap = mapView.mapboxMap
-
-        /*val iconBitmap = BitmapUtils.bitmapFromDrawableRes(requireContext(), R.drawable.red_marker)!!*/
-        getResponse()
         iconBitmap = bitmapFromDrawableRes(requireContext(), R.drawable.red_marker)!!
         viewAnnotationManager = binding.mapView.viewAnnotationManager
 
-        resetCamera()
+        // Fetch data and set up map
+        getResponse()
 
         binding.mapView.mapboxMap.loadStyle(Style.STANDARD) {
-            prepareAnnotationMarker(binding.mapView, iconBitmap,pointsList)
-           // prepareViewAnnotation()
+            Log.d("BrowseClubMapFragment", "Map style loaded successfully")
 
-            pointAnnotationManager.addClickListener { clickedAnnotation ->
-                if (pointAnnotation == clickedAnnotation) {
-                   // viewAnnotation.toggleViewVisibility()
-                }
-                true
-            }
+            // Set the default camera settings, including zoom level
+            setDefaultCamera()
 
-          /*  binding.fabStyleToggle.setOnClickListener {
-                if (pointAnnotation.iconImage == null) {
-                    pointAnnotation.iconImageBitmap = iconBitmap
-                    viewAnnotation.isVisible = true
-                } else {
-                    pointAnnotation.iconImageBitmap = null
-                    viewAnnotation.isVisible = false
-                }
-                pointAnnotationManager.update(pointAnnotation)
-            }*/
-
-          /*  binding.fabReframe.setOnClickListener {
-                resetCamera()
-                pointAnnotation.point = POINT
-                pointAnnotationManager.update(pointAnnotation)
-                syncAnnotationPosition()
-            }
-*/
-            pointAnnotationManager.addDragListener(object : OnPointAnnotationDragListener {
-                override fun onAnnotationDrag(annotation: Annotation<*>) {
-                    TODO("Not yet implemented")
-                }
-
-                override fun onAnnotationDragFinished(annotation: Annotation<*>) {
-                    TODO("Not yet implemented")
-                }
-
-                override fun onAnnotationDragStarted(annotation: Annotation<*>) {
-                    TODO("Not yet implemented")
-                }
-
-            })
+            setupAnnotationManager() // Ensure the annotation manager is created here
         }
     }
 
-    private fun getResponse() {
-        // Show loader before the API call starts
-        showLoader()
+    private fun setDefaultCamera() {
+        // Set the initial camera position and zoom level
+        val initialPoint = Point.fromLngLat(0.0, 0.0) // Default center point (you can change this)
+        val initialZoom = 8.0 // Default zoom level
 
-        sharedViewModel.browseClubResponse.observe(viewLifecycleOwner, Observer { response ->
-            if (response != null) {
-                val data = response.data.clients
-                // Normal case: data is present
-                Log.d("browseClubResponse ", "browseClubResponse.. $data")
-                val filteredClients = data?.filter { client ->
-                    client.visibility == 0 // true 1->false
-                }
+        mapboxMap.setCamera(
+            CameraOptions.Builder()
+                .center(initialPoint)
+                .zoom(initialZoom)
+                .build()
+        )
+    }
 
-                filteredClients?.let { apiPoints ->
-                    // Convert ApiPoint to Point
-                    pointsList = apiPoints.map {
-                        Point.fromLngLat(it.startLongitude.toDouble(), it.startLatitude.toDouble())
-                    }
+    private fun setupAnnotationManager() {
+        // Initialize PointAnnotationManager
+        val annotationPlugin = mapView.annotations
+        pointAnnotationManager = annotationPlugin.createPointAnnotationManager(
+            AnnotationConfig(layerId = LAYER_ID)
+        )
+        Log.d("BrowseClubMapFragment", "PointAnnotationManager created")
 
-                    // Update map with the points
-                    updateMapWithPoints()
+        // Set up click and drag listeners for the annotations
+        pointAnnotationManager.addClickListener { clickedAnnotation ->
+            Log.d("BrowseClubMapFragment", "Annotation clicked at: ${clickedAnnotation.point.longitude()}, ${clickedAnnotation.point.latitude()}")
+            showPopup(clickedAnnotation)
+            true
+        }
 
-                    // Hide loader after processing
-                    hideLoader()
-                } ?: run {
-                    // If filteredClients is null, hide loader
-                    hideLoader()
-                }
-            } else {
-                // Error or null case, hide loader
-                hideLoader()
-                Log.e("browseClubResponse", "Failed to fetch response")
+      /*  pointAnnotationManager.addDragListener(object : OnPointAnnotationDragListener {
+            override fun onAnnotationDrag(annotation: Annotation<*>) {
+                val pointAnnotation = annotation as PointAnnotation
+                Log.d("AnnotationDrag", "Dragging annotation at: ${pointAnnotation.point.longitude()}, ${pointAnnotation.point.latitude()}")
             }
+
+            override fun onAnnotationDragFinished(annotation: Annotation<*>) {
+                val pointAnnotation = annotation as PointAnnotation
+                Log.d("AnnotationDragFinished", "Drag finished at: ${pointAnnotation.point.longitude()}, ${pointAnnotation.point.latitude()}")
+                Toast.makeText(
+                    requireActivity(),
+                    "Drag finished at: ${pointAnnotation.point.longitude()}, ${pointAnnotation.point.latitude()}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
+            override fun onAnnotationDragStarted(annotation: Annotation<*>) {
+                val pointAnnotation = annotation as PointAnnotation
+                Log.d("AnnotationDragStarted", "Drag started at: ${pointAnnotation.point.longitude()}, ${pointAnnotation.point.latitude()}")
+            }
+        })*/
+
+        // Create the initial annotations
+        updateMapWithPoints()
+    }
+  /*  private fun showPopup(annotation: PointAnnotation) {
+        val coordinates = annotation.point
+
+        // Inflate the custom popup layout
+        val popupView = LayoutInflater.from(requireContext()).inflate(R.layout.popup_layout, null)
+
+        // Set up the TextViews in the popup
+        val titleTextView = popupView.findViewById<TextView>(R.id.popup_title)
+        val descriptionTextView = popupView.findViewById<TextView>(R.id.popup_description)
+
+        // Set the content for the popup (you can customize this based on your data)
+        titleTextView.text = "Marker Title" // Set a dynamic title based on your data
+        descriptionTextView.text = "Longitude: ${coordinates.longitude()}, Latitude: ${coordinates.latitude()}" // Set a dynamic description
+
+        // Create a PopupWindow
+        val popupWindow = PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+
+        // Show the popup at the marker's position
+        val location = binding.mapView.projection.toScreenLocation(coordinates)
+        popupWindow.showAtLocation(binding.mapView, Gravity.NO_GRAVITY, location.x, location.y)
+
+        // Dismiss the popup when clicked outside
+        popupView.setOnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_OUTSIDE) {
+                popupWindow.dismiss()
+                true
+            } else {
+                false
+            }
+        }
+    }*/
+
+    private fun showPopup(annotation: PointAnnotation) {
+        val coordinates = annotation.point
+        Toast.makeText(
+            requireActivity(),
+            "Marker clicked at: ${coordinates.longitude()}, ${coordinates.latitude()}",
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    private fun getResponse() {
+        showLoader()
+        sharedViewModel.browseClubResponse.observe(viewLifecycleOwner, Observer { response ->
+            hideLoader()
+            response?.data?.clients?.filter { it.visibility == 0 }?.let { apiPoints ->
+                pointsList = apiPoints.map {
+                    Point.fromLngLat(it.startLongitude.toDouble(), it.startLatitude.toDouble())
+                }
+                updateMapWithPoints()
+            } ?: Log.e("browseClubResponse", "Failed to fetch response")
         })
     }
 
-    // Function to show the loader
     private fun showLoader() {
         binding.progressBar.visibility = View.VISIBLE
     }
 
-    // Function to hide the loader
     private fun hideLoader() {
         binding.progressBar.visibility = View.GONE
     }
 
     private fun updateMapWithPoints() {
-        resetCamera() // Reset camera to center on new points
-        prepareAnnotationMarker(binding.mapView, iconBitmap, pointsList) // Update markers on the map
+        if (this::pointAnnotationManager.isInitialized) {
+            // Clear any previous annotations
+            pointAnnotationManager.deleteAll()
+            // Add new annotations
+            prepareAnnotationMarker(pointsList)
+        } else {
+            Log.e("BrowseClubMapFragment", "PointAnnotationManager not initialized")
+        }
     }
-
 
     private fun bitmapFromDrawableRes(context: Context, resId: Int): Bitmap? {
         val drawable = ContextCompat.getDrawable(context, resId) ?: return null
@@ -182,153 +211,29 @@ class BrowseClubMapFragment : Fragment()  {
         return bitmap
     }
 
-    private fun resetCamera() {
-        if (pointsList.isEmpty()) return
-
-        // Calculate the center point
-        val centerPoint = Point.fromLngLat(
-            pointsList.map { it.longitude() }.average(),
-            pointsList.map { it.latitude() }.average()
-        )
-
-        binding.mapView.mapboxMap.setCamera(
-            CameraOptions.Builder()
-                .center(centerPoint)
-                .pitch(45.0)
-                .zoom(8.0)
-                .bearing(-17.6)
-                .build()
-        )
-    }
-
-    /*private fun resetCamera() {
-        if (POINTS.isEmpty()) return
-
-        // Use the first point as the center
-        val centerPoint = POINTS[0]
-
-        binding.mapView.mapboxMap.setCamera(
-            CameraOptions.Builder()
-                .center(centerPoint)
-                .pitch(45.0)
-                .zoom(12.5)
-                .bearing(-17.6)
-                .build()
-        )
-    }*/
-
-
-    private fun syncAnnotationPosition() {
-        viewAnnotationManager.updateViewAnnotation(
-            viewAnnotation,
-            viewAnnotationOptions {
-                geometry(pointAnnotation.geometry)
-            }
-        )
-        /*ItemCalloutViewBinding.bind(viewAnnotation).apply {
-            textNativeView.text = "lat=%.2f\nlon=%.2f".format(
-                pointAnnotation.geometry.latitude(),
-                pointAnnotation.geometry.longitude()
-            )
-        }*/
-    }
-
-   /* @SuppressLint("SetTextI18n")
-    private fun prepareViewAnnotation() {
-        viewAnnotation = viewAnnotationManager.addViewAnnotation(
-            resId = R.layout.item_callout_view,
-            options = viewAnnotationOptions {
-                geometry(pointAnnotation.geometry)
-                annotationAnchor {
-                    anchor(ViewAnnotationAnchor.BOTTOM)
-                    offsetY((pointAnnotation.iconImageBitmap?.height!!.toDouble()))
-                }
-            }
-        )
-        ItemCalloutViewBinding.bind(viewAnnotation).apply {
-            textNativeView.text = "lat=%.2f\nlon=%.2f".format(POINT.latitude(), POINT.longitude())
-            closeNativeView.setOnClickListener {
-                viewAnnotationManager.removeViewAnnotation(viewAnnotation)
-            }
-            selectButton.setOnClickListener { b ->
-                val button = b as Button
-                val isSelected = button.text.toString().equals("SELECT", true)
-                val pxDelta = if (isSelected) SELECTED_ADD_COEF_PX else -SELECTED_ADD_COEF_PX
-                button.text = if (isSelected) "DESELECT" else "SELECT"
-                viewAnnotationManager.updateViewAnnotation(
-                    viewAnnotation,
-                    viewAnnotationOptions {
-                        selected(isSelected)
-                    }
-                )
-                (button.layoutParams as ViewGroup.MarginLayoutParams).apply {
-                    bottomMargin += pxDelta
-                    rightMargin += pxDelta
-                    leftMargin += pxDelta
-                }
-                button.requestLayout()
-            }
-        }
-    }*/
-
-    private fun prepareAnnotationMarker(
-        mapView: MapView, iconBitmap: Bitmap,
-        pointsList: List<Point>
-    ) {
-        val annotationPlugin = mapView.annotations
-        pointAnnotationManager = annotationPlugin.createPointAnnotationManager(
-            AnnotationConfig(layerId = LAYER_ID)
-        )
-
-        for (point in pointsList) {
-            val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
+    private fun prepareAnnotationMarker(pointsList: List<Point>) {
+        pointsList.forEach { point ->
+            val pointAnnotationOptions = PointAnnotationOptions()
                 .withPoint(point)
                 .withIconImage(iconBitmap)
                 .withIconAnchor(IconAnchor.BOTTOM)
-                .withDraggable(true)
+                .withDraggable(false)
             pointAnnotationManager.create(pointAnnotationOptions)
         }
+        Log.d("BrowseClubMapFragment", "Annotations added: ${pointsList.size}")
     }
 
     private companion object {
-        const val SELECTED_ADD_COEF_PX = 25
-
-        val LAYER_ID = "layer-id"
-    }
-
-
-
-    @SuppressLint("Lifecycle")
-    override fun onDestroy() {
-        super.onDestroy()
-        mapView.onDestroy()
+        const val LAYER_ID = "layer-id"
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
-    @SuppressLint("Lifecycle")
-    override fun onStop() {
-        super.onStop()
-        mapView.onStop() // Ensure MapView stops
-
-    }
-
-    @SuppressLint("Lifecycle")
-    override fun onStart() {
-        super.onStart()
-        mapView.onStart()
-    }
-
-
-    @SuppressLint("Lifecycle")
-    override fun onLowMemory() {
-        super.onLowMemory()
-        mapView.onLowMemory()
-    }
-
 }
+
+
+
 
 

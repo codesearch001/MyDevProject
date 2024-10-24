@@ -88,6 +88,12 @@ class OrderTicketFragment : Fragment() {
         }
 
         displayTicketPrice()
+
+        // Hide button layout if no tickets remain
+        if (viewModel.tickets.isEmpty()) {
+            binding.buttonLayout.visibility = View.GONE
+            binding.tvSplashText.visibility = View.VISIBLE
+        }
     }
     /*  @SuppressLint("NotifyDataSetChanged")
       private fun deleteTicket(ticket: TicketModel) {
@@ -105,13 +111,23 @@ class OrderTicketFragment : Fragment() {
     @SuppressLint("SuspiciousIndentation")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.backBtn.setOnClickListener {
+            it.findNavController().popBackStack()
+        }
         // Retrieve arguments from the Bundle
         ticketCategory = arguments?.getInt("ticketCategory")
         isMultipleTicket = arguments?.getBoolean("isMultipleTicket")
 
 
         tickets = viewModel.getAllTickets()
-
+        // If tickets are empty, hide the button layout
+        if (tickets.isEmpty()) {
+            binding.buttonLayout.visibility = View.GONE
+            binding.tvSplashText.visibility = View.VISIBLE
+        } else {
+            binding.buttonLayout.visibility = View.VISIBLE
+            displayTicketPrice()
+        }
         ///send order
       val prepareOrder =  OrderDTO(
           null,
@@ -175,9 +191,7 @@ class OrderTicketFragment : Fragment() {
             findNavController().navigate(destination, bundle)
             //it.findNavController().navigate(R.id.newTicketFragment)
         }
-        binding.backBtn.setOnClickListener {
-            it.findNavController().popBackStack()
-        }
+
 
         // Assuming you want to display the last added ticket details
         if (viewModel.tickets.isNotEmpty()) {
@@ -189,7 +203,7 @@ class OrderTicketFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun displayTicketPrice() {
         //binding.txtPayTotalPrice.text = "Total Price: " + ticket.price.toString()
-        binding.txtPayTotalPrice.text = "Total Price: " + viewModel.updatePrice()
+        binding.txtPayTotalPrice.text = resources.getString(R.string.total_price) + viewModel.updatePrice()
     }
 
 

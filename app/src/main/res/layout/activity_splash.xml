@@ -12,9 +12,10 @@
         android:layout_margin="@dimen/_14sdp"
         android:src="@drawable/ic_skotersverige_logo_white" />
 
-    <LinearLayout
+   <!-- <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:layout_below="@+id/ivSplashLogo"
         android:orientation="vertical">
 
@@ -22,6 +23,7 @@
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:layout_gravity="center" />
 
         <TextView
@@ -35,6 +37,6 @@
             android:textColor="@color/white"
             android:textSize="@dimen/fontMedium" />
 
-    </LinearLayout>
+    </LinearLayout>-->
 
 </RelativeLayout>

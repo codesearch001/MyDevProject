@@ -2,6 +2,7 @@ package com.snofed.publicapp.ui.feedback
 
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +24,8 @@ import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.FragmentFeedBackDetailsBinding
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.NetworkResult
+import com.snofed.publicapp.utils.enums.SyncActionEnum
+import com.snofed.publicapp.utils.enums.TaskStatus
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -61,7 +64,7 @@ class FeedBackDetailsFragment : Fragment() {
             when (it) {
                 is NetworkResult.Success -> {
                     val data = it.data?.data
-                   // Log.e("data", "data $data")
+                    Log.e("data", "data $data")
                     binding.txtTitle.text = data?.creatorFullName
                     binding.txtFeedBackDecription.text = data?.description
 
@@ -70,6 +73,12 @@ class FeedBackDetailsFragment : Fragment() {
                     if (data != null) {
                         setupMap(data.latitude, data.longitude)
                     }
+                   /* if (data?.status == 4){
+                        binding.txtStatusProgress.text = TaskStatus.getDescription(TaskStatus.PublicAppReport)
+                    }else{
+                        binding.txtStatusProgress.text = "N/A"
+                    }
+*/
                 }
 
                 is NetworkResult.Error -> {

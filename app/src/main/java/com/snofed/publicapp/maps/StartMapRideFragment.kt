@@ -160,12 +160,13 @@ class StartMapRideFragment : Fragment() , ImageUriCallback {
             val myData = realm.createObject(NewWorkoutPoint::class.java)
             myData.name = "Sample Data"
         }*/
+
         // Initialize MediaReader with this fragment
         workoutViewModel = ViewModelProvider(this)[WorkoutViewModel::class.java]
 
         userId= tokenManager.getUserId()
 
-        userName= tokenManager.getUser()
+        userName= tokenManager.getFullName()
 
         getWorkoutID= tokenManager.getWorkoutUdId()
 

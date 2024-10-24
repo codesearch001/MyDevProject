@@ -82,7 +82,7 @@
                                 android:id="@+id/actionText"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Go Explore"
+                                android:text="@string/t_go_explore"
                                 android:textColor="@color/white"
                                 android:textSize="@dimen/_14sdp"
                                 android:textStyle="bold" />

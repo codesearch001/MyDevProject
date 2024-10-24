@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "131519163660",
+    "firebase_url": "https://skotersverige-1687857544415-default-rtdb.firebaseio.com",
+    "project_id": "skotersverige-1687857544415",
+    "storage_bucket": "skotersverige-1687857544415.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:131519163660:android:d0758453c5aa9b6e77ed29",
+        "android_client_info": {
+          "package_name": "com.snofed.publicapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "131519163660-k7g4u0uj4s0m3htojk6b242liaigbj5q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.snofed.publicapp",
+            "certificate_hash": "21f63726c164fbda2e0fb7dada0bdf51dd11c0d6"
+          }
+        },
+        {
+          "client_id": "131519163660-e74qgrbjpb0cceac9v7je1sq146cl1he.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChYUWVo3uITpW2JzhNFJiBsS2hqcpodLc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "131519163660-e74qgrbjpb0cceac9v7je1sq146cl1he.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "131519163660-ea8ugnh88ci5u4pqnqoqvqdp09abm4a5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.snofed.publicapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

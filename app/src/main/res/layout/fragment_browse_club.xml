@@ -86,7 +86,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/t_browse_clubs"
+                android:text="@string/title_fragment_browse_club"
                 android:padding="@dimen/_6sdp"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_22sdp"

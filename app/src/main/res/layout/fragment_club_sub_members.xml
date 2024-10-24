@@ -140,7 +140,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
-                        android:text="Trails"
+                        android:text="@string/t_trails"
                         android:textColor="@color/blue_txt_light"
                         android:textSize="@dimen/_8sdp" />
 
@@ -185,7 +185,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
-                        android:text="Length of all trails"
+                        android:text="@string/t_length_of_all_trails"
                         android:textColor="@color/blue_txt_light"
                         android:textSize="@dimen/_8sdp" />
 
@@ -242,6 +242,22 @@
 
     </RelativeLayout>
 
+<!--    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_marginTop="1dp"
+        android:layout_height="56dp"
+        android:layout_below="@+id/idBrowseClube"
+        android:background="@color/white"
+        app:tabIndicatorColor="@color/active_txt"
+        app:tabSelectedTextColor="@color/active_txt"
+        app:tabTextAppearance="@style/TabTextStyle"
+        app:tabGravity="center"
+        app:tabIndicatorHeight="0dp"
+        app:autoSizeTextType="uniform"
+        app:tabMode="auto"
+        android:elevation="4dp"
+        app:tabRippleColor="@null" />-->
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
@@ -249,7 +265,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/idBrowseClube"
         android:background="?attr/colorOnPrimary"
-        android:elevation="6dp"
+        android:elevation="4dp"
         app:tabMode="fixed"
         app:tabIndicatorAnimationMode="linear"
         app:tabIndicatorFullWidth="true"

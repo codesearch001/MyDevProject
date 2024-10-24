@@ -70,7 +70,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="8dp"
-                        android:text="Order"
+                        android:text="@string/title_fragment_order"
                         android:textColor="@color/white"
                         android:textSize="24sp"
                         android:textStyle="bold" />
@@ -99,9 +99,38 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-        </LinearLayout>
-    </ScrollView>
 
+
+        </LinearLayout>
+
+    </ScrollView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/tvSplashText"
+            style="@style/TextRobotoNormal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/marginMedium"
+            android:text="@string/txt_add_ticket_here"
+            android:visibility="gone"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:textSize="@dimen/fontMedium" />
+
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/buttonLayout"
         android:layout_width="match_parent"
@@ -122,7 +151,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:hint="Total Price:"
+                android:hint="@string/t_tickets_total_price"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_12sdp"
                 android:textStyle="bold" />
@@ -163,7 +192,7 @@
             android:layout_marginBottom="8dp"
             android:background="@drawable/blue_outline_button"
             android:gravity="center"
-            android:text="Pay with Swish"
+            android:text="@string/t_btn_pay_with_swish"
             android:textAllCaps="false"
             android:textColor="@android:color/holo_blue_light"
             android:textSize="16sp"
@@ -177,7 +206,7 @@
             android:layout_marginTop="@dimen/_8sdp"
             android:layout_marginBottom="@dimen/_6sdp"
             android:background="@drawable/blue_outline_button"
-            android:text="Pay with credit card"
+            android:text="@string/t_btn_pay_with_credit_card"
             android:textAllCaps="false"
             android:textSize="16sp"
             android:textStyle="bold"

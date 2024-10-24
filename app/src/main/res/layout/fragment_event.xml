@@ -48,7 +48,7 @@
             android:visibility="gone"
             android:layout_gravity="center" />
 
-        <TextView
+      <!--  <TextView
             android:id="@+id/tvSplashText"
             style="@style/TextRobotoNormal"
             android:layout_width="match_parent"
@@ -58,7 +58,17 @@
             android:visibility="gone"
             android:gravity="center"
             android:textColor="@color/black"
-            android:textSize="@dimen/fontMedium" />
+            android:textSize="@dimen/fontMedium" />-->
+        <TextView
+            android:id="@+id/tvSplashText"
+            style="@style/TextRobotoNormal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No events found for today."
+            android:textSize="16sp"
+            android:visibility="gone"
+            android:gravity="center"
+            android:textColor="@color/black" />
 
     </LinearLayout>
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="CustomTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowTranslucentStatus">false</item>
@@ -8,7 +9,8 @@
 
 
     <style name="TabTextStyle" parent="Widget.Design.TabLayout">
-        <item name="android:textSize">12sp</item> <!-- Adjust the text size as per your requirement -->
+        <item name="android:textSize">12sp
+        </item> <!-- Adjust the text size as per your requirement -->
         <item name="android:textStyle">bold</item>
     </style>
 
@@ -38,10 +40,30 @@
 
     <style name="CustomShapeAppearance" parent="ShapeAppearanceOverlay.MaterialComponents.BottomSheet">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">16dp</item>
+        <item name="cornerSize">@dimen/_16sdp</item>
+
 
     </style>
 
+
+    <!-- Custom style for AlertDialog with rounded corners and black text color -->
+    <style name="RoundedAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <!-- Rounded corners background -->
+        <item name="android:windowBackground">@drawable/dialog_rounded_background</item>
+
+        <!-- Set title and message text color to black -->
+        <item name="android:textColorPrimary">@android:color/black</item> <!-- Title text color -->
+        <item name="android:textColorSecondary">@android:color/black</item> <!-- Message text color -->
+
+        <!-- Custom button styles -->
+        <item name="android:buttonBarPositiveButtonStyle">@style/DialogButton</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/DialogButton</item>
+    </style>
+
+    <!-- Custom button style -->
+    <style name="DialogButton" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@android:color/black</item> <!-- Set button text color to black -->
+    </style>
 
 
 </resources>
