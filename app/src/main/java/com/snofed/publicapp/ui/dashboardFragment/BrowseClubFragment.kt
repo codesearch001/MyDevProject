@@ -41,8 +41,7 @@ class BrowseClubFragment : Fragment() {
         val viewPager = binding.viewPager
 
         // Create a list of tabs
-        /*val tabs = listOf("All", "By Activities", "Favourites")*/
-        val tabs = listOf("All","Favourites")
+        val tabs = listOf(resources.getString(R.string.t_All),resources.getString(R.string.t_Favourites))
 
         // Create a ViewPager adapter
         val adapter = TabBrowseClubsAdapter(this, tabs)

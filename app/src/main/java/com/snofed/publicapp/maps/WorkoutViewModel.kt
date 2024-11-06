@@ -57,7 +57,9 @@ class WorkoutViewModel : ViewModel() {
             _workout.value?.let {
                 transactionRealm.insertOrUpdate(it)
             }
+
         }
+        //realm.refresh() // Force update to fetch the latest data
     }
 
     // Add or update workout details
@@ -86,7 +88,7 @@ class WorkoutViewModel : ViewModel() {
         }
     }
 
-    fun replaceWorkoutPoints(points: List<NewWorkoutPoint>) {
+   /* fun replaceWorkoutPoints(points: List<NewWorkoutPoint>) {
         realm.executeTransaction { transactionRealm ->
             val workout = _workout.value
             workout?.let {
@@ -95,7 +97,7 @@ class WorkoutViewModel : ViewModel() {
                 transactionRealm.copyToRealmOrUpdate(it)
             }
         }
-    }
+    }*/
 
     // Update workout duration and average pace
     fun addWorkoutDurationAndAvgPace(duration: Int, distance: Double, averagePace: Double) {

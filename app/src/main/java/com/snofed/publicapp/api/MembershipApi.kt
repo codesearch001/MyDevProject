@@ -38,7 +38,8 @@ interface MembershipApi {
     //GET_ACTIVE_MEMBERSHIP
     @GET(GET_ACTIVE_MEMBERSHIP)
     suspend fun getActiveMembership(@Header("Accept-Language") acceptLanguage: String,
-                                    @Path("userRef") id: String): Response<ActiveMembership>
+                                    @Path("userId") userId: String): Response<ActiveMembership>
+                                    //@Path("userRef") userRef: String): Response<ActiveMembership>
 
     //TICKET_PURCHASE_ORDER_HISTORY
     @GET(TICKET_PURCHASE_ORDER_HISTORY)

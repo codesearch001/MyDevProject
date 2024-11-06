@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.snofed.publicapp.R
 import com.snofed.publicapp.api.UserAPI
 import com.snofed.publicapp.db.WorkoutResponse
 import com.snofed.publicapp.membership.model.BuyMembership
@@ -34,7 +35,7 @@ import javax.inject.Named
 
 
 class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: UserAPI?,@ApplicationContext private val context: Context) {
-    private val acceptLanguage = "en-US"
+    private val acceptLanguage = R.string.backend_localization.toString()
 
 
     /////////////////////////////////////////
@@ -372,6 +373,11 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
 
             AppPreference.savePreference(context, SharedPreferenceKeys.USER_TOKEN, response.body()!!.data.token)
             AppPreference.savePreference(context, SharedPreferenceKeys.USER_USER_ID, response.body()!!.data.id)
+            AppPreference.savePreference(context, SharedPreferenceKeys.USER_FIRST_NAME, response.body()!!.data.firstName)
+            AppPreference.savePreference(context, SharedPreferenceKeys.USER_LAST_NAME, response.body()!!.data.lastName)
+            AppPreference.savePreference(context, SharedPreferenceKeys.USER_USER_AGE, response.body()!!.data.age.toString())
+            AppPreference.savePreference(context, SharedPreferenceKeys.USER_USER_WEIGHT, response.body()!!.data.weight.toString())
+            AppPreference.savePreference(context, SharedPreferenceKeys.USER_GENDER_TYPE, response.body()!!.data.gender.toString())
             AppPreference.savePreference(context, SharedPreferenceKeys.IS_USER_LOGGED_IN, "true")
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response.errorBody()!!.charStream().readText())

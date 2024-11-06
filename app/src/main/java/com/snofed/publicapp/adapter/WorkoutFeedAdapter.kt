@@ -17,6 +17,7 @@ import com.snofed.publicapp.R
 import com.snofed.publicapp.models.workoutfeed.Daum
 import com.snofed.publicapp.utils.DateTimeConverter
 import com.snofed.publicapp.utils.Helper
+import java.util.Locale
 
 
 class WorkoutFeedAdapter(private val listener: OnItemClickListener) : RecyclerView.Adapter<WorkoutFeedAdapter.ClubViewHolder>() {
@@ -52,7 +53,12 @@ class WorkoutFeedAdapter(private val listener: OnItemClickListener) : RecyclerVi
         holder.feedName.text = reslult.publisherFullname
 
         //holder.feedDistance.text = String.format("%.1f", reslult.distance).toDouble().toString() + " m"
-        holder.feedDistance.text = String.format("%.2f", Helper.m2Km(reslult.distance)).toDouble().toString() + " km"
+        holder.feedDistance.text = String.format(Locale.US, "%.2f", Helper.m2Km(reslult.distance)).toDouble().toString() + " "+holder.itemView.context.getString(R.string.t_km)
+        /*holder.feedDistance.text = String.format(
+            "%.2f %s",
+            Helper.m2Km(reslult.distance),  // Convert meters to kilometers
+            holder.itemView.context.getString(R.string.t_km) // Get the string resource
+        )*/
 
         val formattedDateTimeHMS = dateTimeConverter.formatSecondsToHMS(reslult.duration)
         holder.feedDuration.text = formattedDateTimeHMS

@@ -13,7 +13,9 @@
     <color name="lavender">#8692f7</color>
     <color name="colorNormal">#FF6200EE</color> <!-- Normal state color -->
     <color name="colorPressed">#FF3700B3</color> <!-- Pressed state color -->
-
+    <color name="dialogTitleTextColor">#FF0000</color> <!-- Red color for the title -->
+    <color name="dialogMessageTextColor">#000000</color> <!-- Black color for the message -->
+    <color name="dialogButtonTextColor">#0000FF</color> <!-- Blue color for the buttons -->
 
     <color name="error_color">#FF0000</color>
     <color name="card_bg_color">#F8F8F8</color>

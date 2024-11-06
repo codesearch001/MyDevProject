@@ -17,8 +17,12 @@ import android.graphics.Bitmap
 import android.provider.MediaStore
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
+import androidx.navigation.findNavController
+import com.snofed.publicapp.R
+import com.snofed.publicapp.utils.AppPreference
 import com.snofed.publicapp.utils.ImageUriCallback
 import com.snofed.publicapp.utils.MediaReader
+import com.snofed.publicapp.utils.SharedPreferenceKeys
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -46,14 +50,24 @@ class ProfileSettingFragment : Fragment(),ImageUriCallback {
         binding.profileImageView.setOnClickListener {
             showImageOptionsDialog()
         }
+        binding.changePassword.setOnClickListener {
+            it.findNavController().navigate(R.id.recoverFragment)
+        }
+
+            binding.txtFirstName.text =  AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_FIRST_NAME)
+            binding.txtLastName.text =AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_LAST_NAME)
+            binding.txtUserAge.text = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_AGE)
+            binding.txtUserWeight.text = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_WEIGHT) + " Kg"
+            binding.txtUserGender.text = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_GENDER_TYPE)
+
 
         return view
     }
 
     private fun showImageOptionsDialog() {
-        val options = arrayOf("Take Photo", "Choose from Gallery")
+        val options = arrayOf(resources.getString(R.string.take_photo), resources.getString(R.string.choose_from_gallery))
         val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Select Image Source")
+        builder.setTitle(resources.getString(R.string.t_select_image_source))
         builder.setItems(options) { _: DialogInterface, which: Int ->
             when (which) {
                 0 -> mediaReader.checkPermissionsAndOpenCamera() // Take Photo

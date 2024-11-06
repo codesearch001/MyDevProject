@@ -1,3 +1,4 @@
+/*
 package com.snofed.publicapp.ui.note
 
 import android.os.Bundle
@@ -40,7 +41,8 @@ class NoteFragment : Fragment() {
 //        bindObservers()
     }
 
-   /* private fun bindObservers() {
+   */
+/* private fun bindObservers() {
         noteViewModel.statusLiveData.observe(viewLifecycleOwner, Observer {
             when (it) {
                 is NetworkResult.Success -> {
@@ -86,7 +88,8 @@ class NoteFragment : Fragment() {
         else{
             binding.addEditText.text = resources.getString(R.string.add_note)
         }
-    }*/
+    }*//*
+
 
 
     override fun onDestroyView() {
@@ -94,4 +97,4 @@ class NoteFragment : Fragment() {
         _binding = null
     }
 
-}
+}*/

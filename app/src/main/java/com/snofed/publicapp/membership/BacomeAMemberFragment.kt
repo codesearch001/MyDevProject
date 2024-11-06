@@ -66,8 +66,6 @@ class BacomeAMemberFragment : Fragment() {
         binding.btnHamburger.setOnClickListener {
             it.findNavController().popBackStack()
         }
-
-
     }
 
     private fun init() {
@@ -122,6 +120,7 @@ class BacomeAMemberFragment : Fragment() {
         val json = gson.toJson(membOrderDto)
         println("membershipOrderDto1 " + json)
 
+        Toast.makeText(requireActivity(), json, Toast.LENGTH_LONG).show()
         Log.e("membershipOrderDto2 ",  json)
             if (validateFields(fName, lName, email)) {
             buyTicket(isPaymentMethodSwish, fName, lName, email)

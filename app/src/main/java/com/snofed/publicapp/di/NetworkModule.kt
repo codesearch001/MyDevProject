@@ -56,13 +56,21 @@ class NetworkModule {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
-        return OkHttpClient.Builder().addInterceptor(interceptor)
+        return OkHttpClient.Builder()
+            .addInterceptor(interceptor)
+            .addInterceptor(loggingInterceptor)
+            .callTimeout(60, TimeUnit.SECONDS)
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .build()
+    }
+        /*return OkHttpClient.Builder().addInterceptor(interceptor)
             .addInterceptor(loggingInterceptor) // Add logging interceptor
             .connectTimeout(30, TimeUnit.SECONDS) // Set custom timeouts if needed
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
             .build()
-    }
+    }*/
 
 
     @Singleton

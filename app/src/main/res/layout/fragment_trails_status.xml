@@ -41,7 +41,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Trails Status"
+                android:text="@string/t_trails_status"
                 android:textColor="@color/white"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -90,7 +90,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
-                        android:text="Trails"
+                        android:text="@string/t_trails"
                         android:textColor="@color/blue_txt_light"
                         android:textSize="@dimen/_8sdp" />
 
@@ -135,7 +135,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
-                        android:text=" Length "
+                        android:text="@string/t_length"
                         android:textColor="@color/blue_txt_light"
                         android:textSize="@dimen/_8sdp" />
 

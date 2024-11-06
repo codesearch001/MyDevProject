@@ -24,7 +24,7 @@ data class Data(
     val priority: Long,
     val dueDate: Any?,
     val estimatedTime: Any?,
-    val status: Long,
+    val status: Int,
     val categoryId: String,
     val categoryName: String,
     val notes: List<Note>,

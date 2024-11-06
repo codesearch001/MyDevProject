@@ -4,7 +4,9 @@ object Constants {
     const val TAG = "SNOFED_TAG"
 
     const val USER_TOKEN = "token"
-    const val USER_FIRST_NAME = "fullName"
+    const val USER_FIRST_NAME = "firstName"
+    const val USER_LAST_NAME = "lastName"
+    const val USER_FULL_NAME = "fullName"
     const val USER_USER_ID = "id"
     const val CLUB_CLIENT_ID = "clientId"
     const val CLUB_TRAILS_ID = "trailId"
@@ -15,6 +17,8 @@ object Constants {
     const val CATEGORY_ID= "9DD44008-DFD0-4517-A3FA-08D9BE2972B4"
     const val RECORDING_WORKOUT_ID = "recording_workout_id"
     const val MAX_HEIGHT_WIDTH: Int = 800
+
+    const val IS_FROM_EVENT_DETAILS = "is_from_event"
 
     // DATETIME FORMAT
     const val FIRST_TIME_APP_SYNC = "app_sync_for_a_first_time"

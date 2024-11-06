@@ -106,7 +106,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="Feed"
+                android:text="@string/title_fragment_feed"
                 android:textColor="@color/white"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -249,7 +249,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Time"
+                                android:text="@string/time"
                                 android:textColor="@color/active_txt"
                                 android:textSize="@dimen/_11sdp"
                                 android:textStyle="normal" />
@@ -280,7 +280,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Distance"
+                                    android:text="@string/distance"
                                     android:textColor="@color/active_txt"
                                     android:textSize="@dimen/_11sdp"
                                     android:textStyle="normal" />
@@ -313,7 +313,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Calories"
+                                    android:text="@string/calories"
                                     android:textColor="@color/active_txt"
                                     android:textSize="@dimen/_11sdp"
                                     android:textStyle="normal" />
@@ -354,7 +354,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Speed"
+                                android:text="@string/speed"
                                 android:textColor="@color/active_txt"
                                 android:textSize="@dimen/_11sdp"
                                 android:textStyle="normal" />
@@ -386,7 +386,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="end"
-                                    android:text="Avg. Pace"
+                                    android:text="@string/avg_pace"
                                     android:textColor="@color/active_txt"
                                     android:textSize="@dimen/_11sdp"
                                     android:textStyle="normal" />

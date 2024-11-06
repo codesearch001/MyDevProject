@@ -10,14 +10,10 @@ import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
-
 import com.snofed.publicapp.utils.TokenManager;
-
-import javax.inject.Inject;
 
 
 public class OnBoarding extends AppCompatActivity {

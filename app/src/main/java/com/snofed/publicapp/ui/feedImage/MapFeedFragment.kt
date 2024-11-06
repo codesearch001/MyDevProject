@@ -125,27 +125,38 @@ class MapFeedFragment : Fragment(){
                     binding.txtIdStartTime.text = formattedDateTimeHMS
 
                     binding.txtIdWorkoutType.text = data?.activity?.name ?: "N/A"
+                    // Convert distance from meters to kilometers and format with two decimal places
+                    val distanceInKm = (data?.distance ?: 0.0) / 1000
+                    binding.txtIdDistance.text = String.format(Locale.US, "%.2f km", distanceInKm)
 
-                    binding.txtIdDistance.text = String.format("%.2f", (data?.distance?.div(1000))).toDouble().toString() + "km"
+
+                   // binding.txtIdDistance.text = String.format("%.2f", (data?.distance?.div(1000))).toDouble().toString() + "km"
+
+
 
                     binding.txtCaloriesId.text = data?.calories.toString() ?: "N/A"
 
-                    binding.txtIdAveragePace.text = String.format("%.2f", data?.averagePace).toDouble().toString() + " min/km"
+                    // Format average pace with two decimal places and append "min/km"
+                    binding.txtIdAveragePace.text = String.format(Locale.US, "%.2f min/km", data?.averagePace ?: 0.0)
+
+
+                   // binding.txtIdAveragePace.text = String.format("%.2f", data?.averagePace).toDouble().toString() + " min/km"
 
                     //binding.feedSpeed.text = dateTimeConverter.calculateSpeedFromPace(String.format("%.2f",data.averagePace).toDouble()).toString() + " km/h"
 
                     val averageSpeed = calculateAverage(data.workoutPoints)
-                    // Assuming `data.averagePace` is a number you want to format
-                    val formattedPace = String.format("%.2f", data.averagePace)
+                    // Format the average pace with a period as the decimal separator
+                    val formattedPace = String.format(Locale.US, "%.2f", data.averagePace)
 
-                    // Convert the formatted string to Double for calculation
+                    // Parse as Double safely after formatting with Locale.US
                     val paceAsDouble = formattedPace.toDouble()
 
+
                     // Calculate speed and format the result
-                    val speed = dateTimeConverter.calculateSpeedFromPace(paceAsDouble)
+                    //val speed = dateTimeConverter.calculateSpeedFromPace(paceAsDouble)
 
                     // Set the text with the speed formatted to two decimal places and "km/h"
-                    binding.feedSpeed.text = String.format("%.2f", averageSpeed) + " km/h"
+                    binding.feedSpeed.text = String.format(Locale.US,"%.2f", averageSpeed) + " km/h"
 
 
                     if (data.activity.iconPath == "") {

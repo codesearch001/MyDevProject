@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import com.google.android.material.tabs.TabLayoutMediator
+import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.TabClubsSubMemAdapter
 import com.snofed.publicapp.databinding.FragmentClubSubMembersBinding
 import com.snofed.publicapp.ui.login.AuthViewModel
@@ -43,7 +44,9 @@ class ClubSubMembersFragment : Fragment() {
         val viewPager = binding.viewPager
 
         // Create a list of tabs
-        val tabs = listOf("Action", "Gallery", "About", "Submembers")
+        val tabs = listOf(resources.getString(R.string.t_club_action),
+            resources.getString(R.string.t_club_gallery),
+            resources.getString(R.string.t_club_about), resources.getString(R.string.t_club_sub_members))
 
         // Create a ViewPager adapter
         val adapter = TabClubsSubMemAdapter(this, tabs)
@@ -74,8 +77,8 @@ class ClubSubMembersFragment : Fragment() {
                 is NetworkResult.Success -> {
                     binding.progressBar.isVisible = false
                     sharedViewModel.browseSubClubResponse.value = it.data
-                    Log.i("PraveenALL" , "ALL " + sharedViewModel.browseSubClubResponse.value)
 
+                    //Log.i("PraveenALL" , "ALL " + sharedViewModel.browseSubClubResponse.value)
                     // Example of setting data
                     //clubViewModel.mutableData.galleryImage.postValue(it.data?.data?.publicData)
                     //clubViewModel.mutableData.updateData(it.data?.data?.publicData?.images!!)

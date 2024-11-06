@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.findNavController
 import com.google.android.material.tabs.TabLayoutMediator
+import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.TabSettingAdapter
 import com.snofed.publicapp.databinding.FragmentSettingBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,7 +30,7 @@ class SettingFragment : Fragment() {
         val viewPager = binding.viewPager
 
         // Create a list of tabs
-        val tabs = listOf("App Settings", "Profile Settings")
+        val tabs = listOf(resources.getString(R.string.app_settings),resources.getString(R.string.app_profile_settings))
 
         // Create a ViewPager adapter
         val adapter = TabSettingAdapter(this, tabs)
