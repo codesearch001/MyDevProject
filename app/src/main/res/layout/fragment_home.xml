@@ -438,14 +438,33 @@
                   android:id="@+id/feedRecyclerView"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"/>-->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/feedRecyclerView"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/transparent"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/recent_feed_list" />
+                android:orientation="vertical">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/feedRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/transparent"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/recent_feed_list" />
+
+                <TextView
+                    android:id="@+id/txt_no_recent_feed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_30sdp"
+                    android:layout_marginBottom="@dimen/_16sdp"
+                    android:text="@string/txt_no_record_found"
+                    android:textSize="@dimen/_11sdp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+            </LinearLayout>
+
 
         </LinearLayout>
 

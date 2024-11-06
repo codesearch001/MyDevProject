@@ -36,10 +36,8 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
     private val clubViewModel by viewModels<AuthViewModel>()
     private lateinit var clubAdapter: BrowseClubListAdapter
     private val sharedViewModel by activityViewModels<SharedViewModel>()
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentBrowseAllClubBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -108,7 +106,7 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
 
     override fun onItemClick(clientId: String) {
         binding.editTextClubSearch.text?.clear()
-        Log.i("dddddd","Id " + clientId )
+        //Log.i("dddddd","Id " + clientId )
         val bundle = Bundle()
         bundle.putString("clientId", clientId)
         val destination = R.id.clubSubMembersFragment

@@ -21,8 +21,7 @@ import com.snofed.publicapp.adapter.EventClubFeedAdapter
 import com.snofed.publicapp.models.browseSubClub.Event
 import com.snofed.publicapp.utils.DateTimeConverter
 
-class EventTrailsFeedAdapter(private val listener: OnItemClickListener) :
-    RecyclerView.Adapter<EventTrailsFeedAdapter.ClubViewHolder>() {
+class EventTrailsFeedAdapter(private val listener: OnItemClickListener) : RecyclerView.Adapter<EventTrailsFeedAdapter.ClubViewHolder>() {
 
     private var feedArray: List<Event> = listOf()
     val dateTimeConverter = DateTimeConverter()

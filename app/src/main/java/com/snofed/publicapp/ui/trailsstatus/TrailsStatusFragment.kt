@@ -38,8 +38,8 @@ class TrailsStatusFragment : Fragment() {
         val viewPager = binding.viewPager
 
         // Create a list of tabs
-        val tabs = listOf(resources.getString(R.string.t_tile_view), resources.getString(R.string.t_list_view))
-        // val tabs = listOf("Tile view")
+        //val tabs = listOf(resources.getString(R.string.t_tile_view), resources.getString(R.string.t_list_view))
+         val tabs = listOf("Tile view")
 
         // Create a ViewPager adapter
         val adapter = TabTrailsTileStatusAdapter(this, tabs)

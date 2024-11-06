@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -85,6 +86,13 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.rideLogsFragment)
         }
 
+        binding.profileImageView.setOnClickListener {
+            findNavController().navigate(R.id.settingFragment)
+        }
+        binding.nameTextView.setOnClickListener {
+            findNavController().navigate(R.id.settingFragment)
+        }
+
         fetchResponse()
         clubViewModel.userDashBoardLiveData.observe(viewLifecycleOwner, Observer { it ->
             // binding.progressBar.isVisible = false
@@ -122,11 +130,13 @@ class HomeFragment : Fragment() {
                     val filteredData = filterAndSortLast7Days(data)
 
                     if (filteredData.isNullOrEmpty()) {
+                        binding.txtNoRecentFeed.isVisible = true
                         recentFeedAdpater = RecentFeedAdpater()
                         binding.feedRecyclerView.layoutManager = LinearLayoutManager(requireActivity(),LinearLayoutManager.HORIZONTAL, false)
                         binding.feedRecyclerView.adapter = recentFeedAdpater
                         recentFeedAdpater.setFeed(filteredData)
                     }else{
+                        binding.txtNoRecentFeed.isVisible = false
                         recentFeedAdpater = RecentFeedAdpater()
                         binding.feedRecyclerView.layoutManager = LinearLayoutManager(requireActivity(),LinearLayoutManager.HORIZONTAL, false)
                         binding.feedRecyclerView.adapter = recentFeedAdpater
