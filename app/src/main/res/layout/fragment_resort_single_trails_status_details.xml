@@ -147,7 +147,7 @@
                                     android:id="@+id/idTxtStatusOpen"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Opened"
+                                    android:text="@string/t_opened"
                                     android:textColor="@android:color/white"
                                     android:textStyle="bold"
                                     android:visibility="gone" />
@@ -156,7 +156,7 @@
                                     android:id="@+id/idTxtStatusClose"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Closed"
+                                    android:text="@string/t_close"
                                     android:textColor="@android:color/white"
                                     android:textStyle="bold"
                                     android:visibility="gone" />
@@ -611,7 +611,7 @@
             android:layout_alignParentBottom="true">
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab"
+                android:id="@+id/feedback"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"

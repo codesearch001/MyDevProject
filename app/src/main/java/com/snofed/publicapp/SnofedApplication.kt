@@ -26,10 +26,10 @@ class SnofedApplication : Application() {
 
         Realm.init(this)
          config = RealmConfiguration.Builder().name("snofed.realm")
-            .deleteRealmIfMigrationNeeded()
             .schemaVersion(0)
+            .compactOnLaunch()
             .allowWritesOnUiThread(true)
-            .allowWritesOnUiThread(true).build()
+            .build()
 
         config.let { Realm.setDefaultConfiguration(it) }
        // Realm.setDefaultConfiguration(config)

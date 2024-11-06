@@ -81,6 +81,10 @@ class ResortSingleTrailsStatusDetailsFragment : Fragment(),EventTrailsFeedAdapte
         binding.backBtn.setOnClickListener {
             it.findNavController().popBackStack()
         }
+
+        binding.feedback.setOnClickListener {
+            it.findNavController().navigate(R.id.feedBackDefaultCategoryListFragment)
+        }
         /*  binding.eventCardId.setOnClickListener {
               it.findNavController().navigate(R.id.singleEventDetailsFragment)
           }*/
@@ -139,7 +143,8 @@ class ResortSingleTrailsStatusDetailsFragment : Fragment(),EventTrailsFeedAdapte
 
                     binding.trailsName.text = name.toString()
                     //binding.idTxtLength.text = it.data?.data?.length.toString() + "m"
-                    binding.idTxtLength.text = Helper.m2Km(it.data?.data?.length?.toDouble()).toString() + " km"
+                    binding.idTxtLength.text = Helper.m2Km(it.data?.data?.length?.toDouble()).toString() + resources.getString(R.string.t_km)
+
                     dateTimeConverter.convertDateTime(it.data?.data?.lastPreparedDate!!)//convert data
                     val getDate = dateTimeConverter.dateandtimePart
 

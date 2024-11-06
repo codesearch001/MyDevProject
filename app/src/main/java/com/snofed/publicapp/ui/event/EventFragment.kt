@@ -19,12 +19,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.EventFeedAdapter
 import com.snofed.publicapp.databinding.FragmentEventBinding
+import com.snofed.publicapp.models.events.EventResponseList
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -34,7 +38,7 @@ class EventFragment : Fragment(),EventFeedAdapter.OnItemClickListener {
     private val binding get() = _binding!!
     private val eventViewModel by viewModels<AuthViewModel>()
     private lateinit var feedAdapter: EventFeedAdapter
-    val currentDate = LocalDate.now() // Get current date
+    //val currentDate = LocalDate.now() // Get current date
     @Inject
     lateinit var tokenManager: TokenManager
 
@@ -57,36 +61,40 @@ class EventFragment : Fragment(),EventFeedAdapter.OnItemClickListener {
         }
 
         fetchResponse()
-        eventViewModel.eventLiveData.observe(viewLifecycleOwner, Observer {
+        eventViewModel.eventLiveData.observe(viewLifecycleOwner, Observer { it ->
             binding.progressBar.isVisible = false
             when (it) {
                 is NetworkResult.Success -> {
                     // Filter the events to find those where the endDate matches the current date
-                    val filteredEvents = it.data?.data?.filter { event ->
+                    /*val filteredEvents = it.data?.data?.filter { event ->
                         val eventEndDate = LocalDate.parse(event.endDate.substring(0, 10)) // Extract "yyyy-MM-dd" from endDate
                         eventEndDate == currentDate
-                    }
-                    Log.i("Event", "Event " + it.data?.data)
+                    }*/
+
+                  val activeEvents = filterActiveEvents(it.data?.data?: emptyList()).sortedBy {
+                      it.startDate
+                  }
+                    Log.i("activeEvents", "activeEvents " + activeEvents)
                     feedAdapter = EventFeedAdapter(this)
                     binding.eventRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
                     binding.eventRecyclerView.adapter = feedAdapter
-                    feedAdapter.setEvent(filteredEvents ?: emptyList())
+                    feedAdapter.setEvent(activeEvents)
 
 
                     // Check if there are no filtered events
-                    if (filteredEvents.isNullOrEmpty()) {
-                        // Show the "not found" text
+                    if (activeEvents.isEmpty()) {
+
                         binding.tvSplashText.visibility = View.VISIBLE
                     } else {
-                        // Hide the "not found" text
+
                         binding.tvSplashText.visibility = View.GONE
                     }
                 }
 
                 is NetworkResult.Error -> {
 
-                    Toast.makeText(requireActivity(), it.message.toString(), Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(requireActivity(), it.message.toString(), Toast.LENGTH_SHORT).show()
+
                 }
 
                 is NetworkResult.Loading -> {
@@ -95,33 +103,45 @@ class EventFragment : Fragment(),EventFeedAdapter.OnItemClickListener {
             }
         })
     }
-       /* // Initialize RecyclerView and Adapter
-        feedAdapter = EventFeedAdapter(this)
-        binding.eventRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
-        binding.eventRecyclerView.adapter = feedAdapter
 
+    fun filterActiveEvents(events: List<EventResponseList>): List<EventResponseList> {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val currentDate = Date()
 
-        // Observe the SharedViewModel for data updates
-        sharedViewModel.browseSubClubResponse.observe(viewLifecycleOwner) { response ->
-            val events = response?.data?.events ?: emptyList()
-
-            Log.d("Tag_Events", "EventsSize: ${events.size}")
-
-            if (events.isEmpty()) {
-
-                // Show the "Data Not data" message and hide RecyclerView
-                binding.tvSplashText.visibility = View.VISIBLE
-                binding.eventRecyclerView.visibility = View.GONE
-
-            } else {
-
-                // Hide the "No data" message and show RecyclerView
-                binding.tvSplashText.visibility = View.GONE
-                binding.eventRecyclerView.visibility = View.VISIBLE
-                feedAdapter.setEvent(events)
-            }
+        return events.filter { event ->
+            val eventEndDate = dateFormat.parse(event.endDate)
+            eventEndDate?.after(currentDate) == true
         }
-    }*/
+    }
+
+
+    /* // Initialize RecyclerView and Adapter
+     feedAdapter = EventFeedAdapter(this)
+     binding.eventRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
+     binding.eventRecyclerView.adapter = feedAdapter
+
+
+     // Observe the SharedViewModel for data updates
+     sharedViewModel.browseSubClubResponse.observe(viewLifecycleOwner) { response ->
+         val events = response?.data?.events ?: emptyList()
+
+         Log.d("Tag_Events", "EventsSize: ${events.size}")
+
+         if (events.isEmpty()) {
+
+             // Show the "Data Not data" message and hide RecyclerView
+             binding.tvSplashText.visibility = View.VISIBLE
+             binding.eventRecyclerView.visibility = View.GONE
+
+         } else {
+
+             // Hide the "No data" message and show RecyclerView
+             binding.tvSplashText.visibility = View.GONE
+             binding.eventRecyclerView.visibility = View.VISIBLE
+             feedAdapter.setEvent(events)
+         }
+     }
+ }*/
 
     private fun fetchResponse() {
         eventViewModel.eventRequestUser()

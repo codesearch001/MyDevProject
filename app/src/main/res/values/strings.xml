@@ -8,12 +8,20 @@
     <string name="facebook_app_id" translatable="false">469138440399694</string>
     <string name="fb_login_protocol_scheme" translatable="false">fb469138440399694</string>
     <string name="txt_no_record_found">No Record Found</string>
+    <string name="no_events_found_for_today">No active events registered</string>
     <string name="txt_add_ticket_here">Add Tickets Here</string>
-
-
+    <string name="choose_preferred_language">Please choose preferred language</string>
+    <string name="sw">Swedish</string>
     <!--On Boarding Screen-->
     <string name="lbl_skip">SKIP</string>
     <string name="lbl_done">DONE</string>
+    <string name="time">Time</string>
+    <string name="distance">Distance</string>
+    <string name="feed_duration">Duration</string>
+    <string name="calories">Calories</string>
+    <string name="speed">Speed</string>
+    <string name="avg_pace">Avg. Pace:</string>
+
 
     <string name="app_settings">App Setting</string>
     <string name="app_profile_settings">Profile Setting</string>
@@ -28,9 +36,14 @@
     <string name="app_change_password_settings">Change password</string>
     <string name="app_change_password_settings_title">CHANGE PASSWORD</string>
     <string name="app_privacy_policy_settings">Privacy Policy</string>
-    <string name="app_clear_cache_settings">After clearing cache data will be retrieved again</string>
+    <string name="app_clear_cache">Clear Cache</string>
+    <string name="app_clear_cache_settings">After clearing cache data will be retrieved again.</string>
     <string name="app_app_version_settings">App version</string>
 
+    <!--LogOut-->
+    <string name="confirm_logout">Confirm Logout</string>
+    <string name="Logout_from_skotersverige">Logout from Skotersverige</string>
+    <string name="logged_out_successfully">Logged out successfully</string>
 
     <!--SignUP Home-->
     <string name="t_1">Begin Your\n Journey With Us</string>
@@ -55,6 +68,8 @@
     <string name="title_fragment_Trails_status">Trails Status</string>
     <string name="title_fragment_order">Order</string>
     <string name="title_fragment_purchase_options">Purchase Options</string>
+    <string name="title_search_for_a_membership">Search for a membership</string>
+
 
     <!-- FRAGMENTS DASHBOARD TEXT -->
     <string name="t_PRO">PRO</string>
@@ -67,15 +82,17 @@
     <string name="t_purchase_history">Purchase history</string>
     <string name="t_memberships">Memberships</string>
     <string name="t_recent_feed">Recent Feed</string>
+    <string name="t_ride_logs">Ride Logs</string>
 
 
     <!--PURCHASE HISTORY TAB TEXT-->
     <string name="tab_Orders_History">Orders</string>
     <string name="tab_Pro_Trails_History">Pro Trails</string>
-    <string name="tab_Order_Created">Created</string>
-    <string name="tab_Status">Status</string>
-    <string name="tab_Total_Price">Total Price</string>
-    <string name="tab_Number_of_Tickets">Number of Tickets</string>
+    <string name="tab_Order_Created">Created:</string>
+    <string name="tab_Status">Status:</string>
+    <string name="tab_Valid_to">Valid to:</string>
+    <string name="tab_Total_Price">Total Price:</string>
+    <string name="tab_Number_of_Tickets">Number of Tickets:</string>
 
     <!--PURCHASE OPTION TEXT-->
     <string name="txt_Buy_single_ticket">Buy single ticket</string>
@@ -113,9 +130,10 @@
     <string name="t_opened">Opened</string>
     <string name="t_close">Close</string>
 
-    <string name="t_total_length">Total Length</string>
-    <string name="t_last_prepared">Last Prepared</string>
-    <string name="t_status">Status</string>
+    <string name="t_total_length">Total Length:</string>
+    <string name="t_last_prepared">Last Prepared:</string>
+    <string name="t_status">Status:</string>
+    <string name="t_km">Km</string>
     <string name="total_quality">Total Quality:</string>
     <string name="min_height">Min Height:</string>
     <string name="max_height">Max Height:</string>
@@ -125,6 +143,8 @@
     <string name="trail_short_message">Trail Short Message:</string>
     <string name="average_rating">Average Rating:</string>
     <string name="description">Description:</string>
+    <string name="term">*If you need an SMS ticket enter your mobile number (3 kr per SMS)</string>
+    <string name="ticket_created_successfully">Ticket created successfully!</string>
 
     <!--CLUB TRAILS TEXT -->
     <string name="t_go_explore">Go Explore</string>
@@ -134,6 +154,7 @@
     <string name="t_links_and_doc">Links and Documents</string>
     <string name="t_social_media">Social Media</string>
     <string name="t_feedback">FeedBack</string>
+    <string name="t_events">Events</string>
 
 
     <!--REGISTER/LOGIN FRAGMENT TEXT -->
@@ -184,6 +205,7 @@
 
     <string name="t_to_memberships">Memberships</string>
     <string name="t_buy_memberships">Buy Memberships</string>
+    <string name="t_my_memberships">My Memberships</string>
 
 
     <!--Button Text-->
@@ -197,6 +219,20 @@
     <string name="remember_me">Remember me</string>
     <string name="please_enter_email_id">Please enter email Id</string>
     <string name="please_enter_valid_email_id">Please enter valid email Id</string>
+    <string name="please_select_your_date">Please select your date</string>
+    <string name="please_select_your_first_name">Please enter your last name</string>
+    <string name="please_select_your_last_name">Please enter your last name</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="choose_from_gallery">Choose from Gallery</string>
+    <string name="description_t1">DESCRIPTION</string>
+    <string name="make_it_public">Make it public</string>
+    <string name="make_it_private">Make it private</string>
+
+
+    <string name="event_location">Location:</string>
+    <string name="event_resort_name">Resort name:</string>
+    <string name="trail_used_for_event">Trails used for event:</string>
+    <string name="event_start_date">Start date:</string>
 
 
     <string name="t_h_enter_your_verify_code">Enter verification code</string>
@@ -206,8 +242,12 @@
     <string name="failed">Failed</string>
     <string name="approved">Approved</string>
 
-    <string name="t_h_email">dev@systaina.com</string>
-    <string name="t_h_pass">Admin123!!</string>
+    <string name="t_h_email">androiddeveloper@websutility.com</string>
+    <string name="t_h_pass">developeR@2023</string>
+    <!--<string name="t_h_email">dev@systaina.com</string>
+    <string name="t_h_pass">Admin123!!</string>-->
+
+
     <string name="t_please_enter_description">Please enter description</string>
     <string name="t_please_enter_first_name">Please enter your first name</string>
     <string name="t_please_enter_last_name">Please enter your last name</string>
@@ -225,7 +265,8 @@
     <string name="buy_memberships">Buy Memberships</string>
     <string name="buy_membership">Buy Membership</string>
     <string name="Activate_memberships">Activate Memberships</string>
-    <string name="show_benefits">Show benefits (0)</string>
+    <string name="show_benefits">Show benefits</string>
+    <string name="hide_benefits">Hide benefits</string>
 
 
     <!--Become a Mem-->
@@ -244,9 +285,25 @@
     <string name="enter_your_memb">Enter your membership</string>
     <string name="activate">Activate</string>
 
+    <string name="ice_on_trail">Ice on trail!</string>
+    <string name="remove_feedback">Remove feedback</string>
+    <string name="approve_feedback">Approve feedback</string>
+    <string name="type_of_report">Type of report</string>
+    <string name="leave_feedback">Leave feedback</string>
+
 
     <string name="t_s_ticket_types">Ticket types</string>
     <string name="t_s_create_ticket">Create Ticket</string>
+    <string name="t_s_ticket_deleted">Ticket deleted</string>
+    <string name="t_s_ticket_not_found">Ticket not found</string>
+
+
+    <string name="t_s_save_ride">Save ride</string>
+    <string name="t_you_finished_your_ride">You finished your ride</string>
+    <string name="t_please_enter_a_comment">Please enter a comment</string>
+    <string name="t_select_image_source">Select Image Source</string>
+    <string name="t_you_can_tell_us_how_it_was">You can tell us how it was.</string>
+    <string name="t_no_internet_connection">No internet connection. Please check your network settings.</string>
 
     <!--Ticket List -->
     <string name="ticket_start_date">Start date:</string>
@@ -255,6 +312,12 @@
     <string name="ticket_email">Email:</string>
     <string name="ticket_price">Price:</string>
     <string name="total_price">Total price:</string>
+    <string name="link">Link:</string>
+    <string name="max_number_of_attendees">Max number of attendees:</string>
+    <string name="end_date">End date:</string>
+    <string name="sponsor">Sponsor:</string>
+    <string name="ticket_fee">Ticket fee:</string>
+
 
     <!--Profile Setting-->
     <string name="t_s_start_date">Start date</string>
@@ -288,7 +351,7 @@
         <item>4 km/h</item>
     </string-array>
 
-    <string name="pref_sync_on_wifi_title">Synkronisera endast via WIFI</string>
+    <string name="pref_sync_on_wifi_title">Sync on Wi-Fi only</string>
     <string name="pref_sync_on_wifi_summary_on">Sync will be performed over WiFi only.</string>
     <string name="pref_sync_on_wifi_summary_off">Sync both on WiFi and mobile network.</string>
     <string name="pref_units_title">Units</string>
@@ -303,7 +366,7 @@
     <string name="pref_units_dist_imperial">mi</string>
     <string name="pref_units_pace_metric">min/km</string>
     <string name="pref_units_pace_imperial">min/mi</string>
-    <string name="pref_screen_on_wifi_title">Screen always ON during workout</string>
+    <string name="pref_screen_on_wifi_title">Screen always ON during log</string>
     <string name="pref_screen_on_wifi_summary_on">Screen is always on.</string>
     <string name="pref_screen_on_wifi_summary_off">Screen turns off automaticaly.</string>
     <string name="pref_userdata_title">User information</string>

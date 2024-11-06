@@ -55,7 +55,7 @@ class ActionsFragment : Fragment(),OnItemClickListener {
         fun getItems(): List<GridItem> {
             return listOf(
             GridItem(1, R.drawable.signs, R.drawable.trailstatus,resources.getString(R.string.t_trails_status)),
-            GridItem(2, R.drawable.eventss, R.drawable.events,resources.getString(R.string.t_event)),
+            GridItem(2, R.drawable.eventss, R.drawable.events,resources.getString(R.string.t_events)),
             GridItem(3, R.drawable.card, R.drawable.shop,resources.getString(R.string.t_shops)),
             GridItem(4, R.drawable.document, R.drawable.linksanddocuments,resources.getString(R.string.t_links_and_doc)),
             GridItem(5, R.drawable.world,  R.drawable.socialmedia, resources.getString(R.string.t_social_media)),

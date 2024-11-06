@@ -47,9 +47,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(private val userRepository: UserRepository,
                                         private val feedBackRepository: UserFeedBackRepository,
-                                        private val membershipRepository: MembershipRepository
-
-) :
+                                        private val membershipRepository: MembershipRepository) :
     ViewModel() {
 
     var mutableData = MutableData()

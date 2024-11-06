@@ -336,7 +336,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.1"
-                    android:text="@string/pref_autopause_speed_title"
+                    android:text="@string/pref_sync_on_wifi_title"
                     android:textColor="@color/gray"
                     android:textSize="14sp" />
 
@@ -362,13 +362,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:text="@string/pref_autopause_speed_title"
+                android:text="@string/app_change_password_settings"
                 android:textSize="13sp"
                 android:textAllCaps="true"
                 android:textColor="@color/black"
                 android:textStyle="bold" />
 
             <LinearLayout
+                android:id="@+id/change_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -379,7 +380,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
-                    android:text="Change password"
+                    android:text="@string/app_change_password_settings"
                     android:textColor="@color/blue_txt_light"
                     android:textSize="14sp" />
 

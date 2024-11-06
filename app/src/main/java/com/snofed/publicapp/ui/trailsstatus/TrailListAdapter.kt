@@ -50,8 +50,8 @@ class TrailListAdapter(private var trails: List<Trail>, private val onItemClick:
         ) {
             binding.trailName.text = trail.name
             //binding.length.text = trail.length.toString() + " m"
-            binding.length.text = Helper.m2Km(trail.length.toDouble()).toString() + " km"
-
+            //binding.length.text = Helper.m2Km(trail.length.toDouble()).toString() + R.string.t_km
+            binding.length.text  = Helper.m2Km(trail.length.toDouble()).toString() +  binding.root.context.getString(R.string.t_km)
             val dateTimeConverter = DateTimeConverter()//Date format
             dateTimeConverter.convertDateTime(trail.lastUpdateDate)//convert data
             val getDate = dateTimeConverter.dateandtimePart

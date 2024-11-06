@@ -43,7 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="FeedBack"
+                android:text="@string/t_feedback"
                 android:textColor="@color/white"
                 android:textSize="26sp"
                 android:textStyle="bold" />

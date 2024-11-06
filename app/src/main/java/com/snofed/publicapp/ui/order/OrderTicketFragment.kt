@@ -43,11 +43,7 @@ class OrderTicketFragment : Fragment() {
 
     @Inject
     lateinit var tokenManager: TokenManager
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_order_ticket, container, false)
         _binding = FragmentOrderTicketBinding.inflate(inflater, container, false)
@@ -80,11 +76,11 @@ class OrderTicketFragment : Fragment() {
             viewModel.removeTicketByIndex(index) // Remove from ViewModel
             adapter.updateTickets(viewModel.tickets) // Update adapter
 
-            Toast.makeText(requireContext(), "Ticket deleted", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.t_s_ticket_deleted, Toast.LENGTH_SHORT).show()
 
         } else {
 
-            Toast.makeText(requireContext(), "Ticket not found", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(),  R.string.t_s_ticket_not_found, Toast.LENGTH_SHORT).show()
         }
 
         displayTicketPrice()

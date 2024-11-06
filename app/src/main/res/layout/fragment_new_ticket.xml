@@ -86,17 +86,55 @@
                     android:textStyle="bold"
                     android:visibility="visible" />
 
-                <androidx.appcompat.widget.AppCompatSpinner
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+
+                    <!-- Spinner -->
+                    <androidx.appcompat.widget.AppCompatSpinner
+                        android:id="@+id/ticketTypeSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:padding="@dimen/_11sdp"
+                        android:textSize="@dimen/_12sdp"
+                        android:background="@drawable/rounded_edittext_lightgray_background"
+                        android:drawableEnd="@drawable/drop_down" />
+
+                    <TextView
+                        android:id="@+id/spinnerPlaceholder"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:background="@drawable/rounded_edittext_lightgray_background"
+                        android:hint="Choose ticket type"
+                        android:padding="@dimen/_11sdp"
+                        android:visibility="gone"
+                        android:drawableEnd="@drawable/drop_down"
+                        android:textSize="@dimen/_12sdp" />
+                    <!-- Placeholder TextView -->
+                   <!-- <TextView
+                        android:id="@+id/spinnerPlaceholder"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:hint="Select an option"
+                        android:padding="@dimen/_11sdp"
+                        android:textSize="@dimen/_12sdp"
+                        android:gravity="center_vertical" />-->
+                </RelativeLayout>
+
+
+<!--                <androidx.appcompat.widget.AppCompatSpinner
                     android:id="@+id/ticketTypeSpinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:background="@drawable/rounded_edittext_lightgray_background"
                     android:drawableEnd="@drawable/drop_down"
-                    android:hint="Choose ticket type"
-                    android:inputType="textEmailAddress"
                     android:padding="@dimen/_11sdp"
-                    android:textSize="@dimen/_12sdp" />
+                    android:textSize="@dimen/_12sdp" />-->
             </LinearLayout>
 
             <LinearLayout
@@ -249,7 +287,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_4sdp"
                 android:layout_marginTop="@dimen/_6sdp"
-                android:text="*If you need an SMS ticket enter your mobile number (3 kr per SMS)"
+                android:text="@string/term"
                 android:textColor="@color/grey_light11"
                 android:textSize="12sp"
                 android:textStyle="bold"
@@ -272,7 +310,7 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/blue_bg_color"
                 android:elevation="0dp"
-                android:text="Create Ticket"
+                android:text="@string/t_s_create_ticket"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white" />
         </LinearLayout>

@@ -19,6 +19,8 @@ class PurchaseOptionsFragment : Fragment() {
     private var _binding: FragmentPurchaseOptionsBinding? = null
     private val binding get() = _binding!!
     private var clientId: String? = null
+    private var eventId: String? = null
+    private var isFromEventDetails: Boolean = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -27,7 +29,13 @@ class PurchaseOptionsFragment : Fragment() {
         //return inflater.inflate(R.layout.fragment_purchase_options, container, false)
         _binding = FragmentPurchaseOptionsBinding.inflate(inflater, container, false)
         clientId = getArguments()?.getString("clientId")
-        Log.i("ggggg","Id " + clientId )
+        eventId = getArguments()?.getString("eventId")
+        isFromEventDetails = arguments?.getBoolean("IS_FROM_EVENT_DETAILS", false) ?: false
+
+
+        Log.i("PurchaseOptionsFragment","clientId " + clientId )
+        Log.i("PurchaseOptionsFragment","eventId " + eventId )
+        Log.i("PurchaseOptionsFragment","isFromEventDetails " + isFromEventDetails )
         return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -39,7 +47,9 @@ class PurchaseOptionsFragment : Fragment() {
 
         binding.card1.setOnClickListener {
             val bundle = Bundle()
-            bundle.putString("clientId",clientId)
+            bundle.putString("clientId",clientId) //RESORT_ID->clientId
+            bundle.putString("eventId",eventId)
+            bundle.putBoolean("isFromEventDetails",isFromEventDetails)
             bundle.putInt("ticketCategory",  1)
             val destination = R.id.newTicketFragment
             findNavController().navigate(destination, bundle)
@@ -49,6 +59,8 @@ class PurchaseOptionsFragment : Fragment() {
         binding.card2.setOnClickListener {
             val bundle = Bundle()
             bundle.putString("clientId", clientId)
+            bundle.putString("eventId",eventId)
+            bundle.putBoolean("isFromEventDetails",isFromEventDetails)
             bundle.putInt("ticketCategory", 1)
             bundle.putBoolean("isMultipleTicket", true)
             val destination = R.id.orderTicketFragment

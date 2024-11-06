@@ -18,6 +18,7 @@ import com.snofed.publicapp.R
 import com.snofed.publicapp.models.workoutfeed.Daum
 import com.snofed.publicapp.utils.DateTimeConverter
 import com.snofed.publicapp.utils.Helper
+import java.util.Locale
 
 class WorkoutRideLogFeedAdapter() : RecyclerView.Adapter<WorkoutRideLogFeedAdapter.ClubViewHolder>() {
 
@@ -45,7 +46,13 @@ class WorkoutRideLogFeedAdapter() : RecyclerView.Adapter<WorkoutRideLogFeedAdapt
         val reslult = feedArray[position]
         holder.feedName.isVisible =false
        // holder.feedLogTime.isVisible =true
-        holder.feedDistance.text = String.format("%.2f", Helper.m2Km(reslult.distance)).toDouble().toString() + " km"
+       /* holder.feedDistance.text = String.format(
+            "%.2f %s",
+            Helper.m2Km(reslult.distance),  // Convert meters to kilometers
+            holder.itemView.context.getString(R.string.t_km) // Get the string resource
+        )*/
+        holder.feedDistance.text = String.format(Locale.US, "%.2f", Helper.m2Km(reslult.distance)).toDouble().toString() + holder.itemView.context.getString(R.string.t_km)
+       // holder.feedDistance.text = String.format("%.2f", Helper.m2Km(reslult.distance)).toDouble().toString() + " km"
         val formattedDateTimeHMS = dateTimeConverter.formatSecondsToHMS(reslult.duration)
         holder.feedDuration.text = formattedDateTimeHMS
         val formattedDateTime = dateTimeConverter.convertDateTime(reslult.startTime)

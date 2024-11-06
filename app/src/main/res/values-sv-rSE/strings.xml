@@ -8,34 +8,45 @@
     <string name="facebook_app_id" translatable="false">469138440399694</string>
     <string name="fb_login_protocol_scheme" translatable="false">fb469138440399694</string>
     <string name="txt_no_record_found">Ingen data</string>
+    <string name="no_events_found_for_today">Inga kativa events finns registrerade</string>
     <string name="txt_add_ticket_here">Lägg till biljett</string>
-
-
+    <string name="choose_preferred_language">Please choose preferred language</string>
+    <string name="sw">Swedish</string>
     <!--On Boarding Screen-->
     <string name="lbl_skip">Hoppa över</string>
     <string name="lbl_done">Klar</string>
+    <string name="time">Tid</string>
+    <string name="distance">Distans</string>
+    <string name="feed_duration">Längd</string>
+    <string name="calories">Kalorier</string>
+    <string name="speed">Hastighet</string>
+    <string name="avg_pace">Snitt hastighet</string>
 
     <string name="app_settings">App Inställningar</string>
-    <string name="app_profile_settings">Profile Setting</string>
+    <string name="app_profile_settings">Profil inställningar</string>
     <string name="app_upload_profile_settings">Ladda upp profilbild</string>
     <string name="app_choose_profile_picture_settings">Välj profilbild</string>
     <string name="app_set_first_and_last_name_settings">Ange ditt för och efternamn</string>
     <string name="app_additional_data_settings">Mer information</string>
-    <string name="app_log_settings">Logg</string>
+    <string name="app_log_settings">Loggar</string>
     <string name="app_age_settings">Ålder</string>
     <string name="app_Weight_settings">Vikt</string>
     <string name="app_Gender_settings">Kön</string>
     <string name="app_change_password_settings">Ändra lösenord</string>
     <string name="app_change_password_settings_title">ÄNDRA LÖSENORD</string>
     <string name="app_privacy_policy_settings">Säkerhetspolicy</string>
+    <string name="app_clear_cache">Rensa cash minnet</string>
     <string name="app_clear_cache_settings">Efter att du rensat cash minnet, din data kommer att laddas ner igen</string>
     <string name="app_app_version_settings">App version</string>
 
-
+    <!--LogOut-->
+    <string name="confirm_logout">Bekräfta utloggning</string>
+    <string name="Logout_from_skotersverige">Logga ut från Skotersverige</string>
+    <string name="logged_out_successfully">Du har loggats ut</string>
 
 
     <!--SignUP Home-->
-    <string name="t_1">Starta din resa/or tillsammans med oss</string>
+    <string name="t_1">Starta din resa tillsammans med oss</string>
     <string name="t_2">Utforska naturen, få information om din omgivning, skapa en säker upplevelse av din skoteråkning!</string>
     <string name="btn_sign_up">Registrera dig</string>
     <string name="txt_Already_have_an_account">Har du redan ett konto? Logga in</string>
@@ -46,7 +57,7 @@
     <string name="t_d_setting">Inställningar</string>
     <string name="t_d_help">Hjälp</string>
     <string name="t_logout">Logga ut</string>
-    <string name="t_logged_out">Logged out successfully</string>
+    <string name="t_logged_out">Du har loggats ut</string>
 
     <!-- FRAGMENTS TITLES -->
     <string name="title_fragment_dashboard">översikt</string>
@@ -58,6 +69,7 @@
     <string name="title_fragment_order">Inköp</string>
     <string name="title_fragment_purchase_options">Köpval</string>
 
+
     <!-- FRAGMENTS DASHBOARD TEXT -->
     <string name="t_PRO">PRO</string>
     <string name="t_BASIC">BASIC</string>
@@ -66,17 +78,19 @@
     <string name="t_total_distance">Total längd</string>
     <string name="t_total_time">Total tid</string>
     <string name="t_previous_distance">Föregående distans</string>
-    <string name="t_purchase_history">Lista över köpta biljetter</string>
+    <string name="t_purchase_history">Inköpshistorik</string>
     <string name="t_memberships">Medlemskap</string>
     <string name="t_recent_feed">Senaste flöde</string>
+    <string name="t_ride_logs">Logg över turer</string>
 
     <!--PURCHASE HISTORY TAB TEXT-->
     <string name="tab_Orders_History">Inköp</string>
     <string name="tab_Pro_Trails_History">Pro Karta</string>
     <string name="tab_Order_Created">Skapad</string>
-    <string name="tab_Status">Status</string>
-    <string name="tab_Total_Price">Totalpris</string>
-    <string name="tab_Number_of_Tickets">Antal biljetter</string>
+    <string name="tab_Status">Status:</string>
+    <string name="tab_Valid_to">Giltig till:</string>
+    <string name="tab_Total_Price">Totalpris:</string>
+    <string name="tab_Number_of_Tickets">Antal biljetter:</string>
 
     <!--PURCHASE OPTION TEXT-->
     <string name="txt_Buy_single_ticket">Köp enskild biljett/ledbevis</string>
@@ -100,8 +114,8 @@
     <string name="t_length_of_all_trails">Längd på leder</string>
     <string name="t_club_action">Mer</string>
     <string name="t_club_gallery">Galleri</string>
-    <string name="t_club_about">Ungefär</string>
-    <string name="t_club_sub_members">Paraplymedlemmar</string>
+    <string name="t_club_about">Om</string>
+    <string name="t_club_sub_members">Ingår i</string>
     <string name="t_become_a_member">Bli en medlem</string>
 
     <string name="t_trails">Spår/Led</string>
@@ -114,10 +128,11 @@
     <string name="t_opened">Öppnad</string>
     <string name="t_close">Stäng</string>
 
-    <string name="t_total_length">Total längd</string>
-    <string name="t_last_prepared">Senast uppdaterat</string>
-    <string name="t_status">Status</string>
-    <string name="total_quality">Total Quality:</string>
+    <string name="t_total_length">Total längd:</string>
+    <string name="t_last_prepared">Senast uppdaterat:</string>
+    <string name="t_status">Status:</string>
+    <string name="t_km">Km</string>
+    <string name="total_quality">Total kvantitet:</string>
     <string name="min_height">Min Höjd:</string>
     <string name="max_height">Max Höjd:</string>
     <string name="duration">Längd:</string>
@@ -126,15 +141,17 @@
     <string name="trail_short_message">Spår "kort meddelande":</string>
     <string name="average_rating">Genomsnittlig rankning:</string>
     <string name="description">Beskrivning:</string>
-
+    <string name="term">Om du behöver en SMS biljett, ange ditt mobilnummer (3 SEK per SMS)</string>
+    <string name="ticket_created_successfully">Biljett skapades</string>
     <!--CLUB TRAILS TEXT -->
     <string name="t_go_explore">Utforska</string>
     <string name="t_trails_status">Spår/Ledstatus</string>
     <string name="t_event">Event</string>
     <string name="t_shops">Butik</string>
     <string name="t_links_and_doc">LÄNKAR/DOKUMENT</string>
-    <string name="t_social_media">Sociala medier</string>
+    <string name="t_social_media">Sociala Medier</string>
     <string name="t_feedback">Återkoppling</string>
+    <string name="t_events">Evenemang</string>
 
 
     <!--REGISTER/LOGIN FRAGMENT TEXT -->
@@ -185,6 +202,7 @@
 
     <string name="t_to_memberships">Medlemskap</string>
     <string name="t_buy_memberships">Köp medlemskap</string>
+    <string name="t_my_memberships">Mina medlemskap</string>
 
 
     <!--Button Text-->
@@ -198,17 +216,32 @@
     <string name="remember_me">Kom ihåg mig</string>
     <string name="please_enter_email_id">Vänligen ange din epostadress</string>
     <string name="please_enter_valid_email_id">Vänligen ange en giltig epost adress</string>
+    <string name="please_select_your_date">Please select your date</string>
+    <string name="please_select_your_first_name">Please enter your last name</string>
+    <string name="please_select_your_last_name">Please enter your last name</string>
+    <string name="take_photo">Ta bild</string>
+    <string name="choose_from_gallery">Välj från Galleri</string>
+    <string name="description_t1">BESKRIVNING</string>
+    <string name="make_it_public">Visa offentligt</string>
+    <string name="make_it_private">Endast privat</string>
 
+    <string name="event_location">Plats:</string>
+    <string name="event_resort_name">Föreningsnamn:</string>
+    <string name="trail_used_for_event">Leden används för ett event:</string>
+    <string name="event_start_date">Startdatum:</string>
 
     <string name="t_h_enter_your_verify_code">Ange verifikationskod</string>
     <string name="t_new_password">Nytt lösenord</string>
     <string name="yes">Ja</string>
     <string name="no">Nej</string>
     <string name="failed">Misslyckades</string>
-    <string name="approved">Approved</string>
+    <string name="approved">Godkänd</string>
 
-    <string name="t_h_email">dev@systaina.com</string>
-    <string name="t_h_pass">Admin123!!</string>
+<!--    <string name="t_h_email">dev@systaina.com</string>
+    <string name="t_h_pass">Admin123!!</string>-->
+
+    <string name="t_h_email">androiddeveloper@websutility.com</string>
+    <string name="t_h_pass">developeR@2023</string>
 
     <string name="t_please_enter_description">Vänligen ange beskrivning</string>
     <string name="t_please_enter_first_name">Ange ditt förnamn</string>
@@ -223,11 +256,13 @@
 
 
     <!--Membership-->
-    <string name="membership">MEMBERSHIP</string>
+    <string name="membership">Medlemskap</string>
     <string name="buy_memberships">Köp medlemskap</string>
     <string name="buy_membership">Köp stödmedlemskap</string>
-    <string name="Activate_memberships">Activate Memberships</string>
-    <string name="show_benefits">Show benefits (0)</string>
+    <string name="Activate_memberships">Aktivera medlemskap</string>
+    <string name="show_benefits">Visa förmåner</string>
+    <string name="hide_benefits">Dölj förmåner</string>
+    <string name="title_search_for_a_membership">Sök efter medlemskap</string>
 
     <!--Become a Mem-->
     <string name="first_name">FÖRNAMN</string>
@@ -245,17 +280,36 @@
     <string name="enter_your_memb">Ange ditt medlemskap</string>
     <string name="activate">Aktivitet</string>
 
+    <string name="ice_on_trail">Ice on trail!</string>
+    <string name="remove_feedback">Ta bort återkoppling</string>
+    <string name="approve_feedback">Godkänn återkoppling</string>
+    <string name="type_of_report">Typ av anläggning</string>
+    <string name="leave_feedback">Lämna återkoppling</string>
 
     <string name="t_s_ticket_types">Biljetttyp</string>
-    <string name="t_s_create_ticket">Create Ticket</string>
+    <string name="t_s_create_ticket">Skapa biljett</string>
+    <string name="t_s_ticket_deleted">Biljett borttagen</string>
+    <string name="t_s_ticket_not_found">Biljett hittades inte</string>
 
+
+    <string name="t_s_save_ride">Spara tur</string>
+    <string name="t_you_finished_your_ride">Du har avslutat din tur</string>
+    <string name="t_please_enter_a_comment">Vänligen ange en beskrivning</string>
+    <string name="t_select_image_source">Välj en källa för din bild</string>
+    <string name="t_you_can_tell_us_how_it_was">Du kan beskriva för oss hur det var</string>
+    <string name="t_no_internet_connection">Ingen internet anslutning, vänligen kontrollera dina inställningar.</string>
 
     <string name="ticket_start_date">Startdatum:</string>
     <string name="ticket_first">Förnamn:</string>
     <string name="ticket_last">Efternamn:</string>
-    <string name="ticket_email">Email:</string>
+    <string name="ticket_email">Epost:</string>
     <string name="ticket_price">Pris:</string>
     <string name="total_price">Totalbelopp:</string>
+    <string name="link">Länkar:</string>
+    <string name="max_number_of_attendees">Maximalt antal deltagare:</string>
+    <string name="end_date">Slutdatum:</string>
+    <string name="sponsor">Sponsor:</string>
+    <string name="ticket_fee">Biljett/ledavgift:</string>
 
     <!--Profile Setting-->
     <string name="t_s_start_date">Startdatum</string>
@@ -284,7 +338,7 @@
         <item>Dark</item>
     </string-array>
 
-    <string name="pref_autopause_speed_title">Auto pause speed</string>
+    <string name="pref_autopause_speed_title">Auto paus inställd på hastighet</string>
     <string-array name="pref_autopause_speed_items">
         <item>2 km/h</item>
         <item>4 km/h</item>
@@ -305,7 +359,7 @@
     <string name="pref_units_dist_imperial">mi</string>
     <string name="pref_units_pace_metric">min/km</string>
     <string name="pref_units_pace_imperial">min/mi</string>
-    <string name="pref_screen_on_wifi_title">Skärmen alltid PÅ under träning</string>
+    <string name="pref_screen_on_wifi_title">Skärmen alltid PÅ under logg</string>
     <string name="pref_screen_on_wifi_summary_on">Skärmen är alltid på.</string>
     <string name="pref_screen_on_wifi_summary_off">Skärmen stängs av automatiskt.</string>
     <string name="pref_userdata_title">Användareinformation</string>

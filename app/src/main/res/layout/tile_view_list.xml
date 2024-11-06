@@ -91,7 +91,7 @@
                     android:textSize="12sp"
                     android:textStyle="normal"
                     android:textColor="@color/white"
-                    android:text="Total Length:" />
+                    android:text="@string/t_total_length" />
 
                 <TextView
                     android:id="@+id/length"
@@ -101,7 +101,7 @@
                     android:textSize="12sp"
                     android:layout_marginStart="@dimen/_2sdp"
                     android:textStyle="bold"
-                    android:text="2540m" />
+                    android:text="" />
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -116,7 +116,7 @@
                     android:textSize="12sp"
                     android:textColor="@color/white"
                     android:textStyle="normal"
-                    android:text="Last Prepared:" />
+                    android:text="@string/t_last_prepared" />
 
                 <TextView
                     android:id="@+id/lastUpdateDate"
@@ -126,7 +126,7 @@
                     android:textSize="12sp"
                     android:layout_marginStart="@dimen/_2sdp"
                     android:textStyle="bold"
-                    android:text="22/07/2021 13:00" />
+                    android:text="" />
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -140,7 +140,7 @@
                     android:gravity="center"
                     android:textStyle="normal"
                     android:textColor="@color/white"
-                    android:text="Status:" />
+                    android:text="@string/t_status" />
 
                 <LinearLayout
                     android:id="@+id/idOpen"
@@ -159,7 +159,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:text="Open"
+                            android:text="@string/t_open"
                             android:padding="@dimen/_1sdp"
                             android:gravity="center"
                             android:layout_marginLeft="2dp"
@@ -187,7 +187,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:text="Closed"
+                            android:text="@string/t_close"
                             android:gravity="center"
                             android:padding="@dimen/_1sdp"
                             android:textStyle="bold"

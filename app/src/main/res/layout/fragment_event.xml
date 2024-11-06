@@ -24,6 +24,22 @@
             android:padding="6dp"
             android:scaleType="centerCrop"
             android:src="@drawable/back_btn" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_45sdp"
+            android:layout_below="@+id/backBtn">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/t_events"
+                android:padding="@dimen/_6sdp"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_18sdp"
+                android:textStyle="bold" />
+        </LinearLayout>
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -64,7 +80,7 @@
             style="@style/TextRobotoNormal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="No events found for today."
+            android:text="@string/no_events_found_for_today"
             android:textSize="16sp"
             android:visibility="gone"
             android:gravity="center"

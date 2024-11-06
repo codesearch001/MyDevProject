@@ -72,6 +72,7 @@ import com.snofed.publicapp.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
 import io.realm.Realm
 import org.json.JSONObject
+import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 
@@ -83,7 +84,7 @@ class StartMapRideFragment : Fragment() , ImageUriCallback {
     private val feedWorkoutViewModel by viewModels<AuthViewModel>()
 
     private lateinit var workoutViewModel: WorkoutViewModel
-    private val realm: Realm = Realm.getDefaultInstance()
+
 
    
 
@@ -149,20 +150,21 @@ class StartMapRideFragment : Fragment() , ImageUriCallback {
         binding.backBtn.setOnClickListener {
             it.findNavController().popBackStack()
         }
+        // Initialize MediaReader with this fragment
+        workoutViewModel = ViewModelProvider(this)[WorkoutViewModel::class.java]
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // Insert or fetch data from Realm
-      /*  realm.executeTransaction { realm ->
+       /* realm.executeTransaction { realm ->
             // Example: Insert data into Realm
             val myData = realm.createObject(NewWorkoutPoint::class.java)
-            myData.name = "Sample Data"
+
         }*/
 
-        // Initialize MediaReader with this fragment
-        workoutViewModel = ViewModelProvider(this)[WorkoutViewModel::class.java]
 
         userId= tokenManager.getUserId()
 
@@ -274,9 +276,9 @@ class StartMapRideFragment : Fragment() , ImageUriCallback {
     }
 
     private fun showImageOptionsDialog() {
-        val options = arrayOf("Take Photo")
+        val options = arrayOf(resources.getString(R.string.take_photo))
         val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Select Image Source")
+        builder.setTitle(resources.getString(R.string.t_select_image_source))
         builder.setItems(options) { _: DialogInterface, which: Int ->
             when (which) {
                 0 -> mediaReader.checkPermissionsAndOpenCamera() // Take Photo
@@ -368,7 +370,7 @@ class StartMapRideFragment : Fragment() , ImageUriCallback {
         binding.bPause.visibility = View.GONE
         binding.bResume.visibility = View.GONE
 
-        Toast.makeText(requireContext(), "Save ride ", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), resources.getString(R.string.t_s_save_ride), Toast.LENGTH_SHORT).show()
 
         // Show the custom dialog when End button is clicked
         showSaveRideDialog()
@@ -382,7 +384,7 @@ class StartMapRideFragment : Fragment() , ImageUriCallback {
         dialog.setContentView(dialogBinding.root)
 
         // Set dialog title (optional, already set in XML)
-        dialogBinding.dialogTitle.text = "You finished your ride"
+        dialogBinding.dialogTitle.text = resources.getString(R.string.t_you_finished_your_ride)
 
         // Set default selection for radioButtonPrivate
         dialogBinding.radioButtonPrivate.isChecked = true
@@ -406,7 +408,7 @@ class StartMapRideFragment : Fragment() , ImageUriCallback {
             // Validate comment is not empty
             if (comment.isBlank()) {
                 // Show a toast message as well
-                Toast.makeText(requireContext(), "Please enter a comment", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), resources.getString(R.string.t_please_enter_a_comment), Toast.LENGTH_SHORT).show()
             } else {
                 // Remove any previous error message
                 dialogBinding.editTextComment.error = null
@@ -433,17 +435,19 @@ class StartMapRideFragment : Fragment() , ImageUriCallback {
         // Perform necessary actions to save the ride
         val rideType = if (isPublic) "public" else "private"
         println("Saving ride as $rideType with comment: $comment")
+
         sendRideToServer(comment, isPublic)
     }
 
     private fun sendRideToServer(comment: String, isPublic: Boolean) {
+
         workoutViewModel.addDescription(description = comment,isPublic = isPublic)
 
         //Get data from REALM
         val workoutJsonList: List<WorkoutResponse> = workoutViewModel.fetchWorkoutByIdAsJsonList(getWorkoutID.toString())
-
         // FINAL DATA SEND SEND OVER SERVER
         feedWorkoutViewModel.workOutRideRequest(workoutJsonList)
+        println("received from realm db ride as $workoutJsonList")
 
     }
     override fun onResume() {
@@ -505,7 +509,7 @@ class StartMapRideFragment : Fragment() , ImageUriCallback {
                 if (isInternetAvailable()) {
                     enableGPS()
                 } else {
-                    showToast("No internet connection. Please check your network settings.")
+                    showToast(resources.getString(R.string.t_no_internet_connection))
                 }
             }
 
@@ -625,13 +629,9 @@ class StartMapRideFragment : Fragment() , ImageUriCallback {
                     style.addLayer(symbolLayer)
 
 
-
                     fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                         location?.let {
-                            Log.d(
-                                "TAG",
-                                "Last known location: lat=${it.latitude}, lng=${it.longitude}"
-                            )
+                            Log.d("TAG", "Last known location: lat=${it.latitude}, lng=${it.longitude}")
                             startCameraAnimation(it.latitude, it.longitude)
                         } ?: Log.e("TAG", "Last known location is null.")
                     }
@@ -771,9 +771,9 @@ class StartMapRideFragment : Fragment() , ImageUriCallback {
             val speedKph = speedMps * 3.6
 
             // Format the distance and speed
-            distanceFormatted = String.format("%.2f", totalDistance)
+            distanceFormatted = String.format(Locale.US,"%.2f", totalDistance)
             //distanceFormattedd = String.format("%.2f", totalDistanceTest)
-            speedFormatted = String.format("%.2f", speedKph)
+            speedFormatted = String.format(Locale.US,"%.2f", speedKph)
             speedFormattedDouble=speedFormatted.toDouble()
             val elapsedTimeMillis = currentTime - startTime
             elapsedTimeFormatted = formatElapsedTime(elapsedTimeMillis)

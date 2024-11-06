@@ -31,13 +31,17 @@ import com.mapbox.maps.plugin.annotation.generated.OnPointAnnotationDragListener
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotation
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
+import com.mapbox.maps.viewannotation.viewAnnotationOptions
+
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
+import com.mapbox.maps.plugin.gestures.OnMapClickListener
 import com.mapbox.maps.viewannotation.ViewAnnotationManager
 import com.mapbox.maps.viewannotation.geometry
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
 
+
 @AndroidEntryPoint
-class BrowseClubMapFragment : Fragment() {
+class BrowseClubMapFragment : Fragment(), OnMapClickListener {
     private var _binding: FragmentBrowseClubMapBinding? = null
     private val binding get() = _binding!!
     private val sharedViewModel by activityViewModels<SharedViewModel>()
@@ -69,17 +73,17 @@ class BrowseClubMapFragment : Fragment() {
         binding.mapView.mapboxMap.loadStyle(Style.STANDARD) {
             Log.d("BrowseClubMapFragment", "Map style loaded successfully")
 
-            // Set the default camera settings, including zoom level
+            // Set the default camera settings
             setDefaultCamera()
 
-            setupAnnotationManager() // Ensure the annotation manager is created here
+            // Setup annotation manager
+            setupAnnotationManager()
         }
     }
 
     private fun setDefaultCamera() {
-        // Set the initial camera position and zoom level
-        val initialPoint = Point.fromLngLat(0.0, 0.0) // Default center point (you can change this)
-        val initialZoom = 8.0 // Default zoom level
+        val initialPoint = Point.fromLngLat(0.0, 0.0) // Default center point
+        val initialZoom = 18.0
 
         mapboxMap.setCamera(
             CameraOptions.Builder()
@@ -90,84 +94,56 @@ class BrowseClubMapFragment : Fragment() {
     }
 
     private fun setupAnnotationManager() {
-        // Initialize PointAnnotationManager
         val annotationPlugin = mapView.annotations
-        pointAnnotationManager = annotationPlugin.createPointAnnotationManager(
-            AnnotationConfig(layerId = LAYER_ID)
-        )
-        Log.d("BrowseClubMapFragment", "PointAnnotationManager created")
+        pointAnnotationManager = annotationPlugin.createPointAnnotationManager(AnnotationConfig(layerId = LAYER_ID))
 
-        // Set up click and drag listeners for the annotations
+        // Click listener to show the custom info window
         pointAnnotationManager.addClickListener { clickedAnnotation ->
-            Log.d("BrowseClubMapFragment", "Annotation clicked at: ${clickedAnnotation.point.longitude()}, ${clickedAnnotation.point.latitude()}")
-            showPopup(clickedAnnotation)
+            showCustomInfoWindow(clickedAnnotation)
             true
         }
 
-      /*  pointAnnotationManager.addDragListener(object : OnPointAnnotationDragListener {
-            override fun onAnnotationDrag(annotation: Annotation<*>) {
-                val pointAnnotation = annotation as PointAnnotation
-                Log.d("AnnotationDrag", "Dragging annotation at: ${pointAnnotation.point.longitude()}, ${pointAnnotation.point.latitude()}")
-            }
-
-            override fun onAnnotationDragFinished(annotation: Annotation<*>) {
-                val pointAnnotation = annotation as PointAnnotation
-                Log.d("AnnotationDragFinished", "Drag finished at: ${pointAnnotation.point.longitude()}, ${pointAnnotation.point.latitude()}")
-                Toast.makeText(
-                    requireActivity(),
-                    "Drag finished at: ${pointAnnotation.point.longitude()}, ${pointAnnotation.point.latitude()}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-
-            override fun onAnnotationDragStarted(annotation: Annotation<*>) {
-                val pointAnnotation = annotation as PointAnnotation
-                Log.d("AnnotationDragStarted", "Drag started at: ${pointAnnotation.point.longitude()}, ${pointAnnotation.point.latitude()}")
-            }
-        })*/
-
-        // Create the initial annotations
+        // Add markers to the map
         updateMapWithPoints()
     }
-  /*  private fun showPopup(annotation: PointAnnotation) {
+
+    @SuppressLint("InflateParams")
+    private fun showCustomInfoWindow(annotation: PointAnnotation) {
         val coordinates = annotation.point
 
-        // Inflate the custom popup layout
-        val popupView = LayoutInflater.from(requireContext()).inflate(R.layout.popup_layout, null)
+        // Remove any existing annotation views
+        viewAnnotationManager.removeAllViewAnnotations()
 
-        // Set up the TextViews in the popup
-        val titleTextView = popupView.findViewById<TextView>(R.id.popup_title)
-        val descriptionTextView = popupView.findViewById<TextView>(R.id.popup_description)
+        // Create and configure the custom info window
+        // Inflate your custom layout properly
+        val popupView = LayoutInflater.from(requireContext()).inflate(R.layout.map_popup_layout, null)
+        val displayMetrics = resources.displayMetrics
+        val widthInDp = 250 // Desired width in dp
+        val heightInDp = 170 // Desired height in dp
 
-        // Set the content for the popup (you can customize this based on your data)
-        titleTextView.text = "Marker Title" // Set a dynamic title based on your data
-        descriptionTextView.text = "Longitude: ${coordinates.longitude()}, Latitude: ${coordinates.latitude()}" // Set a dynamic description
+        val widthInPx = (widthInDp * displayMetrics.density).toInt()
+        val heightInPx = (heightInDp * displayMetrics.density).toInt()
 
-        // Create a PopupWindow
-        val popupWindow = PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        popupView.layoutParams = ViewGroup.LayoutParams(
+            widthInPx,
+            heightInPx
+        )
 
-        // Show the popup at the marker's position
-        val location = binding.mapView.projection.toScreenLocation(coordinates)
-        popupWindow.showAtLocation(binding.mapView, Gravity.NO_GRAVITY, location.x, location.y)
+        //val view = LayoutInflater.from(requireContext()).inflate(R.layout.map_popup_layout, null)
+        popupView.findViewById<TextView>(R.id.club_name).text = "Marker Title"
+        popupView.findViewById<TextView>(R.id.club_main_name).text =
+            "Longitude: ${coordinates.longitude()}, Latitude: ${coordinates.latitude()}"
 
-        // Dismiss the popup when clicked outside
-        popupView.setOnTouchListener { v, event ->
-            if (event.action == MotionEvent.ACTION_OUTSIDE) {
-                popupWindow.dismiss()
-                true
-            } else {
-                false
+        // Add the custom view as an annotation
+        viewAnnotationManager.addViewAnnotation(
+            popupView,
+            viewAnnotationOptions {
+                geometry(coordinates)
+                allowOverlap(true)
+                ignoreCameraPadding(true)
+                allowOverlapWithPuck(true)
             }
-        }
-    }*/
-
-    private fun showPopup(annotation: PointAnnotation) {
-        val coordinates = annotation.point
-        Toast.makeText(
-            requireActivity(),
-            "Marker clicked at: ${coordinates.longitude()}, ${coordinates.latitude()}",
-            Toast.LENGTH_SHORT
-        ).show()
+        )
     }
 
     private fun getResponse() {
@@ -193,9 +169,7 @@ class BrowseClubMapFragment : Fragment() {
 
     private fun updateMapWithPoints() {
         if (this::pointAnnotationManager.isInitialized) {
-            // Clear any previous annotations
             pointAnnotationManager.deleteAll()
-            // Add new annotations
             prepareAnnotationMarker(pointsList)
         } else {
             Log.e("BrowseClubMapFragment", "PointAnnotationManager not initialized")
@@ -223,15 +197,22 @@ class BrowseClubMapFragment : Fragment() {
         Log.d("BrowseClubMapFragment", "Annotations added: ${pointsList.size}")
     }
 
-    private companion object {
-        const val LAYER_ID = "layer-id"
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
+    private companion object {
+        const val LAYER_ID = "layer-id"
+    }
+
+    override fun onMapClick(point: Point): Boolean {
+        TODO("Not yet implemented")
+    }
 }
+
+
+
 
 
 

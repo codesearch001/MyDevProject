@@ -171,7 +171,7 @@ class HomeDashBoardActivity : AppCompatActivity(), DrawerController {
 
     private fun handleLogout() {
         val builder = AlertDialog.Builder(this, R.style.RoundedAlertDialog)
-        builder.setTitle("Confirm Logout")
+        builder.setTitle(resources.getString(R.string.confirm_logout))
             .setMessage(getString(R.string.logout_from_track4))
             .setPositiveButton(getString(R.string.ok)) { dialog, which ->
                 // User confirmed logout

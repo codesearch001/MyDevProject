@@ -18,6 +18,8 @@ object Constants {
     const val RECORDING_WORKOUT_ID = "recording_workout_id"
     const val MAX_HEIGHT_WIDTH: Int = 800
 
+    const val IS_FROM_EVENT_DETAILS = "is_from_event"
+
     // DATETIME FORMAT
     const val FIRST_TIME_APP_SYNC = "app_sync_for_a_first_time"
 
