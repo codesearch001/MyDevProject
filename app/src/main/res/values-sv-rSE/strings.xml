@@ -45,7 +45,6 @@
     <string name="Logout_from_skotersverige">Logga ut från Skotersverige</string>
     <string name="logged_out_successfully">Du har loggats ut</string>
 
-
     <!--SignUP Home-->
     <string name="t_1">Starta din resa tillsammans med oss</string>
     <string name="t_2">Utforska naturen, få information om din omgivning, skapa en säker upplevelse av din skoteråkning!</string>
@@ -70,6 +69,7 @@
     <string name="title_fragment_Trails_status">Spår/Ledstatus</string>
     <string name="title_fragment_order">Inköp</string>
     <string name="title_fragment_purchase_options">Köpval</string>
+    <string name="title_search_for_a_membership">Sök efter medlemskap</string>
 
 
     <!-- FRAGMENTS DASHBOARD TEXT -->
@@ -103,7 +103,7 @@
     <string name="t_All">Alla</string>
     <string name="t_Favourites">Favoriter</string>
     <string name="t_search_club">Leta efter förening</string>
-    <string name="t_search_trail">Leta efter förening</string>
+    <string name="t_search_trail">Sök efter en led/spår</string>
     <string name="t_search_event">Search for a events</string>
 
     <!--FRAGMENT MEMBERSHIP TEXT-->
@@ -147,15 +147,16 @@
     <string name="description">Beskrivning:</string>
     <string name="term">Om du behöver en SMS biljett, ange ditt mobilnummer (3 SEK per SMS)</string>
     <string name="ticket_created_successfully">Biljett skapades</string>
+
     <!--CLUB TRAILS TEXT -->
     <string name="t_go_explore">Utforska</string>
     <string name="t_trails_status">Spår/Ledstatus</string>
     <string name="t_event">Event</string>
     <string name="t_shops">Butik</string>
     <string name="t_links_and_doc">Länkar/info</string>
-    <string name="t_events">Evenemang</string>
     <string name="t_social_media">Sociala medier</string>
     <string name="t_feedback">Återkoppling</string>
+    <string name="t_events">Evenemang</string>
 
 
     <!--REGISTER/LOGIN FRAGMENT TEXT -->
@@ -221,8 +222,8 @@
     <string name="please_enter_email_id">Vänligen ange din epostadress</string>
     <string name="please_enter_valid_email_id">Vänligen ange en giltig epost adress</string>
     <string name="please_select_your_date">Please select your date</string>
-    <string name="please_select_your_first_name">Please enter your last name</string>
-    <string name="please_select_your_last_name">Please enter your last name</string>
+    <string name="please_select_your_first_name">Please enter your first name</string>
+    <string name="please_select_your_last_name">Ange ditt efternamn</string>
     <string name="take_photo">Ta bild</string>
     <string name="choose_from_gallery">Välj från Galleri</string>
     <string name="description_t1">BESKRIVNING</string>
@@ -244,7 +245,6 @@
 
    <!-- <string name="t_h_email">dev@systaina.com</string>
     <string name="t_h_pass">Admin123!!</string>-->
-
 <!--    <string name="t_h_email">androiddeveloper@websutility.com</string>-->
 <!--    <string name="t_h_pass">developeR@2023</string>-->
 
@@ -267,7 +267,6 @@
     <string name="Activate_memberships">Aktivera medlemskap</string>
     <string name="show_benefits">Visa förmåner</string>
     <string name="hide_benefits">Dölj förmåner</string>
-    <string name="title_search_for_a_membership">Sök efter medlemskap</string>
     <string name="member_of">Member of</string>
 
     <!--Become a Mem-->
@@ -327,7 +326,6 @@
     <string name="t_h_enter_your_fname">Ange ditt förnamn</string>
     <string name="t_h_enter_your_lname">Ange ditt efternamn</string>
     <string name="t_tickets_total_price">Totalpris:</string>
-
     <string name="report_problem_confirm_and_send_btn">Bekräfta och skicka</string>
     <string name="report_problem_choose_location_btn">Ange plats</string>
     <string name="trail_info_preparation_datete_not_yet_prepared">Ännu inte preparerad</string>
@@ -385,4 +383,9 @@
     <string name="pref_privacy_policy">Integritetspolicy</string>
     <string name="backend_localization">sv-SE</string>
     <string name="swish_application_not_installed_toast">Swish programmet är inte installerat på din enhet</string>
+
+    <string name="please_select_start_date">Vänligen välj ett start datum:</string>
+    <string name="loacation_feature">Platsbehörighet krävs för att använda den här funktionen.</string>
+    <string name="write_here">Skriv här</string>
+
 </resources>

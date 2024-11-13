@@ -23,7 +23,6 @@
     <string name="speed">Speed</string>
     <string name="avg_pace">Avg. Pace:</string>
 
-
     <string name="app_settings">App Setting</string>
     <string name="app_profile_settings">Profile Setting</string>
     <string name="app_upload_profile_settings">Upload profile picture</string>
@@ -85,7 +84,6 @@
     <string name="t_memberships">Memberships</string>
     <string name="t_recent_feed">Recent Feed</string>
     <string name="t_ride_logs">Ride Logs</string>
-
 
     <!--PURCHASE HISTORY TAB TEXT-->
     <string name="tab_Orders_History">Orders</string>
@@ -224,7 +222,7 @@
     <string name="please_enter_email_id">Please enter email Id</string>
     <string name="please_enter_valid_email_id">Please enter valid email Id</string>
     <string name="please_select_your_date">Please select your date</string>
-    <string name="please_select_your_first_name">Please enter your last name</string>
+    <string name="please_select_your_first_name">Please enter your first name</string>
     <string name="please_select_your_last_name">Please enter your last name</string>
     <string name="take_photo">Take Photo</string>
     <string name="choose_from_gallery">Choose from Gallery</string>
@@ -233,12 +231,10 @@
     <string name="make_it_private">Make it private</string>
     <string name="feedback_saved_successfully">Feedback saved successfully</string>
 
-
     <string name="event_location">Location:</string>
     <string name="event_resort_name">Resort name:</string>
     <string name="trail_used_for_event">Trails used for event:</string>
     <string name="event_start_date">Start date:</string>
-
 
     <string name="t_h_enter_your_verify_code">Enter verification code</string>
     <string name="t_new_password">New password</string>
@@ -273,7 +269,6 @@
     <string name="hide_benefits">Hide benefits</string>
     <string name="member_of">Member of</string>
 
-
     <!--Become a Mem-->
     <string name="first_name">FIRST NAME</string>
     <string name="last_name">LAST NAME</string>
@@ -296,7 +291,6 @@
     <string name="type_of_report">Type of report</string>
     <string name="leave_feedback">Leave feedback</string>
 
-
     <string name="t_s_ticket_types">Ticket types</string>
     <string name="t_s_create_ticket">Create Ticket</string>
     <string name="t_s_ticket_deleted">Ticket deleted</string>
@@ -309,7 +303,6 @@
     <string name="t_select_image_source">Select Image Source</string>
     <string name="t_you_can_tell_us_how_it_was">You can tell us how it was.</string>
     <string name="t_no_internet_connection">No internet connection. Please check your network settings.</string>
-
     <!--Ticket List -->
     <string name="ticket_start_date">Start date:</string>
     <string name="ticket_first">First name:</string>
@@ -322,7 +315,6 @@
     <string name="end_date">End date:</string>
     <string name="sponsor">Sponsor:</string>
     <string name="ticket_fee">Ticket fee:</string>
-
 
     <!--Profile Setting-->
     <string name="t_s_start_date">Start date</string>
@@ -391,4 +383,9 @@
     <string name="pref_privacy_policy">Privacy Policy Info</string>
     <string name="backend_localization">en-US</string>
     <string name="swish_application_not_installed_toast">Swish application is not installed on your device</string>
+
+    <string name="please_select_start_date">Please select a start date.</string>
+    <string name="loacation_feature">Location permission is required to use this feature.</string>
+    <string name="write_here">Write here</string>
+
 </resources>
