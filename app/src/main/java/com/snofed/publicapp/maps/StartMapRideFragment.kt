@@ -956,7 +956,7 @@ class StartMapRideFragment : Fragment() {
                 checkLocationPermission()
             } else {
                 handlePermissionDenied()
-                showToast("Location permission is required to use this feature.")
+                showToast(resources.getString(R.string.loacation_feature))
             }
         }
 

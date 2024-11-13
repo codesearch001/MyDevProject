@@ -168,7 +168,7 @@
                     android:layout_marginTop="@dimen/_6sdp"
                     android:background="@drawable/rounded_edit_text_background"
                     android:gravity="center|top"
-                    android:hint="Write here"
+                    android:hint="@string/write_here"
                     android:padding="@dimen/_6sdp"
                     android:text=""
                     android:textAlignment="textStart"
