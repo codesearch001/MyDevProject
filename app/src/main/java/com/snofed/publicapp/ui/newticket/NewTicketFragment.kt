@@ -422,7 +422,7 @@ class NewTicketFragment : Fragment() {
 
         // Validate date selection
         if (startDate.isEmpty()) {
-            Toast.makeText(requireContext(), "Please select a start date.", Toast.LENGTH_SHORT)
+            Toast.makeText(requireContext(), getString(R.string.please_select_start_date), Toast.LENGTH_SHORT)
                 .show()
             return
         }
