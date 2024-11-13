@@ -65,28 +65,21 @@ class FeedFragment : Fragment(),WorkoutFeedAdapter.OnItemClickListener {
                 is NetworkResult.Success -> {
                     val data = it.data?.data
                     if (data.isNullOrEmpty()) {
-                        //Log.i("it.data?.feed","it.data?.feed "+it.data?.data)
-                        // Handle the "data not found" case
-                        // Assuming this is inside a Fragment
                         it.data?.message?.let { message ->
                             binding.tvSplashText.apply {
                                 isVisible = true
                                 text = message
                             }
                         }
-
                         feedAdapter = WorkoutFeedAdapter(this)
                         binding.feedRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
                         binding.feedRecyclerView.adapter = feedAdapter
                         feedAdapter.setFeed(data)
                     } else {
-                        // Normal case: data is present
-                        Log.i("PraveenGallery22222", "Data: $data")
                         binding.tvSplashText.isVisible = false
                         feedAdapter = WorkoutFeedAdapter(this)
                         binding.feedRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
                         binding.feedRecyclerView.adapter = feedAdapter
-                        //Log.i("it.data?.feed","it.data?.feed "+it.data?.data)
                         feedAdapter.setFeed(data)
 
                     }

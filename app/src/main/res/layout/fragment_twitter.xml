@@ -85,10 +85,11 @@
             android:layout_marginTop="@dimen/_14sdp"
             android:layout_marginEnd="@dimen/_11sdp"
             app:cardBackgroundColor="@color/card_bg_color"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="0dp">
+            app:cardCornerRadius="9dp"
+            app:cardElevation="1dp">
 
             <LinearLayout
+                android:id="@+id/instagramImage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -98,6 +99,7 @@
                     android:layout_width="@dimen/_38sdp"
                     android:layout_height="@dimen/_38sdp"
                     android:layout_gravity="center"
+                    android:elevation="1dp"
                     android:src="@drawable/instagram" />
 
                 <LinearLayout
@@ -109,20 +111,24 @@
                     android:orientation="vertical">
 
                     <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/instaURL"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/txt_Buy_single_ticket"
+                        android:layout_margin="@dimen/_4sdp"
+                        android:text=""
                         android:textColor="@color/dark_blue"
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
                     <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/instaUserName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/txt_Buy_single_ticket"
-                        android:textColor="@color/dark_blue"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:layout_margin="@dimen/_4sdp"
+                        android:text=""
+                        android:textColor="@color/colorTabTextUnselected"
+                        android:textSize="@dimen/_9sdp"
+                        android:textStyle="normal" />
 
 
                 </LinearLayout>
@@ -146,10 +152,11 @@
             android:layout_marginEnd="@dimen/_11sdp"
             android:layout_marginBottom="@dimen/_8sdp"
             app:cardBackgroundColor="@color/card_bg_color"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="0dp">
+            app:cardCornerRadius="9dp"
+            app:cardElevation="1dp">
 
             <LinearLayout
+                android:id="@+id/facebookImage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -159,7 +166,7 @@
                     android:layout_width="@dimen/_38sdp"
                     android:layout_height="@dimen/_38sdp"
                     android:layout_gravity="center"
-                    android:scaleType="centerCrop"
+                    android:elevation="1dp"
                     android:src="@drawable/facebook" />
 
                 <LinearLayout
@@ -171,20 +178,24 @@
                     android:orientation="vertical">
 
                     <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/txtFacebook"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/txt_Buy_single_ticket"
+                        android:text=""
                         android:textColor="@color/dark_blue"
+                        android:layout_margin="@dimen/_4sdp"
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
                     <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/fbUserName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/txt_Buy_single_ticket"
-                        android:textColor="@color/dark_blue"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:text=""
+                        android:textColor="@color/grey_light11"
+                        android:layout_margin="@dimen/_4sdp"
+                        android:textSize="@dimen/_9sdp"
+                        android:textStyle="normal" />
 
 
                 </LinearLayout>
@@ -206,10 +217,11 @@
             android:layout_marginStart="@dimen/_11sdp"
             android:layout_marginEnd="@dimen/_11sdp"
             app:cardBackgroundColor="@color/card_bg_color"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="0dp">
+            app:cardCornerRadius="9dp"
+            app:cardElevation="1dp">
 
             <LinearLayout
+                android:id="@+id/twitterImage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -219,6 +231,7 @@
                     android:layout_width="@dimen/_38sdp"
                     android:layout_height="@dimen/_38sdp"
                     android:layout_gravity="center"
+                    android:elevation="1dp"
                     android:src="@drawable/twitter" />
 
                 <LinearLayout
@@ -230,20 +243,24 @@
                     android:orientation="vertical">
 
                     <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/txtTwitter"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/txt_Buy_single_ticket"
+                        android:text=""
+                        android:layout_margin="@dimen/_4sdp"
                         android:textColor="@color/dark_blue"
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
                     <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/XUseName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/txt_Buy_single_ticket"
-                        android:textColor="@color/dark_blue"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:text=""
+                        android:layout_margin="@dimen/_4sdp"
+                        android:textColor="@color/grey_light11"
+                        android:textSize="@dimen/_9sdp"
+                        android:textStyle="normal" />
 
 
                 </LinearLayout>

@@ -39,13 +39,23 @@ class TwitterFragment : Fragment() {
         sharedViewModel.browseSubClubResponse.observe(viewLifecycleOwner) { response ->
             val socialMediaLinks = response?.data?.publicData?.socialMediaLinks
 
-
             // Set up click listeners for each social media icon
             socialMediaLinks?.let { links ->
+                binding.txtTwitter.text = "Visit club X profile"// add text here
+                binding.XUseName.text = extractProfileName(links.twitterLink)
+
+                binding.txtFacebook.text = "Visit club Facebook profile"// add text here
+                binding.fbUserName.text = extractProfileName(links.facebookLink)
+
+                binding.instaURL.text = "Visit club Instagram profile"// add text here
+                binding.instaUserName.text = extractProfileName(links.instagramLink)
+
+
                 // Twitter link
                 binding.twitterImage.setOnClickListener {
                     links.twitterLink.takeIf { it.isNotEmpty() }?.let { twitterLink ->
                         openLink(twitterLink)
+
                     } ?: showToast("Twitter link not available")
                 }
 
@@ -53,6 +63,7 @@ class TwitterFragment : Fragment() {
                 binding.facebookImage.setOnClickListener {
                     links.facebookLink.takeIf { it.isNotEmpty() }?.let { facebookLink ->
                         openLink(facebookLink)
+
                     } ?: showToast("Facebook link not available")
                 }
 
@@ -60,11 +71,32 @@ class TwitterFragment : Fragment() {
                 binding.instagramImage.setOnClickListener {
                     links.instagramLink.takeIf { it.isNotEmpty() }?.let { instagramLink ->
                         openLink(instagramLink)
+
+                        //val profileName = extractProfileName(instagramLink)
+                        //showToast("Profile Name: $profileName")
+
                     } ?: showToast("Instagram link not available")
                 }
             }
         }
+
+
     }
+
+    private fun extractProfileName(url: String): String? {
+        // Define regular expressions for each platform
+        val instagramPattern = Regex("https?://(?:www\\.)?instagram\\.com/([a-zA-Z0-9._-]+)")
+        val facebookPattern = Regex("https?://(?:www\\.)?facebook\\.com/([a-zA-Z0-9._-]+)")
+        val twitterPattern = Regex("https?://(?:www\\.)?twitter\\.com/([a-zA-Z0-9._-]+)")
+
+        return when {
+            "facebook.com" in url -> "@"+facebookPattern.find(url)?.groupValues?.get(1)
+            "instagram.com" in url -> "@"+instagramPattern.find(url)?.groupValues?.get(1)
+            "twitter.com" in url -> "@"+twitterPattern.find(url)?.groupValues?.get(1)
+            else -> null
+        }
+    }
+
 
     private fun showToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()

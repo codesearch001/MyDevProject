@@ -16,8 +16,8 @@ import java.util.UUID
 open class NewWorkoutPoint(
     @PrimaryKey
     var id: String = UUID.randomUUID().toString(),
-    var longitude: Double = 0.0,
     var latitude: Double = 0.0,
+    var longitude: Double = 0.0,
     var speed: Double = 0.0,
     var timestamp: String = "",
     var lengthFromPrevPoint: Double = 0.0,
