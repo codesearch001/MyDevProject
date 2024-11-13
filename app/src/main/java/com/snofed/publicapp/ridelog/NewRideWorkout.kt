@@ -4,6 +4,7 @@ import kotlinx.parcelize.Parceler
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.snofed.publicapp.utils.enums.SyncActionEnum
 import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
@@ -12,14 +13,12 @@ import kotlinx.parcelize.Parcelize
 import java.util.UUID
 
 
-
-
 @Parcelize
 @RealmClass
 open class NewRideWorkout(
     @PrimaryKey
     var id: String = "",
-    var syncAction: Int = 0,
+    var syncAction: Int = 1,
     var publicUserId: String = "",
     var publisherFullname: String = "",
     var duration: Int = 0,
@@ -34,7 +33,7 @@ open class NewRideWorkout(
     var workoutPoints: RealmList<NewWorkoutPoint> = RealmList(),
     var leaderboardTime: Int = 0,
     var workoutImages: RealmList<NewWorkoutImage> = RealmList(),
-    ) : RealmObject(), Parcelable {
+) : RealmObject(), Parcelable {
 
     companion object : Parceler<NewRideWorkout> {
 

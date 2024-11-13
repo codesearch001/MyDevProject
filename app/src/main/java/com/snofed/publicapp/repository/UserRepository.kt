@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.gson.Gson
 import com.snofed.publicapp.R
 import com.snofed.publicapp.api.UserAPI
 import com.snofed.publicapp.db.WorkoutResponse
@@ -13,6 +14,7 @@ import com.snofed.publicapp.models.RideApiResponse
 import com.snofed.publicapp.models.TrailGraphData
 import com.snofed.publicapp.models.TrailPolyLinesResponse
 import com.snofed.publicapp.models.TrailsDetilsResponse
+import com.snofed.publicapp.models.User
 import com.snofed.publicapp.models.UserRecoverRequest
 import com.snofed.publicapp.models.UserRegRequest
 import com.snofed.publicapp.models.UserRequest
@@ -20,6 +22,7 @@ import com.snofed.publicapp.models.UserResponse
 import com.snofed.publicapp.models.browseSubClub.BrowseSubClubResponse
 import com.snofed.publicapp.models.events.EventDetailsResponse
 import com.snofed.publicapp.models.events.EventResponse
+import com.snofed.publicapp.models.userData
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
 import com.snofed.publicapp.ui.setting.UploadResponse
@@ -397,6 +400,18 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             Log.e("firstName", "firstName " + response.body()!!.data.fullName)
             tokenManager.saveUserId(response.body()!!.data.id)
             Log.e("UserId", "UserId " + response.body()!!.data.id)
+
+
+            val gson = Gson()
+            val jsonString = gson.toJson(response.body()!!.data)
+            val user = Gson().fromJson(jsonString, userData::class.java)
+
+
+            Log.e("Settings", "userResponse1 " + jsonString)
+            Log.e("Settings", "userResponse2 " + user)
+
+
+
 
             AppPreference.savePreference(context, SharedPreferenceKeys.USER_TOKEN, response.body()!!.data.token)
             AppPreference.savePreference(context, SharedPreferenceKeys.USER_USER_ID, response.body()!!.data.id)

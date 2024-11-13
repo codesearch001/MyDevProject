@@ -141,15 +141,25 @@ class WorkoutViewModel : ViewModel() {
 
         // Create a Gson instance
         val gson = Gson()
-
         // List to hold the WorkoutResponse objects
         val workoutResponseList = mutableListOf<WorkoutResponse>()
 
         try {
-
+            // Fetch the workout from Realm
+            val workout = realm.where<NewRideWorkout>().equalTo("id", workoutId).findFirst()
+             if (workout != null) {
+                // Convert the workout to a Realm-managed object copy
+                val workoutCopy = realm.copyFromRealm(workout)
+                // Convert the workout object to JSON string
+                val jsonString = gson.toJson(workoutCopy)
+                // Convert the JSON string to WorkoutResponse object
+                val workoutResponse = gson.fromJson(jsonString, WorkoutResponse::class.java)
+                // Add the WorkoutResponse object to the list
+                workoutResponseList.add(workoutResponse)
+            }
 
             ///////////////////NewWorkoutPoint  // NewRideWorkout
-            val obj = realm.where<NewRideWorkout>()
+           /* val obj = realm.where<NewRideWorkout>()
               //  .sort("id", Sort.DESCENDING)
                 .sort("id", Sort.ASCENDING)
                 .findFirst()
@@ -172,20 +182,10 @@ class WorkoutViewModel : ViewModel() {
                     workoutResponseList.add(workoutResponse)
                 }
             }
+*/
 
-            // Fetch the workout from Realm
-            //val workout = realm.where<NewRideWorkout>().equalTo("id", workoutId).findFirst()
 
-           /* if (workout != null) {
-                // Convert the workout to a Realm-managed object copy
-                val workoutCopy = realm.copyFromRealm(workout)
-                // Convert the workout object to JSON string
-                val jsonString = gson.toJson(workoutCopy)
-                // Convert the JSON string to WorkoutResponse object
-                val workoutResponse = gson.fromJson(jsonString, WorkoutResponse::class.java)
-                // Add the WorkoutResponse object to the list
-                workoutResponseList.add(workoutResponse)
-            }*/
+
         } catch (e: Exception) {
             // Handle the exception
             e.printStackTrace()

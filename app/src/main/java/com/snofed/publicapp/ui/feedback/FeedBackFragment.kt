@@ -34,12 +34,17 @@ class FeedBackFragment : Fragment(),FeedBackCategoriesAdapter.OnItemClickListene
     private val viewModel by viewModels<AuthViewModel>()
 
     private lateinit var feedAdapter: FeedBackCategoriesAdapter
+    private var clientId: String = ""
     @Inject
     lateinit var tokenManager: TokenManager
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
        // return inflater.inflate(R.layout.fragment_feed_back, container, false)
         _binding = FragmentFeedBackBinding.inflate(inflater, container, false)
+
+        clientId = arguments?.getString("clientId") ?: ""
+        Log.i("FeedBackFragment" , "clientId " + clientId)
+
         return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

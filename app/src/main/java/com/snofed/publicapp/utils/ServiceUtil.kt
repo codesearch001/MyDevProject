@@ -14,6 +14,8 @@ object ServiceUtil {
 
     //api/clients/{id}
 
+
+
     //FOR REGISTER
     const val REGISTER = "account/register-public-user"
     //FOR LOGIN
@@ -21,6 +23,10 @@ object ServiceUtil {
 
     //FOR FORGOT PASSWORD
     const val RECOVER_PASSWORD = "account/mobile-apps/forgot-password"
+
+    //USER_PROFILE_SETTING
+    //http://161.97.121.63:5000/api/public-app/sync/user/settings
+    const val USER_PROFILE_SETTING = "public-app/sync/user/settings"
 
     //USER_PROFILE_IMAGE
     const val USER_PROFILE_IMAGE = "public-app/upload/profile-image/{userId}"

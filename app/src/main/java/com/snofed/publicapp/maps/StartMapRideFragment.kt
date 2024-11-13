@@ -47,6 +47,7 @@ import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.LocationSettingsResponse
 import com.google.android.gms.location.Priority
 import com.google.android.gms.location.SettingsClient
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.tasks.Task
 import com.google.gson.Gson
 import com.mapbox.geojson.Point
@@ -67,13 +68,11 @@ import com.snofed.publicapp.ridelog.NewWorkoutPoint
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.Constants
 import com.snofed.publicapp.utils.Helper
-import com.snofed.publicapp.utils.ImageUriCallback
 import com.snofed.publicapp.utils.MediaReader
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.TokenManager
+import com.snofed.publicapp.utils.enums.SyncActionEnum
 import dagger.hilt.android.AndroidEntryPoint
-import io.realm.Realm
-import org.json.JSONObject
 import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
@@ -95,6 +94,7 @@ class StartMapRideFragment : Fragment() {
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
     private val LOCATION_PERMISSION_REQUEST_CODE = 1
+
     //private val updateInterval: Long = 1000 // Update interval in milliseconds
     private val updateInterval: Long = 200 // Update interval in milliseconds
     private var lastLocation: Location? = null
@@ -118,9 +118,12 @@ class StartMapRideFragment : Fragment() {
     private var uri: Uri? = null // Store the current URI
     private var isPublicRide: Boolean = true // Default value
 
-
+    private var isFirstReceivedLocation:Boolean = true
+    private var previousLocation: Location? = null
+    private var distance :Float= 0f
     val ACTIVE: Boolean = false
-   // private var workout: List<NewRideWorkout> = listOf()
+
+    // private var workout: List<NewRideWorkout> = listOf()
     // Is the stopwatch running?
     private var running = false
     private var workout: NewRideWorkout? = null
@@ -130,18 +133,23 @@ class StartMapRideFragment : Fragment() {
     private var workout_UDID: String? = null
     private var workout_Point_UDID: String? = null
     private var userName: String? = null
-    //private var getWorkoutID: String? = null
-    private var workouttest : String? = null
+    private var getWorkoutID: String? = null
+    private var workouttest: String? = null
     private val isAutoPauseON = false
     private var Houre = 0
     private var Seconds = 0.0
     private var Minutes = 0
     private var avgPace = 0.0
+
     @Inject
     lateinit var tokenManager: TokenManager
 
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         // Inflate the layout for this fragment
         // return inflater.inflate(R.layout.fragment_start_map_ride, container, false)
         _binding = FragmentStartMapRideBinding.inflate(inflater, container, false)
@@ -159,17 +167,17 @@ class StartMapRideFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // Insert or fetch data from Realm
-       /* realm.executeTransaction { realm ->
-            // Example: Insert data into Realm
-            val myData = realm.createObject(NewWorkoutPoint::class.java)
+        /* realm.executeTransaction { realm ->
+             // Example: Insert data into Realm
+             val myData = realm.createObject(NewWorkoutPoint::class.java)
 
-        }*/
+         }*/
 
-        userId= tokenManager.getUserId()
+        userId = tokenManager.getUserId()
 
-        userName= tokenManager.getFullName()
+        userName = tokenManager.getFullName()
 
-        //getWorkoutID= tokenManager.getWorkoutUdId()
+        getWorkoutID = tokenManager.getWorkoutUdId()
 
 
         workout_UDID = UUID.randomUUID().toString()
@@ -192,7 +200,7 @@ class StartMapRideFragment : Fragment() {
 
 
         if (handler != null) {
-           // handler.removeCallbacks(runnable)
+            // handler.removeCallbacks(runnable)
         }
 
         openRideCamera()
@@ -213,8 +221,9 @@ class StartMapRideFragment : Fragment() {
 
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        locationRequest =LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, highAccuracyUpdateInterval)
-            .setMinUpdateIntervalMillis(highAccuracyUpdateInterval).build()
+        locationRequest =
+            LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, highAccuracyUpdateInterval)
+                .setMinUpdateIntervalMillis(highAccuracyUpdateInterval).build()
 
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
@@ -240,7 +249,8 @@ class StartMapRideFragment : Fragment() {
             publisherFullname = "",
             activityId = "",
             startTime = "",
-            isNewlyCreated = true)
+            isNewlyCreated = true
+        )
 
         workoutViewModel.addNewRideWorkout(workout!!)
     }
@@ -251,15 +261,25 @@ class StartMapRideFragment : Fragment() {
             when (it) {
                 is NetworkResult.Success -> {
 
-                    Toast.makeText(requireActivity(), "Ride Data Send Successfully", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        requireActivity(),
+                        "Ride Data Send Successfully",
+                        Toast.LENGTH_LONG
+                    ).show()
                     findNavController().popBackStack()
                 }
+
                 is NetworkResult.Error -> {
 
-                    Toast.makeText(requireActivity(), it.data?.message.toString(), Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        requireActivity(),
+                        it.data?.message.toString(),
+                        Toast.LENGTH_LONG
+                    ).show()
 
                 }
-                is NetworkResult.Loading ->{
+
+                is NetworkResult.Loading -> {
 
                 }
             }
@@ -298,18 +318,21 @@ class StartMapRideFragment : Fragment() {
     private fun startTracking() {
         enableGPS()
         Log.e("TAG_StartMapRideFragment", "onStartRecordingClick: start")
+
         //first time initialization when before start button click
         workout = NewRideWorkout(
             id = workout_UDID.toString(),
-            syncAction = 1,
+            syncAction = SyncActionEnum.NEW.getValue(),
             publicUserId = userId.toString(),
             publisherFullname = userName.toString(),
             activityId = Constants.ACTIVITIES_ID,
             startTime = Helper.getDateNow(Constants.DATETIME_FORMAT),
             isNewlyCreated = true)
 
-        workoutViewModel.addNewRideWorkout(workout!!)
         tokenManager.saveWorkoutUdId(workout!!.id)
+
+        workoutViewModel.addNewRideWorkout(workout!!)
+
 
         isRunning = true
         startTime = System.currentTimeMillis()
@@ -340,7 +363,7 @@ class StartMapRideFragment : Fragment() {
         startTimeForSpeed = System.currentTimeMillis()
         startLocationUpdates()
         binding.bResume.visibility = View.GONE
-       // binding.bEnd.visibility = View.VISIBLE
+        // binding.bEnd.visibility = View.VISIBLE
         binding.bPause.visibility = View.VISIBLE
         running = true
         //handler.postDelayed(runnable, 1000)
@@ -351,12 +374,15 @@ class StartMapRideFragment : Fragment() {
         binding.timeTextView.text = "00:00:00"
         binding.speedTextView.text = "0.00 km/h"
         binding.distanceTextView.text = "0.00 km"
-        elapsedTimeFormatted =  ""
-        distanceFormatted =  ""
-        speedFormatted =  ""
-        speedFormattedDouble=0.0
+        elapsedTimeFormatted = ""
+        distanceFormatted = ""
+        speedFormatted = ""
+        speedFormattedDouble = 0.0
         Log.e("TAG", "onStopRecordingClick")
-        Log.d("TAG", "Time: $elapsedTimeFormatted ,Distance: $distanceFormatted m, Speed: $speedFormatted km/h, ")
+        Log.d(
+            "TAG",
+            "Time: $elapsedTimeFormatted ,Distance: $distanceFormatted m, Speed: $speedFormatted km/h, "
+        )
         SnofedApplication.isRecordingWorkoutProcessing = false
         Houre = 0
         Seconds = 0.0
@@ -369,7 +395,11 @@ class StartMapRideFragment : Fragment() {
         binding.bPause.visibility = View.GONE
         binding.bResume.visibility = View.GONE
 
-        Toast.makeText(requireContext(), resources.getString(R.string.t_s_save_ride), Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            requireContext(),
+            resources.getString(R.string.t_s_save_ride),
+            Toast.LENGTH_SHORT
+        ).show()
 
         // Show the custom dialog when End button is clicked
         showSaveRideDialog()
@@ -407,7 +437,11 @@ class StartMapRideFragment : Fragment() {
             // Validate comment is not empty
             if (comment.isBlank()) {
                 // Show a toast message as well
-                Toast.makeText(requireContext(), resources.getString(R.string.t_please_enter_a_comment), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    resources.getString(R.string.t_please_enter_a_comment),
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
                 // Remove any previous error message
                 dialogBinding.editTextComment.error = null
@@ -429,27 +463,32 @@ class StartMapRideFragment : Fragment() {
         layoutParams?.width = ViewGroup.LayoutParams.MATCH_PARENT // or a specific size
         dialog.window?.attributes = layoutParams
     }
-    var newWorkoutId :String? = ""
+
+    //var newWorkoutId :String? = ""
     private fun saveRide(comment: String, isPublic: Boolean) {
         // Perform necessary actions to save the ride
         val rideType = if (isPublic) "public" else "private"
 
-         newWorkoutId = UUID.randomUUID().toString()
+        //newWorkoutId = UUID.randomUUID().toString()
 
         println("Saving ride as $rideType with comment: $comment")
-        println("Saving ride Two $rideType with WID: $newWorkoutId")
+        println("Saving ride Two $rideType with WID:" + tokenManager.getWorkoutUdId().toString())
+
         sendRideToServer(comment, isPublic)
     }
 
     private fun sendRideToServer(comment: String, isPublic: Boolean) {
 
-        workoutViewModel.addDescription(description = comment,isPublic = isPublic)
+        workoutViewModel.addDescription(description = comment, isPublic = isPublic)
 
-        println("Saving ride Three: $newWorkoutId")
+        println("Saving ride as $isPublic with comment: $comment")
 
         //Get data from REALM
         //val workoutJsonList: List<WorkoutResponse> = workoutViewModel.fetchWorkoutByIdAsJsonList(getWorkoutID.toString())
-        val workoutJsonList: List<WorkoutResponse> = workoutViewModel.fetchWorkoutByIdAsJsonList(newWorkoutId!!)
+        val workoutJsonList: List<WorkoutResponse> =
+            workoutViewModel.fetchWorkoutByIdAsJsonList(tokenManager.getWorkoutUdId().toString())
+
+        //val workoutJsonList: List<WorkoutResponse> = workoutViewModel.fetchWorkoutByIdAsJsonList(newWorkoutId!!)
 
         // FINAL DATA SEND OVER SERVER
 
@@ -458,10 +497,11 @@ class StartMapRideFragment : Fragment() {
         val gson = Gson()
         val json = gson.toJson(workoutJsonList)
 
-        Log.d("received from realm db ride as", "sendReport: " +json)
-         println("received from realm db ride as $workoutJsonList")
+        Log.d("received from realm db ride as", "sendReport: " + json)
+        println("received from realm db ride $workoutJsonList")
 
     }
+
     override fun onResume() {
         super.onResume()
 
@@ -544,7 +584,11 @@ class StartMapRideFragment : Fragment() {
     }
 
     private fun handlePermissionDenied() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(
+                requireActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+        ) {
             showRationaleDialog()
         } else {
             showPermissionSettingsDialog()
@@ -628,7 +672,10 @@ class StartMapRideFragment : Fragment() {
                     // Add the icon image to the map style
                     style.addImage(
                         iconName, // Custom icon name
-                        BitmapFactory.decodeResource(mapView.context.resources, R.drawable.red_marker) // Replace with your actual image
+                        BitmapFactory.decodeResource(
+                            mapView.context.resources,
+                            R.drawable.red_marker
+                        ) // Replace with your actual image
                     )
 
                     // Create and configure the symbol layer
@@ -643,7 +690,10 @@ class StartMapRideFragment : Fragment() {
 
                     fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                         location?.let {
-                            Log.d("TAG", "Last known location: lat=${it.latitude}, lng=${it.longitude}")
+                            Log.d(
+                                "TAG",
+                                "Last known location: lat=${it.latitude}, lng=${it.longitude}"
+                            )
                             startCameraAnimation(it.latitude, it.longitude)
                         } ?: Log.e("TAG", "Last known location is null.")
                     }
@@ -658,7 +708,11 @@ class StartMapRideFragment : Fragment() {
 
         if (::fusedLocationClient.isInitialized) {
             optimizeBatteryUsage() // Optimize battery before starting location updates
-            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+            fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                Looper.getMainLooper()
+            )
         } else {
             Log.e("TAG", "fusedLocationClient is not initialized.")
         }
@@ -671,7 +725,8 @@ class StartMapRideFragment : Fragment() {
     }
 
     private fun optimizeBatteryUsage() {
-        val newBuilder = LocationRequest.Builder(locationRequest.priority, balancedPowerUpdateInterval)
+        val newBuilder =
+            LocationRequest.Builder(locationRequest.priority, balancedPowerUpdateInterval)
                 .setMinUpdateIntervalMillis(locationRequest.minUpdateIntervalMillis)
                 .setMaxUpdateDelayMillis(locationRequest.maxUpdateDelayMillis)
                 .setMaxUpdates(locationRequest.maxUpdates)
@@ -687,7 +742,8 @@ class StartMapRideFragment : Fragment() {
     }
 
     private fun isBatterySaverEnabled(): Boolean {
-        val powerManager = requireContext().getSystemService(Context.POWER_SERVICE) as android.os.PowerManager
+        val powerManager =
+            requireContext().getSystemService(Context.POWER_SERVICE) as android.os.PowerManager
         return powerManager.isPowerSaveMode
     }
 
@@ -695,7 +751,10 @@ class StartMapRideFragment : Fragment() {
     private fun handleLocationUpdate(location: Location) {
         if (isRunning) {
             // Update UI
-            Log.d("TAG", "Handling location update: lat=$location.latitude, lng=$location.longitude")
+            Log.d(
+                "TAG",
+                "Handling location update: lat=$location.latitude, lng=$location.longitude"
+            )
             // Update the map camera to the current location
             startCameraAnimation(location.latitude, location.longitude)
             // Calculate distance and speed
@@ -703,9 +762,9 @@ class StartMapRideFragment : Fragment() {
         }
 
         /*****************Create a new WorkoutPoint object*****************/
-      /*  workoutPoints = NewWorkoutPoint(workout_Point_UDID.toString(), tokenManager.getWorkoutUdId().toString(),
-            location.latitude, location.longitude, speedFormattedDouble, Helper.getDateNow(Constants.DATETIME_FORMAT))
-        workoutViewModel.addWorkoutPoint(workoutPoints!!)*/
+        /*  workoutPoints = NewWorkoutPoint(workout_Point_UDID.toString(), tokenManager.getWorkoutUdId().toString(),
+              location.latitude, location.longitude, speedFormattedDouble, Helper.getDateNow(Constants.DATETIME_FORMAT))
+          workoutViewModel.addWorkoutPoint(workoutPoints!!)*/
 
     }
 
@@ -722,18 +781,18 @@ class StartMapRideFragment : Fragment() {
 
         }, updateInterval)
     }
-/*
-    val runnable = object : Runnable {
-        override fun run() {
-            if (workout == null) {
-                val workoutId = tokenManager.getWorkoutUdId()
-                workout = workoutViewModel.getWorkoutById(workoutId?.isNullOrEmpty().toString())
-            }
+    /*
+        val runnable = object : Runnable {
+            override fun run() {
+                if (workout == null) {
+                    val workoutId = tokenManager.getWorkoutUdId()
+                    workout = workoutViewModel.getWorkoutById(workoutId?.isNullOrEmpty().toString())
+                }
 
-           */
-            /* if (isAutoPauseON) {
-                workout?.let { calculateNotMovingInAutoPause(it.distance) }
-            }*//*
+               */
+    /* if (isAutoPauseON) {
+        workout?.let { calculateNotMovingInAutoPause(it.distance) }
+    }*//*
 
 
             avgPace = SnofedUtils.calculateAvgPace(Seconds, workout?.distance ?: 0.0)
@@ -756,26 +815,39 @@ class StartMapRideFragment : Fragment() {
     @SuppressLint("SuspiciousIndentation")
     private fun calculateDistanceAndSpeed(currentLocation: Location) {
         if (lastLocation != null) {
-
+            //val currentLatLng = LatLng(currentLocation.latitude, currentLocation.longitude)
+            val currentLatLng = Location("").apply {
+                latitude = currentLocation.latitude
+                longitude = currentLocation.longitude
+            }
+            // MEASURE DISTANCE BETWEEN TWO POINTS (SKIP FIRST ONE)
+            if (isFirstReceivedLocation) {
+                Log.e("Praveen", "recordingTrail: First Received Location")
+                isFirstReceivedLocation = false
+            } else {
+                distance = currentLatLng.distanceTo(previousLocation!!)
+            }
             /*****************Create a new WorkoutPoint object*****************/
 
-            val udID = UUID.randomUUID().toString()
-            print("udID+praveen " + udID)
-            workoutPoints = NewWorkoutPoint(udID,
-            //workoutPoints = NewWorkoutPoint(UUID.randomUUID().toString(),
-                userId.toString(),
+            //val udID = UUID.randomUUID().toString()
+           // print("udID+praveen " + udID)
+            workoutPoints = NewWorkoutPoint(
+                UUID.randomUUID().toString(),
                 currentLocation.latitude,
                 currentLocation.longitude,
                 speedFormattedDouble,
-                Helper.getDateNow(Constants.DATETIME_FORMAT))
+                Helper.getDateNow(Constants.DATETIME_FORMAT),
+                distance.toDouble(),
+                SyncActionEnum.NEW.getValue(),
+                tokenManager.getWorkoutUdId().toString())
 
             /***************** ADD REALM  the new WorkoutPoint to the ViewModel*****************/
-                workoutViewModel.addWorkoutPoint(workoutPoints!!)
+            workoutViewModel.addWorkoutPoint(workoutPoints!!)
 
 
             // Calculate the distance between the last and current locations
             val distanceInMeters = lastLocation!!.distanceTo(currentLocation)
-           // val distanceInKilometers = distanceInMeters / 1000.0
+            // val distanceInKilometers = distanceInMeters / 1000.0
             val distanceInKilometers = distanceInMeters
             //totalDistance = distanceInKilometers// collect add distance
             totalDistance += distanceInKilometers// collect add distance
@@ -786,16 +858,22 @@ class StartMapRideFragment : Fragment() {
             val speedKph = speedMps * 3.6
 
             // Format the distance and speed
-            distanceFormatted = String.format(Locale.US,"%.2f", totalDistance)
+            distanceFormatted = String.format(Locale.US, "%.2f", totalDistance)
             //distanceFormattedd = String.format("%.2f", totalDistanceTest)
-            speedFormatted = String.format(Locale.US,"%.2f", speedKph)
-            speedFormattedDouble=speedFormatted.toDouble()
+            speedFormatted = String.format(Locale.US, "%.2f", speedKph)
+            speedFormattedDouble = speedFormatted.toDouble()
             val elapsedTimeMillis = currentTime - startTime
             elapsedTimeFormatted = formatElapsedTime(elapsedTimeMillis)
             val totalSeconds = convertTimeStringToSeconds(elapsedTimeFormatted)
 
-            Log.d("TAG_1", "Time1: $elapsedTimeFormatted ,Distance: $distanceFormatted m,  Speed: $speedFormatted km/h, ")
-            Log.d("TAG_2", "Time2: $totalSeconds ,Distance: $distanceFormatted m,  Speed: $speedFormatted km/h, ")
+            Log.d(
+                "TAG_1",
+                "Time1: $elapsedTimeFormatted ,Distance: $distanceFormatted m,  Speed: $speedFormatted km/h, "
+            )
+            Log.d(
+                "TAG_2",
+                "Time2: $totalSeconds ,Distance: $distanceFormatted m,  Speed: $speedFormatted km/h, "
+            )
 
             activity?.runOnUiThread {
                 //TIME
@@ -808,7 +886,7 @@ class StartMapRideFragment : Fragment() {
 
             //ADD REALM DB WORKOUT
             //workout = NewRideWorkout(duration = totalSeconds, distance = distanceFormatted.toInt(), averagePace = speedFormattedDouble.toInt())
-           // workout = NewRideWorkout(duration = totalSeconds, distance =distanceFormatted.toDouble(), averagePace = speedFormattedDouble)
+            // workout = NewRideWorkout(duration = totalSeconds, distance =distanceFormatted.toDouble(), averagePace = speedFormattedDouble)
             //workoutViewModel.addWorkoutDurationAndAvgPace(workout!!)
 
             // Call the method with individual parameters
@@ -819,6 +897,8 @@ class StartMapRideFragment : Fragment() {
             )
             lastLocation = currentLocation
             startTimeForSpeed = currentTime
+
+            previousLocation = currentLocation
         } else {
             // If this is the first location update, just set the lastLocation
             lastLocation = currentLocation
@@ -837,8 +917,10 @@ class StartMapRideFragment : Fragment() {
 
         // Parse each component as an integer
         val hours = parts[0].toIntOrNull() ?: throw IllegalArgumentException("Invalid hours format")
-        val minutes = parts[1].toIntOrNull() ?: throw IllegalArgumentException("Invalid minutes format")
-        val seconds = parts[2].toIntOrNull() ?: throw IllegalArgumentException("Invalid seconds format")
+        val minutes =
+            parts[1].toIntOrNull() ?: throw IllegalArgumentException("Invalid minutes format")
+        val seconds =
+            parts[2].toIntOrNull() ?: throw IllegalArgumentException("Invalid seconds format")
 
         // Calculate the total number of seconds
         return (hours * 3600) + (minutes * 60) + seconds
@@ -853,19 +935,19 @@ class StartMapRideFragment : Fragment() {
         return String.format("%02d : %02d : %02d", hours, minutes, seconds)
     }
 
-   /* @SuppressLint("DefaultLocale")
-    private fun formatElapsedTime(elapsedTimeMillis: Long): String {
-        // Ensure the time is non-negative
-        if (elapsedTimeMillis < 0) return "00 : 00 : 00"
+    /* @SuppressLint("DefaultLocale")
+     private fun formatElapsedTime(elapsedTimeMillis: Long): String {
+         // Ensure the time is non-negative
+         if (elapsedTimeMillis < 0) return "00 : 00 : 00"
 
-        // Calculate hours, minutes, and seconds
-        val hours = (elapsedTimeMillis / 3600000).toInt()
-        val minutes = ((elapsedTimeMillis % 3600000) / 60000).toInt()
-        val seconds = ((elapsedTimeMillis % 60000) / 1000).toInt()
+         // Calculate hours, minutes, and seconds
+         val hours = (elapsedTimeMillis / 3600000).toInt()
+         val minutes = ((elapsedTimeMillis % 3600000) / 60000).toInt()
+         val seconds = ((elapsedTimeMillis % 60000) / 1000).toInt()
 
-        // Format the time string
-        return "%02d : %02d : %02d".format(hours, minutes, seconds)
-    }*/
+         // Format the time string
+         return "%02d : %02d : %02d".format(hours, minutes, seconds)
+     }*/
 
 
     private val requestPermissionLauncher =
