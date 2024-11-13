@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -52,6 +54,12 @@ class BrowseClubMapFragment : Fragment(), OnMapClickListener {
     private var pointsList: List<Point> = emptyList()
     private lateinit var iconBitmap: Bitmap
 
+    private lateinit var fabOpen: Animation
+    private lateinit var fabClose: Animation
+    private lateinit var rotateForward: Animation
+    private lateinit var rotateBackward: Animation
+    private var isOpen = false
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentBrowseClubMapBinding.inflate(inflater, container, false)
         return binding.root
@@ -69,7 +77,36 @@ class BrowseClubMapFragment : Fragment(), OnMapClickListener {
 
         // Fetch data and set up map
         getResponse()
+        binding.fab1.setOnClickListener {
+            //zoomOut()
+        }
 
+        fabOpen = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_out)
+        fabClose = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
+        rotateForward = AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_forward)
+        rotateBackward = AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_backward)
+
+        binding.fab.setOnClickListener {
+            animateFab()
+        }
+
+        binding.fab1.setOnClickListener {
+            animateFab()
+//            zoomToCurrentLocation()
+
+            //Toast.makeText(requireContext(), "camera click", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.fab2.setOnClickListener {
+            animateFab()
+
+            //Toast.makeText(requireContext(), "folder click", Toast.LENGTH_SHORT).show()
+        }
+        binding.fab3.setOnClickListener {
+            animateFab()
+            //showCustomDialog2()
+            //Toast.makeText(requireContext(), "folder click", Toast.LENGTH_SHORT).show()
+        }
         binding.mapView.mapboxMap.loadStyle(Style.STANDARD) {
             Log.d("BrowseClubMapFragment", "Map style loaded successfully")
 
@@ -79,16 +116,42 @@ class BrowseClubMapFragment : Fragment(), OnMapClickListener {
             // Setup annotation manager
             setupAnnotationManager()
         }
+
     }
 
-    private fun setDefaultCamera() {
-        val initialPoint = Point.fromLngLat(0.0, 0.0) // Default center point
-        val initialZoom = 18.0
+    private fun animateFab() {
+        if (isOpen) {
+            binding.fab.startAnimation(rotateForward)
+            binding.fab1.startAnimation(fabClose)
+            binding.fab2.startAnimation(fabClose)
+            binding.fab3.startAnimation(fabClose)
+            binding.fab1.isClickable = false
+            binding.fab2.isClickable = false
+            binding.fab3.isClickable = false
+            isOpen = false
+        } else {
+            binding.fab.startAnimation(rotateBackward)
+            binding.fab1.startAnimation(fabOpen)
+            binding.fab2.startAnimation(fabOpen)
+            binding.fab3.startAnimation(fabOpen)
+            binding.fab1.isClickable = true
+            binding.fab2.isClickable = true
+            binding.fab3.isClickable = true
+            isOpen = true
+        }
+    }
+
+
+        private fun setDefaultCamera() {
+        val initialPoint = Point.fromLngLat( pointsList.map { it.longitude() }.average(),
+            pointsList.map { it.latitude() }.average()) // Default center point
+        //val initialZoom = 18.0
 
         mapboxMap.setCamera(
             CameraOptions.Builder()
                 .center(initialPoint)
-                .zoom(initialZoom)
+                .pitch(45.0)
+                .zoom(4.0)
                 .build()
         )
     }

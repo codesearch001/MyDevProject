@@ -459,7 +459,7 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="@dimen/_30sdp"
                     android:layout_marginBottom="@dimen/_16sdp"
-                    android:text="@string/txt_no_record_found"
+                    android:text="@string/txt_no_recent_feed"
                     android:textSize="@dimen/_11sdp"
                     android:textStyle="bold"
                     android:visibility="gone" />

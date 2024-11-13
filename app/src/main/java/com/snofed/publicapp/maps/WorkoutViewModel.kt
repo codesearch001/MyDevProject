@@ -13,6 +13,7 @@ import com.snofed.publicapp.utils.SnofedUtils
 import com.snofed.publicapp.utils.TokenManager
 import io.realm.Realm
 import io.realm.RealmList
+import io.realm.Sort
 import io.realm.kotlin.where
 import org.json.JSONArray
 import org.json.JSONObject
@@ -27,7 +28,7 @@ class WorkoutViewModel : ViewModel() {
         MutableLiveData<List<NewWorkoutPoint>>()
     }*/
     private val _workout = MutableLiveData<NewRideWorkout>()
-    val workout: LiveData<NewRideWorkout> get() = _workout
+   // val workout: LiveData<NewRideWorkout> get() = _workout
 
     init {
         // Initialize or load existing workout data
@@ -145,10 +146,37 @@ class WorkoutViewModel : ViewModel() {
         val workoutResponseList = mutableListOf<WorkoutResponse>()
 
         try {
-            // Fetch the workout from Realm
-            val workout = realm.where<NewRideWorkout>().equalTo("id", workoutId).findFirst()
 
-            if (workout != null) {
+
+            ///////////////////NewWorkoutPoint  // NewRideWorkout
+            val obj = realm.where<NewRideWorkout>()
+              //  .sort("id", Sort.DESCENDING)
+                .sort("id", Sort.ASCENDING)
+                .findFirst()
+
+            if(obj != null){
+                val latestId = obj.id
+                val latestIdXYZ = obj.workoutPoints
+
+                print("latestIdXYZ" + latestIdXYZ)
+                print("latestId" + latestId)
+
+                if (obj != null) {
+                    // Convert the workout to a Realm-managed object copy
+                    val workoutCopy = realm.copyFromRealm(obj)
+                    // Convert the workout object to JSON string
+                    val jsonString = gson.toJson(workoutCopy)
+                    // Convert the JSON string to WorkoutResponse object
+                    val workoutResponse = gson.fromJson(jsonString, WorkoutResponse::class.java)
+                    // Add the WorkoutResponse object to the list
+                    workoutResponseList.add(workoutResponse)
+                }
+            }
+
+            // Fetch the workout from Realm
+            //val workout = realm.where<NewRideWorkout>().equalTo("id", workoutId).findFirst()
+
+           /* if (workout != null) {
                 // Convert the workout to a Realm-managed object copy
                 val workoutCopy = realm.copyFromRealm(workout)
                 // Convert the workout object to JSON string
@@ -157,7 +185,7 @@ class WorkoutViewModel : ViewModel() {
                 val workoutResponse = gson.fromJson(jsonString, WorkoutResponse::class.java)
                 // Add the WorkoutResponse object to the list
                 workoutResponseList.add(workoutResponse)
-            }
+            }*/
         } catch (e: Exception) {
             // Handle the exception
             e.printStackTrace()

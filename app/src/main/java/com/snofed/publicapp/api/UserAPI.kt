@@ -17,6 +17,7 @@ import com.snofed.publicapp.models.events.EventDetailsResponse
 import com.snofed.publicapp.models.events.EventResponse
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
+import com.snofed.publicapp.ui.setting.UploadResponse
 import com.snofed.publicapp.utils.ServiceUtil.BROWSE_CLUB_DETAILS
 import com.snofed.publicapp.utils.ServiceUtil.BROWSE_CLUB_LIST
 import com.snofed.publicapp.utils.ServiceUtil.CLUB_EVENT
@@ -31,11 +32,15 @@ import com.snofed.publicapp.utils.ServiceUtil.GET_USER_WORKOUTS
 import com.snofed.publicapp.utils.ServiceUtil.LOGIN
 import com.snofed.publicapp.utils.ServiceUtil.RECOVER_PASSWORD
 import com.snofed.publicapp.utils.ServiceUtil.REGISTER
+import com.snofed.publicapp.utils.ServiceUtil.USER_PROFILE_IMAGE
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -57,15 +62,15 @@ interface UserAPI {
 
     //CLUB_WORKOUT_RIDE
     @POST(CLUB_WORKOUT_RIDE)
-    suspend fun workoutRide(@Header("Accept-Language") acceptLanguage: String,
-                            @Body workouts: List<WorkoutResponse>) : Response<RideApiResponse>
-
+    suspend fun workoutRide(@Header("Accept-Language") acceptLanguage: String, @Body workouts: List<WorkoutResponse>) : Response<RideApiResponse>
 
     //GET_USER_WORKOUTS
     @GET(GET_USER_WORKOUTS)
-    suspend fun userDashBoard(@Header("Accept-Language")
-                                  acceptLanguage: String, @Path("id") id: String): Response<FeedListResponse>
+    suspend fun userDashBoard(@Header("Accept-Language") acceptLanguage: String, @Path("id") id: String): Response<FeedListResponse>
 
+    @Multipart
+    @POST(USER_PROFILE_IMAGE)
+    suspend fun uploadProfileImage(@Path("userId") userId: String, @Part file: MultipartBody.Part): Response<UploadResponse>  // Define `UploadResponse` based on your API response
 
     //BROWSE_CLUB
     @GET(BROWSE_CLUB_LIST)
@@ -113,8 +118,5 @@ interface UserAPI {
     suspend fun trailsGraphDetails(@Header("Accept-Language") acceptLanguage: String,
                                    @Path("id") id: String) : Response<TrailGraphData>
 
-
-
-
-
+    // public static final String USER_PROFILE_IMAGE = "public-app/upload/profile-image/{userId}";
 }

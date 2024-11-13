@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Filter
 import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -11,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.TileViewListBinding
+import com.snofed.publicapp.models.Client
 import com.snofed.publicapp.models.browseSubClub.Trail
 import com.snofed.publicapp.utils.DateTimeConverter
 import com.snofed.publicapp.utils.Helper
@@ -18,13 +20,15 @@ import com.snofed.publicapp.utils.enums.PageType
 
 class TrailListAdapter(private var trails: List<Trail>, private val onItemClick: (Trail) -> Unit, private val onMapClick: (Trail) -> Unit, private val pageType: PageType) : RecyclerView.Adapter<TrailListAdapter.TrailViewHolder>() {
 
-
+    private var outerArray: List<Trail> = listOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrailViewHolder {
         val binding =
             TileViewListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return TrailViewHolder(binding)
     }
-
+    init {
+        trails = outerArray
+    }
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: TrailViewHolder, position: Int) {
         val trail = trails[position]
@@ -36,18 +40,43 @@ class TrailListAdapter(private var trails: List<Trail>, private val onItemClick:
     @SuppressLint("NotifyDataSetChanged")
     fun updateTrails(newTrails: List<Trail>) {
         trails = newTrails
-        notifyDataSetChanged() // Notify the adapter that the data has changed
+        //notifyDataSetChanged() // Notify the adapter that the data has changed
+        if (trails != null) {
+            this.outerArray = trails
+        }
+        this.trails = this.outerArray
+        //Log.i("test","sizearr "+outerArray.size)
+        notifyDataSetChanged()
+
     }
 
-    class TrailViewHolder(private val binding: TileViewListBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    //Apply filter
+    fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val filteredResults = FilterResults()
+                val filterPattern = constraint?.toString()?.lowercase()?.trim() ?: ""
+                filteredResults.values = if (filterPattern.isEmpty()) {
+                    outerArray
+                } else {
+                    outerArray.filter {
+                        it.name.lowercase().contains(filterPattern)
+                    }
+                }
+
+                return filteredResults
+            }
+
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                trails = results?.values as List<Trail>
+                notifyDataSetChanged()
+            }
+        }
+    }
+
+    class TrailViewHolder(private val binding: TileViewListBinding) : RecyclerView.ViewHolder(binding.root) {
         @RequiresApi(Build.VERSION_CODES.O)
-        fun bind(
-            trail: Trail,
-            onItemClick: (Trail) -> Unit,
-            onMapClick: (Trail) -> Unit,
-            pageType: PageType
-        ) {
+        fun bind(trail: Trail, onItemClick: (Trail) -> Unit, onMapClick: (Trail) -> Unit, pageType: PageType) {
             binding.trailName.text = trail.name
             //binding.length.text = trail.length.toString() + " m"
             //binding.length.text = Helper.m2Km(trail.length.toDouble()).toString() + R.string.t_km

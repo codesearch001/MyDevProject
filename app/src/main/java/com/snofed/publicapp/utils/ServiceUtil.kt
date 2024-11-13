@@ -10,6 +10,7 @@ object ServiceUtil {
     const val MEMBERSHIP_BASE_URL = "http://161.97.121.63:5006/api/"
     //FOR MEMBERSHIP IMAGE
     const val BASE_URL_MEMB_IMAGE = "http://161.97.121.63:5006"
+    const val BASE_URL_PROFILE_IMAGE = "http://161.97.121.63:5000"
 
     //api/clients/{id}
 
@@ -17,10 +18,16 @@ object ServiceUtil {
     const val REGISTER = "account/register-public-user"
     //FOR LOGIN
     const val LOGIN = "account/public-app/sign-in"
+
     //FOR FORGOT PASSWORD
     const val RECOVER_PASSWORD = "account/mobile-apps/forgot-password"
+
+    //USER_PROFILE_IMAGE
+    const val USER_PROFILE_IMAGE = "public-app/upload/profile-image/{userId}"
+
     //GET_USER_WORKOUTS
     const val GET_USER_WORKOUTS = "public-app/workouts/for-user/{id}"
+
     //BROWSE_CLUB_LIST
     const val BROWSE_CLUB_LIST = "public-app/sync/system-data?HasProTrails=false"
 

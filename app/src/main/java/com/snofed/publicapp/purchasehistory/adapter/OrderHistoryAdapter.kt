@@ -9,7 +9,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.RequiresApi
-import androidx.cardview.widget.CardView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.snofed.publicapp.R
@@ -18,11 +17,15 @@ import com.snofed.publicapp.utils.DateTimeConverter
 import com.snofed.publicapp.utils.enums.PaymentOrderStatus
 
 
-class OrderHistoryAdapter() : RecyclerView.Adapter<OrderHistoryAdapter.ClubViewHolder>(){
+class OrderHistoryAdapter(private val listener: OnItemClickListener) : RecyclerView.Adapter<OrderHistoryAdapter.ClubViewHolder>(){
 
     private var orderHistoryArray: List<Daum> = listOf()
     val dateTimeConverter = DateTimeConverter()
 
+    // Define the OnItemClickListener interface
+    interface OnItemClickListener {
+        fun onItemClick(daum: Daum)
+    }
     /*init {
         // Calculate the total price when the adapter is initialized and set it to the provided TextView
          totalPrice = calculateTotalPriceOfAllDaum()
@@ -79,6 +82,10 @@ class OrderHistoryAdapter() : RecyclerView.Adapter<OrderHistoryAdapter.ClubViewH
                 holder.status_approved.visibility = View.GONE
             }
         }
+        // Set item click listener
+        holder.itemView.setOnClickListener {
+            listener.onItemClick(reslult) // Call the listener with the clicked item data
+        }
     }
 
     override fun getItemCount(): Int = orderHistoryArray.size
@@ -98,7 +105,6 @@ class OrderHistoryAdapter() : RecyclerView.Adapter<OrderHistoryAdapter.ClubViewH
         val txt_number_of_tickets: TextView = itemView.findViewById(R.id.txt_number_of_tickets)
         val id_valid_to: LinearLayout = itemView.findViewById(R.id.id_valid_to)
         val txt_valid_to: TextView = itemView.findViewById(R.id.txt_valid_to)
-
 
 
     }

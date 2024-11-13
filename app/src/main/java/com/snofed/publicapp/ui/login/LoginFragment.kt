@@ -161,7 +161,7 @@ class LoginFragment : Fragment() {
                 false
             }
             password.length < 6 -> {
-                showToast(getString(R.string.password_must_be_6_chars)) // Password length message
+                showToast(getString(R.string.password_must_be_8_chars)) // Password length message
                 false
             }
             else -> true // Validation passed

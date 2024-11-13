@@ -17,7 +17,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
         multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -132,6 +132,7 @@ dependencies {
     implementation("com.mapbox.mapboxsdk:mapbox-sdk-turf:5.9.0-alpha.1")
 
 
+    implementation ("de.hdodenhof:circleimageview:3.1.0")
 
     implementation ("com.google.android.gms:play-services-location:21.0.1")
 

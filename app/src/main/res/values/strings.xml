@@ -2,12 +2,13 @@
     <string name="app_name">Skotersverige</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
+    <string name="skotersverige">Skotersverige</string>
     <!--App Setting key and text-->
     <string name="mapbox_access_token" translatable="false" tools:ignore="UnusedResources">sk.eyJ1Ijoic3lzdGFpbmFkZXYiLCJhIjoiY2x6ZjUzZW41MTBiZjJpcXplYWR6b3hvMyJ9.NK5-whs-iNzysW9WktKRJg</string>
     <string name="facebook_app_id" translatable="false">469138440399694</string>
     <string name="fb_login_protocol_scheme" translatable="false">fb469138440399694</string>
     <string name="txt_no_record_found">No Record Found</string>
+    <string name="txt_no_recent_feed">No recent feed available</string>
     <string name="no_events_found_for_today">No active events registered</string>
     <string name="txt_add_ticket_here">Add Tickets Here</string>
     <string name="choose_preferred_language">Please choose preferred language</string>
@@ -38,7 +39,7 @@
     <string name="app_privacy_policy_settings">Privacy Policy</string>
     <string name="app_clear_cache">Clear Cache</string>
     <string name="app_clear_cache_settings">After clearing cache data will be retrieved again.</string>
-    <string name="app_app_version_settings">App version</string>
+    <string name="app_app_version_settings">App version: </string>
 
     <!--LogOut-->
     <string name="confirm_logout">Confirm Logout</string>
@@ -58,6 +59,7 @@
     <string name="t_d_help">Help</string>
     <string name="t_logout">Logout</string>
     <string name="t_logged_out">Logged out successfully</string>
+    <string name="upload_successful">Upload successful</string>
 
     <!-- FRAGMENTS TITLES -->
     <string name="title_fragment_dashboard">Dashboard</string>
@@ -103,6 +105,8 @@
     <string name="t_All">All</string>
     <string name="t_Favourites">Favourites</string>
     <string name="t_search_club">Search for a club</string>
+    <string name="t_search_trail">Search for a trail</string>
+    <string name="t_search_event">Search for a events</string>
 
     <!--FRAGMENT MEMBERSHIP TEXT-->
     <string name="label_active_memberships">Active</string>
@@ -131,8 +135,8 @@
     <string name="t_close">Close</string>
 
     <string name="t_total_length">Total Length:</string>
-    <string name="t_last_prepared">Last Prepared:</string>
-    <string name="t_status">Status:</string>
+    <string name="t_last_prepared">Last Prepared</string>
+    <string name="t_status">Status</string>
     <string name="t_km">Km</string>
     <string name="total_quality">Total Quality:</string>
     <string name="min_height">Min Height:</string>
@@ -180,9 +184,9 @@
     <string name="t_h_enter_your_email">Enter your email</string>
     <string name="t_h_enter_your_password">Enter your password</string>
     <string name="t_h_enter_your_re_new_password">Repeat your new password</string>
-    <string name="password_must_be_6_chars">Password must be at least 6 characters</string>
+    <string name="password_must_be_8_chars">Password must be at least 8 characters</string>
     <string name="t_h_enter_your_re_password">Repeat your password</string>
-    <string name="t_h_passwords_do_not_match">Passwords do not match</string>
+    <string name="t_h_passwords_do_not_match">Passwords do not match.</string>
 
     <!--forgot password-->
     <!--Recover-->
@@ -227,6 +231,7 @@
     <string name="description_t1">DESCRIPTION</string>
     <string name="make_it_public">Make it public</string>
     <string name="make_it_private">Make it private</string>
+    <string name="feedback_saved_successfully">Feedback saved successfully</string>
 
 
     <string name="event_location">Location:</string>
@@ -242,11 +247,10 @@
     <string name="failed">Failed</string>
     <string name="approved">Approved</string>
 
-    <string name="t_h_email">androiddeveloper@websutility.com</string>
-    <string name="t_h_pass">developeR@2023</string>
+    <!-- <string name="t_h_email">androiddeveloper@websutility.com</string>
+    <string name="t_h_pass">developeR@2023</string>-->
     <!--<string name="t_h_email">dev@systaina.com</string>
     <string name="t_h_pass">Admin123!!</string>-->
-
 
     <string name="t_please_enter_description">Please enter description</string>
     <string name="t_please_enter_first_name">Please enter your first name</string>
@@ -267,6 +271,7 @@
     <string name="Activate_memberships">Activate Memberships</string>
     <string name="show_benefits">Show benefits</string>
     <string name="hide_benefits">Hide benefits</string>
+    <string name="member_of">Member of</string>
 
 
     <!--Become a Mem-->

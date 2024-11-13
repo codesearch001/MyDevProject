@@ -48,9 +48,11 @@ import com.google.android.gms.location.LocationSettingsResponse
 import com.google.android.gms.location.Priority
 import com.google.android.gms.location.SettingsClient
 import com.google.android.gms.tasks.Task
+import com.google.gson.Gson
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
+import com.mapbox.maps.Style
 import com.mapbox.maps.extension.style.layers.addLayer
 import com.mapbox.maps.extension.style.layers.generated.SymbolLayer
 import com.mapbox.maps.plugin.locationcomponent.location
@@ -78,15 +80,13 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class StartMapRideFragment : Fragment() , ImageUriCallback {
+class StartMapRideFragment : Fragment() {
     private var _binding: FragmentStartMapRideBinding? = null
     private val binding get() = _binding!!
     private val feedWorkoutViewModel by viewModels<AuthViewModel>()
 
     private lateinit var workoutViewModel: WorkoutViewModel
 
-
-   
 
     private lateinit var mediaReader: MediaReader
     private lateinit var mapView: MapView
@@ -130,7 +130,7 @@ class StartMapRideFragment : Fragment() , ImageUriCallback {
     private var workout_UDID: String? = null
     private var workout_Point_UDID: String? = null
     private var userName: String? = null
-    private var getWorkoutID: String? = null
+    //private var getWorkoutID: String? = null
     private var workouttest : String? = null
     private val isAutoPauseON = false
     private var Houre = 0
@@ -146,7 +146,7 @@ class StartMapRideFragment : Fragment() , ImageUriCallback {
         // return inflater.inflate(R.layout.fragment_start_map_ride, container, false)
         _binding = FragmentStartMapRideBinding.inflate(inflater, container, false)
         // Initialize MediaReader with this fragment
-        mediaReader = MediaReader(this,this)
+        //mediaReader = MediaReader(this)
         binding.backBtn.setOnClickListener {
             it.findNavController().popBackStack()
         }
@@ -165,12 +165,11 @@ class StartMapRideFragment : Fragment() , ImageUriCallback {
 
         }*/
 
-
         userId= tokenManager.getUserId()
 
         userName= tokenManager.getFullName()
 
-        getWorkoutID= tokenManager.getWorkoutUdId()
+        //getWorkoutID= tokenManager.getWorkoutUdId()
 
 
         workout_UDID = UUID.randomUUID().toString()
@@ -430,12 +429,15 @@ class StartMapRideFragment : Fragment() , ImageUriCallback {
         layoutParams?.width = ViewGroup.LayoutParams.MATCH_PARENT // or a specific size
         dialog.window?.attributes = layoutParams
     }
-
+    var newWorkoutId :String? = ""
     private fun saveRide(comment: String, isPublic: Boolean) {
         // Perform necessary actions to save the ride
         val rideType = if (isPublic) "public" else "private"
-        println("Saving ride as $rideType with comment: $comment")
 
+         newWorkoutId = UUID.randomUUID().toString()
+
+        println("Saving ride as $rideType with comment: $comment")
+        println("Saving ride Two $rideType with WID: $newWorkoutId")
         sendRideToServer(comment, isPublic)
     }
 
@@ -443,11 +445,21 @@ class StartMapRideFragment : Fragment() , ImageUriCallback {
 
         workoutViewModel.addDescription(description = comment,isPublic = isPublic)
 
+        println("Saving ride Three: $newWorkoutId")
+
         //Get data from REALM
-        val workoutJsonList: List<WorkoutResponse> = workoutViewModel.fetchWorkoutByIdAsJsonList(getWorkoutID.toString())
-        // FINAL DATA SEND SEND OVER SERVER
+        //val workoutJsonList: List<WorkoutResponse> = workoutViewModel.fetchWorkoutByIdAsJsonList(getWorkoutID.toString())
+        val workoutJsonList: List<WorkoutResponse> = workoutViewModel.fetchWorkoutByIdAsJsonList(newWorkoutId!!)
+
+        // FINAL DATA SEND OVER SERVER
+
         feedWorkoutViewModel.workOutRideRequest(workoutJsonList)
-        println("received from realm db ride as $workoutJsonList")
+
+        val gson = Gson()
+        val json = gson.toJson(workoutJsonList)
+
+        Log.d("received from realm db ride as", "sendReport: " +json)
+         println("received from realm db ride as $workoutJsonList")
 
     }
     override fun onResume() {
@@ -604,7 +616,7 @@ class StartMapRideFragment : Fragment() , ImageUriCallback {
     private fun initializeLocationComponent() {
         if (::fusedLocationClient.isInitialized) {
             mapView.mapboxMap
-                .loadStyle("mapbox://styles/systainadev/clzeswuev00bn01pl0whu8v9i") {style ->
+                .loadStyle(Style.OUTDOORS) { style ->
                     val locationComponent = mapView.location
                     locationComponent.updateSettings {
                         enabled = true
@@ -747,7 +759,10 @@ class StartMapRideFragment : Fragment() , ImageUriCallback {
 
             /*****************Create a new WorkoutPoint object*****************/
 
-            workoutPoints = NewWorkoutPoint(UUID.randomUUID().toString(),
+            val udID = UUID.randomUUID().toString()
+            print("udID+praveen " + udID)
+            workoutPoints = NewWorkoutPoint(udID,
+            //workoutPoints = NewWorkoutPoint(UUID.randomUUID().toString(),
                 userId.toString(),
                 currentLocation.latitude,
                 currentLocation.longitude,
@@ -863,10 +878,10 @@ class StartMapRideFragment : Fragment() , ImageUriCallback {
             }
         }
 
-    override fun onImageUriReceived(uri: Uri) {
-        print("Saving get ride as iMAGE:${uri}")
-         getWorkoutImage = NewWorkoutImage(UUID.randomUUID().toString(),path = uri.toString())
-         workoutViewModel.addWorkoutImage(getWorkoutImage!!)
-    }
+//    fun onImageUriReceived(uri: Uri) {
+//        print("Saving get ride as iMAGE:${uri}")
+//         getWorkoutImage = NewWorkoutImage(UUID.randomUUID().toString(),path = uri.toString())
+//         workoutViewModel.addWorkoutImage(getWorkoutImage!!)
+//    }
 }
 

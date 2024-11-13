@@ -24,7 +24,7 @@ import com.snofed.publicapp.utils.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class LinksFragment : Fragment(), LinksDocAdapter.OnItemClickListener {
+class LinksFragment : Fragment(){
 
     private var _binding: FragmentLinksBinding? = null
     private val binding get() = _binding!!
@@ -46,15 +46,14 @@ class LinksFragment : Fragment(), LinksDocAdapter.OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-        linksAdapter = LinksDocAdapter(this)
+        linksAdapter = LinksDocAdapter()
         binding.eventRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
         binding.eventRecyclerView.adapter = linksAdapter
         // Observe the SharedViewModel for data updates
         sharedViewModel.browseSubClubResponse.observe(viewLifecycleOwner) { response ->
             val links = response?.data?.publicData?.links ?: emptyList()
 
-            Log.d("LinksFragment", "links: ${links.size}")
+            //Log.d("LinksFragment", "links: ${links.size}")
 
             if (links.isEmpty()) {
                 // Show the "Data Not data" message and hide RecyclerView
@@ -69,18 +68,4 @@ class LinksFragment : Fragment(), LinksDocAdapter.OnItemClickListener {
             }
         }
     }
-
-    override fun onItemClick(eventId: String, link: String) {
-        val spannableString = SpannableString(link)
-
-        val linkSpan = object : ClickableSpan() {
-            override fun onClick(widget: View) {
-                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
-                startActivity(browserIntent)
-            }
-        }
-        spannableString.setSpan(linkSpan, 0, link.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-    }
-
 }

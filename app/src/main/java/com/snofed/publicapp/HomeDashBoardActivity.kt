@@ -163,6 +163,8 @@ class HomeDashBoardActivity : AppCompatActivity(), DrawerController {
                 R.id.rideLogsFragment -> hideBottomNav()
                 R.id.feedBackDefaultCategoryListFragment -> hideBottomNav()
                 R.id.feedBackDetailsFragment -> hideBottomNav()
+                R.id.purchaseHistroryDeatisFragment -> hideBottomNav()
+                R.id.recoverFragment -> hideBottomNav()
 
                 else -> showBottomNav()
             }

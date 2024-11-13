@@ -3,6 +3,7 @@ package com.snofed.publicapp.ui.login
 
 import android.text.TextUtils
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.snofed.publicapp.db.WorkoutResponse
@@ -37,20 +38,23 @@ import com.snofed.publicapp.ui.order.model.TicketTypeData
 import com.snofed.publicapp.ui.order.ticketing.OrderDTO
 import com.snofed.publicapp.ui.order.ticketing.OrderResponseDTO
 import com.snofed.publicapp.ui.order.ticketing.SwishResponseDTO
+import com.snofed.publicapp.ui.setting.UploadResponse
 import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.MutableData
 import com.snofed.publicapp.utils.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(private val userRepository: UserRepository,
                                         private val feedBackRepository: UserFeedBackRepository,
-                                        private val membershipRepository: MembershipRepository) :
-    ViewModel() {
+                                        private val membershipRepository: MembershipRepository) : ViewModel() {
 
     var mutableData = MutableData()
+
+
 
 
     val userResponseLiveData: LiveData<NetworkResult<UserResponse>>
@@ -95,6 +99,9 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
 
     val clubLiveData: LiveData<NetworkResult<NewClubData>>
         get() = userRepository.clubLiveData
+
+    val uploadResult: LiveData<NetworkResult<UploadResponse>>
+        get() = userRepository.uploadResult
 
     val userDashBoardLiveData: LiveData<NetworkResult<FeedListResponse>>
         get() = userRepository.userDashBoardLiveData
@@ -233,6 +240,13 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
         viewModelScope.launch {
             userRepository.getUserDasBoard(userid)
             //userRepository.saveData(userRepository)
+        }
+    }
+
+    fun uploadProfileImage(userId: String, file: File) {
+        viewModelScope.launch {
+            userRepository.uploadProfileImage(userId, file)
+           // _uploadResult.postValue(result)
         }
     }
 

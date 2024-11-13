@@ -121,9 +121,8 @@ class SingleResortReportProblemChooseLocationFragment : Fragment() {
         feedViewModel.userFeedBackResponseLiveData.observe(viewLifecycleOwner, Observer {
             when (it) {
                 is NetworkResult.Success -> {
-                    Toast.makeText(
-                        requireActivity(),
-                        "Your feedback sent successfully",
+                    Toast.makeText(requireActivity(),
+                        resources.getString(R.string.feedback_saved_successfully),
                         Toast.LENGTH_SHORT
                     ).show()
                     //findNavController().navigate(R.id.feedBackFragment)

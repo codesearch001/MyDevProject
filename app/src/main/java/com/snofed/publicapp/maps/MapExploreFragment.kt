@@ -1,6 +1,8 @@
 package com.snofed.publicapp.maps
 
 import PolylineManager
+import android.Manifest
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
@@ -15,15 +17,25 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
 
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.mapbox.android.core.permissions.PermissionsManager
+import com.mapbox.common.location.Location
 
 import com.mapbox.geojson.BoundingBox
 import com.mapbox.geojson.Feature
@@ -73,7 +85,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.lang.System.setProperties
 
 @AndroidEntryPoint
-class MapExploreFragment : Fragment() {
+class MapExploreFragment : Fragment(){
     private var _binding: FragmentMapExploreBinding? = null
     private val binding get() = _binding!!
 
@@ -89,6 +101,14 @@ class MapExploreFragment : Fragment() {
     private lateinit var rotateForward: Animation
     private lateinit var rotateBackward: Animation
     private var isOpen = false
+    private lateinit var mMap: GoogleMap
+
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+    }
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -98,6 +118,9 @@ class MapExploreFragment : Fragment() {
         binding.backBtn.setOnClickListener {
             it.findNavController().popBackStack()
         }
+        // Initialize location client
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+
         return binding.root
     }
 
@@ -114,7 +137,7 @@ class MapExploreFragment : Fragment() {
 
         fetchMapTrailsData()
         binding.fab1.setOnClickListener {
-            zoomOut()
+            //zoomOut()
         }
 
         fabOpen = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_out)
@@ -128,34 +151,41 @@ class MapExploreFragment : Fragment() {
 
         binding.fab1.setOnClickListener {
             animateFab()
-            Toast.makeText(requireContext(), "camera click", Toast.LENGTH_SHORT).show()
+//            zoomToCurrentLocation()
+
+            //Toast.makeText(requireContext(), "camera click", Toast.LENGTH_SHORT).show()
         }
 
         binding.fab2.setOnClickListener {
             animateFab()
 
-            Toast.makeText(requireContext(), "folder click", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(requireContext(), "folder click", Toast.LENGTH_SHORT).show()
         }
         binding.fab3.setOnClickListener {
             animateFab()
             showCustomDialog2()
-            Toast.makeText(requireContext(), "folder click", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(requireContext(), "folder click", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun zoomOut() {
-        /* mapboxMap.getStyle { style ->
-             val currentCameraPosition = mapboxMap.cameraPosition
-             val newZoomLevel = currentCameraPosition.zoom - 1.0 // Adjust zoom level as needed
 
-             mapboxMap.setCamera(
+
+    /* private fun zoomOut() {
+         mapboxMap.getStyle { style ->
+             val currentCameraPosition = mapboxMap.cameraState
+             val newZoomLevel = currentCameraPosition.zoom - 1.0 // Adjust zoom level as needed
+             cameraAnimationsPlugin?.easeTo(
                  CameraOptions.Builder()
-                     .center(Point.fromLngLat(currentCameraPosition.center.longitude, currentCameraPosition.center.latitude))
+                     .center(currentCameraPosition.center)
                      .zoom(newZoomLevel)
+                     .build(),
+                 MapAnimationOptions.Builder()
+                     .duration(1000) // Duration in milliseconds
                      .build()
              )
-         }*/
-    }
+         }
+     }*/
+
 
     //trail data
     val trails: List<Trail> = listOf() // Replace with actual data
@@ -264,7 +294,7 @@ class MapExploreFragment : Fragment() {
                 val cameraAnimationsPlugin = mapView.camera
                 cameraAnimationsPlugin.easeTo(CameraOptions.Builder()
                     .center(Point.fromLngLat(centerLng, centerLat)) // Note: Longitude, Latitude
-                    .zoom(9.0)
+                    .zoom(8.0)
                     .padding(EdgeInsets(10.0, 10.0, 10.0, 10.0)) // Optional: add padding to the edges// Adjust zoom level as needed
                     .build(),
                     MapAnimationOptions.Builder()
@@ -435,10 +465,7 @@ class MapExploreFragment : Fragment() {
 //        customDialog.show(parentFragmentManager, "CustomDialogTag")
         val bottomSheetDialog = BottomSheetDialog(requireContext(),R.style.TransparentBottomSheetDialog)
         val bottomSheetViewBinding = DataBindingUtil.inflate<BottomSheetApartmentsBinding>(
-            layoutInflater,
-            R.layout.bottom_sheet_apartments,
-            null,
-            false)
+            layoutInflater, R.layout.bottom_sheet_apartments, null, false)
         bottomSheetViewBinding?.btnLeaveFeedback?.setOnClickListener {
             showCustomDialog()
             bottomSheetDialog.dismiss()
@@ -474,4 +501,9 @@ class MapExploreFragment : Fragment() {
             isOpen = true
         }
     }
+
+
+
+
+
 }

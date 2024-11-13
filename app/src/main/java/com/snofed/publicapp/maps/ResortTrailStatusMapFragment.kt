@@ -1,18 +1,36 @@
 package com.snofed.publicapp.maps
 
+import android.Manifest
+import android.provider.Settings
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
+import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
-import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.mapbox.geojson.LineString
@@ -24,7 +42,6 @@ import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.Style
 import com.mapbox.maps.extension.style.layers.addLayer
-import com.mapbox.maps.extension.style.layers.generated.LineLayer
 import com.mapbox.maps.extension.style.layers.generated.lineLayer
 import com.mapbox.maps.extension.style.layers.getLayer
 import com.mapbox.maps.extension.style.sources.addSource
@@ -34,6 +51,8 @@ import com.mapbox.maps.extension.style.sources.getSource
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.camera
 import com.mapbox.maps.plugin.animation.easeTo
+import com.mapbox.maps.plugin.locationcomponent.location
+import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.FragmentResortTrailStatusMapBinding
 import com.snofed.publicapp.models.DataPolyResponse
 import com.snofed.publicapp.models.PolyLine
@@ -57,9 +76,18 @@ class ResortTrailStatusMapFragment : Fragment() {
     val boundsBuilder = LatLngBounds.Builder()
     var hasCoordinates = false
     val trails: String = ""
+    private lateinit var fabOpen: Animation
+    private lateinit var fabClose: Animation
+    private lateinit var rotateForward: Animation
+    private lateinit var rotateBackward: Animation
+    private var isOpen = false
     // Define the coordinates where you want to center the map
     private val longitude = -73.935242
     private val latitude = 40.730610
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var locationCallback: LocationCallback
+
     private val pageType: PageType? by lazy {
         arguments?.getParcelable<PageType>("pageType") // Retrieve pageType
     }
@@ -70,6 +98,15 @@ class ResortTrailStatusMapFragment : Fragment() {
     @Inject
     lateinit var tokenManager: TokenManager
 
+    private var currentStyleIndex = 0
+    private val styles = listOf(
+        Style.MAPBOX_STREETS,
+        Style.SATELLITE,
+        Style.OUTDOORS
+    )
+    companion object {
+        const val GPS_ENABLE_REQUEST_CODE = 1002
+    }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_resort_trail_status_map, container, false)
@@ -77,6 +114,9 @@ class ResortTrailStatusMapFragment : Fragment() {
         binding.backBtn.setOnClickListener {
             it.findNavController().popBackStack()
         }
+        // Initialize the FusedLocationProviderClient
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+        setupLocationRequest()
         Log.d("P0000", "Adding GeoJsonSource and LineLayer$trails")
         return binding.root
     }
@@ -84,7 +124,35 @@ class ResortTrailStatusMapFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        fabOpen = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_out)
+        fabClose = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
+        rotateForward = AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_forward)
+        rotateBackward = AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_backward)
 
+
+        binding.fab.setOnClickListener {
+            animateFab()
+        }
+
+        binding.fab1.setOnClickListener {
+            animateFab()
+            checkPermissionsAndGps()
+
+            //Toast.makeText(requireContext(), "camera click", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.fab2.setOnClickListener {
+            animateFab()
+
+            //switchMapStyle()
+
+            //Toast.makeText(requireContext(), "folder click", Toast.LENGTH_SHORT).show()
+        }
+        binding.fab3.setOnClickListener {
+            animateFab()
+            //showCustomDialog2()
+           // Toast.makeText(requireContext(), "folder click", Toast.LENGTH_SHORT).show()
+        }
         val trails = tokenManager.getTrailsId().toString()
         Log.d("P1111", "Adding GeoJsonSource and LineLayer$trails")
 
@@ -121,7 +189,7 @@ class ResortTrailStatusMapFragment : Fragment() {
                     // Set the camera options to adjust zoom level
                       mapView.mapboxMap.setCamera(
                        CameraOptions.Builder()
-                           .zoom(14.0) // Set the desired zoom level here
+                           .zoom(8.0) // Set the desired zoom level here
                            .center(fromLngLat(longitude, latitude))
                            //.center(mapView.mapboxMap.cameraState.center) // Center the camera on the current location
                            .build()
@@ -154,6 +222,146 @@ class ResortTrailStatusMapFragment : Fragment() {
         }
 
     }
+
+    private fun setupLocationRequest() {
+        locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000L)
+            .setWaitForAccurateLocation(true)
+            .build()
+
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                val location = locationResult.lastLocation
+                if (location != null) {
+                    updateMapToCurrentLocation(location)
+                    fusedLocationClient.removeLocationUpdates(locationCallback) // Stop updates after first result
+                }
+            }
+        }
+    }
+
+    private fun updateMapToCurrentLocation(location: Location) {
+        val currentPoint = fromLngLat(location.longitude, location.latitude)
+
+        val cameraOptions = CameraOptions.Builder()
+            .center(currentPoint)
+            .zoom(14.0) // Adjust zoom level as needed
+            .build()
+
+        mapboxMap.easeTo(cameraOptions)
+    }
+
+
+    private fun checkPermissionsAndGps() {
+        // Check if the app has location permission
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
+
+            // Request location permission
+            requestLocationPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        } else {
+            enableGPS() // If permission is already granted, enable GPS
+        }
+
+
+    }
+    // Register the permission result launcher
+    private val requestLocationPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                enableGPS()
+            } else {
+                Toast.makeText(requireContext(), "Location permission is required", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+    private fun enableGPS() {
+        val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            // If GPS is not enabled, open GPS settings screen
+            val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+            gpsSettingsLauncher.launch(intent)
+        } else {
+            //moveToCurrentLocation()
+            requestLocationUpdates()
+//            // If GPS is enabled, show a message or proceed with GPS-related tasks
+//            Toast.makeText(requireContext(), "GPS is already enabled", Toast.LENGTH_SHORT).show()
+        }
+    }
+    private fun requestLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+    }
+    /*// Fetch and center map on current location
+    private fun moveToCurrentLocation() {
+        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+            location?.let {
+                val currentPoint = fromLngLat(it.longitude, it.latitude)
+
+                // Animate map to current location
+                val cameraOptions = CameraOptions.Builder()
+                    .center(currentPoint)
+                    .zoom(14.0) // Set preferred zoom level
+                    .build()
+
+                mapboxMap.easeTo(cameraOptions)
+            } ?: run {
+                Toast.makeText(requireContext(), "Unable to get current location", Toast.LENGTH_SHORT).show()
+            }
+        }.addOnFailureListener {
+            Toast.makeText(requireContext(), "Error fetching location: ${it.message}", Toast.LENGTH_SHORT).show()
+        }
+    }*/
+
+    // Register the ActivityResultLauncher for GPS settings
+    private val gpsSettingsLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                Toast.makeText(requireContext(), "GPS enabled", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Please enable GPS", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
+    private fun animateFab() {
+        if (isOpen) {
+            binding.fab.startAnimation(rotateForward)
+            binding.fab1.startAnimation(fabClose)
+            binding.fab2.startAnimation(fabClose)
+            binding.fab3.startAnimation(fabClose)
+            binding.fab1.isClickable = false
+            binding.fab2.isClickable = false
+            binding.fab3.isClickable = false
+            isOpen = false
+        } else {
+            binding.fab.startAnimation(rotateBackward)
+            binding.fab1.startAnimation(fabOpen)
+            binding.fab2.startAnimation(fabOpen)
+            binding.fab3.startAnimation(fabOpen)
+            binding.fab1.isClickable = true
+            binding.fab2.isClickable = true
+            binding.fab3.isClickable = true
+            isOpen = true
+        }
+    }
+
     private fun drawPolyline(style: Style, response: DataPolyResponse) {
         // Variables to track the bounding box
         var minLng = Double.MAX_VALUE
@@ -176,52 +384,40 @@ class ResortTrailStatusMapFragment : Fragment() {
 
             val points = coordinates.map { fromLngLat(it[0], it[1]) }
             val lineString = LineString.fromLngLats(points)
-
             val sourceId = "line-source-${feature.properties.trailId}"
             val layerId = "line-layer-${feature.properties.trailId}"
 
-            // Add GeoJsonSource if it doesn't already exist
             if (style.getSource(sourceId) == null) {
-                style.addSource(geoJsonSource(sourceId) {
-                    geometry(lineString)
-                })
+                style.addSource(geoJsonSource(sourceId) { geometry(lineString) })
             }
-            // Add LineLayer if it doesn't already exist
+
             if (style.getLayer(layerId) == null) {
-                style.addLayer(
-                    lineLayer(layerId, sourceId) {
-                        lineColor(Color.parseColor(feature.properties.color))
-                        lineWidth(5.0)
-                    }
-                )
+                style.addLayer(lineLayer(layerId, sourceId) {
+                    lineColor(Color.parseColor(feature.properties.color))
+                    lineWidth(5.0)
+                })
             }
         }
 
-        // Update camera to fit the bounding box
+        // Adjust camera to fit the bounding box
         if (response.features.isNotEmpty()) {
             val latLngBounds = LatLngBounds.Builder()
                 .include(LatLng(minLat, minLng))
                 .include(LatLng(maxLat, maxLng))
                 .build()
-// Convert LatLng center to Point
             val centerPoint = Point.fromLngLat(latLngBounds.center.longitude, latLngBounds.center.latitude)
-
-            // Calculate zoom level based on bounding box
             val baseZoomLevel = calculateZoomLevel(minLng, minLat, maxLng, maxLat)
-            // Adjust zoom level to zoom out slightly (e.g., decrease by 1.0)
-            val zoomOutAdjustment = 1.0 // You can adjust this value as needed
-            val adjustedZoomLevel = Math.min(15.0, baseZoomLevel + zoomOutAdjustment)
-            // Create CameraOptions
+            val zoomOutAdjustment = 1.0
+            val adjustedZoomLevel = Math.min(12.0, baseZoomLevel + zoomOutAdjustment)
+
             val cameraOptions = CameraOptions.Builder()
-                .center(centerPoint) // Center on the bounding box center (converted to Point)
-                .zoom(adjustedZoomLevel) // Set the calculated zoom level
+                .center(centerPoint)
+                .zoom(adjustedZoomLevel)
                 .build()
 
-
-            // Update camera position with CameraOptions
-            mapboxMap.easeTo(cameraOptions) // Duration of the animation in milliseconds
-
+            mapboxMap.easeTo(cameraOptions)
         }
+
     }
 
     private fun calculateZoomLevel(minLng: Double, minLat: Double, maxLng: Double, maxLat: Double): Double {
@@ -238,7 +434,7 @@ class ResortTrailStatusMapFragment : Fragment() {
 
         // Calculate the zoom level based on the map's tile dimensions
         // Maximum zoom level
-        val zoomLevel = Math.min(15.0, Math.log(Math.max(mapWidth / bboxWidth, mapHeight / bboxHeight)) / Math.log(2.0))
+        val zoomLevel = Math.min(8.0, Math.log(Math.max(mapWidth / bboxWidth, mapHeight / bboxHeight)) / Math.log(2.0))
         return zoomLevel
     }
 
@@ -308,7 +504,7 @@ class ResortTrailStatusMapFragment : Fragment() {
                 val zoomLevel = when {
                     latSpan > 0.1 || lngSpan > 0.1 -> 10.0  // Example value for larger areas
                     latSpan > 0.05 || lngSpan > 0.05 -> 12.0  // Example value for medium areas
-                    else -> 14.0  // Example value for smaller areas
+                    else -> 8.0  // Example value for smaller areas
                 }
 
                 // Configure camera options

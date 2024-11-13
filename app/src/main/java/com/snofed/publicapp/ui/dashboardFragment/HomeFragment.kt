@@ -16,6 +16,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.RecentFeedAdpater
 import com.snofed.publicapp.databinding.FragmentHomeBinding
@@ -70,6 +72,19 @@ class HomeFragment : Fragment() {
         // Get ViewModel instance
         binding.nameTextView.text = tokenManager.getFullName()
 
+        // Retrieve the saved image URL
+        val savedImageUrl = AppPreference.getPreference(context, SharedPreferenceKeys.PREFS_PROFILE_FILE)
+
+        savedImageUrl?.let {
+            // Load the image using Glide with circle crop transformation
+            Glide.with(this) // `fragment` provides the necessary context here
+                .load(savedImageUrl)
+                .placeholder(R.drawable.user_profile) // Optional: placeholder image while loading
+                .error(R.drawable.user_profile) // Optional: error image if loading fails
+                .transform(CircleCrop()) // Circle crop transformation to make the image circular
+                .into(binding.profileImageView) // Set the ImageView
+        }
+
         binding.btnPurchase.setOnClickListener {
             findNavController().navigate(R.id.purchaseHistoryFragment2)
         }
@@ -87,10 +102,16 @@ class HomeFragment : Fragment() {
         }
 
         binding.profileImageView.setOnClickListener {
-            findNavController().navigate(R.id.settingFragment)
+            val bundle = Bundle().apply {
+                putInt("tabIndex", 1) // 1 opens the second tab
+            }
+            findNavController().navigate(R.id.settingFragment,bundle)
         }
         binding.nameTextView.setOnClickListener {
-            findNavController().navigate(R.id.settingFragment)
+            val bundle = Bundle().apply {
+                putInt("tabIndex", 1) // 1 opens the second tab
+            }
+            findNavController().navigate(R.id.settingFragment,bundle)
         }
 
         fetchResponse()

@@ -22,14 +22,19 @@ import com.snofed.publicapp.models.events.EventDetailsResponse
 import com.snofed.publicapp.models.events.EventResponse
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
+import com.snofed.publicapp.ui.setting.UploadResponse
 import com.snofed.publicapp.utils.AppPreference
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.SharedPreferenceKeys
 import com.snofed.publicapp.utils.TokenManager
 import dagger.hilt.android.qualifiers.ApplicationContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Response
+import java.io.File
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -45,6 +50,10 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
 
     @Inject
     lateinit var tokenManager: TokenManager
+
+    private val _uploadResult = MutableLiveData<NetworkResult<UploadResponse>>()
+    val uploadResult: LiveData<NetworkResult<UploadResponse>>
+        get() = _uploadResult
 
     private val _clubLiveData = MutableLiveData<NetworkResult<NewClubData>>()
     val clubLiveData: LiveData<NetworkResult<NewClubData>>
@@ -177,7 +186,6 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             Log.e("jsonResponseData", "clubResponse " + response.body())
             _userDashBoardLiveData.postValue(NetworkResult.Success(response.body()!!))
 
-
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
             _userDashBoardLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
@@ -185,6 +193,25 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             _userDashBoardLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
     }
+
+    suspend fun uploadProfileImage(userId: String, file: File): Result<UploadResponse> {
+        _uploadResult.postValue(NetworkResult.Loading())
+        return try {
+            val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+            val body = MultipartBody.Part.createFormData("image", file.name, requestFile)
+            val response = userAPI!!.uploadProfileImage(userId, body)
+
+            if (response.isSuccessful && response.body() != null) {
+                _uploadResult.postValue(NetworkResult.Success(response.body()!!))
+                Result.success(response.body()!!)
+            } else {
+                Result.failure(Exception("Error: ${response.message()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
 
     suspend fun getClub() {
         _clubLiveData.postValue(NetworkResult.Loading())
@@ -378,6 +405,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             AppPreference.savePreference(context, SharedPreferenceKeys.USER_USER_AGE, response.body()!!.data.age.toString())
             AppPreference.savePreference(context, SharedPreferenceKeys.USER_USER_WEIGHT, response.body()!!.data.weight.toString())
             AppPreference.savePreference(context, SharedPreferenceKeys.USER_GENDER_TYPE, response.body()!!.data.gender.toString())
+           // AppPreference.savePreference(context, SharedPreferenceKeys.USER_GENDER_TYPE, response.body()!!.data.clientLogo.toString())
             AppPreference.savePreference(context, SharedPreferenceKeys.IS_USER_LOGGED_IN, "true")
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response.errorBody()!!.charStream().readText())

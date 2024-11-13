@@ -88,10 +88,11 @@
 
             <LinearLayout
                 android:id="@+id/subClubTitle"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/_2sdp"
-                android:layout_marginTop="20dp">
+                android:layout_marginTop="@dimen/_8sdp">
 
                 <TextView
                     android:id="@+id/idPublicName"
@@ -99,7 +100,17 @@
                     android:layout_height="wrap_content"
                     android:text=""
                     android:textColor="@color/white"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/_12sdp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtSubOrgName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:visibility="gone"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_9sdp"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -117,7 +128,7 @@
                     android:background="@drawable/rectangle_white_background"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:padding="@dimen/_2sdp">
+                    android:padding="@dimen/_1sdp">
 
                     <TextView
                         android:id="@+id/idTotalTrails"
@@ -162,7 +173,7 @@
                     android:background="@drawable/rectangle_white_background"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:padding="@dimen/_2sdp">
+                    android:padding="@dimen/_1sdp">
 
                     <TextView
                         android:id="@+id/idTotalTrailsLength"
@@ -207,7 +218,7 @@
                     android:background="@drawable/rectangle_white_background"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:padding="@dimen/_2sdp">
+                    android:padding="@dimen/_1sdp">
 
                     <TextView
                         android:id="@+id/idClientRating"

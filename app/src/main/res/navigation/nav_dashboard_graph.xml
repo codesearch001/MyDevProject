@@ -235,6 +235,15 @@
         android:name="com.snofed.publicapp.ui.feedback.FeedBackDetailsFragment"
         android:label="fragment_feed_back_details"
         tools:layout="@layout/fragment_feed_back_details" />
+    <fragment
+        android:id="@+id/purchaseHistroryDeatisFragment"
+        android:name="com.snofed.publicapp.purchasehistory.PurchaseHistroryDeatisFragment"
+        android:label="fragment_purchase_histrory_deatis"
+        tools:layout="@layout/fragment_purchase_histrory_deatis" />
 
+    <fragment
+        android:id="@+id/recoverFragment"
+        android:name="com.snofed.publicapp.ui.login.RecoverPasswordFragment"
+        android:label="RecoverFragment" />
 
 </navigation>

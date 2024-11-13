@@ -2,12 +2,13 @@
     <string name="app_name">Skotersverige</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
+    <string name="skotersverige">Skotersverige</string>
     <!--App Setting key and text-->
     <string name="mapbox_access_token" translatable="false" tools:ignore="UnusedResources">sk.eyJ1Ijoic3lzdGFpbmFkZXYiLCJhIjoiY2x6ZjUzZW41MTBiZjJpcXplYWR6b3hvMyJ9.NK5-whs-iNzysW9WktKRJg</string>
     <string name="facebook_app_id" translatable="false">469138440399694</string>
     <string name="fb_login_protocol_scheme" translatable="false">fb469138440399694</string>
     <string name="txt_no_record_found">Ingen data</string>
+    <string name="txt_no_recent_feed">Inget flöde är tillgängligt</string>
     <string name="no_events_found_for_today">Inga kativa events finns registrerade</string>
     <string name="txt_add_ticket_here">Lägg till biljett</string>
     <string name="choose_preferred_language">Please choose preferred language</string>
@@ -37,7 +38,7 @@
     <string name="app_privacy_policy_settings">Säkerhetspolicy</string>
     <string name="app_clear_cache">Rensa cash minnet</string>
     <string name="app_clear_cache_settings">Efter att du rensat cash minnet, din data kommer att laddas ner igen</string>
-    <string name="app_app_version_settings">App version</string>
+    <string name="app_app_version_settings">App version:</string>
 
     <!--LogOut-->
     <string name="confirm_logout">Bekräfta utloggning</string>
@@ -58,6 +59,7 @@
     <string name="t_d_help">Hjälp</string>
     <string name="t_logout">Logga ut</string>
     <string name="t_logged_out">Du har loggats ut</string>
+    <string name="upload_successful">Laddade upp informationen</string>
 
     <!-- FRAGMENTS TITLES -->
     <string name="title_fragment_dashboard">översikt</string>
@@ -73,7 +75,7 @@
     <!-- FRAGMENTS DASHBOARD TEXT -->
     <string name="t_PRO">PRO</string>
     <string name="t_BASIC">BASIC</string>
-    <string name="t_UPGRADE">Upgrade</string>
+    <string name="t_UPGRADE">Uppgradera</string>
     <string name="t_number_of_logs">Antal turer</string>
     <string name="t_total_distance">Total längd</string>
     <string name="t_total_time">Total tid</string>
@@ -101,6 +103,8 @@
     <string name="t_All">Alla</string>
     <string name="t_Favourites">Favoriter</string>
     <string name="t_search_club">Leta efter förening</string>
+    <string name="t_search_trail">Leta efter förening</string>
+    <string name="t_search_event">Search for a events</string>
 
     <!--FRAGMENT MEMBERSHIP TEXT-->
     <string name="label_active_memberships">Aktivt</string>
@@ -129,8 +133,8 @@
     <string name="t_close">Stäng</string>
 
     <string name="t_total_length">Total längd:</string>
-    <string name="t_last_prepared">Senast uppdaterat:</string>
-    <string name="t_status">Status:</string>
+    <string name="t_last_prepared">Senast uppdaterat</string>
+    <string name="t_status">Status</string>
     <string name="t_km">Km</string>
     <string name="total_quality">Total kvantitet:</string>
     <string name="min_height">Min Höjd:</string>
@@ -148,10 +152,10 @@
     <string name="t_trails_status">Spår/Ledstatus</string>
     <string name="t_event">Event</string>
     <string name="t_shops">Butik</string>
-    <string name="t_links_and_doc">LÄNKAR/DOKUMENT</string>
-    <string name="t_social_media">Sociala Medier</string>
-    <string name="t_feedback">Återkoppling</string>
+    <string name="t_links_and_doc">Länkar/info</string>
     <string name="t_events">Evenemang</string>
+    <string name="t_social_media">Sociala medier</string>
+    <string name="t_feedback">Återkoppling</string>
 
 
     <!--REGISTER/LOGIN FRAGMENT TEXT -->
@@ -177,7 +181,7 @@
     <string name="t_h_enter_your_email">Ange din mail</string>
     <string name="t_h_enter_your_password">Ange ditt lösenord</string>
     <string name="t_h_enter_your_re_new_password">Repetera ditt lösenord</string>
-    <string name="password_must_be_6_chars">Lösenord måste vara minst 8 tecken</string>
+    <string name="password_must_be_8_chars">Lösenord måste vara minst 8 tecken</string>
     <string name="t_h_enter_your_re_password">Repetera lösenord</string>
     <string name="t_h_passwords_do_not_match">Lösenord stämmer inte</string>
 
@@ -222,8 +226,9 @@
     <string name="take_photo">Ta bild</string>
     <string name="choose_from_gallery">Välj från Galleri</string>
     <string name="description_t1">BESKRIVNING</string>
-    <string name="make_it_public">Visa offentligt</string>
+    <string name="make_it_public">Visa för alla</string>
     <string name="make_it_private">Endast privat</string>
+    <string name="feedback_saved_successfully">Feedbacken sparades</string>
 
     <string name="event_location">Plats:</string>
     <string name="event_resort_name">Föreningsnamn:</string>
@@ -237,11 +242,11 @@
     <string name="failed">Misslyckades</string>
     <string name="approved">Godkänd</string>
 
-<!--    <string name="t_h_email">dev@systaina.com</string>
+   <!-- <string name="t_h_email">dev@systaina.com</string>
     <string name="t_h_pass">Admin123!!</string>-->
 
-    <string name="t_h_email">androiddeveloper@websutility.com</string>
-    <string name="t_h_pass">developeR@2023</string>
+<!--    <string name="t_h_email">androiddeveloper@websutility.com</string>-->
+<!--    <string name="t_h_pass">developeR@2023</string>-->
 
     <string name="t_please_enter_description">Vänligen ange beskrivning</string>
     <string name="t_please_enter_first_name">Ange ditt förnamn</string>
@@ -263,6 +268,7 @@
     <string name="show_benefits">Visa förmåner</string>
     <string name="hide_benefits">Dölj förmåner</string>
     <string name="title_search_for_a_membership">Sök efter medlemskap</string>
+    <string name="member_of">Member of</string>
 
     <!--Become a Mem-->
     <string name="first_name">FÖRNAMN</string>

@@ -11,6 +11,7 @@ object SharedPreferenceKeys {
     const val USER_START_DATE= "USER_START_DATE"
     const val MOBILE= "MOBILE"
     const val USER_TOKEN = "token"
+    const val USER_FAV = "FAVORITE"
     const val USER_FIRST_NAME = "fullName"
     const val USER_LAST_NAME = "lastName"
     const val USER_USER_AGE = "AGE"
@@ -22,4 +23,5 @@ object SharedPreferenceKeys {
     const val CLUB_PUBLIC_ID = "feedId"
     const val CLUB_DESC = "description"
     const val PREFS_TOKEN_FILE = "prefs_token_file"
+    const val PREFS_PROFILE_FILE = "prefs_file"
 }

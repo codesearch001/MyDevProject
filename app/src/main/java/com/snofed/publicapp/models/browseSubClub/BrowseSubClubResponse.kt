@@ -386,6 +386,7 @@ data class PublicData(
     val coverImagePath: String,
     val images: List<Image>,
     val links: List<Link>,
+    val socialMediaLinks: SocialMediaLinks,
     val id: String,
     val syncAction: Long,
 )
@@ -401,6 +402,12 @@ data class Link(
     val id: String,
     val linkName: String,
     val link: String,
+)
+
+data class SocialMediaLinks(
+    val twitterLink: String,
+    val instagramLink: String,
+    val facebookLink: String,
 )
 data class ParentOrganisation(
     val id: String,

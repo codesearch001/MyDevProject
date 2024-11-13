@@ -1,6 +1,8 @@
 package com.snofed.publicapp.ui.links
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.snofed.publicapp.R
 import com.snofed.publicapp.models.browseSubClub.Link
 
-class LinksDocAdapter (private val listener: OnItemClickListener):  RecyclerView.Adapter<LinksDocAdapter.ClubViewHolder>() {
+class LinksDocAdapter() : RecyclerView.Adapter<LinksDocAdapter.ClubViewHolder>() {
 
     private var linksArray: List<Link> = listOf()
 
@@ -32,7 +34,8 @@ class LinksDocAdapter (private val listener: OnItemClickListener):  RecyclerView
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClubViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.links_doc_list, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.links_doc_list, parent, false)
         return ClubViewHolder(view)
     }
 
@@ -44,9 +47,15 @@ class LinksDocAdapter (private val listener: OnItemClickListener):  RecyclerView
         holder.textEventDate.text = result.link
 
         holder.linkDoc.setOnClickListener {
-            Log.e("click..", "clickClubItem")
-            listener.onItemClick(result.id,result.link) // Assuming Client has an 'id' property
+            //Log.e("click..", "clickClubItem " + result.id)
+
+            // Open the link in an external browser
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse(result.link)
+            }
+            holder.itemView.context.startActivity(intent)
         }
+
 
     }
 

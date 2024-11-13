@@ -115,10 +115,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_4sdp"
             android:background="@drawable/rounded_edittext_white_background"
-            android:hint="@string/t_login_enter_your_name"
+            android:hint="@string/t_h_enter_your_email"
             android:inputType="textEmailAddress"
             android:padding="@dimen/_12sdp"
-            android:text="@string/t_h_email"
             android:textSize="@dimen/_11sdp" />
 
         <TextView
@@ -151,7 +150,6 @@
             android:hint="@string/t_login_enter_your_password"
             android:inputType="textPassword"
             android:padding="@dimen/_12sdp"
-            android:text="@string/t_h_pass"
             android:textSize="@dimen/_11sdp" />
 
         <TextView

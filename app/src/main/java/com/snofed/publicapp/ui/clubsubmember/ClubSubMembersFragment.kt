@@ -1,5 +1,6 @@
 package com.snofed.publicapp.ui.clubsubmember
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -16,6 +17,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.TabClubsSubMemAdapter
 import com.snofed.publicapp.databinding.FragmentClubSubMembersBinding
+import com.snofed.publicapp.models.browseSubClub.ParentOrganisation
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.NetworkResult
@@ -34,7 +36,10 @@ class ClubSubMembersFragment : Fragment() {
 
     var clientId: String = ""
     var description: String = ""
-
+    private val hideSubMebTab = true
+    var isParentMember: ParentOrganisation? = null
+    var isSubMember : Boolean? = false
+    //var tabs = listOf<String>()
     @Inject lateinit var tokenManager: TokenManager
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -44,9 +49,17 @@ class ClubSubMembersFragment : Fragment() {
         val viewPager = binding.viewPager
 
         // Create a list of tabs
-        val tabs = listOf(resources.getString(R.string.t_club_action),
-            resources.getString(R.string.t_club_gallery),
-            resources.getString(R.string.t_club_about), resources.getString(R.string.t_club_sub_members))
+       val tabs = listOf(resources.getString(R.string.t_club_action), resources.getString(R.string.t_club_gallery), resources.getString(R.string.t_club_about), resources.getString(R.string.t_club_sub_members))
+
+
+        /*if (hideSubMebTab){
+            // Create a list of tabs
+             tabs = listOf(resources.getString(R.string.t_club_action), resources.getString(R.string.t_club_gallery), resources.getString(R.string.t_club_about))
+        }else{
+            // Create a list of tabs
+             tabs = listOf(resources.getString(R.string.t_club_action), resources.getString(R.string.t_club_gallery), resources.getString(R.string.t_club_about), resources.getString(R.string.t_club_sub_members))
+        }*/
+
 
         // Create a ViewPager adapter
         val adapter = TabClubsSubMemAdapter(this, tabs)
@@ -65,6 +78,7 @@ class ClubSubMembersFragment : Fragment() {
 
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -84,6 +98,18 @@ class ClubSubMembersFragment : Fragment() {
                     //clubViewModel.mutableData.updateData(it.data?.data?.publicData?.images!!)
                     //Log.i("PraveenGallery" , "hhhhhh " +it.data?.data?.publicData)
                     //Log.i("it.data?.clients/publicData", "it.data?.clients.publicData " + it.data?.data?.publicData?.images)
+
+                     isParentMember = it.data?.data?.parentOrganisation//
+                     isSubMember = it.data?.data?.subOrganisations?.isEmpty()// is == true
+
+
+                    if (isSubMember == true && isParentMember != null){
+                        binding.txtSubOrgName.isVisible = true
+                        binding.txtSubOrgName.text = resources.getString(R.string.member_of)+ "-" + it.data?.data?.parentOrganisation?.publicName
+                    }else{
+                        binding.txtSubOrgName.isVisible = false
+                    }
+
 
                     if (it.data?.data?.publicName == null){
                         binding.idPublicName.text = ""

@@ -22,7 +22,10 @@ import com.snofed.publicapp.databinding.FragmentBrowseAllClubBinding
 import com.snofed.publicapp.models.Client
 import com.snofed.publicapp.repository.UserRepository
 import com.snofed.publicapp.ui.login.AuthViewModel
+import com.snofed.publicapp.utils.AppPreference
+import com.snofed.publicapp.utils.ClientPrefrences
 import com.snofed.publicapp.utils.NetworkResult
+import com.snofed.publicapp.utils.SharedPreferenceKeys
 import com.snofed.publicapp.utils.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.GlobalScope
@@ -116,7 +119,21 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
 
     override fun onWishlistClick(clientId: String) {
         Log.d("TAG_WishList","Wishlist_Item " + clientId )
-       // clubViewModel.toggleWishlistStatus(clientId)
+
+        if (ClientPrefrences.containsClientId(requireContext(),clientId)) {
+
+            ClientPrefrences.removeClientId(requireContext(),clientId)
+
+        } else {
+            ClientPrefrences.saveClientId(requireContext(),clientId)
+        }
+
+        Log.d("BrowseAllClubFragment","save me as  " + ClientPrefrences.getClientIds(requireContext()) )
+        requestWistlistResonse(clientId)
+
+    }
+
+    private fun requestWistlistResonse(clientId: String) {
 
     }
 }
