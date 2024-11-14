@@ -34,6 +34,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.gson.Gson
 import com.mapbox.android.core.permissions.PermissionsManager
 import com.mapbox.common.location.Location
 
@@ -102,8 +103,15 @@ class MapExploreFragment : Fragment(){
     private lateinit var rotateBackward: Animation
     private var isOpen = false
     private lateinit var mMap: GoogleMap
-
+    val gson = Gson()
+    var defaultLat :String = ""
+    var defaultLong :String = ""
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    var minLng = Double.MAX_VALUE
+    var minLat = Double.MAX_VALUE
+    var maxLng = Double.MIN_VALUE
+    var maxLat = Double.MIN_VALUE
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
@@ -127,13 +135,27 @@ class MapExploreFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val defaultLocationJson = arguments?.getString("DefaultClubLocation") ?: ""
+        val gson = Gson()
+        val data = gson.fromJson(defaultLocationJson, Map::class.java)
+
+        defaultLat = "%.6f".format(data["Latitude"].toString().toDoubleOrNull() ?: 0.0)
+        defaultLong = "%.6f".format(data["Longitude"].toString().toDoubleOrNull() ?: 0.0)
+
+
         // Initialize MapView and MapboxMap
         mapView = binding.mapView
         mapboxMap = mapView.mapboxMap
         // Retrieve the CameraAnimationsPlugin
         // Retrieve the CameraAnimationsPlugin
         cameraAnimationsPlugin = mapView.getPlugin(CameraAnimationsPlugin::class.java.toString())
-
+        mapboxMap.setCamera(
+            CameraOptions.Builder()
+                .center(Point.fromLngLat(defaultLong.toDouble(), defaultLat.toDouble())) // Set desired center
+                .zoom(6.0) // Set desired zoom level
+                .pitch(9.0)
+                .build()
+        )
 
         fetchMapTrailsData()
         binding.fab1.setOnClickListener {
@@ -285,20 +307,27 @@ class MapExploreFragment : Fragment(){
                 // Use the plugin to animate the camera to fit all trails
                 val latLngBounds = boundsBuilder.build()
                 // Compute the center manually
-                val southwest = latLngBounds.southwest
-                val northeast = latLngBounds.northeast
-                val centerLat = (southwest.latitude + northeast.latitude) / 2
-                val centerLng = (southwest.longitude + northeast.longitude) / 2
+                minLng = minOf(minLng, defaultLong.toDouble())
+                minLat = minOf(minLat, defaultLat.toDouble())
+                maxLng = maxOf(maxLng, defaultLong.toDouble())
+                maxLat = maxOf(maxLat, defaultLat.toDouble())
+                //val southwest = latLngBounds.southwest
+                //val northeast = latLngBounds.northeast
+                val centerLng = (minLng + maxLng) / 2
+                val centerLat = (minLat + maxLat) / 2
+                val centerPoint = Point.fromLngLat(centerLng, centerLat)
+                val padding = EdgeInsets(50.0, 50.0, 50.0, 50.0) // Adjust as needed
+
                 //val centerLatLng = LatLng(centerLat, centerLng)
                 //  val centerPoint = Point.fromLngLat(centerLatLng.longitude, centerLatLng.latitude)
                 val cameraAnimationsPlugin = mapView.camera
-                cameraAnimationsPlugin.easeTo(CameraOptions.Builder()
-                    .center(Point.fromLngLat(centerLng, centerLat)) // Note: Longitude, Latitude
-                    .zoom(8.0)
-                    .padding(EdgeInsets(10.0, 10.0, 10.0, 10.0)) // Optional: add padding to the edges// Adjust zoom level as needed
+                cameraAnimationsPlugin?.easeTo(CameraOptions.Builder()
+                    .center(centerPoint)
+                    //.padding(padding)
+                    .zoom(8.00)
                     .build(),
                     MapAnimationOptions.Builder()
-                        .duration(3000) // Duration in milliseconds (e.g., 3 seconds)
+                        .duration(2000) // Duration in milliseconds (e.g., 3 seconds)
                         .build())
 
             } else {
@@ -309,6 +338,16 @@ class MapExploreFragment : Fragment(){
             //cameraAnimationsPlugin!!.easeTo(cameraOptions, animationOptions) // Smooth animation to the bounds
         }
     }
+
+    /*fun calculateZoomLevel(minLng: Double, maxLng: Double, minLat: Double, maxLat: Double, mapView: MapView): Double {
+        // You can implement custom logic here, or use a basic approximation
+        val lngDiff = maxLng - minLng
+        val latDiff = maxLat - minLat
+        val mapSize = max(lngDiff, latDiff)
+
+        // Basic calculation for zoom level (you may need to adjust this scaling factor)
+        return 14.0 - (mapSize * 5)
+    }*/
 
     private fun addAreasToMap(areas: List<Area>) {
         mapboxMap.getStyle { style ->

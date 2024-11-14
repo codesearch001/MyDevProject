@@ -6,12 +6,12 @@ class BrowseSubClubResponse {
 data class BrowseSubClubResponse(
     val success: Boolean,
     val message: Any?,
-    val data: Data,
+    val data: ClubData,
     val statusCode: Long,
     val totalItems: Long,
 )
 
-data class Data(
+data class ClubData(
     val publicName: Any?,
     val country: Any?,
     val logoPath: Any?,

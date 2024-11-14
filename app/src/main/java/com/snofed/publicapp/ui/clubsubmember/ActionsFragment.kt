@@ -6,18 +6,28 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.gson.Gson
 import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.BrowseClubListAdapter
 import com.snofed.publicapp.adapter.ClubActionAdapter
 import com.snofed.publicapp.databinding.FragmentActionsBinding
+import com.snofed.publicapp.models.browseSubClub.ClubData
 import com.snofed.publicapp.models.browseclubaction.GridItem
+import com.snofed.publicapp.utils.Helper
+import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.OnItemClickListener
+import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.ToastUtils
 import com.snofed.publicapp.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -27,8 +37,11 @@ class ActionsFragment : Fragment(),OnItemClickListener {
     private val binding get() = _binding!!
     @Inject
     lateinit var tokenManager: TokenManager
-
+    private val sharedViewModel by activityViewModels<SharedViewModel>()
     private var clientId: String? = null
+    var clubData: ClubData? = null
+    var defaultLocationJson : String? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -41,6 +54,16 @@ class ActionsFragment : Fragment(),OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        sharedViewModel.browseSubClubResponse.observe(viewLifecycleOwner) { response ->
+            clubData = response.data
+            val defaultLocation = mutableMapOf<String, String>()
+            defaultLocation["Latitude"] = clubData!!.startLatitude
+            defaultLocation["Longitude"] = clubData!!.startLongitude
+            val gson = Gson()
+            defaultLocationJson = gson.toJson(defaultLocation)
+        }
+
+
         binding.becomeMemberButton.setOnClickListener {
             val bundle = Bundle()
             bundle.putString("clientId", tokenManager.getClientId().toString())
@@ -49,7 +72,14 @@ class ActionsFragment : Fragment(),OnItemClickListener {
         }
 
         binding.goexplore.setOnClickListener {
-            findNavController().navigate(R.id.mapExploreFragment)
+
+            val bundle = Bundle()
+            bundle.putString("clientId", tokenManager.getClientId().toString())
+            bundle.putString("DefaultClubLocation", defaultLocationJson)
+            val destination = R.id.mapExploreFragment
+            findNavController().navigate(destination, bundle)
+            //findNavController().navigate(R.id.mapExploreFragment)
+
         }
 
         fun getItems(): List<GridItem> {
