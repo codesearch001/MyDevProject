@@ -162,13 +162,13 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             Log.e("StartRide", "StartRideResponse " + response.body())
 
         } else if (response.errorBody() != null) {
+            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
             try {
-                val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-                val errorMessage = errorObj.optString("message", "Unknown Error")
+                //val errorMessage = errorObj.optString("message", "Unknown Error")
                 _userWorkoutRideLiveData.postValue(NetworkResult.Error(response.body()?.message.toString()))
                 Log.e("StartRide", "StartRideResponse " + response.body()?.message)
             } catch (e: JSONException) {
-                _userWorkoutRideLiveData.postValue(NetworkResult.Error("Error parsing error response"))
+                _userWorkoutRideLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
                 Log.e("handleResponse3", "JSON parsing error", e)
             }
         } else {
@@ -191,9 +191,13 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
 
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-            _userDashBoardLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+            //_userDashBoardLiveData .postValue(NetworkResult.Error(response.body()?.message.toString()))
+            //_userDashBoardLiveData.postValue(NetworkResult.Error(errorObj.getString("title")))
+            _userDashBoardLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+           // Log.e("print1", "message" + errorObj)
         } else {
-            _userDashBoardLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            //Log.e("print", "Something Went Wrong")
+           _userDashBoardLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
     }
 
@@ -230,7 +234,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
 
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-            _clubLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+            _clubLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _clubLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
@@ -247,7 +251,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
 
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-            _subClubLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+            _subClubLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _subClubLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
@@ -267,7 +271,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
 
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-            _eventLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+            _eventLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _eventLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
@@ -284,7 +288,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
 
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-            _eventDetailsLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+            _eventDetailsLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _eventDetailsLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
@@ -301,7 +305,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
 
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-            _trailsDetailsLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+            _trailsDetailsLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _trailsDetailsLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
@@ -318,7 +322,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
 
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-            _trailsDrawPolyLinesByIDLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+            _trailsDrawPolyLinesByIDLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _trailsDrawPolyLinesByIDLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
@@ -336,7 +340,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
 
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-            _trailsDetailsGraphData.postValue(NetworkResult.Error(errorObj.getString("message")))
+            _trailsDetailsGraphData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _trailsDetailsGraphData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
@@ -353,7 +357,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
 
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-            _feedWorkoutLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+            _feedWorkoutLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _feedWorkoutLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
@@ -368,7 +372,8 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             _feedLiveData.postValue(NetworkResult.Success(response.body()!!))
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-            _feedLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+
+            _feedLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _feedLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
@@ -424,7 +429,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             AppPreference.savePreference(context, SharedPreferenceKeys.IS_USER_LOGGED_IN, "true")
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-            _userResponseLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+            _userResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _userResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
@@ -437,7 +442,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
 
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-            _userResponseLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+            _userResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _userResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
