@@ -65,8 +65,8 @@ class MembershipRepository @Inject constructor(@Named("MembershipApi") private v
             //_subClubLiveData_gallery_l.postValue(response.body())
 
         } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-            _membershipResponseLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+            _membershipResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _membershipResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
@@ -82,7 +82,7 @@ class MembershipRepository @Inject constructor(@Named("MembershipApi") private v
             //_subClubLiveData_gallery_l.postValue(response.body())
 
         } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
             _membershipResponseLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
         } else {
             _membershipResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
@@ -99,8 +99,8 @@ class MembershipRepository @Inject constructor(@Named("MembershipApi") private v
             //_subClubLiveData_gallery_l.postValue(response.body())
 
         } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-            _activeMembershipResponseLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+            _activeMembershipResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _activeMembershipResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
@@ -116,8 +116,8 @@ class MembershipRepository @Inject constructor(@Named("MembershipApi") private v
             //_subClubLiveData_gallery_l.postValue(response.body())
 
         } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-            _activeMembershipDetailsResponseLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+            _activeMembershipDetailsResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _activeMembershipDetailsResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
@@ -134,8 +134,8 @@ class MembershipRepository @Inject constructor(@Named("MembershipApi") private v
             //_subClubLiveData_gallery_l.postValue(response.body())
 
         } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-            _purchaseOrderHistoryMembershipResponseLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+            _purchaseOrderHistoryMembershipResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _purchaseOrderHistoryMembershipResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
@@ -144,15 +144,15 @@ class MembershipRepository @Inject constructor(@Named("MembershipApi") private v
     suspend fun getTicketType(userId: String) {
         _getTicketTypeResponseLiveData.postValue(NetworkResult.Loading())
         val response = membershipApi!!.getTicketType(acceptLanguage, userId)
-        Log.e("response", "subClubResponse " + response)
+       // Log.e("response", "subClubResponse " + response)
         if (response.isSuccessful && response.body() != null) {
-            Log.e("jsonResponseData", "subClubResponse " + response.body())
+            //Log.e("jsonResponseData", "subClubResponse " + response.body())
             _getTicketTypeResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
             //_subClubLiveData_gallery_l.postValue(response.body())
 
         } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-            _getTicketTypeResponseLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+            _getTicketTypeResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _getTicketTypeResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
@@ -161,15 +161,15 @@ class MembershipRepository @Inject constructor(@Named("MembershipApi") private v
  suspend fun getSendOrderDirect(orderDTO: OrderDTO) {
         _getSendOrderDirectResponseLiveData.postValue(NetworkResult.Loading())
         val response = membershipApi!!.getSendOrderDirect(acceptLanguage, orderDTO)
-        Log.e("response", "subClubResponse " + response)
+       // Log.e("response", "subClubResponse " + response)
         if (response.isSuccessful && response.body() != null) {
             Log.e("jsonResponseData", "subClubResponse " + response.body())
             _getSendOrderDirectResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
             //_subClubLiveData_gallery_l.postValue(response.body())
 
         } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-            _getSendOrderDirectResponseLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+            _getSendOrderDirectResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _getSendOrderDirectResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
@@ -185,8 +185,8 @@ class MembershipRepository @Inject constructor(@Named("MembershipApi") private v
             //_subClubLiveData_gallery_l.postValue(response.body())
 
         } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-            _getSendOrderSwishResponseLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+            _getSendOrderSwishResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _getSendOrderSwishResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }

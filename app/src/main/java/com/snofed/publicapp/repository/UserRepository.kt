@@ -148,7 +148,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
                 Log.e("loginResponsedddd", "loginResponseddd " + response.body())
 
             } else if (response.errorBody() != null) {
-                val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+                val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
 //                _userWorkoutRideLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
             } else {
                 _userWorkoutRideLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
@@ -162,14 +162,14 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             Log.e("StartRide", "StartRideResponse " + response.body())
 
         } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
             try {
-                //val errorMessage = errorObj.optString("message", "Unknown Error")
-                _userWorkoutRideLiveData.postValue(NetworkResult.Error(response.body()?.message.toString()))
-                Log.e("StartRide", "StartRideResponse " + response.body()?.message)
+
+                _userWorkoutRideLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+
             } catch (e: JSONException) {
                 _userWorkoutRideLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
-                Log.e("handleResponse3", "JSON parsing error", e)
+
             }
         } else {
             _userWorkoutRideLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
@@ -190,13 +190,12 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             _userDashBoardLiveData.postValue(NetworkResult.Success(response.body()!!))
 
         } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-            //_userDashBoardLiveData .postValue(NetworkResult.Error(response.body()?.message.toString()))
-            //_userDashBoardLiveData.postValue(NetworkResult.Error(errorObj.getString("title")))
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+
             _userDashBoardLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
-           // Log.e("print1", "message" + errorObj)
+
         } else {
-            //Log.e("print", "Something Went Wrong")
+
            _userDashBoardLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
     }
@@ -206,13 +205,15 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
         return try {
             val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
             val body = MultipartBody.Part.createFormData("image", file.name, requestFile)
-            val response = userAPI!!.uploadProfileImage(userId, body)
 
-            if (response.isSuccessful && response.body() != null) {
+            val response = userAPI?.uploadProfileImage(userId, body)
+
+
+            if (response?.isSuccessful== true && response?.body() != null) {
                 _uploadResult.postValue(NetworkResult.Success(response.body()!!))
                 Result.success(response.body()!!)
             } else {
-                Result.failure(Exception("Error: ${response.message()}"))
+                Result.failure(Exception("Error: ${response?.message()}"))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -233,7 +234,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
 
 
         } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
             _clubLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _clubLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
@@ -250,7 +251,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             //_subClubLiveData_gallery_l.postValue(response.body())
 
         } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
             _subClubLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _subClubLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
@@ -270,7 +271,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             //_subClubLiveData_gallery_l.postValue(response.body())
 
         } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
             _eventLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _eventLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
@@ -287,7 +288,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             //_subClubLiveData_gallery_l.postValue(response.body())
 
         } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
             _eventDetailsLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _eventDetailsLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
@@ -304,7 +305,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             //_subClubLiveData_gallery_l.postValue(response.body())
 
         } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
             _trailsDetailsLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _trailsDetailsLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
@@ -321,7 +322,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             //_subClubLiveData_gallery_l.postValue(response.body())
 
         } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
             _trailsDrawPolyLinesByIDLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _trailsDrawPolyLinesByIDLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
@@ -339,7 +340,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             //_subClubLiveData_gallery_l.postValue(response.body())
 
         } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
             _trailsDetailsGraphData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _trailsDetailsGraphData.postValue(NetworkResult.Error("Something Went Wrong"))
@@ -356,7 +357,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             //_subClubLiveData_gallery_l.postValue(response.body())
 
         } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
             _feedWorkoutLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _feedWorkoutLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
@@ -371,7 +372,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             Log.e("jsonResponseData", "subClubResponse " + response.body())
             _feedLiveData.postValue(NetworkResult.Success(response.body()!!))
         } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
 
             _feedLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
@@ -386,7 +387,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
 //
 //        }
 //        else if(response.errorBody()!=null){
-//            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+//            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
 //            _clubListResponseLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
 //        }
 //        else{
@@ -407,14 +408,14 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             Log.e("UserId", "UserId " + response.body()!!.data.id)
 
 
-            val gson = Gson()
+           /* val gson = Gson()
             val jsonString = gson.toJson(response.body()!!.data)
             val user = Gson().fromJson(jsonString, userData::class.java)
 
 
             Log.e("Settings", "userResponse1 " + jsonString)
             Log.e("Settings", "userResponse2 " + user)
-
+*/
 
 
 
@@ -428,7 +429,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
            // AppPreference.savePreference(context, SharedPreferenceKeys.USER_GENDER_TYPE, response.body()!!.data.clientLogo.toString())
             AppPreference.savePreference(context, SharedPreferenceKeys.IS_USER_LOGGED_IN, "true")
         } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
             _userResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _userResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
@@ -441,7 +442,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             Log.e("loginResponse", "loginResponse " + response.body())
 
         } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
             _userResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _userResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
