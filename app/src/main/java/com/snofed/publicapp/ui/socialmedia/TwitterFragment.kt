@@ -57,7 +57,7 @@ class TwitterFragment : Fragment() {
                     links.twitterLink.takeIf { it.isNotEmpty() }?.let { twitterLink ->
                         openLink(twitterLink)
 
-                    } ?: showToast("Twitter link not available")
+                    } ?: showToast(resources.getString(R.string.not_vailable_link_x))
                 }
 
                 // Facebook link
@@ -65,7 +65,7 @@ class TwitterFragment : Fragment() {
                     links.facebookLink.takeIf { it.isNotEmpty() }?.let { facebookLink ->
                         openLink(facebookLink)
 
-                    } ?: showToast("Facebook link not available")
+                    } ?: showToast(resources.getString(R.string.not_vailable_link_fb))
                 }
 
                 // Instagram link
@@ -76,7 +76,7 @@ class TwitterFragment : Fragment() {
                         //val profileName = extractProfileName(instagramLink)
                         //showToast("Profile Name: $profileName")
 
-                    } ?: showToast("Instagram link not available")
+                    } ?: showToast(resources.getString(R.string.not_vailable_link_insta))
                 }
             }
         }
