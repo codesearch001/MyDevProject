@@ -62,7 +62,7 @@
 
     <!-- FRAGMENTS TITLES -->
     <string name="title_fragment_dashboard">översikt</string>
-    <string name="title_fragment_browse_club">Välj förening</string>
+    <string name="title_fragment_browse_club">Välj din förening</string>
     <string name="title_fragment_twitter">X</string>
     <string name="title_fragment_feed">Flöde</string>
     <string name="title_fragment_Map">Karta</string>
@@ -104,7 +104,7 @@
     <string name="t_Favourites">Favoriter</string>
     <string name="t_search_club">Leta efter förening</string>
     <string name="t_search_trail">Sök efter en led/spår</string>
-    <string name="t_search_event">Search for a events</string>
+    <string name="t_search_event">Sök events</string>
 
     <!--FRAGMENT MEMBERSHIP TEXT-->
     <string name="label_active_memberships">Aktivt</string>
@@ -267,7 +267,7 @@
     <string name="Activate_memberships">Aktivera medlemskap</string>
     <string name="show_benefits">Visa förmåner</string>
     <string name="hide_benefits">Dölj förmåner</string>
-    <string name="member_of">Member of</string>
+    <string name="member_of">Medlem i</string>
 
     <!--Become a Mem-->
     <string name="first_name">FÖRNAMN</string>
@@ -285,7 +285,7 @@
     <string name="enter_your_memb">Ange ditt medlemskap</string>
     <string name="activate">Aktivitet</string>
 
-    <string name="ice_on_trail">Ice on trail!</string>
+    <string name="ice_on_trail">Is på leden!</string>
     <string name="remove_feedback">Ta bort återkoppling</string>
     <string name="approve_feedback">Godkänn återkoppling</string>
     <string name="type_of_report">Typ av anläggning</string>
@@ -335,14 +335,14 @@
     <string name="pref_theme_title">Theme</string>
     <string name="pref_user_name">Förnamn</string>
     <string name="pref_user_last_name">Efternamn</string>
-    <string name="pref_set_user_name">Minsta hastighet för paus</string>
-    <string name="pref_set_user_last_name">Set last name</string>
+    <string name="pref_set_user_name">Förnamn</string>
+    <string name="pref_set_user_last_name">Efternamn</string>
     <string-array name="pref_theme_items">
         <item>Light</item>
         <item>Dark</item>
     </string-array>
 
-    <string name="pref_autopause_speed_title">Auto paus inställd på hastighet</string>
+    <string name="pref_autopause_speed_title">Minsta hastighet för paus</string>
     <string-array name="pref_autopause_speed_items">
         <item>2 km/h</item>
         <item>4 km/h</item>
@@ -350,7 +350,7 @@
 
     <string name="pref_sync_on_wifi_title">Synka endast via WIFI</string>
     <string name="pref_sync_on_wifi_summary_on">Synkronisering sker endast via WIFI</string>
-    <string name="pref_sync_on_wifi_summary_off">Synkronsiering sker både via WIFI och mobildata</string>
+    <string name="pref_sync_on_wifi_summary_off">Synkronisering sker endast via WIFI</string>
     <string name="pref_units_title">Units</string>
     <string-array name="pref_units_items">
         <item>Metric</item>
@@ -387,5 +387,17 @@
     <string name="please_select_start_date">Vänligen välj ett start datum:</string>
     <string name="loacation_feature">Platsbehörighet krävs för att använda den här funktionen.</string>
     <string name="write_here">Skriv här</string>
+
+    <string name="not_vailable_link_x">X konto finns inte </string>
+    <string name="not_vailable_link_fb">Facebook koppling finns inte</string>
+    <string name="not_vailable_link_insta">Instagram länk finns inte</string>
+
+    <string name="visit_x">Visit club X profile</string>
+    <string name="visit_fb">Visit club Facebook profile</string>
+    <string name="visit_insta">Visit club Instagram profile</string>
+
+    <string name="user_not_exist">Användare finns inte</string>
+    <string name="link_sent_email">Länk är skickad till din mailadress.</string>
+    <string name="email_follow_instruction">Vänligen följ instruktionerna som är skickad till din mailadress!</string>
 
 </resources>

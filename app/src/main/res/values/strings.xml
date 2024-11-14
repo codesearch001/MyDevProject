@@ -388,4 +388,16 @@
     <string name="loacation_feature">Location permission is required to use this feature.</string>
     <string name="write_here">Write here</string>
 
+    <string name="not_vailable_link_x">X link not available</string>
+    <string name="not_vailable_link_fb">Facebook link not available</string>
+    <string name="not_vailable_link_insta">Instagram link not available</string>
+
+    <string name="visit_x">Visit club X profile</string>
+    <string name="visit_fb">Visit club Facebook profile</string>
+    <string name="visit_insta">Visit club Instagram profile</string>
+
+    <string name="user_not_exist">User Does Not Exist</string>
+    <string name="link_sent_email">Link is sent to your Email address.</string>
+    <string name="email_follow_instruction">Please follow the instructions in the email to access your account.</string>
+
 </resources>

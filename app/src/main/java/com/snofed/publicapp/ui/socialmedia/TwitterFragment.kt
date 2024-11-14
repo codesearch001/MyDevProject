@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
+import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.FragmentTwitterBinding
 import com.snofed.publicapp.ui.links.LinksDocAdapter
 import com.snofed.publicapp.utils.SharedViewModel
@@ -41,13 +42,13 @@ class TwitterFragment : Fragment() {
 
             // Set up click listeners for each social media icon
             socialMediaLinks?.let { links ->
-                binding.txtTwitter.text = "Visit club X profile"// add text here
+                binding.txtTwitter.text = resources.getString(R.string.visit_x)// add text here
                 binding.XUseName.text = extractProfileName(links.twitterLink)
 
-                binding.txtFacebook.text = "Visit club Facebook profile"// add text here
+                binding.txtFacebook.text = resources.getString(R.string.visit_fb)// add text here
                 binding.fbUserName.text = extractProfileName(links.facebookLink)
 
-                binding.instaURL.text = "Visit club Instagram profile"// add text here
+                binding.instaURL.text = resources.getString(R.string.visit_insta)// add text here
                 binding.instaUserName.text = extractProfileName(links.instagramLink)
 
 
