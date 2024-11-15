@@ -51,6 +51,7 @@ import com.mapbox.maps.extension.style.sources.getSource
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.camera
 import com.mapbox.maps.plugin.animation.easeTo
+import com.mapbox.maps.plugin.locationcomponent.LocationComponentPlugin
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.FragmentResortTrailStatusMapBinding
@@ -269,8 +270,23 @@ class ResortTrailStatusMapFragment : Fragment() {
             .build()
 
         mapboxMap.easeTo(cameraOptions)
+        enableLocationComponent()
     }
 
+    private fun enableLocationComponent() {
+        // Get the location component
+        val locationComponent: LocationComponentPlugin = mapView.location
+
+        // Activate the location component
+        locationComponent.updateSettings {
+            enabled = true
+            pulsingEnabled = true // Pulsing effect around the current location
+            pulsingColor = Color.BLUE // Customize pulsing color if needed
+        }
+
+        // Set the location puck to display an arrow indicating direction
+
+    }
 
     private fun checkPermissionsAndGps() {
         // Check if the app has location permission
