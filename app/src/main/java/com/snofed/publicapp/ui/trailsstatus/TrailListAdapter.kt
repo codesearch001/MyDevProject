@@ -78,46 +78,77 @@ class TrailListAdapter(private var trails: List<Trail>, private val onItemClick:
         @RequiresApi(Build.VERSION_CODES.O)
         fun bind(trail: Trail, onItemClick: (Trail) -> Unit, onMapClick: (Trail) -> Unit, pageType: PageType) {
             binding.trailName.text = trail.name
-            //binding.length.text = trail.length.toString() + " m"
-            //binding.length.text = Helper.m2Km(trail.length.toDouble()).toString() + R.string.t_km
-            binding.length.text  = Helper.m2Km(trail.length.toDouble()).toString() +  binding.root.context.getString(R.string.t_km)
-            val dateTimeConverter = DateTimeConverter()//Date format
-            dateTimeConverter.convertDateTime(trail.lastUpdateDate)//convert data
-            val getDate = dateTimeConverter.dateandtimePart
-            binding.lastUpdateDate.text = getDate
 
-            if (trail.status == 1) {
-                binding.idOpen.isVisible = true
-                binding.idClose.isVisible = false
-            } else {
-                binding.idClose.isVisible = true
-                binding.idOpen.isVisible = false
-            }
+            var isProTrail = trail.isProTrail
 
-            if (trail.trailIconPath == null) {
-                Glide.with(binding.backgroundImage).load(R.drawable.resort_card_bg)
-                    .into(binding.backgroundImage)
-            } else {
-                Glide.with(binding.backgroundImage).load(trail.trailIconPath)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL).fitCenter()
-                    .into(binding.backgroundImage)
-            }
-            // Handle click events
-            binding.trailRL.setOnClickListener {
-                onItemClick(trail)
-            }
+            if (isProTrail){
+                //binding.length.text = trail.length.toString() + " m"
+                //binding.length.text = Helper.m2Km(trail.length.toDouble()).toString() + R.string.t_km
+                binding.length.text  = Helper.m2Km(trail.length.toDouble()).toString() +  binding.root.context.getString(R.string.t_km)
+                val dateTimeConverter = DateTimeConverter()//Date format
+                dateTimeConverter.convertDateTime(trail.lastUpdateDate)//convert data
+                val getDate = dateTimeConverter.dateandtimePart
+                binding.lastUpdateDate.text = getDate
 
-            /* // Handle map click
-            binding.trailsMaps.setOnClickListener {
-                onMapClick(trail)
-            }*/
+                if (trail.status == 1) {
+                    binding.idOpen.isVisible = true
+                    binding.idClose.isVisible = false
+                } else {
+                    binding.idClose.isVisible = true
+                    binding.idOpen.isVisible = false
+                }
 
-            // Handle map click based on page type
-            if (pageType == PageType.MAP) {
+                if (trail.trailIconPath == null) {
+                    Glide.with(binding.backgroundImage).load(R.drawable.resort_card_bg)
+                        .into(binding.backgroundImage)
+                } else {
+                    Glide.with(binding.backgroundImage).load(trail.trailIconPath)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL).fitCenter()
+                        .into(binding.backgroundImage)
+                }
+            }else{
+                //binding.length.text = trail.length.toString() + " m"
+                //binding.length.text = Helper.m2Km(trail.length.toDouble()).toString() + R.string.t_km
+                binding.length.text  = Helper.m2Km(trail.length.toDouble()).toString() +  binding.root.context.getString(R.string.t_km)
+                val dateTimeConverter = DateTimeConverter()//Date format
+                dateTimeConverter.convertDateTime(trail.lastUpdateDate)//convert data
+                val getDate = dateTimeConverter.dateandtimePart
+                binding.lastUpdateDate.text = getDate
+
+                if (trail.status == 1) {
+                    binding.idOpen.isVisible = true
+                    binding.idClose.isVisible = false
+                } else {
+                    binding.idClose.isVisible = true
+                    binding.idOpen.isVisible = false
+                }
+
+                if (trail.trailIconPath == null) {
+                    Glide.with(binding.backgroundImage).load(R.drawable.resort_card_bg)
+                        .into(binding.backgroundImage)
+                } else {
+                    Glide.with(binding.backgroundImage).load(trail.trailIconPath)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL).fitCenter()
+                        .into(binding.backgroundImage)
+                }
+                // Handle click events
+                binding.trailRL.setOnClickListener {
+                    onItemClick(trail)
+                }
+
+                /* // Handle map click
                 binding.trailsMaps.setOnClickListener {
                     onMapClick(trail)
+                }*/
+
+                // Handle map click based on page type
+                if (pageType == PageType.MAP) {
+                    binding.trailsMaps.setOnClickListener {
+                        onMapClick(trail)
+                    }
                 }
             }
+
         }
     }
 }

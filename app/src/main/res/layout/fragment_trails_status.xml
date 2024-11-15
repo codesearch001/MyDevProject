@@ -187,6 +187,7 @@
             android:hint="@string/t_search_trail"
             android:imeOptions="actionSearch"
             android:paddingStart="12dp"
+            android:maxLines="1"
             android:paddingEnd="12dp"
             android:textSize="14sp" />
     </LinearLayout>

@@ -131,6 +131,10 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
     val trailsDetailsGraphData: LiveData<NetworkResult<TrailGraphData>>
         get() = userRepository.eventDetailsGraphLiveData
 
+    //Fav Club
+    val clubFavLiveData: LiveData<NetworkResult<BrowseSubClubResponse>>
+        get() = userRepository.clubFavLiveData
+
 
     fun registerUser(userRequest: UserRegRequest) {
         viewModelScope.launch {
@@ -385,5 +389,11 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
             result = Pair(false, "Email is invalid")
         }
         return result
+    }
+
+    fun getFavClubResponse(favClientId: String) {
+        viewModelScope.launch {
+            userRepository.getClubById(favClientId)
+        }
     }
 }

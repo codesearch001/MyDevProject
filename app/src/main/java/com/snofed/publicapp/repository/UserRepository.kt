@@ -54,6 +54,11 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
     @Inject
     lateinit var tokenManager: TokenManager
 
+    //Fav club
+    private val _clubFavLiveData = MutableLiveData<NetworkResult<BrowseSubClubResponse>>()
+    val clubFavLiveData: LiveData<NetworkResult<BrowseSubClubResponse>>
+        get() = _clubFavLiveData
+
     private val _uploadResult = MutableLiveData<NetworkResult<UploadResponse>>()
     val uploadResult: LiveData<NetworkResult<UploadResponse>>
         get() = _uploadResult
@@ -399,6 +404,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
     private fun handleResponse(response: Response<UserResponse>) {
         if (response.isSuccessful && response.body() != null) {
             _userResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+
             Log.e("loginResponse", "loginResponse " + response.body())
             tokenManager.saveToken(response.body()!!.data.token)
             Log.e("token", "token " + response.body()!!.data.token)
@@ -408,14 +414,13 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             Log.e("UserId", "UserId " + response.body()!!.data.id)
 
 
-           /* val gson = Gson()
+            val gson = Gson()
             val jsonString = gson.toJson(response.body()!!.data)
             val user = Gson().fromJson(jsonString, userData::class.java)
 
 
             Log.e("Settings", "userResponse1 " + jsonString)
             Log.e("Settings", "userResponse2 " + user)
-*/
 
 
 
@@ -446,6 +451,26 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             _userResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _userResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+        }
+
+    }
+
+
+
+    suspend fun getClubById(favClientId: String) {
+        _clubFavLiveData.postValue(NetworkResult.Loading())
+        val response = userAPI!!.requestFavClubById(acceptLanguage, favClientId)
+        Log.e("response", "subClubResponse " + response)
+        if (response.isSuccessful && response.body() != null) {
+            Log.e("jsonResponseData", "subClubResponse " + response.body())
+            _clubFavLiveData.postValue(NetworkResult.Success(response.body()!!))
+            //_subClubLiveData_gallery_l.postValue(response.body())
+
+        } else if (response.errorBody() != null) {
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+            _clubFavLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+        } else {
+            _clubFavLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
 
     }

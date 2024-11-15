@@ -1,6 +1,8 @@
 package com.snofed.publicapp.ui.event
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -21,6 +23,7 @@ import com.snofed.publicapp.adapter.EventFeedAdapter
 import com.snofed.publicapp.databinding.FragmentEventBinding
 import com.snofed.publicapp.models.events.EventResponseList
 import com.snofed.publicapp.ui.login.AuthViewModel
+import com.snofed.publicapp.utils.DrawerController
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.TokenManager
@@ -46,6 +49,9 @@ class EventFragment : Fragment(),EventFeedAdapter.OnItemClickListener {
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_event, container, false)
         _binding = FragmentEventBinding.inflate(inflater, container, false)
+        binding.humburger.setOnClickListener {
+            (activity as? DrawerController)?.openDrawer()
+        }
         return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -56,9 +62,10 @@ class EventFragment : Fragment(),EventFeedAdapter.OnItemClickListener {
                 findNavController().popBackStack()
             }
         })
-        binding.backBtn.setOnClickListener {
-            it.findNavController().popBackStack()
-        }
+
+//        binding.backBtn.setOnClickListener {
+//            it.findNavController().popBackStack()
+//        }
 
         fetchResponse()
         eventViewModel.eventLiveData.observe(viewLifecycleOwner, Observer { it ->
@@ -75,11 +82,26 @@ class EventFragment : Fragment(),EventFeedAdapter.OnItemClickListener {
                       it.startDate
                   }
                     Log.i("activeEvents", "activeEvents " + activeEvents)
-                    feedAdapter = EventFeedAdapter(this)
+                    feedAdapter = EventFeedAdapter(emptyList(),this)
                     binding.eventRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
                     binding.eventRecyclerView.adapter = feedAdapter
                     feedAdapter.setEvent(activeEvents)
 
+
+                    //Apply search Filter
+                    binding.editTextEventSearch.addTextChangedListener(object : TextWatcher {
+                        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                            feedAdapter.getFilter().filter(s)
+                        }
+
+                        override fun afterTextChanged(s: Editable?) {
+                            // Trigger filter on the adapter based on the updated text
+                            feedAdapter.getFilter().filter(s)
+
+                        }
+                    })
 
                     // Check if there are no filtered events
                     if (activeEvents.isEmpty()) {

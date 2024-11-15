@@ -53,6 +53,8 @@ object ServiceUtil {
 
     const val CLUB_TRAILS_CHART = "trails/get-graph-data/{id}"
 
+    const val CLUB_FAV_ITEMS = "public-app/sync/client?"
+
     const val CLUB_WORKOUT_RIDE = "public-app/workouts"
 
     const val UPLOAD_WORKOUT_IMAGES = "public-app/workouts/upload-images"

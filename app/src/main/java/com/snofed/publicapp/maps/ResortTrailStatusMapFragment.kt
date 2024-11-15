@@ -124,6 +124,8 @@ class ResortTrailStatusMapFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+
         fabOpen = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_out)
         fabClose = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
         rotateForward = AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_forward)
@@ -160,8 +162,60 @@ class ResortTrailStatusMapFragment : Fragment() {
         mapView = binding.mapView
         mapboxMap = mapView.mapboxMap
 
+         val defaultLat = 59.3251172
+        val defaultLong = 18.0710935
+
+        mapboxMap.setCamera(
+            CameraOptions.Builder()
+                .center(fromLngLat(defaultLong, defaultLat)) // Set desired center
+                .zoom(7.0) // Set desired zoom level
+                .build())
+
         // Use the pageType here
         when (pageType) {
+            PageType.MAP -> {
+                // Handle MAP page type
+                Log.d("MAP_TAG", "MAP")
+                mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS) { style ->
+                    // Set the camera options to adjust zoom level
+//                      mapView.mapboxMap.setCamera(
+//                       CameraOptions.Builder()
+//                           .zoom(8.0) // Set the desired zoom level here
+//                           .center(fromLngLat(defaultLong, defaultLat))
+//                           //.center(mapView.mapboxMap.cameraState.center) // Center the camera on the current location
+//                           .build(),
+//
+//                   )
+//                    val cameraAnimationsPlugin = mapView.camera
+//                    cameraAnimationsPlugin?.easeTo(CameraOptions.Builder()
+//                       // .center(fromLngLat(defaultLong, defaultLat))
+//                        //.padding(padding)
+//                        .zoom(8.00)
+//                        .build(),
+//                        MapAnimationOptions.Builder()
+//                            .duration(3000) // Duration in milliseconds (e.g., 3 seconds)
+//                            .build())
+                    // Observe the SharedViewModel for data updates
+                    fetchResponse()
+                    viewModelTrails.trailsDrawPolyLinesByIDLiveData.observe(viewLifecycleOwner, Observer { response ->
+                        // binding.trailsNameMap.text = response.data.name
+                        Log.d("TAG_TRAILS_STAUS", "trailsDrawPolyLinesByIDLiveData ${response.data?.data?.features}")
+                        if (response != null) {
+
+                            val trailResponse = response.data?.data
+                            Log.d("TAG_TRAIL_RESPONSE", "TAG_TRAIL_RESPONSE $trailResponse.")
+                            trailResponse?.let {
+                                drawPolyline(style, it)
+                            }
+
+                        } else {
+                            // Handle the null case
+                            Toast.makeText(requireContext(), response.toString(), Toast.LENGTH_SHORT).show()
+                            Log.d("TAG_NULL", "Adding GeoJsonSource and LineLayer${response}")
+                        }
+                    })
+                }
+            }
             PageType.DETAIL -> {
                 // Handle DETAIL page type
                 Log.d("DETAIL", "DETAIL")
@@ -174,39 +228,6 @@ class ResortTrailStatusMapFragment : Fragment() {
                             Log.d("P3333", "Print Details trails Id ${response.data.id}")
                             Log.d("P2222", "Adding GeoJsonSource and LineLayer${polylineData.features.size}")
                             getDrawPolyline(polylineData)
-                        } else {
-                            // Handle the null case
-                            Toast.makeText(requireContext(), response.toString(), Toast.LENGTH_SHORT).show()
-                            Log.d("TAG_NULL", "Adding GeoJsonSource and LineLayer${response}")
-                        }
-                    })
-                }
-            }
-            PageType.MAP -> {
-                // Handle MAP page type
-                Log.d("MAP_TAG", "MAP")
-                mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS) { style ->
-                    // Set the camera options to adjust zoom level
-                      mapView.mapboxMap.setCamera(
-                       CameraOptions.Builder()
-                           .zoom(8.0) // Set the desired zoom level here
-                           .center(fromLngLat(longitude, latitude))
-                           //.center(mapView.mapboxMap.cameraState.center) // Center the camera on the current location
-                           .build()
-                   )
-                    // Observe the SharedViewModel for data updates
-                    fetchResponse()
-                    viewModelTrails.trailsDrawPolyLinesByIDLiveData.observe(viewLifecycleOwner, Observer { response ->
-                       // binding.trailsNameMap.text = response.data.name
-                        Log.d("TAG_TRAILS_STAUS", "trailsDrawPolyLinesByIDLiveData ${response.data?.data?.features}")
-                        if (response != null) {
-
-                            val trailResponse = response.data?.data
-                            Log.d("TAG_TRAIL_RESPONSE", "TAG_TRAIL_RESPONSE $trailResponse.")
-                            trailResponse?.let {
-                                drawPolyline(style, it)
-                            }
-
                         } else {
                             // Handle the null case
                             Toast.makeText(requireContext(), response.toString(), Toast.LENGTH_SHORT).show()
@@ -244,7 +265,7 @@ class ResortTrailStatusMapFragment : Fragment() {
 
         val cameraOptions = CameraOptions.Builder()
             .center(currentPoint)
-            .zoom(14.0) // Adjust zoom level as needed
+            .zoom(8.0) // Adjust zoom level as needed
             .build()
 
         mapboxMap.easeTo(cameraOptions)
@@ -405,31 +426,43 @@ class ResortTrailStatusMapFragment : Fragment() {
                 .include(LatLng(minLat, minLng))
                 .include(LatLng(maxLat, maxLng))
                 .build()
-            val centerPoint = Point.fromLngLat(latLngBounds.center.longitude, latLngBounds.center.latitude)
+            val centerPoint = fromLngLat(latLngBounds.center.longitude, latLngBounds.center.latitude)
             val baseZoomLevel = calculateZoomLevel(minLng, minLat, maxLng, maxLat)
             val zoomOutAdjustment = 1.0
             val adjustedZoomLevel = Math.min(12.0, baseZoomLevel + zoomOutAdjustment)
+
 
             val cameraOptions = CameraOptions.Builder()
                 .center(centerPoint)
                 .zoom(adjustedZoomLevel)
                 .build()
-
-            mapboxMap.easeTo(cameraOptions)
+            // Configure animation options
+            val animationOptions = MapAnimationOptions.Builder()
+                .duration(3000) // Duration in milliseconds
+                .build()
+            mapboxMap.easeTo(cameraOptions,animationOptions)
         }
 
     }
 
+//    fun calculateZoomLevel(minLng: Double, maxLng: Double, minLat: Double, maxLat: Double, mapView: MapView): Double {
+//       // You can implement custom logic here, or use a basic approximation
+//       val lngDiff = maxLng - minLng
+//       val latDiff = maxLat - minLat
+//       val mapSize = max(lngDiff, latDiff)
+//
+//       // Basic calculation for zoom level (you may need to adjust this scaling factor)
+//       return 14.0 - (mapSize * 5)
+//   }
+
     private fun calculateZoomLevel(minLng: Double, minLat: Double, maxLng: Double, maxLat: Double): Double {
-        // Define padding (in pixels) to give some space around the bounding box
-        val padding = 50.0
 
         // Convert the bounding box width and height to map coordinates
         val bboxWidth = maxLng - minLng
         val bboxHeight = maxLat - minLat
 
         // Map dimensions in pixels
-        val mapWidth = 200.0 // Width of the map at zoom level 0 (default tile size)
+        val mapWidth = 150.0 // Width of the map at zoom level 0 (default tile size)
         val mapHeight = 100.0 // Height of the map at zoom level 0 (default tile size)
 
         // Calculate the zoom level based on the map's tile dimensions
@@ -445,6 +478,7 @@ class ResortTrailStatusMapFragment : Fragment() {
     }
 
     private fun getDrawPolyline(polylineData: PolyLine) {
+        print("polylineData " + polylineData)
         mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS) { style ->
             // Get the feature and its coordinates
             val feature = polylineData.features.firstOrNull() ?: return@loadStyle
@@ -485,7 +519,7 @@ class ResortTrailStatusMapFragment : Fragment() {
             // Build bounds from your boundsBuilder
             val latLngBounds = boundsBuilder.build()
 
-// Check if bounds are valid
+                // Check if bounds are valid
             if (latLngBounds.southwest != null && latLngBounds.northeast != null) {
                 // Extract southwest and northeast points
                 val southwest = latLngBounds.southwest
@@ -501,16 +535,16 @@ class ResortTrailStatusMapFragment : Fragment() {
 
                 // Adjust zoom level based on bounding box size
                 // You might need to tweak these values to fit your requirements
-                val zoomLevel = when {
-                    latSpan > 0.1 || lngSpan > 0.1 -> 10.0  // Example value for larger areas
-                    latSpan > 0.05 || lngSpan > 0.05 -> 12.0  // Example value for medium areas
-                    else -> 8.0  // Example value for smaller areas
-                }
+//                val zoomLevel = when {
+//                    latSpan > 0.1 || lngSpan > 0.1 -> 10.0  // Example value for larger areas
+//                    latSpan > 0.05 || lngSpan > 0.05 -> 12.0  // Example value for medium areas
+//                    else -> 8.0  // Example value for smaller areas
+//                }
 
                 // Configure camera options
                 val cameraOptions = CameraOptions.Builder()
                     .center(fromLngLat(centerLng, centerLat))
-                    .zoom(zoomLevel) // Dynamically adjusted zoom level
+                    .zoom(9.0) // Dynamically adjusted zoom level
                     .padding(EdgeInsets(10.0, 10.0, 10.0, 10.0)) // Optional padding
                     .build()
 

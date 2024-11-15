@@ -36,6 +36,7 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:scaleType="centerCrop"
+                    android:elevation="@dimen/_2sdp"
                     android:src="@drawable/user_profile" />
 
                 <LinearLayout
@@ -271,8 +272,10 @@
 
 
                 <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchCompat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:elevation="@dimen/_1sdp"
                     android:thumb="@drawable/thumb"
                     app:track="@drawable/track"/>
 
@@ -342,9 +345,11 @@
 
 
                 <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchWifi"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:thumb="@drawable/thumb"
+                    android:elevation="@dimen/_1sdp"
                     app:track="@drawable/track">
 
                 </androidx.appcompat.widget.SwitchCompat>

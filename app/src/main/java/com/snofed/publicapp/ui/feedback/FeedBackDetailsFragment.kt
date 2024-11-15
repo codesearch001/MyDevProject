@@ -53,6 +53,8 @@ class FeedBackDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         // Initialize the MapboxMap directly
         mapboxMap = binding.mapView.mapboxMap
+
+
         binding.backBtn.setOnClickListener {
             it.findNavController().popBackStack()
         }

@@ -51,4 +51,15 @@ object ClientPrefrences {
         return clientIds.contains(clientId)
     }
 
+    fun saveSwitchState(context: Context, key: String, isChecked: Boolean) {
+        val sharedPreferences: SharedPreferences = context.getSharedPreferences("switch_prefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putBoolean(key, isChecked)
+        editor.apply()
+    }
+
+    fun getSwitchState(context: Context, key: String): Boolean {
+        val sharedPreferences: SharedPreferences = context.getSharedPreferences("switch_prefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean(key, false) // Default is false
+    }
 }

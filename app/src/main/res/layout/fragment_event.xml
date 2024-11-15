@@ -14,17 +14,30 @@
             android:layout_height="@dimen/_138sdp"
             android:background="@drawable/event_banner" />
 
-
-        <ImageView
-            android:id="@+id/backBtn"
-            android:layout_width="38dp"
-            android:layout_height="38dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/circle_white_background"
-            android:padding="6dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/back_btn" />
+        <LinearLayout
+            android:id="@+id/humburger"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:padding="@dimen/_4sdp">
+            <ImageView
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:background="@drawable/circle_white_background"
+                android:padding="@dimen/_4sdp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/menu" />
+        </LinearLayout>
+<!--        <ImageView-->
+<!--            android:id="@+id/backBtn"-->
+<!--            android:layout_width="38dp"-->
+<!--            android:layout_height="38dp"-->
+<!--            android:layout_marginStart="8dp"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:background="@drawable/circle_white_background"-->
+<!--            android:padding="6dp"-->
+<!--            android:scaleType="centerCrop"-->
+<!--            android:src="@drawable/back_btn" />-->
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -44,7 +57,7 @@
     </RelativeLayout>
 
     <EditText
-        android:id="@+id/editTextClubSearch"
+        android:id="@+id/editTextEventSearch"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_below="@+id/idEventBanner"
@@ -54,6 +67,7 @@
         android:background="@drawable/rounded_edittext"
         android:drawableEnd="@drawable/new_search_icon"
         android:hint="@string/t_search_event"
+        android:maxLines="1"
         android:imeOptions="actionSearch"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
@@ -66,7 +80,7 @@
         android:id="@+id/eventRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/editTextClubSearch"
+        android:layout_below="@+id/editTextEventSearch"
         android:layout_marginTop="@dimen/_8sdp"
         android:clipToPadding="false"
         android:padding="4dp" />

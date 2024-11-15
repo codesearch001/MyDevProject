@@ -109,7 +109,7 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
 
     override fun onItemClick(clientId: String) {
         binding.editTextClubSearch.text?.clear()
-        //Log.i("dddddd","Id " + clientId )
+
         val bundle = Bundle()
         bundle.putString("clientId", clientId)
         val destination = R.id.clubSubMembersFragment

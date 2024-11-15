@@ -106,7 +106,7 @@ class TrailsStatusFragment : Fragment() {
 
             val trail = response?.data?.trails ?: emptyList()
 
-            Log.d("Tag_Trails", "TrailsSize: ${trail.size}")
+            Log.d("Tag_Trails", "TrailsSize: ${trail}")
 
             if (trail.isEmpty()) {
 

@@ -24,4 +24,6 @@ object SharedPreferenceKeys {
     const val CLUB_DESC = "description"
     const val PREFS_TOKEN_FILE = "prefs_token_file"
     const val PREFS_PROFILE_FILE = "prefs_file"
+    const val SWITCH_WIFI_STATE = "SWITCH_WIFI_STATE"
+    const val SWITCH_COMPAT_STATE = "SWITCH_COMPAT_STATE"
 }

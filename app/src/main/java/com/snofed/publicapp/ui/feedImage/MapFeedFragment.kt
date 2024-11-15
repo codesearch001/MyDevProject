@@ -445,9 +445,9 @@ class MapFeedFragment : Fragment(){
         // Calculate the zoom level based on bounding box dimensions
         // This is a simplified example; you may need a more complex calculation based on your needs
         return when {
-            width > 0.1 || height > 0.1 -> 18.0 // Zoom out a bit for large areas
-            width > 0.05 || height > 0.05 -> 18.0 // Zoom out further for medium areas
-            else -> 21.0 // Zoom in the closest for small areas
+            width > 0.1 || height > 0.5 -> 16.0 // Zoom out a bit for large areas
+            width > 0.01 || height > 0.01 -> 16.0 // Zoom out further for medium areas
+            else -> 18.0 // Zoom in the closest for small areas
         }
     }
     // Extension function to convert Point to LatLng

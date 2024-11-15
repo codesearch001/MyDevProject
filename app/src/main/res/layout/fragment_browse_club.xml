@@ -23,14 +23,13 @@
                 android:id="@+id/humburger"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:padding="6dp">
-
+                android:layout_marginTop="@dimen/_4sdp"
+                android:padding="@dimen/_4sdp">
                 <ImageView
                     android:layout_width="@dimen/_24sdp"
                     android:layout_height="@dimen/_24sdp"
                     android:background="@drawable/circle_white_background"
-                    android:padding="8dp"
+                    android:padding="@dimen/_4sdp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/menu" />
             </LinearLayout>

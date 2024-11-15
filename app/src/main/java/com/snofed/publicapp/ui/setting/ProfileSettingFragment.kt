@@ -18,6 +18,7 @@ import androidx.navigation.findNavController
 import com.snofed.publicapp.R
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.AppPreference
+import com.snofed.publicapp.utils.ClientPrefrences
 import com.snofed.publicapp.utils.MediaReader
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.ServiceUtil
@@ -52,6 +53,22 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
         // Set click listener on ImageView
         binding.profileImageView.setOnClickListener {
             showImageOptionsDialog()
+        }
+
+
+        binding.switchWifi.isChecked = ClientPrefrences.getSwitchState(requireContext(), SharedPreferenceKeys.SWITCH_WIFI_STATE)
+
+
+        binding.switchCompat.isChecked = ClientPrefrences.getSwitchState(requireContext(), SharedPreferenceKeys.SWITCH_COMPAT_STATE)
+
+
+        binding.switchWifi.setOnCheckedChangeListener { _, isChecked ->
+            ClientPrefrences.saveSwitchState(requireContext(), SharedPreferenceKeys.SWITCH_COMPAT_STATE, isChecked)
+        }
+
+
+        binding.switchCompat.setOnCheckedChangeListener { _, isChecked ->
+            ClientPrefrences.saveSwitchState(requireContext(), SharedPreferenceKeys.SWITCH_COMPAT_STATE, isChecked)
         }
 
         binding.changePassword.setOnClickListener {

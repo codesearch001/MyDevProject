@@ -395,11 +395,7 @@ class StartMapRideFragment : Fragment() {
         binding.bPause.visibility = View.GONE
         binding.bResume.visibility = View.GONE
 
-        Toast.makeText(
-            requireContext(),
-            resources.getString(R.string.t_s_save_ride),
-            Toast.LENGTH_SHORT
-        ).show()
+        Toast.makeText(requireContext(), resources.getString(R.string.t_s_save_ride), Toast.LENGTH_SHORT).show()
 
         // Show the custom dialog when End button is clicked
         showSaveRideDialog()
@@ -437,11 +433,7 @@ class StartMapRideFragment : Fragment() {
             // Validate comment is not empty
             if (comment.isBlank()) {
                 // Show a toast message as well
-                Toast.makeText(
-                    requireContext(),
-                    resources.getString(R.string.t_please_enter_a_comment),
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(requireContext(), resources.getString(R.string.t_please_enter_a_comment), Toast.LENGTH_SHORT).show()
             } else {
                 // Remove any previous error message
                 dialogBinding.editTextComment.error = null
@@ -497,8 +489,8 @@ class StartMapRideFragment : Fragment() {
         val gson = Gson()
         val json = gson.toJson(workoutJsonList)
 
-        Log.d("received from realm db ride as", "sendReport: " + json)
-        println("received from realm db ride $workoutJsonList")
+        //Log.d("received from realm db ride as", "sendReport: " + json)
+        //println("received from realm db ride $workoutJsonList")
 
     }
 

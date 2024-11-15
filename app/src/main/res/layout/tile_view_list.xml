@@ -116,7 +116,7 @@
                     android:textSize="12sp"
                     android:textColor="@color/white"
                     android:textStyle="normal"
-                    android:text="@string/t_last_prepared" />
+                    android:text="@string/t_last_Status_prepared" />
 
                 <TextView
                     android:id="@+id/lastUpdateDate"
@@ -140,7 +140,7 @@
                     android:gravity="center"
                     android:textStyle="normal"
                     android:textColor="@color/white"
-                    android:text="@string/t_status" />
+                    android:text="@string/t_trails_statuss" />
 
                 <LinearLayout
                     android:id="@+id/idOpen"

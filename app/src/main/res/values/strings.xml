@@ -134,6 +134,8 @@
 
     <string name="t_total_length">Total Length:</string>
     <string name="t_last_prepared">Last Prepared</string>
+    <string name="t_last_Status_prepared">Last Prepared:</string>
+    <string name="t_trails_statuss">Status:</string>
     <string name="t_status">Status</string>
     <string name="t_km">Km</string>
     <string name="total_quality">Total Quality:</string>

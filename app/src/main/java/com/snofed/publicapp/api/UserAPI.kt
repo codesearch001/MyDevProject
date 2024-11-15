@@ -22,6 +22,7 @@ import com.snofed.publicapp.utils.ServiceUtil.BROWSE_CLUB_DETAILS
 import com.snofed.publicapp.utils.ServiceUtil.BROWSE_CLUB_LIST
 import com.snofed.publicapp.utils.ServiceUtil.CLUB_EVENT
 import com.snofed.publicapp.utils.ServiceUtil.CLUB_EVENT_DETAILS
+import com.snofed.publicapp.utils.ServiceUtil.CLUB_FAV_ITEMS
 import com.snofed.publicapp.utils.ServiceUtil.CLUB_TRAILS_CHART
 import com.snofed.publicapp.utils.ServiceUtil.CLUB_TRAILS_DETAILS
 import com.snofed.publicapp.utils.ServiceUtil.CLUB_TRAILS_DRAW_POLYLINES
@@ -118,5 +119,11 @@ interface UserAPI {
     suspend fun trailsGraphDetails(@Header("Accept-Language") acceptLanguage: String,
                                    @Path("id") id: String) : Response<TrailGraphData>
 
+
+    //CLUB_TRAILS_CHART
+    @GET(CLUB_FAV_ITEMS)
+    suspend fun requestFavClubById(@Header("Accept-Language") acceptLanguage: String,
+                                   @Query("ClientId") clientId: String,
+                                   @Query("HasProTrails") hasProTrails: Boolean = false): Response<BrowseSubClubResponse>
     // public static final String USER_PROFILE_IMAGE = "public-app/upload/profile-image/{userId}";
 }
