@@ -198,7 +198,7 @@ class LoginFragment : Fragment() {
             binding.progressBar.isVisible = false
             when (response) {
                 is NetworkResult.Success -> {
-                    Toast.makeText(requireActivity(), response.data?.success.toString(), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireActivity(), response.data?.message.toString(), Toast.LENGTH_SHORT).show()
                     val intent = Intent(requireActivity(), HomeDashBoardActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)

@@ -486,8 +486,8 @@ class StartMapRideFragment : Fragment() {
 
         feedWorkoutViewModel.workOutRideRequest(workoutJsonList)
 
-        val gson = Gson()
-        val json = gson.toJson(workoutJsonList)
+        //val gson = Gson()
+        //val json = gson.toJson(workoutJsonList)
 
         //Log.d("received from realm db ride as", "sendReport: " + json)
         //println("received from realm db ride $workoutJsonList")

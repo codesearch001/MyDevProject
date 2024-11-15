@@ -102,7 +102,7 @@ class RecoverPasswordFragment : Fragment() {
                 }
                 is NetworkResult.Error -> {
 
-                    Toast.makeText(requireActivity(), "User Does Not Exist", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireActivity(), it.message.toString(), Toast.LENGTH_SHORT).show()
 
                 }
                 is NetworkResult.Loading ->{

@@ -435,7 +435,9 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             AppPreference.savePreference(context, SharedPreferenceKeys.IS_USER_LOGGED_IN, "true")
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
-            _userResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+            _userResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("message", "One or more validation errors occurred.")))
+
+           // _userResponseLiveData.postValue(NetworkResult.Error(response.body()?.message))
         } else {
             _userResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
@@ -448,7 +450,7 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
 
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
-            _userResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+            _userResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("message", "One or more validation errors occurred.")))
         } else {
             _userResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
