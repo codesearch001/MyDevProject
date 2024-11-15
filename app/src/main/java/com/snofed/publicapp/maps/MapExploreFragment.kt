@@ -2,10 +2,15 @@ package com.snofed.publicapp.maps
 
 import PolylineManager
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.location.LocationManager
 import android.os.Bundle
+import android.os.Looper
+import android.provider.Settings
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,6 +21,7 @@ import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -25,7 +31,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -43,6 +53,7 @@ import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
+import com.mapbox.geojson.Point.fromLngLat
 import com.mapbox.geojson.Polygon
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.EdgeInsets
@@ -62,12 +73,15 @@ import com.mapbox.maps.extension.style.sources.getSource
 import com.mapbox.maps.plugin.animation.CameraAnimationsPlugin
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.camera
+import com.mapbox.maps.plugin.animation.easeTo
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.createAnnotationPlugin
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.gestures.OnMapClickListener
+import com.mapbox.maps.plugin.locationcomponent.LocationComponentPlugin
+import com.mapbox.maps.plugin.locationcomponent.location
 import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.BottomSheetApartmentsBinding
 import com.snofed.publicapp.databinding.FragmentMapExploreBinding
@@ -106,7 +120,10 @@ class MapExploreFragment : Fragment(){
     val gson = Gson()
     var defaultLat :String = ""
     var defaultLong :String = ""
+
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var locationCallback: LocationCallback
 
     var minLng = Double.MAX_VALUE
     var minLat = Double.MAX_VALUE
@@ -126,10 +143,54 @@ class MapExploreFragment : Fragment(){
         binding.backBtn.setOnClickListener {
             it.findNavController().popBackStack()
         }
-        // Initialize location client
+        // Initialize the FusedLocationProviderClient
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+        setupLocationRequest()
 
         return binding.root
+    }
+
+    private fun setupLocationRequest() {
+        locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000L)
+            .setWaitForAccurateLocation(true)
+            .build()
+
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                val location = locationResult.lastLocation
+                if (location != null) {
+                    updateMapToCurrentLocation(location)
+                    fusedLocationClient.removeLocationUpdates(locationCallback) // Stop updates after first result
+                }
+            }
+        }
+    }
+
+    private fun updateMapToCurrentLocation(location: android.location.Location) {
+        val currentPoint = fromLngLat(location.longitude, location.latitude)
+
+        val cameraOptions = CameraOptions.Builder()
+            .center(currentPoint)
+            .zoom(12.0) // Adjust zoom level as needed
+            .build()
+
+        mapboxMap.easeTo(cameraOptions)
+        enableLocationComponent()
+    }
+
+    private fun enableLocationComponent() {
+        // Get the location component
+        val locationComponent: LocationComponentPlugin = mapView.location
+
+        // Activate the location component
+        locationComponent.updateSettings {
+            enabled = true
+            pulsingEnabled = true // Pulsing effect around the current location
+            pulsingColor = Color.BLUE // Customize pulsing color if needed
+        }
+
+        // Set the location puck to display an arrow indicating direction
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -173,7 +234,7 @@ class MapExploreFragment : Fragment(){
 
         binding.fab1.setOnClickListener {
             animateFab()
-//            zoomToCurrentLocation()
+            checkPermissionsAndGps()
 
             //Toast.makeText(requireContext(), "camera click", Toast.LENGTH_SHORT).show()
         }
@@ -190,8 +251,73 @@ class MapExploreFragment : Fragment(){
         }
     }
 
+    private fun checkPermissionsAndGps() {
+        // Check if the app has location permission
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
+
+            // Request location permission
+            requestLocationPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        } else {
+            enableGPS() // If permission is already granted, enable GPS
+        }
 
 
+    }
+    // Register the permission result launcher
+    private val requestLocationPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                enableGPS()
+            } else {
+                Toast.makeText(requireContext(), "Location permission is required", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+    private fun enableGPS() {
+        val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            // If GPS is not enabled, open GPS settings screen
+            val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+            gpsSettingsLauncher.launch(intent)
+        } else {
+            //moveToCurrentLocation()
+            requestLocationUpdates()
+//            // If GPS is enabled, show a message or proceed with GPS-related tasks
+//            Toast.makeText(requireContext(), "GPS is already enabled", Toast.LENGTH_SHORT).show()
+        }
+    }
+    private fun requestLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+    }
+
+    // Register the ActivityResultLauncher for GPS settings
+    private val gpsSettingsLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                Toast.makeText(requireContext(), "GPS enabled", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Please enable GPS", Toast.LENGTH_SHORT).show()
+            }
+        }
     /* private fun zoomOut() {
          mapboxMap.getStyle { style ->
              val currentCameraPosition = mapboxMap.cameraState

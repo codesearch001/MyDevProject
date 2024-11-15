@@ -79,9 +79,10 @@ class TrailListAdapter(private var trails: List<Trail>, private val onItemClick:
         fun bind(trail: Trail, onItemClick: (Trail) -> Unit, onMapClick: (Trail) -> Unit, pageType: PageType) {
             binding.trailName.text = trail.name
 
-            var isProTrail = trail.isProTrail
+            val isProTrail = trail.isProTrail
 
             if (isProTrail){
+                binding.proTrailsLayout.isVisible = true
                 //binding.length.text = trail.length.toString() + " m"
                 //binding.length.text = Helper.m2Km(trail.length.toDouble()).toString() + R.string.t_km
                 binding.length.text  = Helper.m2Km(trail.length.toDouble()).toString() +  binding.root.context.getString(R.string.t_km)
@@ -107,6 +108,7 @@ class TrailListAdapter(private var trails: List<Trail>, private val onItemClick:
                         .into(binding.backgroundImage)
                 }
             }else{
+                binding.proTrailsLayout.isVisible = false
                 //binding.length.text = trail.length.toString() + " m"
                 //binding.length.text = Helper.m2Km(trail.length.toDouble()).toString() + R.string.t_km
                 binding.length.text  = Helper.m2Km(trail.length.toDouble()).toString() +  binding.root.context.getString(R.string.t_km)

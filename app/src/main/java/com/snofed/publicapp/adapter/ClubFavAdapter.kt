@@ -17,18 +17,18 @@ import com.snofed.publicapp.models.Client
 import com.snofed.publicapp.models.browseSubClub.BrowseSubClubResponse
 import com.snofed.publicapp.utils.ServiceUtil
 
-class ClubFavAdapter(val listener: OnItemClickListener) : RecyclerView.Adapter<ClubFavAdapter.ClubViewHolder>() {
-
+class ClubFavAdapter() : RecyclerView.Adapter<ClubFavAdapter.ClubViewHolder>() {
+    //val listener: OnItemClickListener
     //private var clubs: List<NewClubData> = listOf()
     private val clubs = mutableListOf<BrowseSubClubResponse>()
     private var outerArray:  List<BrowseSubClubResponse> =  listOf()
     private var filteredClubs: List<BrowseSubClubResponse> = listOf()
     private val wishlistItems: MutableSet<String> = mutableSetOf()
 
-    interface OnItemClickListener {
+    /*interface OnItemClickListener {
         fun onItemClick(clientId: String)
         fun onWishlistClick(clientId: String) // Callback for wishlist icon clicks
-    }
+    }*/
 //    init {
 //        filteredClubs = outerArray
 //    }
@@ -89,10 +89,10 @@ class ClubFavAdapter(val listener: OnItemClickListener) : RecyclerView.Adapter<C
         holder.tvName.text = reslult.data.publicName.toString()
         holder.tvLable.text = reslult.data.country.toString()
 
-        holder.cardIdLayout.setOnClickListener {
+        /*holder.cardIdLayout.setOnClickListener {
             Log.e("click..", "clickClubItem")
             listener.onItemClick(reslult.data.id) // Assuming Client has an 'id' property
-        }
+        }*/
         // Set wishlist icon based on the wishlist state
         if (wishlistItems.contains(reslult.data.id)) {
             holder.imgIdWishlist.setImageResource(R.drawable.hearth_filled)
@@ -111,7 +111,7 @@ class ClubFavAdapter(val listener: OnItemClickListener) : RecyclerView.Adapter<C
                 wishlistItems.add(clientId)
             }
             notifyItemChanged(position) // Notify that the item at this position has changed
-            listener.onWishlistClick(clientId) // Notify the listener
+            //listener.onWishlistClick(clientId) // Notify the listener
         }
 
         if (reslult.data.logoPath == null) {

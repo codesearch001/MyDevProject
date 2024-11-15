@@ -263,7 +263,7 @@
                         android:layout_marginTop="6dp"
                         android:background="@drawable/rounded_edit_text_background"
                         android:hint="@string/t_h_enter_your_mob_no"
-                        android:inputType="textPhonetic"
+                        android:inputType="phone"
                         android:padding="@dimen/_12sdp"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_11sdp" />

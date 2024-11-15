@@ -27,7 +27,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class BrowseFavFragment : Fragment(),ClubFavAdapter.OnItemClickListener {
+class BrowseFavFragment : Fragment() {//ClubFavAdapter.OnItemClickListener
     private var _binding: FragmentBrowseFavBinding? = null
     private val binding get() = _binding!!
 
@@ -64,7 +64,7 @@ class BrowseFavFragment : Fragment(),ClubFavAdapter.OnItemClickListener {
 
         favClubResponses.clear()
         // Initialize the adapter once
-        val clubAdapter = ClubFavAdapter(this)
+        val clubAdapter = ClubFavAdapter()
         binding.recyclerView.layoutManager = GridLayoutManager(requireActivity(), 2)
         binding.recyclerView.adapter = clubAdapter
         binding.recyclerView.isVisible = true
@@ -144,11 +144,5 @@ class BrowseFavFragment : Fragment(),ClubFavAdapter.OnItemClickListener {
 
     }
 
-    override fun onItemClick(clientId: String) {
-        TODO("Not yet implemented")
-    }
 
-    override fun onWishlistClick(clientId: String) {
-        TODO("Not yet implemented")
-    }
 }

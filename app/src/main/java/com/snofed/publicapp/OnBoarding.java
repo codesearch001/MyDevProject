@@ -60,8 +60,8 @@ public class OnBoarding extends AppCompatActivity {
 
 
     public void Skip(View view) {
-        tokenManager.getUserId();
-        startActivity(new Intent(this, HomeDashBoardActivity.class));
+        //tokenManager.getUserId();
+        startActivity(new Intent(this, MainActivity.class));
         finishAffinity();
     }
     public void DONE(View view) {

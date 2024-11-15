@@ -165,7 +165,6 @@ class HomeDashBoardActivity : AppCompatActivity(), DrawerController {
                 R.id.feedBackDetailsFragment -> hideBottomNav()
                 R.id.purchaseHistroryDeatisFragment -> hideBottomNav()
                 R.id.recoverFragment -> hideBottomNav()
-
                 else -> showBottomNav()
             }
         }
@@ -183,7 +182,7 @@ class HomeDashBoardActivity : AppCompatActivity(), DrawerController {
                 Toast.makeText(this, R.string.t_logged_out, Toast.LENGTH_SHORT).show()
 
                 // Navigate to the login activity
-                val intent = Intent(this, OnBoarding::class.java)
+                val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
                 finish() // Optional: finish the current activity
             }

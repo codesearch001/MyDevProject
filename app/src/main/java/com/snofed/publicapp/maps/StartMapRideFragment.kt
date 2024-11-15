@@ -508,41 +508,6 @@ class StartMapRideFragment : Fragment() {
         initializeLocationComponent() // Reinitialize the location component on resume
     }
 
-    override fun onPause() {
-        super.onPause()
-        stopLocationUpdates()
-    }
-
-    @SuppressLint("Lifecycle")
-    override fun onDestroy() {
-        super.onDestroy()
-        mapView.onDestroy()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    @SuppressLint("Lifecycle")
-    override fun onStop() {
-        super.onStop()
-        mapView.onStop() // Ensure MapView stops
-
-    }
-
-    @SuppressLint("Lifecycle")
-    override fun onStart() {
-        super.onStart()
-        mapView.onStart()
-    }
-
-
-    @SuppressLint("Lifecycle")
-    override fun onLowMemory() {
-        super.onLowMemory()
-        mapView.onLowMemory()
-    }
 
     private fun checkLocationPermission() {
         when {
@@ -957,5 +922,42 @@ class StartMapRideFragment : Fragment() {
 //         getWorkoutImage = NewWorkoutImage(UUID.randomUUID().toString(),path = uri.toString())
 //         workoutViewModel.addWorkoutImage(getWorkoutImage!!)
 //    }
+
+    override fun onPause() {
+        super.onPause()
+        stopLocationUpdates()
+    }
+
+    @SuppressLint("Lifecycle")
+    override fun onDestroy() {
+        super.onDestroy()
+        mapView.onDestroy()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    @SuppressLint("Lifecycle")
+    override fun onStop() {
+        super.onStop()
+        mapView.onStop() // Ensure MapView stops
+
+    }
+
+    @SuppressLint("Lifecycle")
+    override fun onStart() {
+        super.onStart()
+        mapView.onStart()
+    }
+
+
+    @SuppressLint("Lifecycle")
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView.onLowMemory()
+    }
+
 }
 

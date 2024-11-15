@@ -29,16 +29,14 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class TrailsStatusFragment : Fragment() {
+
     lateinit var _binding: FragmentTrailsStatusBinding
     private val binding get() = _binding!!
     private val sharedViewModel by activityViewModels<SharedViewModel>()
     private lateinit var trailsAdapter: TrailListAdapter
     private val pageType: PageType = PageType.MAP // Example page type, set as needed
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_trails_status, container, false)
         _binding = FragmentTrailsStatusBinding.inflate(inflater, container, false)
@@ -60,9 +58,9 @@ class TrailsStatusFragment : Fragment() {
 //        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
 //            tab.text = tabs[position]
 //        }.attach()
-//        binding.backBtn.setOnClickListener {
-//            it.findNavController().popBackStack()
-//        }
+        binding.backBtn.setOnClickListener {
+            it.findNavController().popBackStack()
+        }
 //        // Hide TabLayout
 //        binding.tabLayout.visibility = View.GONE
         return binding.root

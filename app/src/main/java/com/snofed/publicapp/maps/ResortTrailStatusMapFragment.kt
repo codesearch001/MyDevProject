@@ -266,7 +266,7 @@ class ResortTrailStatusMapFragment : Fragment() {
 
         val cameraOptions = CameraOptions.Builder()
             .center(currentPoint)
-            .zoom(8.0) // Adjust zoom level as needed
+            .zoom(12.0) // Adjust zoom level as needed
             .build()
 
         mapboxMap.easeTo(cameraOptions)
