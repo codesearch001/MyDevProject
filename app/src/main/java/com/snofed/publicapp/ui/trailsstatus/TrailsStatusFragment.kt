@@ -86,6 +86,8 @@ class TrailsStatusFragment : Fragment() {
         }, { clickedTrail ->
             // Handle map click
             showTrailMap(clickedTrail)
+        }, { upgradeClick ->
+            upgradeProTrails(upgradeClick)
         }, pageType)
 
 
@@ -137,6 +139,15 @@ class TrailsStatusFragment : Fragment() {
                 }
             })
         }
+    }
+
+    private fun upgradeProTrails(upgradeClick: Trail) {
+        val bundle = Bundle().apply {
+            putString("trailId", upgradeClick.id)
+            putParcelable("pageType", pageType) // Use putParcelable
+        }
+        val destination = R.id.newTicketFragment
+        findNavController().navigate(destination, bundle)
     }
 
     private fun showTrailMap(clickedTrail: Trail) {

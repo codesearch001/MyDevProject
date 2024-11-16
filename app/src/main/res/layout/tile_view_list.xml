@@ -230,9 +230,9 @@
                     android:id="@+id/proTrailText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="PRO trail"
+                    android:text="@string/pro_trails_uppercase"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/_22sdp"
+                    android:textSize="@dimen/_18sdp"
                     android:textStyle="bold" />
 
                 <!-- Upgrade Button -->
@@ -240,20 +240,20 @@
                     android:id="@+id/upgradeButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_8sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
                     android:background="@drawable/txt_blue_bg_color"
-                    android:paddingHorizontal="@dimen/_18sdp"
-                    android:text="Upgrade"
+                    android:paddingHorizontal="@dimen/_14sdp"
+                    android:text="@string/t_UPGRADE"
                     android:elevation="0dp"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/_12sdp" />
+                    android:textSize="@dimen/_11sdp" />
             </LinearLayout>
 
             <!-- Lock Icon -->
             <ImageView
                 android:id="@+id/lockIcon"
-                android:layout_width="@dimen/_68sdp"
-                android:layout_height="@dimen/_68sdp"
+                android:layout_width="@dimen/_60sdp"
+                android:layout_height="@dimen/_60sdp"
                 android:layout_toEndOf="@id/upgradeContainer"
                 android:src="@drawable/lock_closed" />
 

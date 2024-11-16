@@ -18,7 +18,11 @@ import com.snofed.publicapp.utils.DateTimeConverter
 import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.enums.PageType
 
-class TrailListAdapter(private var trails: List<Trail>, private val onItemClick: (Trail) -> Unit, private val onMapClick: (Trail) -> Unit, private val pageType: PageType) : RecyclerView.Adapter<TrailListAdapter.TrailViewHolder>() {
+class TrailListAdapter(private var trails: List<Trail>,
+                       private val onItemClick: (Trail) -> Unit,
+                       private val onMapClick: (Trail) -> Unit,
+                       private val onClickUpgrade: (Trail) -> Unit ,
+                       private val pageType: PageType) : RecyclerView.Adapter<TrailListAdapter.TrailViewHolder>() {
 
     private var outerArray: List<Trail> = listOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrailViewHolder {
@@ -32,7 +36,7 @@ class TrailListAdapter(private var trails: List<Trail>, private val onItemClick:
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: TrailViewHolder, position: Int) {
         val trail = trails[position]
-        holder.bind(trail, onItemClick, onMapClick, pageType)
+        holder.bind(trail, onItemClick, onMapClick, onClickUpgrade ,pageType)
     }
 
     override fun getItemCount(): Int = trails.size
@@ -76,7 +80,7 @@ class TrailListAdapter(private var trails: List<Trail>, private val onItemClick:
 
     class TrailViewHolder(private val binding: TileViewListBinding) : RecyclerView.ViewHolder(binding.root) {
         @RequiresApi(Build.VERSION_CODES.O)
-        fun bind(trail: Trail, onItemClick: (Trail) -> Unit, onMapClick: (Trail) -> Unit, pageType: PageType) {
+        fun bind(trail: Trail, onItemClick: (Trail) -> Unit, onMapClick: (Trail) -> Unit, onClickUpgrade: (Trail) -> Unit, pageType: PageType) {
             binding.trailName.text = trail.name
 
             val isProTrail = trail.isProTrail
@@ -106,6 +110,10 @@ class TrailListAdapter(private var trails: List<Trail>, private val onItemClick:
                     Glide.with(binding.backgroundImage).load(trail.trailIconPath)
                         .diskCacheStrategy(DiskCacheStrategy.ALL).fitCenter()
                         .into(binding.backgroundImage)
+                }
+
+                binding.upgradeButton.setOnClickListener {
+                    onClickUpgrade(trail)
                 }
             }else{
                 binding.proTrailsLayout.isVisible = false

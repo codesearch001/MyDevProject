@@ -58,7 +58,9 @@ import com.snofed.publicapp.databinding.FragmentResortTrailStatusMapBinding
 import com.snofed.publicapp.models.DataPolyResponse
 import com.snofed.publicapp.models.PolyLine
 import com.snofed.publicapp.ui.login.AuthViewModel
+import com.snofed.publicapp.utils.Constants
 import com.snofed.publicapp.utils.SharedViewModel
+import com.snofed.publicapp.utils.SnofedConstants
 import com.snofed.publicapp.utils.TokenManager
 import com.snofed.publicapp.utils.enums.PageType
 import dagger.hilt.android.AndroidEntryPoint
@@ -163,13 +165,10 @@ class ResortTrailStatusMapFragment : Fragment() {
         mapView = binding.mapView
         mapboxMap = mapView.mapboxMap
 
-         val defaultLat = 59.3251172
-        val defaultLong = 18.0710935
-
         mapboxMap.setCamera(
             CameraOptions.Builder()
-                .center(fromLngLat(defaultLong, defaultLat)) // Set desired center
-                .zoom(7.0) // Set desired zoom level
+                .center(fromLngLat(SnofedConstants.CENTER_LONG, SnofedConstants.CENTER_LAT)) // Set desired center
+                .zoom(9.0) // Set desired zoom level
                 .build())
 
         // Use the pageType here
@@ -269,7 +268,11 @@ class ResortTrailStatusMapFragment : Fragment() {
             .zoom(12.0) // Adjust zoom level as needed
             .build()
 
-        mapboxMap.easeTo(cameraOptions)
+        val animationOptions = MapAnimationOptions.Builder()
+            .duration(2000) // Duration in milliseconds
+            .build()
+
+        mapboxMap.easeTo(cameraOptions, animationOptions)
         enableLocationComponent()
     }
 
@@ -438,56 +441,25 @@ class ResortTrailStatusMapFragment : Fragment() {
 
         // Adjust camera to fit the bounding box
         if (response.features.isNotEmpty()) {
-            val latLngBounds = LatLngBounds.Builder()
-                .include(LatLng(minLat, minLng))
-                .include(LatLng(maxLat, maxLng))
-                .build()
-            val centerPoint = fromLngLat(latLngBounds.center.longitude, latLngBounds.center.latitude)
-            val baseZoomLevel = calculateZoomLevel(minLng, minLat, maxLng, maxLat)
-            val zoomOutAdjustment = 1.0
-            val adjustedZoomLevel = Math.min(12.0, baseZoomLevel + zoomOutAdjustment)
+            // Create a list of Point objects for bounding box calculation
+            val boundsCoordinates = listOf(
+                Point.fromLngLat(minLng, minLat),
+                Point.fromLngLat(maxLng, maxLat)
+            )
 
+            // Calculate camera options to fit the bounding box
+            val cameraOptions = mapboxMap.cameraForCoordinates(
+                boundsCoordinates,
+                EdgeInsets(50.0, 50.0, 50.0, 50.0) // Padding: top, left, bottom, right
+            )
 
-            val cameraOptions = CameraOptions.Builder()
-                .center(centerPoint)
-                .zoom(adjustedZoomLevel)
-                .build()
-            // Configure animation options
+            // Animate to the calculated camera position
             val animationOptions = MapAnimationOptions.Builder()
-                .duration(3000) // Duration in milliseconds
+                .duration(2000) // Duration in milliseconds
                 .build()
-            mapboxMap.easeTo(cameraOptions,animationOptions)
+            mapboxMap.easeTo(cameraOptions, animationOptions)
         }
-
     }
-
-//    fun calculateZoomLevel(minLng: Double, maxLng: Double, minLat: Double, maxLat: Double, mapView: MapView): Double {
-//       // You can implement custom logic here, or use a basic approximation
-//       val lngDiff = maxLng - minLng
-//       val latDiff = maxLat - minLat
-//       val mapSize = max(lngDiff, latDiff)
-//
-//       // Basic calculation for zoom level (you may need to adjust this scaling factor)
-//       return 14.0 - (mapSize * 5)
-//   }
-
-    private fun calculateZoomLevel(minLng: Double, minLat: Double, maxLng: Double, maxLat: Double): Double {
-
-        // Convert the bounding box width and height to map coordinates
-        val bboxWidth = maxLng - minLng
-        val bboxHeight = maxLat - minLat
-
-        // Map dimensions in pixels
-        val mapWidth = 150.0 // Width of the map at zoom level 0 (default tile size)
-        val mapHeight = 100.0 // Height of the map at zoom level 0 (default tile size)
-
-        // Calculate the zoom level based on the map's tile dimensions
-        // Maximum zoom level
-        val zoomLevel = Math.min(8.0, Math.log(Math.max(mapWidth / bboxWidth, mapHeight / bboxHeight)) / Math.log(2.0))
-        return zoomLevel
-    }
-
-
 
     private fun fetchResponse() {
         viewModelTrails.trailsDrawPolyLinesByIDRequestUser(specificTrailId!!)

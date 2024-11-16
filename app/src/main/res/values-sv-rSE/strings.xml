@@ -93,6 +93,7 @@
     <string name="tab_Valid_to">Giltig till:</string>
     <string name="tab_Total_Price">Totalpris:</string>
     <string name="tab_Number_of_Tickets">Antal biljetter:</string>
+    <string name="pro_trails_uppercase">ProTrails</string>
 
     <!--PURCHASE OPTION TEXT-->
     <string name="txt_Buy_single_ticket">Köp enskild biljett/ledbevis</string>

@@ -93,6 +93,7 @@
     <string name="tab_Valid_to">Valid to:</string>
     <string name="tab_Total_Price">Total Price:</string>
     <string name="tab_Number_of_Tickets">Number of Tickets:</string>
+    <string name="pro_trails_uppercase">PRO Trails</string>
 
     <!--PURCHASE OPTION TEXT-->
     <string name="txt_Buy_single_ticket">Buy single ticket</string>
