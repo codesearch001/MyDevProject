@@ -450,7 +450,7 @@ class ResortTrailStatusMapFragment : Fragment() {
             // Calculate camera options to fit the bounding box
             val cameraOptions = mapboxMap.cameraForCoordinates(
                 boundsCoordinates,
-                EdgeInsets(50.0, 50.0, 50.0, 50.0) // Padding: top, left, bottom, right
+                EdgeInsets(100.0, 50.0, 100.0, 50.0) // Padding: top, left, bottom, right
             )
 
             // Animate to the calculated camera position
@@ -466,6 +466,12 @@ class ResortTrailStatusMapFragment : Fragment() {
     }
 
     private fun getDrawPolyline(polylineData: PolyLine) {
+
+        var minLng = Double.MAX_VALUE
+        var minLat = Double.MAX_VALUE
+        var maxLng = Double.MIN_VALUE
+        var maxLat = Double.MIN_VALUE
+
         print("polylineData " + polylineData)
         mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS) { style ->
             // Get the feature and its coordinates
@@ -475,6 +481,15 @@ class ResortTrailStatusMapFragment : Fragment() {
             if (coordinates.isEmpty()) {
                 Log.e("MapboxError", "No coordinates found.")
                 return@loadStyle
+            }
+
+            coordinates.forEach {
+                val lng = it[0]
+                val lat = it[1]
+                if (lng < minLng) minLng = lng
+                if (lat < minLat) minLat = lat
+                if (lng > maxLng) maxLng = lng
+                if (lat > maxLat) maxLat = lat
             }
 
             // Convert coordinates to Points
@@ -510,31 +525,17 @@ class ResortTrailStatusMapFragment : Fragment() {
                 // Check if bounds are valid
             if (latLngBounds.southwest != null && latLngBounds.northeast != null) {
                 // Extract southwest and northeast points
-                val southwest = latLngBounds.southwest
-                val northeast = latLngBounds.northeast
 
-                // Calculate the center latitude and longitude
-                val centerLat = (southwest.latitude + northeast.latitude) / 2
-                val centerLng = (southwest.longitude + northeast.longitude) / 2
+                val boundsCoordinates = listOf(
+                    Point.fromLngLat(minLng, minLat),
+                    Point.fromLngLat(maxLng, maxLat)
+                )
 
-                // Calculate the bounding box width and height in degrees
-                val latSpan = northeast.latitude - southwest.latitude
-                val lngSpan = northeast.longitude - southwest.longitude
-
-                // Adjust zoom level based on bounding box size
-                // You might need to tweak these values to fit your requirements
-//                val zoomLevel = when {
-//                    latSpan > 0.1 || lngSpan > 0.1 -> 10.0  // Example value for larger areas
-//                    latSpan > 0.05 || lngSpan > 0.05 -> 12.0  // Example value for medium areas
-//                    else -> 8.0  // Example value for smaller areas
-//                }
-
-                // Configure camera options
-                val cameraOptions = CameraOptions.Builder()
-                    .center(fromLngLat(centerLng, centerLat))
-                    .zoom(9.0) // Dynamically adjusted zoom level
-                    .padding(EdgeInsets(10.0, 10.0, 10.0, 10.0)) // Optional padding
-                    .build()
+                // Calculate camera options to fit the bounding box
+                val cameraOptions = mapboxMap.cameraForCoordinates(
+                    boundsCoordinates,
+                    EdgeInsets(100.0, 50.0, 100.0, 50.0) // Padding: top, left, bottom, right
+                )
 
                 // Configure animation options
                 val animationOptions = MapAnimationOptions.Builder()
