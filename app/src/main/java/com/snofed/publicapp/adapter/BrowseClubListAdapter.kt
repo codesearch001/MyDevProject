@@ -85,6 +85,7 @@ class BrowseClubListAdapter(private val listener: OnItemClickListener) : Recycle
             listener.onItemClick(reslult.id) // Assuming Client has an 'id' property
         }
         // Set wishlist icon based on the wishlist state
+
         if (wishlistItems.contains(reslult.id)) {
             holder.imgIdWishlist.setImageResource(R.drawable.hearth_filled)
         } else {

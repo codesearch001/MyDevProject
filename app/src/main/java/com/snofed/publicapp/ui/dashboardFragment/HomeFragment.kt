@@ -46,7 +46,8 @@ class HomeFragment : Fragment() {
 
     private lateinit var recentFeedAdpater: RecentFeedAdpater
     val dateTimeConverter = DateTimeConverter()
-    private var lastDaysData: Long = 7
+    //private var lastDaysData: Long = 7
+    private var lastDaysData: Long = 1000
 
     @Inject
     lateinit var tokenManager: TokenManager
@@ -56,13 +57,15 @@ class HomeFragment : Fragment() {
 
         //for using status bar space
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            requireActivity().window.setFlags(
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+
+            requireActivity().window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
+
         binding.humburger.setOnClickListener {
             (activity as? DrawerController)?.openDrawer()
         }
+
         return binding.root
     }
 

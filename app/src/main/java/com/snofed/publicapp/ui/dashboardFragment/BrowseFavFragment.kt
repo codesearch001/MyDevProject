@@ -74,8 +74,7 @@ class BrowseFavFragment : Fragment() {//ClubFavAdapter.OnItemClickListener
      //   val favClubResponses = mutableListOf<ClubFavResponseType>() // Replace `ClubFavResponseType` with the actual type
 
         for (favClientId in clientIdList) {
-            fetchResponse(favClientId)
-
+            /*fetchResponse(favClientId)
             viewFavClubModel.clubFavLiveData.observe(viewLifecycleOwner, Observer { clubFavResponse ->
                 when (clubFavResponse) {
                     is NetworkResult.Success -> {
@@ -100,8 +99,10 @@ class BrowseFavFragment : Fragment() {//ClubFavAdapter.OnItemClickListener
                     }
                 }
             })
-            Log.e("idList", "praveenFAV111 $favClientId")
+            Log.e("idList", "praveenFAV111 $favClientId")*/
         }
+
+
 
 
        /* for (favClientId in clientIdList) {

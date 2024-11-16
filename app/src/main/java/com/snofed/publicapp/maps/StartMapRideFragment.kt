@@ -2,6 +2,7 @@ package com.snofed.publicapp.maps
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
@@ -16,8 +17,10 @@ import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import android.os.Looper
+import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
@@ -31,6 +34,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -73,6 +77,9 @@ import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.TokenManager
 import com.snofed.publicapp.utils.enums.SyncActionEnum
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
@@ -118,9 +125,9 @@ class StartMapRideFragment : Fragment() {
     private var uri: Uri? = null // Store the current URI
     private var isPublicRide: Boolean = true // Default value
 
-    private var isFirstReceivedLocation:Boolean = true
+    private var isFirstReceivedLocation: Boolean = true
     private var previousLocation: Location? = null
-    private var distance :Float= 0f
+    private var distance: Float = 0f
     val ACTIVE: Boolean = false
 
     // private var workout: List<NewRideWorkout> = listOf()
@@ -140,6 +147,10 @@ class StartMapRideFragment : Fragment() {
     private var Seconds = 0.0
     private var Minutes = 0
     private var avgPace = 0.0
+
+    private val CAMERA_PERMISSION_REQUEST = 101
+    private val CAMERA_REQUEST_CODE = 102
+    private var photoFile: File? = null
 
     @Inject
     lateinit var tokenManager: TokenManager
@@ -186,7 +197,7 @@ class StartMapRideFragment : Fragment() {
         Log.e("TAG_StartMapRideFragment", "workout_UDID: start$workout_UDID")
         Log.e("TAG_StartMapRideFragment", "workout_Point_UDID: start$workout_Point_UDID")
 
-        init()
+       // init()
 
 
         //mediaReader = MediaReader(this)
@@ -240,20 +251,20 @@ class StartMapRideFragment : Fragment() {
         checkLocationPermission()
     }
 
-    private fun init() {
-        //first time initialization when before start button click
-        workout = NewRideWorkout(
-            id = "",
-            syncAction = 0,
-            publicUserId = "",
-            publisherFullname = "",
-            activityId = "",
-            startTime = "",
-            isNewlyCreated = true
-        )
-
-        workoutViewModel.addNewRideWorkout(workout!!)
-    }
+//    private fun init() {
+//        //first time initialization when before start button click
+//        workout = NewRideWorkout(
+//            id = "",
+//            syncAction = 0,
+//            publicUserId = "",
+//            publisherFullname = "",
+//            activityId = "",
+//            startTime = "",
+//            isNewlyCreated = true
+//        )
+//
+//        workoutViewModel.addNewRideWorkout(workout!!)
+//    }
 
     private fun bindObservers() {
         feedWorkoutViewModel.userWorkoutRideLiveData.observe(viewLifecycleOwner, Observer {
@@ -290,21 +301,100 @@ class StartMapRideFragment : Fragment() {
     private fun openRideCamera() {
         // Set click listener on ImageView
         binding.rideCameraMap.setOnClickListener {
-            showImageOptionsDialog()
+            // showImageOptionsDialog()
+            checkPermissions()
+
         }
     }
 
-    private fun showImageOptionsDialog() {
-        val options = arrayOf(resources.getString(R.string.take_photo))
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle(resources.getString(R.string.t_select_image_source))
-        builder.setItems(options) { _: DialogInterface, which: Int ->
-            when (which) {
-                0 -> mediaReader.checkPermissionsAndOpenCamera() // Take Photo
+    private fun checkPermissions() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.CAMERA
+            ) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // If permissions are not granted, request them
+            requestPermissions(
+                arrayOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ),
+                CAMERA_PERMISSION_REQUEST
+            )
+        } else {
+            // Permissions already granted, open the camera directly
+            openCamera()
+        }
+    }
+
+
+    private fun openCamera() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        photoFile = createImageFile()
+        photoFile?.let {
+            val photoURI = FileProvider.getUriForFile(
+                requireContext(),
+                "${requireContext().packageName}.provider",
+                it
+            )
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+            startActivityForResult(intent, CAMERA_REQUEST_CODE)
+        }
+    }
+
+    private fun createImageFile(): File {
+        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile("IMG_${timestamp}_", ".jpg", storageDir)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CAMERA_PERMISSION_REQUEST) {
+            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                // Permissions granted, open the camera
+                openCamera()
+            } else {
+                // Permissions denied
+                Toast.makeText(requireContext(), "Permissions Denied", Toast.LENGTH_SHORT).show()
             }
         }
-        builder.show()
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            photoFile?.let { file ->
+                // Print the image path
+                val imagePath = file.absolutePath
+                Toast.makeText(requireContext(), "Image Path: $imagePath", Toast.LENGTH_LONG).show()
+                println("Captured Image Path: $imagePath")
+
+                // Proceed to upload the image
+                // uploadImage(file)
+                //onImageUriReceived(imagePath)
+            }
+        }
+    }
+    /* private fun showImageOptionsDialog() {
+         val options = arrayOf(resources.getString(R.string.take_photo))
+         val builder = AlertDialog.Builder(requireContext())
+         builder.setTitle(resources.getString(R.string.t_select_image_source))
+         builder.setItems(options) { _: DialogInterface, which: Int ->
+             when (which) {
+                 0 -> mediaReader.checkPermissionsAndOpenCamera() // Take Photo
+             }
+         }
+         builder.show()
+     }*/
 
     private fun updateStatusBarColor() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -327,7 +417,8 @@ class StartMapRideFragment : Fragment() {
             publisherFullname = userName.toString(),
             activityId = Constants.ACTIVITIES_ID,
             startTime = Helper.getDateNow(Constants.DATETIME_FORMAT),
-            isNewlyCreated = true)
+            isNewlyCreated = true
+        )
 
         tokenManager.saveWorkoutUdId(workout!!.id)
 
@@ -395,7 +486,11 @@ class StartMapRideFragment : Fragment() {
         binding.bPause.visibility = View.GONE
         binding.bResume.visibility = View.GONE
 
-        Toast.makeText(requireContext(), resources.getString(R.string.t_s_save_ride), Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            requireContext(),
+            resources.getString(R.string.t_s_save_ride),
+            Toast.LENGTH_SHORT
+        ).show()
 
         // Show the custom dialog when End button is clicked
         showSaveRideDialog()
@@ -433,7 +528,11 @@ class StartMapRideFragment : Fragment() {
             // Validate comment is not empty
             if (comment.isBlank()) {
                 // Show a toast message as well
-                Toast.makeText(requireContext(), resources.getString(R.string.t_please_enter_a_comment), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    resources.getString(R.string.t_please_enter_a_comment),
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
                 // Remove any previous error message
                 dialogBinding.editTextComment.error = null
@@ -483,14 +582,13 @@ class StartMapRideFragment : Fragment() {
         //val workoutJsonList: List<WorkoutResponse> = workoutViewModel.fetchWorkoutByIdAsJsonList(newWorkoutId!!)
 
         // FINAL DATA SEND OVER SERVER
-
         feedWorkoutViewModel.workOutRideRequest(workoutJsonList)
 
-        //val gson = Gson()
-        //val json = gson.toJson(workoutJsonList)
+        val gson = Gson()
+        val json = gson.toJson(workoutJsonList)
 
-        //Log.d("received from realm db ride as", "sendReport: " + json)
-        //println("received from realm db ride $workoutJsonList")
+        Log.d("received from realm db ride as", "sendReport: " + json)
+        println("received from realm db ride $workoutJsonList")
 
     }
 
@@ -787,7 +885,7 @@ class StartMapRideFragment : Fragment() {
             /*****************Create a new WorkoutPoint object*****************/
 
             //val udID = UUID.randomUUID().toString()
-           // print("udID+praveen " + udID)
+            // print("udID+praveen " + udID)
             workoutPoints = NewWorkoutPoint(
                 UUID.randomUUID().toString(),
                 currentLocation.latitude,
@@ -796,7 +894,8 @@ class StartMapRideFragment : Fragment() {
                 Helper.getDateNow(Constants.DATETIME_FORMAT),
                 distance.toDouble(),
                 SyncActionEnum.NEW.getValue(),
-                tokenManager.getWorkoutUdId().toString())
+                tokenManager.getWorkoutUdId().toString()
+            )
 
             /***************** ADD REALM  the new WorkoutPoint to the ViewModel*****************/
             workoutViewModel.addWorkoutPoint(workoutPoints!!)
@@ -917,11 +1016,11 @@ class StartMapRideFragment : Fragment() {
             }
         }
 
-//    fun onImageUriReceived(uri: Uri) {
-//        print("Saving get ride as iMAGE:${uri}")
-//         getWorkoutImage = NewWorkoutImage(UUID.randomUUID().toString(),path = uri.toString())
-//         workoutViewModel.addWorkoutImage(getWorkoutImage!!)
-//    }
+    fun onImageUriReceived(uri: Uri) {
+        print("Saving get ride as iMAGE:${uri}")
+         getWorkoutImage = NewWorkoutImage(UUID.randomUUID().toString(),1,path = uri.toString(),"Test",tokenManager.getWorkoutUdId().toString())
+         workoutViewModel.addWorkoutImage(getWorkoutImage!!)
+    }
 
     override fun onPause() {
         super.onPause()

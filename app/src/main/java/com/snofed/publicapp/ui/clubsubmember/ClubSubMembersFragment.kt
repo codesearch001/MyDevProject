@@ -85,6 +85,8 @@ class ClubSubMembersFragment : Fragment() {
         binding.backBtn.setOnClickListener {
             it.findNavController().popBackStack()
         }
+
+
         fetchResponse()
         clubViewModel.subClubLiveData.observe(viewLifecycleOwner, Observer {
             when (it) {
@@ -102,6 +104,21 @@ class ClubSubMembersFragment : Fragment() {
                      isParentMember = it.data?.data?.parentOrganisation//
                      isSubMember = it.data?.data?.subOrganisations?.isEmpty()// is == true
 
+                    /*if (wishlistItems.contains(reslult.id)) {
+                        holder.imgIdWishlist.setImageResource(R.drawable.hearth_filled)
+                    } else {
+                        holder.imgIdWishlist.setImageResource(R.drawable.hearth_empty)
+                    }*/
+
+                    if (it.data?.data?.isSubscribed == true){
+
+                        binding.isfavFillSubscribed.isVisible = true
+                        binding.isfavSubscribed.isVisible = false
+
+                    }else{
+                        binding.isfavSubscribed.isVisible = true
+                        binding.isfavFillSubscribed.isVisible = false
+                    }
 
                     if (isSubMember == true && isParentMember != null){
                         binding.txtSubOrgName.isVisible = true
