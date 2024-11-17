@@ -14,7 +14,6 @@ import com.snofed.publicapp.models.RideApiResponse
 import com.snofed.publicapp.models.TrailGraphData
 import com.snofed.publicapp.models.TrailPolyLinesResponse
 import com.snofed.publicapp.models.TrailsDetilsResponse
-import com.snofed.publicapp.models.User
 import com.snofed.publicapp.models.UserRecoverRequest
 import com.snofed.publicapp.models.UserRegRequest
 import com.snofed.publicapp.models.UserRequest
@@ -26,6 +25,7 @@ import com.snofed.publicapp.models.userData
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
 import com.snofed.publicapp.ui.setting.UploadResponse
+import com.snofed.publicapp.ui.setting.UploadWorkoutResponse
 import com.snofed.publicapp.utils.AppPreference
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.SharedPreferenceKeys
@@ -33,7 +33,9 @@ import com.snofed.publicapp.utils.TokenManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Response
@@ -62,6 +64,11 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
     private val _uploadResult = MutableLiveData<NetworkResult<UploadResponse>>()
     val uploadResult: LiveData<NetworkResult<UploadResponse>>
         get() = _uploadResult
+
+
+    private val _uploadWorkoutResult = MutableLiveData<NetworkResult<UploadWorkoutResponse>>()
+    val uploadWorkoutResult: LiveData<NetworkResult<UploadWorkoutResponse>>
+        get() = _uploadWorkoutResult
 
     private val _clubLiveData = MutableLiveData<NetworkResult<NewClubData>>()
     val clubLiveData: LiveData<NetworkResult<NewClubData>>
@@ -224,6 +231,54 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             Result.failure(e)
         }
     }
+
+    suspend fun uploadWorkOutIdImage(workOutId: String, files: MutableList<File>): Result<UploadWorkoutResponse> {
+        _uploadWorkoutResult.postValue(NetworkResult.Loading())
+        return try {
+            // Prepare files for multipart
+            val workoutIdRequestBody = workOutId.toRequestBody("text/plain".toMediaTypeOrNull())
+            val fileParts = files.map { file ->
+                val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+                MultipartBody.Part.createFormData("image", file.name, requestFile)
+
+
+            }
+
+            // Assuming userAPI supports multiple files
+            val response = userAPI?.uploadWorkoutImage(workoutIdRequestBody, fileParts.toMutableList())
+
+            if (response?.isSuccessful == true && response.body() != null) {
+                _uploadWorkoutResult.postValue(NetworkResult.Success(response.body()!!))
+                Result.success(response.body()!!)
+            } else {
+                _uploadWorkoutResult.postValue(NetworkResult.Error(response?.body()?.message ?: "Unknown error"))
+                Result.failure(Exception("Error: ${response?.message()}"))
+            }
+        } catch (e: Exception) {
+            _uploadWorkoutResult.postValue(NetworkResult.Error(e.localizedMessage ?: "Unknown error"))
+            Result.failure(e)
+        }
+    }
+
+// suspend fun uploadWorkOutIdImage(workOutId: String, file: List<File>): Result<UploadResponse> {
+//        _uploadResult.postValue(NetworkResult.Loading())
+//        return try {
+//            val requestFile = file.asRequestBody("WorkoutImages/*".toMediaTypeOrNull())
+//            val body = MultipartBody.Part.createFormData("image", file.name, requestFile)
+//
+//            val response = userAPI?.uploadWorkoutImage(workOutId, body)
+//
+//
+//            if (response?.isSuccessful== true && response?.body() != null) {
+//                _uploadResult.postValue(NetworkResult.Success(response.body()!!))
+//                Result.success(response.body()!!)
+//            } else {
+//                Result.failure(Exception("Error: ${response?.message()}"))
+//            }
+//        } catch (e: Exception) {
+//            Result.failure(e)
+//        }
+//    }
 
 
     suspend fun getClub() {

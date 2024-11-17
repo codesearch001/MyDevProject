@@ -137,7 +137,8 @@ class MediaReader(
         imageView?.setImageBitmap(circularBitmap)
 
         val compressedImage = createAndSaveCompressedImage(context, uri, 1000 * 1024)
-        listener.onImageUriReceived(uri)
+       // listener.onImageUriReceived(uri)
+        Log.e("TAG_ProfileSettingFragment", "onImageUriReceived: File path - ${uri}")
     }
 
     private fun getCorrectedBitmap(uri: Uri, context: Context): Bitmap {

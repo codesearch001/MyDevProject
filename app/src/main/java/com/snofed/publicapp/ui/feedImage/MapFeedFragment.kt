@@ -77,9 +77,12 @@ class MapFeedFragment : Fragment(){
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMapFeedBinding.inflate(inflater, container, false)
 
-        binding.humburger.setOnClickListener {
-            (activity as? DrawerController)?.openDrawer()
+        binding.backBtn.setOnClickListener {
+            it.findNavController().popBackStack()
         }
+      /*  binding.humburger.setOnClickListener {
+            (activity as? DrawerController)?.openDrawer()
+        }*/
         // Retrieve data from arguments
         // Ensure that the arguments and initialization are valid
         publicUserId = arguments?.getString("feedId") ?: ""

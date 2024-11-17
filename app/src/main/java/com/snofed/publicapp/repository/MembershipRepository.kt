@@ -29,8 +29,7 @@ class MembershipRepository @Inject constructor(@Named("MembershipApi") private v
     val membershipResponseLiveData: LiveData<NetworkResult<BuyMembership>>
         get() = _membershipResponseLiveData
 
-    private val _activeMembershipResponseLiveData =
-        MutableLiveData<NetworkResult<ActiveMembership>>()
+    private val _activeMembershipResponseLiveData = MutableLiveData<NetworkResult<ActiveMembership>>()
     val activeMembershipResponseLiveData: LiveData<NetworkResult<ActiveMembership>>
         get() = _activeMembershipResponseLiveData
 

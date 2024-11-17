@@ -39,11 +39,13 @@ import com.snofed.publicapp.ui.order.ticketing.OrderDTO
 import com.snofed.publicapp.ui.order.ticketing.OrderResponseDTO
 import com.snofed.publicapp.ui.order.ticketing.SwishResponseDTO
 import com.snofed.publicapp.ui.setting.UploadResponse
+import com.snofed.publicapp.ui.setting.UploadWorkoutResponse
 import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.MutableData
 import com.snofed.publicapp.utils.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import okhttp3.RequestBody
 import java.io.File
 import javax.inject.Inject
 
@@ -102,6 +104,9 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
 
     val uploadResult: LiveData<NetworkResult<UploadResponse>>
         get() = userRepository.uploadResult
+
+    val uploadWorkoutResult: LiveData<NetworkResult<UploadWorkoutResponse>>
+        get() = userRepository.uploadWorkoutResult
 
     val userDashBoardLiveData: LiveData<NetworkResult<FeedListResponse>>
         get() = userRepository.userDashBoardLiveData
@@ -250,6 +255,12 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
     fun uploadProfileImage(userId: String, file: File) {
         viewModelScope.launch {
             userRepository.uploadProfileImage(userId, file)
+           // _uploadResult.postValue(result)
+        }
+    }
+    fun uploadWorkOutIdImage(workOutId: String, file: MutableList<File>) {
+        viewModelScope.launch {
+            userRepository.uploadWorkOutIdImage(workOutId, file)
            // _uploadResult.postValue(result)
         }
     }

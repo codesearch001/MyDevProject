@@ -31,6 +31,8 @@ object ServiceUtil {
     //USER_PROFILE_IMAGE
     const val USER_PROFILE_IMAGE = "public-app/upload/profile-image/{userId}"
 
+    const val UPLOAD_WORKOUT_IMAGES = "public-app/workouts/upload-images/{WorkoutId}"
+
     //GET_USER_WORKOUTS
     const val GET_USER_WORKOUTS = "public-app/workouts/for-user/{id}"
 
@@ -57,7 +59,7 @@ object ServiceUtil {
 
     const val CLUB_WORKOUT_RIDE = "public-app/workouts"
 
-    const val UPLOAD_WORKOUT_IMAGES = "public-app/workouts/upload-images"
+
 
     /*** TASKING SERVICE FOR FEEDBACK ***/
     const val SYNC_PUBLIC_TASK_CATEGORIES = "tasking-service/task-categories/public-task-categories"

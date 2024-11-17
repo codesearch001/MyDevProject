@@ -2,7 +2,6 @@ package com.snofed.publicapp.api
 
 
 import com.snofed.publicapp.db.WorkoutResponse
-import com.snofed.publicapp.membership.model.BuyMembership
 import com.snofed.publicapp.models.NewClubData
 import com.snofed.publicapp.models.RideApiResponse
 import com.snofed.publicapp.models.TrailGraphData
@@ -18,6 +17,7 @@ import com.snofed.publicapp.models.events.EventResponse
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
 import com.snofed.publicapp.ui.setting.UploadResponse
+import com.snofed.publicapp.ui.setting.UploadWorkoutResponse
 import com.snofed.publicapp.utils.ServiceUtil.BROWSE_CLUB_DETAILS
 import com.snofed.publicapp.utils.ServiceUtil.BROWSE_CLUB_LIST
 import com.snofed.publicapp.utils.ServiceUtil.CLUB_EVENT
@@ -33,8 +33,10 @@ import com.snofed.publicapp.utils.ServiceUtil.GET_USER_WORKOUTS
 import com.snofed.publicapp.utils.ServiceUtil.LOGIN
 import com.snofed.publicapp.utils.ServiceUtil.RECOVER_PASSWORD
 import com.snofed.publicapp.utils.ServiceUtil.REGISTER
+import com.snofed.publicapp.utils.ServiceUtil.UPLOAD_WORKOUT_IMAGES
 import com.snofed.publicapp.utils.ServiceUtil.USER_PROFILE_IMAGE
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -71,7 +73,13 @@ interface UserAPI {
 
     @Multipart
     @POST(USER_PROFILE_IMAGE)
-    suspend fun uploadProfileImage(@Path("userId") userId: String, @Part file: MultipartBody.Part): Response<UploadResponse>  // Define `UploadResponse` based on your API response
+    suspend fun uploadProfileImage(@Path("userId") userId: String,
+                                   @Part file: MultipartBody.Part): Response<UploadResponse>  // Define `UploadResponse` based on your API response
+
+    @Multipart
+    @POST(UPLOAD_WORKOUT_IMAGES)
+    suspend fun uploadWorkoutImage(@Path("WorkoutId") workoutId: RequestBody,
+                                   @Part files: MutableList<MultipartBody.Part>): Response<UploadWorkoutResponse>  // Define `UploadResponse` based on your API response
 
     //BROWSE_CLUB
     @GET(BROWSE_CLUB_LIST)

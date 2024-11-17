@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
@@ -51,7 +50,6 @@ import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.LocationSettingsResponse
 import com.google.android.gms.location.Priority
 import com.google.android.gms.location.SettingsClient
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.tasks.Task
 import com.google.gson.Gson
 import com.mapbox.geojson.Point
@@ -70,13 +68,18 @@ import com.snofed.publicapp.ridelog.NewRideWorkout
 import com.snofed.publicapp.ridelog.NewWorkoutImage
 import com.snofed.publicapp.ridelog.NewWorkoutPoint
 import com.snofed.publicapp.ui.login.AuthViewModel
+import com.snofed.publicapp.ui.setting.WorkoutDataImages
+import com.snofed.publicapp.utils.AppPreference
 import com.snofed.publicapp.utils.Constants
 import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.MediaReader
 import com.snofed.publicapp.utils.NetworkResult
+import com.snofed.publicapp.utils.ServiceUtil
+import com.snofed.publicapp.utils.SharedPreferenceKeys
 import com.snofed.publicapp.utils.TokenManager
 import com.snofed.publicapp.utils.enums.SyncActionEnum
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.serialization.json.Json
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -92,7 +95,7 @@ class StartMapRideFragment : Fragment() {
     private val feedWorkoutViewModel by viewModels<AuthViewModel>()
 
     private lateinit var workoutViewModel: WorkoutViewModel
-
+    private val viewModel by viewModels<AuthViewModel>()
 
     private lateinit var mediaReader: MediaReader
     private lateinit var mapView: MapView
@@ -138,7 +141,7 @@ class StartMapRideFragment : Fragment() {
     private var getWorkoutImage: NewWorkoutImage? = null
     private var userId: String? = null
     private var workout_UDID: String? = null
-    private var workout_Point_UDID: String? = null
+   // private var workout_Point_UDID: String? = null
     private var userName: String? = null
     private var getWorkoutID: String? = null
     private var workouttest: String? = null
@@ -150,7 +153,11 @@ class StartMapRideFragment : Fragment() {
 
     private val CAMERA_PERMISSION_REQUEST = 101
     private val CAMERA_REQUEST_CODE = 102
+    private val capturedImages = mutableListOf<String>() // List to store image paths
     private var photoFile: File? = null
+   // private var workoutImgTemp : List<String> = listOf()
+    private var workoutImgTemp: MutableList<String> = mutableListOf()
+
 
     @Inject
     lateinit var tokenManager: TokenManager
@@ -192,10 +199,9 @@ class StartMapRideFragment : Fragment() {
 
 
         workout_UDID = UUID.randomUUID().toString()
-        workout_Point_UDID = UUID.randomUUID().toString()
+       // workout_Point_UDID = UUID.randomUUID().toString()
 
         Log.e("TAG_StartMapRideFragment", "workout_UDID: start$workout_UDID")
-        Log.e("TAG_StartMapRideFragment", "workout_Point_UDID: start$workout_Point_UDID")
 
        // init()
 
@@ -302,86 +308,166 @@ class StartMapRideFragment : Fragment() {
         // Set click listener on ImageView
         binding.rideCameraMap.setOnClickListener {
             // showImageOptionsDialog()
-            checkPermissions()
+            if (hasPermissions()) {
+                openCamera()
+            } else {
+                requestCameraPermissions()
+            }
+
+           // checkPermissions()
 
         }
     }
 
-    private fun checkPermissions() {
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.CAMERA
-            ) != PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // If permissions are not granted, request them
-            requestPermissions(
-                arrayOf(
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ),
-                CAMERA_PERMISSION_REQUEST
-            )
-        } else {
-            // Permissions already granted, open the camera directly
-            openCamera()
-        }
+    private fun hasPermissions(): Boolean {
+        // Check if Camera and Storage permissions are granted
+        val cameraPermission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+        val storagePermission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        return cameraPermission == PackageManager.PERMISSION_GRANTED && storagePermission == PackageManager.PERMISSION_GRANTED
     }
 
+    private fun requestCameraPermissions() {
+        requestPermissions(
+            arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            CAMERA_PERMISSION_REQUEST
+        )
+    }
 
     private fun openCamera() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         photoFile = createImageFile()
-        photoFile?.let {
-            val photoURI = FileProvider.getUriForFile(
-                requireContext(),
-                "${requireContext().packageName}.provider",
+        /*photoFile?.let {
+            val photoURI = FileProvider.getUriForFile(requireContext(), "com.snofed.publicapp.provider", // Ensure this matches your manifest
                 it
-            )
+            )*/
+            photoFile?.let {
+                val photoURI = FileProvider.getUriForFile(requireContext(), "${context?.packageName}.fileprovider", it)
+
             intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
             startActivityForResult(intent, CAMERA_REQUEST_CODE)
+        } ?: Toast.makeText(requireContext(), "Error creating file", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun createImageFile(): File? {
+        return try {
+            val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+            val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            if (!storageDir!!.exists()) {
+                storageDir.mkdirs() // Create directory if it doesn't exist
+            }
+            File.createTempFile("IMG_${timestamp}_", ".jpg", storageDir)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
     }
 
-    private fun createImageFile(): File {
-        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile("IMG_${timestamp}_", ".jpg", storageDir)
-    }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    @Deprecated("Deprecated in Java")
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == CAMERA_PERMISSION_REQUEST) {
-            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                // Permissions granted, open the camera
+            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
                 openCamera()
             } else {
-                // Permissions denied
                 Toast.makeText(requireContext(), "Permissions Denied", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            photoFile?.let { file ->
-                // Print the image path
-                val imagePath = file.absolutePath
-                Toast.makeText(requireContext(), "Image Path: $imagePath", Toast.LENGTH_LONG).show()
+            photoFile?.let {
+                val imagePath = it.absolutePath
+                val imageUri = Uri.fromFile(it) // Get URI from file
+               // capturedImages.add(imagePath) // Save image path to list
+                Toast.makeText(requireContext(), "Image Saved: $imagePath", Toast.LENGTH_SHORT).show()
+                //println("Captured Image Path: $imagePath")
+                println("Captured Image URI: $imageUri")
+                Toast.makeText(requireContext(), "Image Saved: $imagePath", Toast.LENGTH_SHORT).show()
                 println("Captured Image Path: $imagePath")
+                // showCapturedImages()
 
-                // Proceed to upload the image
-                // uploadImage(file)
-                //onImageUriReceived(imagePath)
+
+                // Ensure URI is not null
+                if (imageUri != null) {
+                    workoutImgTemp.add(imageUri.toString())
+                    Toast.makeText(requireContext(), "Image URI is  $imageUri", Toast.LENGTH_SHORT)
+                        .show()
+                } else {
+                    Toast.makeText(requireContext(), "Error: Image URI is null", Toast.LENGTH_SHORT)
+                        .show()
+                    return
+                }
+
+                // Observe upload result only once
             }
+        }
+    }
+
+    private fun imageResponse(uri: MutableList<String>, getWorkoutID: String) {
+        //val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
+        //val imageFile = uriToFile(uri)
+        val imageFiles = uriToFile(uri)
+        Log.e("TAG_ProfileSettingFragment", "onImageUriReceived: File path1111111 - ${imageFiles}")
+
+
+        if (imageFiles.isNotEmpty()) {
+            //Request api
+            viewModel.uploadWorkOutIdImage(getWorkoutID, imageFiles)
+            Log.e("TAG_ProfileSettingFragment", "onImageUriReceived: File path - ${imageFiles.size}")
+        } else {
+            Log.e("TAG_ProfileSettingFragment", "onImageUriReceived: Error converting URI to File")
+        }
+    }
+
+    private fun uriToFile(uris: MutableList<String>): MutableList<File> {
+        val fileList = mutableListOf<File>()
+        val contentResolver = requireContext().contentResolver
+
+        uris.forEach { uri ->
+            try {
+                val tempFile = File.createTempFile("profile_image", ".jpg", requireContext().cacheDir)
+                contentResolver.openInputStream(Uri.parse(uri))?.use { inputStream ->
+                    tempFile.outputStream().use { outputStream ->
+                        inputStream.copyTo(outputStream)
+                    }
+                }
+                fileList.add(tempFile)
+            } catch (e: Exception) {
+                Log.e("MyFragment", "Error converting URI to File: ${e.message}")
+            }
+        }
+
+        return fileList
+    }
+
+
+
+    /* private fun showCapturedImages() {
+         if (capturedImages.isNotEmpty()) {
+             Toast.makeText(requireContext(), "Captured Images:\n${capturedImages.joinToString("\n")}", Toast.LENGTH_LONG).show()
+         } else {
+             Toast.makeText(requireContext(), "No images captured yet!", Toast.LENGTH_SHORT).show()
+         }
+     }*/
+
+
+/*private fun showCapturedImages() {
+    if (capturedImages.isNotEmpty()) {
+        Toast.makeText(requireContext(), "Captured Images:\n${capturedImages.joinToString("\n")}", Toast.LENGTH_LONG).show()
+    } else {
+        Toast.makeText(requireContext(), "No images captured yet!", Toast.LENGTH_SHORT).show()
+    }
+}*/
+
+    private fun showCapturedImages() {
+        if (capturedImages.isNotEmpty()) {
+            Toast.makeText(requireContext(), "Captured Images:\n${capturedImages.joinToString("\n")}", Toast.LENGTH_LONG).show()
+        } else {
+            Toast.makeText(requireContext(), "No images captured yet!", Toast.LENGTH_SHORT).show()
         }
     }
     /* private fun showImageOptionsDialog() {
@@ -539,6 +625,10 @@ class StartMapRideFragment : Fragment() {
 
                 // Handle saving the ride here
 
+                //val magedata  = workoutImgTemp
+
+
+
                 saveRide(comment, isPublicRide)
 
                 // Dismiss the dialog
@@ -559,8 +649,17 @@ class StartMapRideFragment : Fragment() {
     private fun saveRide(comment: String, isPublic: Boolean) {
         // Perform necessary actions to save the ride
         val rideType = if (isPublic) "public" else "private"
+        Log.e("idprint", "praveen: start1 $" +tokenManager.getWorkoutUdId())
 
-        //newWorkoutId = UUID.randomUUID().toString()
+
+
+
+    //newWorkoutId = UUID.randomUUID().toString()
+//        workoutImgTemp.forEach { imagePath ->
+//            Log.e("println" ,"ssssss " +imagePath)
+//
+//
+//        }
 
         println("Saving ride as $rideType with comment: $comment")
         println("Saving ride Two $rideType with WID:" + tokenManager.getWorkoutUdId().toString())
@@ -575,14 +674,39 @@ class StartMapRideFragment : Fragment() {
         println("Saving ride as $isPublic with comment: $comment")
 
         //Get data from REALM
-        //val workoutJsonList: List<WorkoutResponse> = workoutViewModel.fetchWorkoutByIdAsJsonList(getWorkoutID.toString())
         val workoutJsonList: List<WorkoutResponse> =
             workoutViewModel.fetchWorkoutByIdAsJsonList(tokenManager.getWorkoutUdId().toString())
-
-        //val workoutJsonList: List<WorkoutResponse> = workoutViewModel.fetchWorkoutByIdAsJsonList(newWorkoutId!!)
+        
 
         // FINAL DATA SEND OVER SERVER
         feedWorkoutViewModel.workOutRideRequest(workoutJsonList)
+
+
+        //imageResponse(workoutImgTemp, tokenManager.getWorkoutUdId()!!)
+        Log.e("idprint", "praveen: start2 $" +tokenManager.getWorkoutUdId())
+
+        viewModel.uploadWorkoutResult.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is NetworkResult.Success -> {
+                    //val uploadMessage = result.data?.message ?: resources.getString(R.string.upload_successful)
+                    val images  = ServiceUtil.BASE_URL_IMAGE  + result.data?.data
+                    val gson = Gson()
+                    val json = gson.toJson(result.data?.data)
+
+                    onImageUriReceived(images)
+
+                    Log.e("TAG_ProfileSettingFragment", "json - $images")
+                    Toast.makeText(requireActivity(), images.toString(), Toast.LENGTH_SHORT).show()
+                }
+                is NetworkResult.Error -> {
+                    Log.e("TAG_ProfileSettingFragment", "result.message.toString() -" +result.message)
+                    Toast.makeText(requireActivity(), result.message.toString(), Toast.LENGTH_SHORT).show()
+                }
+                is NetworkResult.Loading -> {
+                    // Handle loading state
+                }
+            }
+        }
 
         val gson = Gson()
         val json = gson.toJson(workoutJsonList)
@@ -1016,9 +1140,11 @@ class StartMapRideFragment : Fragment() {
             }
         }
 
-    fun onImageUriReceived(uri: Uri) {
+
+
+    private fun onImageUriReceived(uri: String) {
         print("Saving get ride as iMAGE:${uri}")
-         getWorkoutImage = NewWorkoutImage(UUID.randomUUID().toString(),1,path = uri.toString(),"Test",tokenManager.getWorkoutUdId().toString())
+         getWorkoutImage = NewWorkoutImage(UUID.randomUUID().toString(),1, uri,"Test",tokenManager.getWorkoutUdId().toString())
          workoutViewModel.addWorkoutImage(getWorkoutImage!!)
     }
 

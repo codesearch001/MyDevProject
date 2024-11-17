@@ -1,0 +1,4 @@
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Define the external-path for your app's external files directory -->
+    <external-path name="external_files" path="." />
+</paths>
