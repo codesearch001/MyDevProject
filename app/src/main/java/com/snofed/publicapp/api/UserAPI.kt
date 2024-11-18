@@ -78,8 +78,8 @@ interface UserAPI {
 
     @Multipart
     @POST(UPLOAD_WORKOUT_IMAGES)
-    suspend fun uploadWorkoutImage(@Path("WorkoutId") workoutId: RequestBody,
-                                   @Part files: MutableList<MultipartBody.Part>): Response<UploadWorkoutResponse>  // Define `UploadResponse` based on your API response
+    suspend fun uploadWorkoutImage(@Part("WorkoutId") workoutId: RequestBody,
+                                   @Part WorkoutImages: List<MultipartBody.Part>): Response<UploadWorkoutResponse>  // Define `UploadResponse` based on your API response
 
     //BROWSE_CLUB
     @GET(BROWSE_CLUB_LIST)

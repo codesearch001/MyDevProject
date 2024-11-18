@@ -232,20 +232,22 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
         }
     }
 
-    suspend fun uploadWorkOutIdImage(workOutId: String, files: MutableList<File>): Result<UploadWorkoutResponse> {
+    suspend fun uploadWorkOutIdImage(workoutId: String, files: List<File>): Result<UploadWorkoutResponse> {
         _uploadWorkoutResult.postValue(NetworkResult.Loading())
         return try {
             // Prepare files for multipart
-            val workoutIdRequestBody = workOutId.toRequestBody("text/plain".toMediaTypeOrNull())
             val fileParts = files.map { file ->
-                val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-                MultipartBody.Part.createFormData("image", file.name, requestFile)
-
-
+                val fileReqBody = file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
+                //val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+                MultipartBody.Part.createFormData("WorkoutImages", file.name, fileReqBody)
             }
+            val workoutIdRequestBody: RequestBody = workoutId.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+            //val workoutIdRequestBody = workOutId.toRequestBody("text/plain".toMediaTypeOrNull())
 
+
+            Log.e("Praveen_Request","fileParts.... "+ fileParts.size)
             // Assuming userAPI supports multiple files
-            val response = userAPI?.uploadWorkoutImage(workoutIdRequestBody, fileParts.toMutableList())
+            val response = userAPI?.uploadWorkoutImage(workoutIdRequestBody, fileParts)
 
             if (response?.isSuccessful == true && response.body() != null) {
                 _uploadWorkoutResult.postValue(NetworkResult.Success(response.body()!!))

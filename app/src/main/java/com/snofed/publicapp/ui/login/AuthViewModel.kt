@@ -57,18 +57,18 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
     var mutableData = MutableData()
 
 
-
-
     val userResponseLiveData: LiveData<NetworkResult<UserResponse>>
         get() = userRepository.userResponseLiveData
+
 
     val userWorkoutRideLiveData: LiveData<NetworkResult<RideApiResponse>>
         get() = userRepository.userWorkoutRideLiveData
 
+
    val userFeedBackResponseLiveData: LiveData<NetworkResult<FeedApiResponse>>
         get() = feedBackRepository.userFeedBackResponseLiveData
 
- val feedBackTaskCategoriesLiveData: LiveData<NetworkResult<FeedBackTaskCategories>>
+  val feedBackTaskCategoriesLiveData: LiveData<NetworkResult<FeedBackTaskCategories>>
         get() = feedBackRepository.feedBackTaskCategoriesLiveData
 
     val membershipResponseLiveData: LiveData<NetworkResult<BuyMembership>>
@@ -258,7 +258,7 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
            // _uploadResult.postValue(result)
         }
     }
-    fun uploadWorkOutIdImage(workOutId: String, file: MutableList<File>) {
+    fun uploadWorkOutIdImage(workOutId: String, file: List<File>) {
         viewModelScope.launch {
             userRepository.uploadWorkOutIdImage(workOutId, file)
            // _uploadResult.postValue(result)

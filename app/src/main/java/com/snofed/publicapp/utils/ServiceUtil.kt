@@ -31,7 +31,7 @@ object ServiceUtil {
     //USER_PROFILE_IMAGE
     const val USER_PROFILE_IMAGE = "public-app/upload/profile-image/{userId}"
 
-    const val UPLOAD_WORKOUT_IMAGES = "public-app/workouts/upload-images/{WorkoutId}"
+    const val UPLOAD_WORKOUT_IMAGES = "public-app/workouts/upload-images"
 
     //GET_USER_WORKOUTS
     const val GET_USER_WORKOUTS = "public-app/workouts/for-user/{id}"
