@@ -117,6 +117,7 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
             when (result) {
                 is NetworkResult.Success -> {
                     val uploadMessage = result.data?.message ?: resources.getString(R.string.upload_successful)
+                    Log.e("ProfileSettingFragment", "Upload successful: $uploadMessage")
                     // Construct the URL for the uploaded image
                     val imageUrl = ServiceUtil.BASE_URL_IMAGE + result.data?.data.toString()
                     AppPreference.savePreference(context, SharedPreferenceKeys.PREFS_PROFILE_FILE, imageUrl)

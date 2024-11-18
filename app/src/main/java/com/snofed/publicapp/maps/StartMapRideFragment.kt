@@ -159,6 +159,7 @@ class StartMapRideFragment : Fragment() {
     private var workoutImgTemp: MutableList<String> = mutableListOf()
 
 
+
     @Inject
     lateinit var tokenManager: TokenManager
 
@@ -308,11 +309,11 @@ class StartMapRideFragment : Fragment() {
         // Set click listener on ImageView
         binding.rideCameraMap.setOnClickListener {
             // showImageOptionsDialog()
-            if (hasPermissions()) {
+           /* if (hasPermissions()) {
                 openCamera()
             } else {
                 requestCameraPermissions()
-            }
+            }*/
 
            // checkPermissions()
 
