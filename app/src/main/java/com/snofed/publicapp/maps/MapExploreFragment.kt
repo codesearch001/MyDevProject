@@ -98,6 +98,7 @@ import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.System.setProperties
+import java.util.Locale
 
 @AndroidEntryPoint
 class MapExploreFragment : Fragment(){
@@ -200,8 +201,8 @@ class MapExploreFragment : Fragment(){
         val gson = Gson()
         val data = gson.fromJson(defaultLocationJson, Map::class.java)
 
-        defaultLat = "%.6f".format(data["Latitude"].toString().toDoubleOrNull() ?: 0.0)
-        defaultLong = "%.6f".format(data["Longitude"].toString().toDoubleOrNull() ?: 0.0)
+        defaultLat = "%.6f".format(Locale.US,data["Latitude"].toString().toDoubleOrNull() ?: 0.0)
+        defaultLong = "%.6f".format(Locale.US,data["Longitude"].toString().toDoubleOrNull() ?: 0.0)
 
 
         // Initialize MapView and MapboxMap
