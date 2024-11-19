@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="16dp"
-    android:layout_gravity="center"
+    android:layout_marginTop="@dimen/_55sdp"
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp">
 
@@ -44,7 +44,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:text="(61)"
+                android:text=""
                 android:textColor="@android:color/darker_gray" />
         </LinearLayout>
 
@@ -65,7 +65,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Angel Woods"
+            android:text=""
             android:textColor="@android:color/black"
             android:textSize="@dimen/_12sdp"
             android:textStyle="bold"
@@ -79,7 +79,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Main club name"
+            android:text=""
             android:textColor="@android:color/darker_gray"
             android:textSize="@dimen/_8sdp"
             app:layout_constraintStart_toStartOf="parent"

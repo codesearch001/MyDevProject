@@ -89,6 +89,7 @@ class OrderHistoryFragment : Fragment(), OrderHistoryAdapter.OnItemClickListener
             putInt("status", daum.ticketOrderStatus.toInt())
             putInt("numberOfTickets", daum.tickets.count())
         }
-        findNavController().navigate(R.id.purchaseHistroryDeatisFragment, bundle)
+        findNavController().navigate(R.id.purchaseOrderDetilsFragment, bundle)
+        //findNavController().navigate(R.id.purchaseHistroryDeatisFragment, bundle)
     }
 }

@@ -245,5 +245,9 @@
         android:id="@+id/recoverFragment"
         android:name="com.snofed.publicapp.ui.login.RecoverPasswordFragment"
         android:label="RecoverFragment" />
+    <fragment
+        android:id="@+id/purchaseOrderDetilsFragment"
+        android:name="com.snofed.publicapp.purchasehistory.PurchaseOrderDetilsFragment"
+        android:label="PurchaseOrderDetilsFragment" />
 
 </navigation>

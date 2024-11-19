@@ -18,6 +18,7 @@ import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.mapbox.geojson.Point
@@ -190,9 +191,9 @@ class BrowseClubMapFragment : Fragment(), OnMapClickListener {
         val coordinates = annotation.point
         val client  = annotation.getData()
         val gson = Gson()
-        val clientData = gson.fromJson(client.toString(), ClientResponse::class.java)
+        val clientData = gson.fromJson(client.toString(), Client::class.java)
         // Remove any existing annotation views
-        viewAnnotationManager.removeAllViewAnnotations()
+       // viewAnnotationManager.removeAllViewAnnotations()
 
         // Create and configure the custom info window
         // Inflate your custom layout properly
@@ -204,15 +205,22 @@ class BrowseClubMapFragment : Fragment(), OnMapClickListener {
         val widthInPx = (widthInDp * displayMetrics.density).toInt()
         val heightInPx = (heightInDp * displayMetrics.density).toInt()
 
-        popupView.layoutParams = ViewGroup.LayoutParams(
-            widthInPx,
-            heightInPx
-        )
+        popupView.layoutParams = ViewGroup.LayoutParams(widthInPx, heightInPx)
 
         //val view = LayoutInflater.from(requireContext()).inflate(R.layout.map_popup_layout, null)
         popupView.findViewById<TextView>(R.id.club_name).text = clientData?.publicName?.trimStart()?.trimEnd()
-        popupView.findViewById<TextView>(R.id.club_main_name).text =
-            "Longitude: ${coordinates.longitude()}, Latitude: ${coordinates.latitude()}"
+       // popupView.findViewById<TextView>(R.id.club_main_name).text =
+        popupView.findViewById<TextView>(R.id.rating_text).text =clientData.clientRating
+        popupView.findViewById<TextView>(R.id.review_count).text ="(${clientData.totalRatings})"
+        popupView.findViewById<TextView>(R.id.view_club_page_button).setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("clientId", clientData.id)
+            val destination = R.id.clubSubMembersFragment
+            findNavController().navigate(destination, bundle)
+        }
+
+
+            /*"Longitude: ${coordinates.longitude()}, Latitude: ${coordinates.latitude()}"*/
 
         // Add the custom view as an annotation
         viewAnnotationManager.addViewAnnotation(
@@ -225,15 +233,15 @@ class BrowseClubMapFragment : Fragment(), OnMapClickListener {
                 allowOverlapWithPuck(true)
             }
         )
-//        cameraAnimationsPlugin = mapView.getPlugin(CameraAnimationsPlugin::class.java.toString())
-//        mapboxMap.setCamera(
-//            CameraOptions.Builder()
-//                .center(coordinates)
-//                .zoom(6.0) // Set desired zoom level
-//                .pitch(9.0)
-//                .build()
-//        )
-        //MapAnimationOptions.mapAnimationOptions { duration(3000) }
+        cameraAnimationsPlugin = mapView.getPlugin(CameraAnimationsPlugin::class.java.toString())
+        mapboxMap.setCamera(
+            CameraOptions.Builder()
+                .center(coordinates)
+                .zoom(6.0) // Set desired zoom level
+                .pitch(9.0)
+                .build()
+        )
+        MapAnimationOptions.mapAnimationOptions { duration(3000) }
     }
 
     private fun getResponse() {
@@ -316,8 +324,16 @@ class BrowseClubMapFragment : Fragment(), OnMapClickListener {
     }
 
     override fun onMapClick(point: Point): Boolean {
-        TODO("Not yet implemented")
+        dismissPopup()
+        print("click")
+        return true
     }
+    private fun dismissPopup() {
+
+        viewAnnotationManager.removeAllViewAnnotations()
+        Log.d("BrowseClubMapFragment", "Popup dismissed")
+    }
+
 }
 
 

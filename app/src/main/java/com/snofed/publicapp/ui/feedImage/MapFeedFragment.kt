@@ -27,6 +27,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
+import com.mapbox.geojson.Point.fromLngLat
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
@@ -49,6 +50,7 @@ import com.snofed.publicapp.utils.DrawerController
 import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.SharedViewModel
+import com.snofed.publicapp.utils.SnofedConstants
 import com.snofed.publicapp.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.ParseException
@@ -109,7 +111,11 @@ class MapFeedFragment : Fragment(){
 
         // Load Map Style
         mapView.mapboxMap.loadStyle(Style.OUTDOORS)
-
+        mapboxMap.setCamera(
+            CameraOptions.Builder()
+                .center(fromLngLat(SnofedConstants.CENTER_LONG, SnofedConstants.CENTER_LAT)) // Set desired center
+                .zoom(9.0) // Set desired zoom level
+                .build())
 
         fetchResponse()
         feedWorkoutViewModel.feedWorkoutLiveData.observe(viewLifecycleOwner, Observer { it ->
@@ -395,6 +401,8 @@ class MapFeedFragment : Fragment(){
                 // Add margin to the bounding box
                 val marginRatio = 1.0 // Adjust this ratio to fit your margin needs
                 val expandedBounds = expandBounds(bounds, marginRatio)
+
+
                 // Access the CameraAnimationsPlugin
                 val cameraAnimationsPlugin = mapView.camera
                 cameraAnimationsPlugin.easeTo(
@@ -456,7 +464,11 @@ class MapFeedFragment : Fragment(){
     // Extension function to convert Point to LatLng
     private fun Point.toLatLng(): LatLng {
         return LatLng(latitude(), longitude())
+
+
     }
+
+
 
     private fun fetchResponse() {
         feedWorkoutViewModel.feedWorkoutRequestUser(tokenManager.getPublicUserId().toString())

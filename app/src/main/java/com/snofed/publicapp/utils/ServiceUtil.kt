@@ -1,19 +1,17 @@
 package com.snofed.publicapp.utils
 
 object ServiceUtil {
-    const val TAG = "SNOFED_TAG"
 
     const val BASE_URL = "http://161.97.121.63:5000/api/"
+
     const val BASE_URL_IMAGE = "http://161.97.121.63:5000"
+
     const val FEED_BACK_BASE_URL = "http://161.97.121.63:5005/api/"
 
     const val MEMBERSHIP_BASE_URL = "http://161.97.121.63:5006/api/"
+
     //FOR MEMBERSHIP IMAGE
     const val BASE_URL_MEMB_IMAGE = "http://161.97.121.63:5006"
-    const val BASE_URL_PROFILE_IMAGE = "http://161.97.121.63:5000"
-
-    //api/clients/{id}
-
 
 
     //FOR REGISTER
@@ -25,7 +23,6 @@ object ServiceUtil {
     const val RECOVER_PASSWORD = "account/mobile-apps/forgot-password"
 
     //USER_PROFILE_SETTING
-    //http://161.97.121.63:5000/api/public-app/sync/user/settings
     const val USER_PROFILE_SETTING = "public-app/sync/user/settings"
 
     //USER_PROFILE_IMAGE
@@ -72,6 +69,7 @@ object ServiceUtil {
 
     /**********************HISTORY********************/
     const val TICKET_PURCHASE_ORDER_HISTORY = "ticket-order/history/{userRef}"
+
     const val TICKET_PURCHASE_ORDER_HISTORY_PRO_TRAILS = "/api/tickets/pro-trails/{userId}"
 
     const val GET_TICKET_TYPE = "ticket-type/client/{clientId}"
@@ -84,8 +82,11 @@ object ServiceUtil {
 
     /**********************MEMBERSHIP********************/
     const val GET_MEMBERSHIP = "membership?"
+
     //const val GET_ACTIVE_MEMBERSHIP = "membership/active/{userId}"
-    const val GET_ACTIVE_MEMBERSHIP = "membership/history/v2/{userId}"    //api/membership/history/v2/{userId}
+    const val GET_ACTIVE_MEMBERSHIP = "membership/history/v2/{userId}"    
+
+    //api/membership/history/v2/{userId}
     //const val GET_ALL_MEMBERSHIP = "membership"
     //const val GET_ACTIVE_MEMBERSHIP = "membership/active/{userRef}"
 

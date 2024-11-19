@@ -95,8 +95,9 @@ class RecoverPasswordFragment : Fragment() {
             when (it) {
                 is NetworkResult.Success -> {
 
-                    Toast.makeText(requireActivity(), "Link is sent to your Email address.\n" +
-                            "Please follow the instructions in the email to access your account.", Toast.LENGTH_LONG).show()
+                    val message = getString(R.string.link_sent_email) + "\n" + getString(R.string.email_follow_instruction)
+                    Toast.makeText(requireActivity(), message, Toast.LENGTH_LONG).show()
+
                     findNavController().popBackStack()
 
                 }

@@ -22,7 +22,6 @@ data class Data(
 )
 
 @Entity(tableName = "clients")
-/*@TypeConverters(Converters::class) // Add this annotation*/
 data class Client(
     @PrimaryKey val id: String,
     val country: String,

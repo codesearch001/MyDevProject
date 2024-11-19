@@ -103,6 +103,7 @@ class BrowseClubListAdapter(private val listener: OnItemClickListener) : Recycle
                 wishlistItems.add(clientId)
             }
             notifyItemChanged(position) // Notify that the item at this position has changed
+
             listener.onWishlistClick(clientId) // Notify the listener
         }
 

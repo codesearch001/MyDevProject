@@ -55,6 +55,11 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
             showImageOptionsDialog()
         }
 
+        binding.selectProfileImage.setOnClickListener {
+            showImageOptionsDialog()
+        }
+
+
 
         binding.switchWifi.isChecked = ClientPrefrences.getSwitchState(requireContext(), SharedPreferenceKeys.SWITCH_WIFI_STATE)
 
@@ -122,8 +127,8 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
                     val imageUrl = ServiceUtil.BASE_URL_IMAGE + result.data?.data.toString()
                     AppPreference.savePreference(context, SharedPreferenceKeys.PREFS_PROFILE_FILE, imageUrl)
 
+                    mediaReader.setImageView(binding.profileImageView,imageUrl)
 
-                   // Log.e("ProfileSettingFragment", "Upload successful: $uploadMessage")
                     Toast.makeText(requireActivity(), uploadMessage, Toast.LENGTH_SHORT).show()
                 }
                 is NetworkResult.Error -> {

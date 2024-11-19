@@ -84,6 +84,7 @@
     <string name="t_memberships">Memberships</string>
     <string name="t_recent_feed">Recent Feed</string>
     <string name="t_ride_logs">Ride Logs</string>
+    <string name="t_purchase_Order_details">Order Details</string>
 
     <!--PURCHASE HISTORY TAB TEXT-->
     <string name="tab_Orders_History">Orders</string>

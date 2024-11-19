@@ -165,6 +165,7 @@ class HomeDashBoardActivity : AppCompatActivity(), DrawerController {
                 R.id.feedBackDetailsFragment -> hideBottomNav()
                 R.id.purchaseHistroryDeatisFragment -> hideBottomNav()
                 R.id.recoverFragment -> hideBottomNav()
+                R.id.purchaseOrderDetilsFragment -> hideBottomNav()
                 else -> showBottomNav()
             }
         }
