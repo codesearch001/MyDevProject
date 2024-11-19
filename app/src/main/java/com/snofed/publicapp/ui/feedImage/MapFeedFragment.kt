@@ -41,6 +41,8 @@ import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.maps.extension.style.sources.getSource
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.camera
+import com.mapbox.maps.plugin.locationcomponent.LocationComponentPlugin
+import com.mapbox.maps.plugin.locationcomponent.location
 import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.FragmentMapFeedBinding
 import com.snofed.publicapp.models.workoutfeed.WorkoutPointResponse
@@ -344,9 +346,9 @@ class MapFeedFragment : Fragment(){
 
             style.addLayer(
                 lineLayer(layerId, "route-source") {
-                    lineColor(Color.RED)
-                    lineWidth(2.0) // Set the width of the route
-                    lineDasharray(listOf(3.0, 3.0)) // Create a dashed line pattern
+                    lineColor(Color.DKGRAY)
+                    lineWidth(3.0) // Set the width of the route
+                    lineDasharray(listOf(3.0, 1.0)) // Create a dashed line pattern
                 }
             )
 
@@ -415,7 +417,20 @@ class MapFeedFragment : Fragment(){
                         .duration(800) // Duration in milliseconds (e.g., 3 seconds)
                         .build()
                 )
+                enableLocationComponent()
             }
+        }
+    }
+
+    private fun enableLocationComponent() {
+        // Get the location component
+        val locationComponent: LocationComponentPlugin = mapView.location
+
+        // Activate the location component
+        locationComponent.updateSettings {
+            enabled = true
+            pulsingEnabled = true // Pulsing effect around the current location
+            pulsingColor = Color.BLUE // Customize pulsing color if needed
         }
     }
 
