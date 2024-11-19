@@ -193,7 +193,7 @@ class BrowseClubMapFragment : Fragment(), OnMapClickListener {
         val gson = Gson()
         val clientData = gson.fromJson(client.toString(), Client::class.java)
         // Remove any existing annotation views
-       // viewAnnotationManager.removeAllViewAnnotations()
+        viewAnnotationManager.removeAllViewAnnotations()
 
         // Create and configure the custom info window
         // Inflate your custom layout properly
@@ -324,15 +324,14 @@ class BrowseClubMapFragment : Fragment(), OnMapClickListener {
     }
 
     override fun onMapClick(point: Point): Boolean {
-        dismissPopup()
-        print("click")
+
         return true
     }
-    private fun dismissPopup() {
+   /* private fun dismissPopup() {
 
         viewAnnotationManager.removeAllViewAnnotations()
         Log.d("BrowseClubMapFragment", "Popup dismissed")
-    }
+    }*/
 
 }
 
