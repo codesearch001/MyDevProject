@@ -3,6 +3,7 @@ package com.snofed.publicapp.ui.dashboardFragment
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -13,9 +14,12 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import com.google.gson.Gson
+import com.google.gson.JsonElement
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
@@ -25,7 +29,10 @@ import com.snofed.publicapp.databinding.FragmentBrowseClubMapBinding
 import com.snofed.publicapp.utils.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import com.mapbox.maps.Style
+import com.mapbox.maps.ViewAnnotationAnchor
 import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
+import com.mapbox.maps.plugin.animation.CameraAnimationsPlugin
+import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.annotation.Annotation
 import com.mapbox.maps.plugin.annotation.AnnotationConfig
 import com.mapbox.maps.plugin.annotation.annotations
@@ -40,6 +47,8 @@ import com.mapbox.maps.plugin.gestures.OnMapClickListener
 import com.mapbox.maps.viewannotation.ViewAnnotationManager
 import com.mapbox.maps.viewannotation.geometry
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
+import com.snofed.publicapp.models.Client
+import com.snofed.publicapp.models.ClientResponse
 
 
 @AndroidEntryPoint
@@ -59,6 +68,10 @@ class BrowseClubMapFragment : Fragment(), OnMapClickListener {
     private lateinit var rotateForward: Animation
     private lateinit var rotateBackward: Animation
     private var isOpen = false
+    private var cameraAnimationsPlugin: CameraAnimationsPlugin? = null
+    // Desired width and height for the icon in pixels
+    val iconWidth = 50  // for example, 50px
+    val iconHeight = 85 // for example, 50px
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentBrowseClubMapBinding.inflate(inflater, container, false)
@@ -72,7 +85,8 @@ class BrowseClubMapFragment : Fragment(), OnMapClickListener {
         // Initialize MapView and MapboxMap
         mapView = binding.mapView
         mapboxMap = mapView.mapboxMap
-        iconBitmap = bitmapFromDrawableRes(requireContext(), R.drawable.red_marker)!!
+        //iconBitmap = bitmapFromDrawableRes(requireContext(), R.drawable.red_marker)!!
+        iconBitmap = bitmapFromDrawableRes(requireContext(), R.drawable.red_marker,iconWidth,iconHeight)!!
         viewAnnotationManager = binding.mapView.viewAnnotationManager
 
         // Fetch data and set up map
@@ -111,11 +125,12 @@ class BrowseClubMapFragment : Fragment(), OnMapClickListener {
             Log.d("BrowseClubMapFragment", "Map style loaded successfully")
 
             // Set the default camera settings
-            setDefaultCamera()
+            //setDefaultCamera()
 
             // Setup annotation manager
-            setupAnnotationManager()
+            //setupAnnotationManager()
         }
+
 
     }
 
@@ -142,7 +157,7 @@ class BrowseClubMapFragment : Fragment(), OnMapClickListener {
     }
 
 
-        private fun setDefaultCamera() {
+    private fun setDefaultCamera() {
         val initialPoint = Point.fromLngLat( pointsList.map { it.longitude() }.average(),
             pointsList.map { it.latitude() }.average()) // Default center point
         //val initialZoom = 18.0
@@ -150,30 +165,32 @@ class BrowseClubMapFragment : Fragment(), OnMapClickListener {
         mapboxMap.setCamera(
             CameraOptions.Builder()
                 .center(initialPoint)
-                .pitch(45.0)
-                .zoom(4.0)
+                .pitch(20.0)
+                .zoom(5.0)
                 .build()
         )
     }
 
-    private fun setupAnnotationManager() {
+    private fun setupAnnotationManager(clients: List<Client>) {
         val annotationPlugin = mapView.annotations
-        pointAnnotationManager = annotationPlugin.createPointAnnotationManager(AnnotationConfig(layerId = LAYER_ID))
+       pointAnnotationManager = annotationPlugin.createPointAnnotationManager(AnnotationConfig(layerId = LAYER_ID))
 
-        // Click listener to show the custom info window
-        pointAnnotationManager.addClickListener { clickedAnnotation ->
+       // Click listener to show the custom info window
+       pointAnnotationManager.addClickListener { clickedAnnotation ->
             showCustomInfoWindow(clickedAnnotation)
-            true
-        }
+          true
+      }
 
         // Add markers to the map
-        updateMapWithPoints()
+        updateMapWithPoints(clients)
     }
 
     @SuppressLint("InflateParams")
     private fun showCustomInfoWindow(annotation: PointAnnotation) {
         val coordinates = annotation.point
-
+        val client  = annotation.getData()
+        val gson = Gson()
+        val clientData = gson.fromJson(client.toString(), ClientResponse::class.java)
         // Remove any existing annotation views
         viewAnnotationManager.removeAllViewAnnotations()
 
@@ -193,7 +210,7 @@ class BrowseClubMapFragment : Fragment(), OnMapClickListener {
         )
 
         //val view = LayoutInflater.from(requireContext()).inflate(R.layout.map_popup_layout, null)
-        popupView.findViewById<TextView>(R.id.club_name).text = "Marker Title"
+        popupView.findViewById<TextView>(R.id.club_name).text = clientData?.publicName?.trimStart()?.trimEnd()
         popupView.findViewById<TextView>(R.id.club_main_name).text =
             "Longitude: ${coordinates.longitude()}, Latitude: ${coordinates.latitude()}"
 
@@ -202,22 +219,34 @@ class BrowseClubMapFragment : Fragment(), OnMapClickListener {
             popupView,
             viewAnnotationOptions {
                 geometry(coordinates)
-                allowOverlap(true)
-                ignoreCameraPadding(true)
+                //anchor(ViewAnnotationAnchor.BOTTOM) // Attach popup at the bottom of the POI
+                allowOverlap(true)     // Allow overlapping with other annotations (optional)
+                ignoreCameraPadding(true)  // Optionally ignore camera padding
                 allowOverlapWithPuck(true)
             }
         )
+//        cameraAnimationsPlugin = mapView.getPlugin(CameraAnimationsPlugin::class.java.toString())
+//        mapboxMap.setCamera(
+//            CameraOptions.Builder()
+//                .center(coordinates)
+//                .zoom(6.0) // Set desired zoom level
+//                .pitch(9.0)
+//                .build()
+//        )
+        //MapAnimationOptions.mapAnimationOptions { duration(3000) }
     }
 
     private fun getResponse() {
         showLoader()
         sharedViewModel.browseClubResponse.observe(viewLifecycleOwner, Observer { response ->
             hideLoader()
-            response?.data?.clients?.filter { it.visibility == 0 }?.let { apiPoints ->
-                pointsList = apiPoints.map {
+            response?.data?.clients?.filter { it.visibility == 0 }?.let { clients ->
+                pointsList = clients.map {
                     Point.fromLngLat(it.startLongitude.toDouble(), it.startLatitude.toDouble())
                 }
-                updateMapWithPoints()
+                //updateMapWithPoints()
+                setDefaultCamera()
+                setupAnnotationManager(clients)
             } ?: Log.e("browseClubResponse", "Failed to fetch response")
         })
     }
@@ -230,32 +259,49 @@ class BrowseClubMapFragment : Fragment(), OnMapClickListener {
         binding.progressBar.visibility = View.GONE
     }
 
-    private fun updateMapWithPoints() {
+    private fun updateMapWithPoints(clients: List<Client>) {
         if (this::pointAnnotationManager.isInitialized) {
             pointAnnotationManager.deleteAll()
-            prepareAnnotationMarker(pointsList)
+            prepareAnnotationMarker(clients)
         } else {
             Log.e("BrowseClubMapFragment", "PointAnnotationManager not initialized")
         }
     }
 
-    private fun bitmapFromDrawableRes(context: Context, resId: Int): Bitmap? {
-        val drawable = ContextCompat.getDrawable(context, resId) ?: return null
-        val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
-        val canvas = android.graphics.Canvas(bitmap)
-        drawable.setBounds(0, 0, 80, 80)
+//    private fun bitmapFromDrawableRes(context: Context, resId: Int): Bitmap? {
+//        val drawable = ContextCompat.getDrawable(context, resId) ?: return null
+//        val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+//        val canvas = android.graphics.Canvas(bitmap)
+//        drawable.setBounds(0, 0, 80, 80)
+//        drawable.draw(canvas)
+//        return bitmap
+//    }
+
+    private fun bitmapFromDrawableRes(context: Context, @DrawableRes resourceId: Int, width: Int, height: Int): Bitmap? {
+        val drawable = ContextCompat.getDrawable(context, resourceId) ?: return null
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, width, height)
         drawable.draw(canvas)
         return bitmap
     }
 
-    private fun prepareAnnotationMarker(pointsList: List<Point>) {
-        pointsList.forEach { point ->
+    private fun prepareAnnotationMarker(clients: List<Client>) {
+        clients.forEach { client ->
             val pointAnnotationOptions = PointAnnotationOptions()
-                .withPoint(point)
+                .withPoint(Point.fromLngLat(client.startLongitude.toDouble(), client.startLatitude.toDouble()))
                 .withIconImage(iconBitmap)
                 .withIconAnchor(IconAnchor.BOTTOM)
                 .withDraggable(false)
-            pointAnnotationManager.create(pointAnnotationOptions)
+           // pointAnnotationManager.create(pointAnnotationOptions)
+            // Create the annotation and attach the client data as metadata
+            val pointAnnotation = pointAnnotationManager.create(pointAnnotationOptions)
+
+
+            val gson = Gson()
+            // Convert Client object to JsonElement
+            val clientJson: JsonElement = gson.toJsonTree(client)
+            pointAnnotation.setData(clientJson)
         }
         Log.d("BrowseClubMapFragment", "Annotations added: ${pointsList.size}")
     }
