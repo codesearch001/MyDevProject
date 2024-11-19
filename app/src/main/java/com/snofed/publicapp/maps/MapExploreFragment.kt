@@ -96,6 +96,7 @@ import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.DrawerController
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.SharedViewModel
+import com.snofed.publicapp.utils.SnofedConstants
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.System.setProperties
 import java.util.Locale
@@ -201,8 +202,8 @@ class MapExploreFragment : Fragment(){
         val gson = Gson()
         val data = gson.fromJson(defaultLocationJson, Map::class.java)
 
-        defaultLat = "%.6f".format(Locale.US,data["Latitude"]?.toString()?.toDoubleOrNull() ?: 0.0)
-        defaultLong = "%.6f".format(Locale.US,data["Longitude"]?.toString()?.toDoubleOrNull() ?: 0.0)
+        defaultLat = "%.6f".format(Locale.US,data["Latitude"]?.toString()?.toDoubleOrNull() ?: SnofedConstants.CENTER_LAT)
+        defaultLong = "%.6f".format(Locale.US,data["Longitude"]?.toString()?.toDoubleOrNull() ?: SnofedConstants.CENTER_LONG)
 
 
         // Initialize MapView and MapboxMap
