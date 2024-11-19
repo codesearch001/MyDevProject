@@ -201,8 +201,8 @@ class MapExploreFragment : Fragment(){
         val gson = Gson()
         val data = gson.fromJson(defaultLocationJson, Map::class.java)
 
-        defaultLat = "%.6f".format(Locale.US,data["Latitude"].toString().toDoubleOrNull() ?: 0.0)
-        defaultLong = "%.6f".format(Locale.US,data["Longitude"].toString().toDoubleOrNull() ?: 0.0)
+        defaultLat = "%.6f".format(Locale.US,data["Latitude"]?.toString()?.toDoubleOrNull() ?: 0.0)
+        defaultLong = "%.6f".format(Locale.US,data["Longitude"]?.toString()?.toDoubleOrNull() ?: 0.0)
 
 
         // Initialize MapView and MapboxMap
