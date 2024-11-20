@@ -4,8 +4,10 @@
     android:layout_height="wrap_content"
     android:layout_margin="16dp"
     android:layout_marginTop="@dimen/_55sdp"
+    android:clickable="false"
+    android:focusable="false"
     app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    app:cardElevation="6dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -19,6 +21,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:paddingEnd="@dimen/_2sdp"
+            android:paddingStart="@dimen/_2sdp"
+            android:background="@color/card_background"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -27,7 +32,7 @@
                 android:id="@+id/rating_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="4.4"
+                android:text="0.0"
                 android:textColor="@android:color/black"
                 android:textStyle="bold" />
 
@@ -53,8 +58,8 @@
             android:id="@+id/heart_icon"
             android:layout_width="@dimen/_32sdp"
             android:layout_height="@dimen/_32sdp"
-            android:layout_marginStart="8dp"
             android:padding="@dimen/_6sdp"
+            android:background="@drawable/circle_gray_background"
             android:src="@drawable/hearth_empty"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -64,7 +69,7 @@
             android:id="@+id/club_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/_14sdp"
             android:text=""
             android:textColor="@android:color/black"
             android:textSize="@dimen/_12sdp"
@@ -78,7 +83,7 @@
             android:id="@+id/club_main_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="@dimen/_2sdp"
             android:text=""
             android:textColor="@android:color/darker_gray"
             android:textSize="@dimen/_8sdp"
@@ -91,15 +96,15 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_4sdp"
-            android:layout_marginTop="12dp"
             android:layout_marginBottom="8dp"
             android:background="@drawable/blue_outline_button"
             android:backgroundTint="@android:color/transparent"
             android:drawablePadding="8dp"
             android:padding="@dimen/_8sdp"
-            android:textSize="@dimen/_8sdp"
+            android:textSize="@dimen/_9sdp"
             android:text="View club page"
-            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textColor="@color/holo_blue_light"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/club_main_name" />

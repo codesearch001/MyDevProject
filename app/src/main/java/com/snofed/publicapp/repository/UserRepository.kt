@@ -1,5 +1,6 @@
 package com.snofed.publicapp.repository
 
+import RealmRepository
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -10,10 +11,12 @@ import com.snofed.publicapp.api.UserAPI
 import com.snofed.publicapp.db.WorkoutResponse
 import com.snofed.publicapp.membership.model.BuyMembership
 import com.snofed.publicapp.models.NewClubData
+import com.snofed.publicapp.models.PublicUserSettingsRealm
 import com.snofed.publicapp.models.RideApiResponse
 import com.snofed.publicapp.models.TrailGraphData
 import com.snofed.publicapp.models.TrailPolyLinesResponse
 import com.snofed.publicapp.models.TrailsDetilsResponse
+import com.snofed.publicapp.models.User
 import com.snofed.publicapp.models.UserRecoverRequest
 import com.snofed.publicapp.models.UserRegRequest
 import com.snofed.publicapp.models.UserRequest
@@ -31,6 +34,8 @@ import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.SharedPreferenceKeys
 import com.snofed.publicapp.utils.TokenManager
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.realm.Realm
+import io.realm.RealmList
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -471,14 +476,55 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             Log.e("UserId", "UserId " + response.body()!!.data.id)
 
 
-            val gson = Gson()
+           /* val gson = Gson()
             val jsonString = gson.toJson(response.body()!!.data)
-            val user = Gson().fromJson(jsonString, userData::class.java)
+            val user = Gson().fromJson(jsonString, userData::class.java)*/
 
+            // Convert response data to UserRealm
+            val userResponseData = response.body()!!.data
+            val user = User().apply {
+                id = userResponseData.id
+                email = userResponseData.email
+                firstName = userResponseData.firstName
+                lastName = userResponseData.lastName
+                fullName = userResponseData.fullName
+                username = userResponseData.username
+                phone = userResponseData.phone.toString()
+                cellphone = userResponseData.cellphone.toString()
+                isConfirmed = userResponseData.isConfirmed
+                isDeleted = userResponseData.isDeleted
+                password = userResponseData.password.toString()
+                roleName = userResponseData.roleName.toString()
+                clientName = userResponseData.clientName.toString()
+                clientId = userResponseData.clientId.toString()
+                token = userResponseData.token
+                userGroupId = userResponseData.userGroupId
+                gender = userResponseData.gender
+                weight = userResponseData.weight
+                age = userResponseData.age
+                isSubscribed = userResponseData.isSubscribed
+                favouriteClients = RealmList(*userResponseData.favouriteClients?.toTypedArray() ?: arrayOf())
+                publicUserSettings = RealmList(*userResponseData.publicUserSettings?.map {
+                    PublicUserSettingsRealm().apply {
+                        key = it.key
+                        value = it.value
+                    }
+                }?.toTypedArray() ?: arrayOf())
+            }
 
-            Log.e("Settings", "userResponse1 " + jsonString)
-            Log.e("Settings", "userResponse2 " + user)
+            // Save UserRealm in Realm
+            // Use the generic RealmRepository to save the UserRealm object
+            val realmRepository = RealmRepository()
+            realmRepository.insertOrUpdate(user)
+            // Print saved data
+            val savedUser = realmRepository.getById(User::class.java, user.id)
 
+            Log.e("SavedUser", "Saved User Data: $savedUser")
+
+            // Log the publicUserSettings if available
+            savedUser?.publicUserSettings?.forEach {
+                Log.e("PublicUserSettings", "Key: ${it.key}, Value: ${it.value}")
+            }
 
 
             AppPreference.savePreference(context, SharedPreferenceKeys.USER_TOKEN, response.body()!!.data.token)

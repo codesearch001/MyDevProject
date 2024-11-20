@@ -45,6 +45,7 @@ import com.mapbox.maps.viewannotation.viewAnnotationOptions
 
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.gestures.OnMapClickListener
+import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.viewannotation.ViewAnnotationManager
 import com.mapbox.maps.viewannotation.geometry
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
@@ -53,7 +54,7 @@ import com.snofed.publicapp.models.ClientResponse
 
 
 @AndroidEntryPoint
-class BrowseClubMapFragment : Fragment(), OnMapClickListener {
+class BrowseClubMapFragment : Fragment() {
     private var _binding: FragmentBrowseClubMapBinding? = null
     private val binding get() = _binding!!
     private val sharedViewModel by activityViewModels<SharedViewModel>()
@@ -73,6 +74,7 @@ class BrowseClubMapFragment : Fragment(), OnMapClickListener {
     // Desired width and height for the icon in pixels
     val iconWidth = 50  // for example, 50px
     val iconHeight = 85 // for example, 50px
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentBrowseClubMapBinding.inflate(inflater, container, false)
@@ -188,6 +190,8 @@ class BrowseClubMapFragment : Fragment(), OnMapClickListener {
 
     @SuppressLint("InflateParams")
     private fun showCustomInfoWindow(annotation: PointAnnotation) {
+
+
         val coordinates = annotation.point
         val client  = annotation.getData()
         val gson = Gson()
@@ -206,6 +210,7 @@ class BrowseClubMapFragment : Fragment(), OnMapClickListener {
         val heightInPx = (heightInDp * displayMetrics.density).toInt()
 
         popupView.layoutParams = ViewGroup.LayoutParams(widthInPx, heightInPx)
+
 
         //val view = LayoutInflater.from(requireContext()).inflate(R.layout.map_popup_layout, null)
         popupView.findViewById<TextView>(R.id.club_name).text = clientData?.publicName?.trimStart()?.trimEnd()
@@ -242,6 +247,11 @@ class BrowseClubMapFragment : Fragment(), OnMapClickListener {
                 .build()
         )
         MapAnimationOptions.mapAnimationOptions { duration(3000) }
+        // Dismiss popup when clicking outside
+        mapboxMap.addOnMapClickListener {
+            viewAnnotationManager.removeAllViewAnnotations()
+            true
+        }
     }
 
     private fun getResponse() {
@@ -323,16 +333,13 @@ class BrowseClubMapFragment : Fragment(), OnMapClickListener {
         const val LAYER_ID = "layer-id"
     }
 
-    override fun onMapClick(point: Point): Boolean {
-
+    /*override fun onMapClick(point: Point): Boolean {
+        *//*if (isPopupVisible) {
+            viewAnnotationManager.removeAllViewAnnotations()
+            isPopupVisible = false
+        }*//*
         return true
-    }
-   /* private fun dismissPopup() {
-
-        viewAnnotationManager.removeAllViewAnnotations()
-        Log.d("BrowseClubMapFragment", "Popup dismissed")
     }*/
-
 }
 
 

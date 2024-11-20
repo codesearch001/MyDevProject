@@ -19,9 +19,9 @@ data class UserResponse(
 )
 
 data class userData(
-    val gender: Long,
-    val weight: Long,
-    val age: Long,
+    val gender: Int,
+    val weight: Int,
+    val age: Int,
     val isSubscribed: Boolean,
     val publicUserSettings: List<PublicUserSetting>,
     val favouriteClients: List<String>,

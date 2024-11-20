@@ -69,12 +69,6 @@ class WorkoutViewModel : ViewModel() {
         saveWorkoutToRealm()
     }
 
-    // Add a new workout point
-//    fun addWorkoutPoint(point: NewWorkoutPoint) {
-//        _workout.value?.workoutPoints = listOf(point) as RealmList<NewWorkoutPoint>
-//        saveWorkoutToRealm()
-//    }
-
 
     fun addWorkoutPoint(point: NewWorkoutPoint) {
         realm.executeTransaction { transactionRealm ->
@@ -89,16 +83,6 @@ class WorkoutViewModel : ViewModel() {
         }
     }
 
-   /* fun replaceWorkoutPoints(points: List<NewWorkoutPoint>) {
-        realm.executeTransaction { transactionRealm ->
-            val workout = _workout.value
-            workout?.let {
-                it.workoutPoints.clear()
-                it.workoutPoints.addAll(points)
-                transactionRealm.copyToRealmOrUpdate(it)
-            }
-        }
-    }*/
 
     // Update workout duration and average pace
     fun addWorkoutDurationAndAvgPace(duration: Int, distance: Double, averagePace: Double) {
@@ -157,33 +141,6 @@ class WorkoutViewModel : ViewModel() {
                 // Add the WorkoutResponse object to the list
                 workoutResponseList.add(workoutResponse)
             }
-
-            ///////////////////NewWorkoutPoint  // NewRideWorkout
-           /* val obj = realm.where<NewRideWorkout>()
-              //  .sort("id", Sort.DESCENDING)
-                .sort("id", Sort.ASCENDING)
-                .findFirst()
-
-            if(obj != null){
-                val latestId = obj.id
-                val latestIdXYZ = obj.workoutPoints
-
-                print("latestIdXYZ" + latestIdXYZ)
-                print("latestId" + latestId)
-
-                if (obj != null) {
-                    // Convert the workout to a Realm-managed object copy
-                    val workoutCopy = realm.copyFromRealm(obj)
-                    // Convert the workout object to JSON string
-                    val jsonString = gson.toJson(workoutCopy)
-                    // Convert the JSON string to WorkoutResponse object
-                    val workoutResponse = gson.fromJson(jsonString, WorkoutResponse::class.java)
-                    // Add the WorkoutResponse object to the list
-                    workoutResponseList.add(workoutResponse)
-                }
-            }
-*/
-
 
 
         } catch (e: Exception) {
