@@ -72,8 +72,8 @@ class BrowseClubMapFragment : Fragment() {
     private var isOpen = false
     private var cameraAnimationsPlugin: CameraAnimationsPlugin? = null
     // Desired width and height for the icon in pixels
-    val iconWidth = 50  // for example, 50px
-    val iconHeight = 85 // for example, 50px
+    val iconWidth = 70  // for example, 50px
+    val iconHeight = 105 // for example, 50px
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -224,28 +224,31 @@ class BrowseClubMapFragment : Fragment() {
             findNavController().navigate(destination, bundle)
         }
 
-
+        val adjustedCoordinates = Point.fromLngLat(
+            coordinates.longitude(),
+            coordinates.latitude() - 0.9890 // Adjust latitude slightly for vertical offset
+        )
             /*"Longitude: ${coordinates.longitude()}, Latitude: ${coordinates.latitude()}"*/
 
         // Add the custom view as an annotation
         viewAnnotationManager.addViewAnnotation(
             popupView,
             viewAnnotationOptions {
-                geometry(coordinates)
+                geometry(adjustedCoordinates)
                 //anchor(ViewAnnotationAnchor.BOTTOM) // Attach popup at the bottom of the POI
                 allowOverlap(true)     // Allow overlapping with other annotations (optional)
                 ignoreCameraPadding(true)  // Optionally ignore camera padding
                 allowOverlapWithPuck(true)
             }
         )
-        cameraAnimationsPlugin = mapView.getPlugin(CameraAnimationsPlugin::class.java.toString())
-        mapboxMap.setCamera(
-            CameraOptions.Builder()
-                .center(coordinates)
-                .zoom(6.0) // Set desired zoom level
-                .pitch(9.0)
-                .build()
-        )
+//        cameraAnimationsPlugin = mapView.getPlugin(CameraAnimationsPlugin::class.java.toString())
+//        mapboxMap.setCamera(
+//            CameraOptions.Builder()
+//                .center(coordinates)
+//                .zoom(6.0) // Set desired zoom level
+//                .pitch(9.0)
+//                .build()
+//        )
         MapAnimationOptions.mapAnimationOptions { duration(3000) }
         // Dismiss popup when clicking outside
         mapboxMap.addOnMapClickListener {
