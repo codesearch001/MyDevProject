@@ -226,7 +226,7 @@ class BrowseClubMapFragment : Fragment() {
 
         val adjustedCoordinates = Point.fromLngLat(
             coordinates.longitude(),
-            coordinates.latitude() - 0.9890 // Adjust latitude slightly for vertical offset
+            coordinates.latitude() - calculateOffset(mapboxMap.cameraState.zoom) // Dynamic latitude offset
         )
             /*"Longitude: ${coordinates.longitude()}, Latitude: ${coordinates.latitude()}"*/
 
@@ -255,6 +255,12 @@ class BrowseClubMapFragment : Fragment() {
             viewAnnotationManager.removeAllViewAnnotations()
             true
         }
+    }
+
+    private fun calculateOffset(zoom: Double): Double {
+        // Base offset multiplier - adjust this based on your needs
+        val baseOffset = 0.0300
+        return baseOffset / Math.pow(2.0, zoom - 10) // Adjust offset based on zoom level
     }
 
     private fun getResponse() {
