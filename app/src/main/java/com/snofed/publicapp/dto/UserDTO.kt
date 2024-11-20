@@ -1,6 +1,6 @@
-package com.snofed.publicapp.models
+package com.snofed.publicapp.dto
 
-data class User(
+open class UserDTO(
     val id: String,
     val email: String,
     val firstName: String,
@@ -21,12 +21,6 @@ data class User(
     val weight: Int? = null,
     val age: Int? = null,
     val isSubscribed: Boolean? = null,
-    val publicUserSettings: List<PublicUserSettings>? = null,
+    val publicUserSettings: List<PublicUserSettingsDTO>? = null,
     val favouriteClients: List<String>? = null
 )
-
-
-
-
-
-

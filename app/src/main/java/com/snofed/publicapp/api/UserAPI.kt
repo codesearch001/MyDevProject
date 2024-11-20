@@ -7,6 +7,7 @@ import com.snofed.publicapp.models.RideApiResponse
 import com.snofed.publicapp.models.TrailGraphData
 import com.snofed.publicapp.models.TrailPolyLinesResponse
 import com.snofed.publicapp.models.TrailsDetilsResponse
+import com.snofed.publicapp.models.User
 import com.snofed.publicapp.models.UserRecoverRequest
 import com.snofed.publicapp.models.UserRegRequest
 import com.snofed.publicapp.models.UserRequest
@@ -35,6 +36,7 @@ import com.snofed.publicapp.utils.ServiceUtil.RECOVER_PASSWORD
 import com.snofed.publicapp.utils.ServiceUtil.REGISTER
 import com.snofed.publicapp.utils.ServiceUtil.UPLOAD_WORKOUT_IMAGES
 import com.snofed.publicapp.utils.ServiceUtil.USER_PROFILE_IMAGE
+import com.snofed.publicapp.utils.ServiceUtil.USER_SETTINGS
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -57,6 +59,10 @@ interface UserAPI {
     //LOGIN
     @POST(LOGIN)
     suspend fun signIn(@Header("Accept-Language") acceptLanguage: String, @Body userRequest: UserRequest) : Response<UserResponse>
+
+    //SETTINGS
+    @POST(USER_SETTINGS)
+    suspend fun settings(@Header("Accept-Language") acceptLanguage: String?, @Body user: User): Response<UserResponse>
 
     //RECOVER_PASSWORD
     @POST(RECOVER_PASSWORD)

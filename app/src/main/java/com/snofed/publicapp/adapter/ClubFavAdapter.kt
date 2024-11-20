@@ -14,13 +14,15 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.snofed.publicapp.R
 import com.snofed.publicapp.models.Client
+import com.snofed.publicapp.models.Data
+import com.snofed.publicapp.models.NewClubData
 import com.snofed.publicapp.models.browseSubClub.BrowseSubClubResponse
 import com.snofed.publicapp.utils.ServiceUtil
 
 class ClubFavAdapter() : RecyclerView.Adapter<ClubFavAdapter.ClubViewHolder>() {
     //val listener: OnItemClickListener
     //private var clubs: List<NewClubData> = listOf()
-    private val clubs = mutableListOf<BrowseSubClubResponse>()
+    private val clubs = mutableListOf<Client>()
     private var outerArray:  List<BrowseSubClubResponse> =  listOf()
     private var filteredClubs: List<BrowseSubClubResponse> = listOf()
     private val wishlistItems: MutableSet<String> = mutableSetOf()
@@ -34,9 +36,9 @@ class ClubFavAdapter() : RecyclerView.Adapter<ClubFavAdapter.ClubViewHolder>() {
 //    }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setClubs(newClubs: List<BrowseSubClubResponse>) {
+    fun setClubs(newClubs: List<NewClubData>) {
         clubs.clear()
-        clubs.addAll(newClubs)
+        clubs.addAll(newClubs.flatMap { it.data.clients })
         notifyDataSetChanged()
     }
 //    @SuppressLint("NotifyDataSetChanged")
@@ -84,17 +86,17 @@ class ClubFavAdapter() : RecyclerView.Adapter<ClubFavAdapter.ClubViewHolder>() {
     override fun onBindViewHolder(holder: ClubViewHolder, position: Int) {
         //val reslult=holder.bind(outerArray[position])
         val reslult = clubs[position]
-        holder.clientRating.text = reslult.data.clientRating.toString()
-        holder.totalRatings.text = "(" + reslult.data.totalRatings.toString() + ")"
-        holder.tvName.text = reslult.data.publicName.toString()
-        holder.tvLable.text = reslult.data.country.toString()
+        holder.clientRating.text = reslult.clientRating
+        holder.totalRatings.text = "(" + reslult.totalRatings.toString() + ")"
+        holder.tvName.text = reslult.publicName.toString()
+        holder.tvLable.text = reslult.country.toString()
 
         /*holder.cardIdLayout.setOnClickListener {
             Log.e("click..", "clickClubItem")
             listener.onItemClick(reslult.data.id) // Assuming Client has an 'id' property
         }*/
         // Set wishlist icon based on the wishlist state
-        if (wishlistItems.contains(reslult.data.id)) {
+        if (wishlistItems.contains(reslult.id)) {
             holder.imgIdWishlist.setImageResource(R.drawable.hearth_filled)
         } else {
             holder.imgIdWishlist.setImageResource(R.drawable.hearth_empty)
@@ -104,7 +106,7 @@ class ClubFavAdapter() : RecyclerView.Adapter<ClubFavAdapter.ClubViewHolder>() {
          }*/
         // Handle wishlist icon click
         holder.imgIdWishlist.setOnClickListener {
-            val clientId = reslult.data.id
+            val clientId = reslult.id
             if (wishlistItems.contains(clientId)) {
                 wishlistItems.remove(clientId)
             } else {
@@ -114,13 +116,13 @@ class ClubFavAdapter() : RecyclerView.Adapter<ClubFavAdapter.ClubViewHolder>() {
             //listener.onWishlistClick(clientId) // Notify the listener
         }
 
-        if (reslult.data.logoPath == null) {
+        if (reslult.logoPath == null) {
             Glide.with(holder.backgroundImage).load(R.drawable.resort_card_bg)
                 .into(holder.backgroundImage)
             //Glide.with(holder.background_image).load(Constants.BASE_URL_IMAGE).into(holder.background_image)
         } else {
             Glide.with(holder.backgroundImage)
-                .load(ServiceUtil.BASE_URL_IMAGE + reslult.data.logoPath).diskCacheStrategy(
+                .load(ServiceUtil.BASE_URL_IMAGE + reslult.logoPath).diskCacheStrategy(
                     DiskCacheStrategy.ALL
                 ).fitCenter()
                 .into(holder.backgroundImage)

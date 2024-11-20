@@ -9,14 +9,16 @@ import com.google.gson.Gson
 import com.snofed.publicapp.R
 import com.snofed.publicapp.api.UserAPI
 import com.snofed.publicapp.db.WorkoutResponse
+import com.snofed.publicapp.dto.PublicUserSettingsDTO
+import com.snofed.publicapp.dto.UserDTO
 import com.snofed.publicapp.membership.model.BuyMembership
 import com.snofed.publicapp.models.NewClubData
-import com.snofed.publicapp.models.PublicUserSettingsRealm
 import com.snofed.publicapp.models.RideApiResponse
 import com.snofed.publicapp.models.TrailGraphData
 import com.snofed.publicapp.models.TrailPolyLinesResponse
 import com.snofed.publicapp.models.TrailsDetilsResponse
 import com.snofed.publicapp.models.User
+import com.snofed.publicapp.models.realmModels.UserRealm
 import com.snofed.publicapp.models.UserRecoverRequest
 import com.snofed.publicapp.models.UserRegRequest
 import com.snofed.publicapp.models.UserRequest
@@ -24,9 +26,11 @@ import com.snofed.publicapp.models.UserResponse
 import com.snofed.publicapp.models.browseSubClub.BrowseSubClubResponse
 import com.snofed.publicapp.models.events.EventDetailsResponse
 import com.snofed.publicapp.models.events.EventResponse
+import com.snofed.publicapp.models.realmModels.PublicUserSettingsRealm
 import com.snofed.publicapp.models.userData
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
+import com.snofed.publicapp.ui.User.UserViewModelRealm
 import com.snofed.publicapp.ui.setting.UploadResponse
 import com.snofed.publicapp.ui.setting.UploadWorkoutResponse
 import com.snofed.publicapp.utils.AppPreference
@@ -143,6 +147,21 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
         _userResponseLiveData.postValue(NetworkResult.Loading())
         val response = userAPI!!.signIn(acceptLanguage, userRequest)
         handleResponse(response)
+    }
+
+    suspend fun updateUser(user: User) {
+        _userResponseLiveData.postValue(NetworkResult.Loading())
+        val response = userAPI!!.settings(acceptLanguage, user)
+        handleResponse(response)
+    }
+    suspend fun getUserById(userId: String) {
+        TODO()
+    }
+    suspend fun saveUser(user: User) {
+       TODO()
+    }
+    suspend fun savePublicUserSettings(userId: String, settings: List<PublicUserSettingsDTO>) {
+        TODO()
     }
 
     suspend fun recoverPassword(userRequest: UserRecoverRequest) {
@@ -476,13 +495,13 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             Log.e("UserId", "UserId " + response.body()!!.data.id)
 
 
-           /* val gson = Gson()
+           val gson = Gson()
             val jsonString = gson.toJson(response.body()!!.data)
-            val user = Gson().fromJson(jsonString, userData::class.java)*/
+            val userResponse = Gson().fromJson(jsonString, userData::class.java)
 
             // Convert response data to UserRealm
             val userResponseData = response.body()!!.data
-            val user = User().apply {
+            val userRealm = UserRealm().apply {
                 id = userResponseData.id
                 email = userResponseData.email
                 firstName = userResponseData.firstName
@@ -504,10 +523,10 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
                 age = userResponseData.age
                 isSubscribed = userResponseData.isSubscribed
                 favouriteClients = RealmList(*userResponseData.favouriteClients?.toTypedArray() ?: arrayOf())
-                publicUserSettings = RealmList(*userResponseData.publicUserSettings?.map {
+                publicUserSettings = RealmList(*userResponseData.publicUserSettings?.map { setting ->
                     PublicUserSettingsRealm().apply {
-                        key = it.key
-                        value = it.value
+                        key = setting.key
+                        value = setting.value
                     }
                 }?.toTypedArray() ?: arrayOf())
             }
@@ -515,16 +534,22 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
             // Save UserRealm in Realm
             // Use the generic RealmRepository to save the UserRealm object
             val realmRepository = RealmRepository()
-            realmRepository.insertOrUpdate(user)
+            val userViewModelRealm = UserViewModelRealm(realmRepository)
+            //realmRepository.insertOrUpdate(userRealm)
+            userViewModelRealm.addUser(userRealm)
             // Print saved data
-            val savedUser = realmRepository.getById(User::class.java, user.id)
+            //val savedUser = realmRepository.getById(UserRealm::class.java, userRealm.id)
+            //val getUser = userViewModelRealm.getUserById(userRealm.id)
 
-            Log.e("SavedUser", "Saved User Data: $savedUser")
+            val userDTO = userViewModelRealm.getUserById(userRealm.id)
+            val jsonUser = Gson().toJson(userDTO)
+
+            Log.e("SavedUserNew", "Saved User Data: $jsonUser")
 
             // Log the publicUserSettings if available
-            savedUser?.publicUserSettings?.forEach {
-                Log.e("PublicUserSettings", "Key: ${it.key}, Value: ${it.value}")
-            }
+//            getUser?.publicUserSettings?.forEach {
+//                Log.e("PublicUserSettings", "Key: ${it.key}, Value: ${it.value}")
+//            }
 
 
             AppPreference.savePreference(context, SharedPreferenceKeys.USER_TOKEN, response.body()!!.data.token)

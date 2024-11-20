@@ -19,6 +19,8 @@ object ServiceUtil {
     //FOR LOGIN
     const val LOGIN = "account/public-app/sign-in"
 
+    const val USER_SETTINGS = "public-app/sync/user/settings"
+
     //FOR FORGOT PASSWORD
     const val RECOVER_PASSWORD = "account/mobile-apps/forgot-password"
 

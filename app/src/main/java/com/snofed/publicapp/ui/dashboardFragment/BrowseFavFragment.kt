@@ -1,5 +1,6 @@
 package com.snofed.publicapp.ui.dashboardFragment
 
+import RealmRepository
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
@@ -19,10 +20,15 @@ import com.snofed.publicapp.adapter.BrowseClubListAdapter
 import com.snofed.publicapp.adapter.ClubFavAdapter
 import com.snofed.publicapp.databinding.FragmentBrowseAllClubBinding
 import com.snofed.publicapp.databinding.FragmentBrowseFavBinding
+import com.snofed.publicapp.models.NewClubData
 import com.snofed.publicapp.models.browseSubClub.BrowseSubClubResponse
+import com.snofed.publicapp.ui.User.UserViewModelRealm
 import com.snofed.publicapp.ui.login.AuthViewModel
+import com.snofed.publicapp.utils.AppPreference
 import com.snofed.publicapp.utils.ClientPrefrences
 import com.snofed.publicapp.utils.NetworkResult
+import com.snofed.publicapp.utils.SharedPreferenceKeys
+import com.snofed.publicapp.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -34,27 +40,13 @@ class BrowseFavFragment : Fragment() {//ClubFavAdapter.OnItemClickListener
     private val viewFavClubModel by viewModels<AuthViewModel>()
     private lateinit var clubAdapter: ClubFavAdapter
     var clientIdList: List<String> = listOf()
-
-    val favClubResponses = mutableListOf<BrowseSubClubResponse>() // Replace `ClubFavResponseType` with the actual data type of `clubFavResponse.data`
+    var allClubResponses = mutableListOf<NewClubData>()
+    var favClubResponses = mutableListOf<NewClubData>() // Replace `ClubFavResponseType` with the actual data type of `clubFavResponse.data`
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
        // return inflater.inflate(R.layout.fragment_browse_fav, container, false)
         _binding = FragmentBrowseFavBinding.inflate(inflater, container, false)
-
-     /*   val getAllClientIds = ClientPrefrences.getClientIds(requireContext())
-        Log.e("BrowseFavFragment","getALLIDS " + getAllClientIds)
-        val idList: List<String> = listOf(getAllClientIds)*/
-
-        val getAllClientIds = ClientPrefrences.getClientIds(requireContext())
-        clientIdList = getAllClientIds.toList()
-        //val idList: List<String> = clientIdList.toString().split(",")
-
-
-       // Log.e("idList" ,"praveenFAVXYZ" + idList)
-
-
-
         return binding.root
     }
 
@@ -62,16 +54,69 @@ class BrowseFavFragment : Fragment() {//ClubFavAdapter.OnItemClickListener
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        favClubResponses.clear()
-        // Initialize the adapter once
-        val clubAdapter = ClubFavAdapter()
-        binding.recyclerView.layoutManager = GridLayoutManager(requireActivity(), 2)
-        binding.recyclerView.adapter = clubAdapter
-        binding.recyclerView.isVisible = true
-        clubAdapter.setClubs(favClubResponses)
+        // Bind the adapter to the RecyclerView
+        viewFavClubModel.clubLiveData.observe(viewLifecycleOwner) { result ->
+            val allClubs = when (result) {
+                is NetworkResult.Success -> {
 
-// Mutable list to hold all responses
-     //   val favClubResponses = mutableListOf<ClubFavResponseType>() // Replace `ClubFavResponseType` with the actual type
+
+                    val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
+
+                    val realmRepository = RealmRepository()
+                    val userViewModelRealm = UserViewModelRealm(realmRepository)
+                    val userRealm = userViewModelRealm.getUserById(userId!!)
+                    val getFavClients: List<String> = userRealm?.favouriteClients ?: emptyList()
+
+                    result.data?.let { data ->
+                        // Add the response to the list
+                        allClubResponses.add(data)
+                    }
+                    Log.e("ClubResponses", "AllClubs $allClubResponses")
+                    favClubResponses.clear()
+
+
+                    for (club in allClubResponses) {
+                        // Check if any client in club.data.clients is in getFavClients
+                        for (client in club.data.clients) {
+                            if (client.id in getFavClients) {
+                                // If a match is found, add the club to favClubResponses
+                                favClubResponses.add(club)
+                                break // No need to check further clients for this club
+                            }
+                        }
+                    }
+
+                    Log.e("ClubResponses", "AllClubs $favClubResponses")
+                    // Initialize the adapter once
+                    //val clubAdapter = ClubFavAdapter()
+                    binding.recyclerView.layoutManager = GridLayoutManager(requireActivity(), 2)
+                    binding.recyclerView.adapter = clubAdapter
+                    binding.recyclerView.isVisible = true
+                    clubAdapter.setClubs(favClubResponses)
+                }
+
+                is NetworkResult.Error -> {
+                    Log.e("Error", "Failed to fetch clubs: ${result.message}")
+                    favClubResponses
+                }
+
+                is NetworkResult.Loading -> {
+                    Log.d("Loading", "Clubs are being loaded")
+                    favClubResponses
+                }
+
+                null -> {
+                    Log.e("Error", "LiveData is null")
+                    favClubResponses
+                }
+            }
+        }
+        //favClubResponses = allClubResponses.filter { it.data.clients in getFavClients } as MutableList<NewClubData>
+        // favClubResponses = allClubResponses.filter { it.data.clients.any { client -> client in getFavClients } } as MutableList<NewClubData>
+
+
+        // Mutable list to hold all responses
+        //   val favClubResponses = mutableListOf<ClubFavResponseType>() // Replace `ClubFavResponseType` with the actual type
 
         for (favClientId in clientIdList) {
             /*fetchResponse(favClientId)
@@ -137,13 +182,4 @@ class BrowseFavFragment : Fragment() {//ClubFavAdapter.OnItemClickListener
             Log.e("idList" ,"praveenFAV111" + favClientId)
         }*/
     }
-
-
-
-    private fun fetchResponse(favClientId: String) {
-        viewFavClubModel.getFavClubResponse(favClientId)
-
-    }
-
-
 }
