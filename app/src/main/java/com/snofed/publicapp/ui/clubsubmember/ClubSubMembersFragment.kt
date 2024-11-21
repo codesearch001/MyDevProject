@@ -17,11 +17,16 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.TabClubsSubMemAdapter
 import com.snofed.publicapp.databinding.FragmentClubSubMembersBinding
+import com.snofed.publicapp.dto.SubscribeDTO
 import com.snofed.publicapp.models.browseSubClub.ParentOrganisation
 import com.snofed.publicapp.ui.login.AuthViewModel
+import com.snofed.publicapp.utils.AppPreference
 import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.NetworkResult
+import com.snofed.publicapp.utils.SharedPreferenceKeys
 import com.snofed.publicapp.utils.SharedViewModel
+import com.snofed.publicapp.utils.SnofedConstants
+import com.snofed.publicapp.utils.SnofedUtils
 import com.snofed.publicapp.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -85,7 +90,7 @@ class ClubSubMembersFragment : Fragment() {
         binding.backBtn.setOnClickListener {
             it.findNavController().popBackStack()
         }
-
+        
 
         fetchResponse()
         clubViewModel.subClubLiveData.observe(viewLifecycleOwner, Observer {
@@ -109,8 +114,25 @@ class ClubSubMembersFragment : Fragment() {
                     } else {
                         holder.imgIdWishlist.setImageResource(R.drawable.hearth_empty)
                     }*/
+                    val isSubsricedClub = it.data?.data?.isSubscribed
 
-                    if (it.data?.data?.isSubscribed == true){
+                    binding.isfavSubscribed.setOnClickListener{
+                        val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
+                        val subscribeDTO : SubscribeDTO = SubscribeDTO(
+                            clientId = clientId,
+                            publicUserId = userId,
+                            subscribeDate = SnofedUtils.getDateNow(SnofedConstants.DATETIME_SERVER_FORMAT)
+                        )
+                        // call subscribe api on isSubscribe condition
+                        if(isSubsricedClub ==  true){
+                            clubViewModel.subscribeClubService(subscribeDTO)
+                        }else{
+                            clubViewModel.unsubscribeClubService(subscribeDTO)
+                        }
+
+                    }
+
+                    if (isSubsricedClub == true){
 
                         binding.isfavFillSubscribed.isVisible = true
                         binding.isfavSubscribed.isVisible = false

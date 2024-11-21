@@ -58,6 +58,10 @@ object ServiceUtil {
 
     const val CLUB_WORKOUT_RIDE = "public-app/workouts"
 
+    const val SUBSCRIBE_TO_CLUB = "public-app/subscribe"
+
+    const val UNSUBSCRIBE_FROM_CLUB = "public-app/unsubscribe"
+
 
 
     /*** TASKING SERVICE FOR FEEDBACK ***/

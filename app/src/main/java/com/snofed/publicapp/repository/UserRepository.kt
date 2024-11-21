@@ -7,9 +7,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.snofed.publicapp.R
+import com.snofed.publicapp.api.ClientAPI
 import com.snofed.publicapp.api.UserAPI
 import com.snofed.publicapp.db.WorkoutResponse
 import com.snofed.publicapp.dto.PublicUserSettingsDTO
+import com.snofed.publicapp.dto.SubscribeDTO
 import com.snofed.publicapp.dto.UserDTO
 import com.snofed.publicapp.membership.model.BuyMembership
 import com.snofed.publicapp.models.NewClubData
@@ -53,7 +55,10 @@ import javax.inject.Inject
 import javax.inject.Named
 
 
-class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: UserAPI?,@ApplicationContext private val context: Context) {
+class UserRepository @Inject constructor(
+                        @Named("UserAPI") private val userAPI: UserAPI?,
+                        @Named("ClientAPI") private val clientAPI: ClientAPI?,
+                        @ApplicationContext private val context: Context) {
     private val acceptLanguage = R.string.backend_localization.toString()
 
 
@@ -176,6 +181,14 @@ class UserRepository @Inject constructor(@Named("UserAPI") private val userAPI: 
         _userWorkoutRideLiveData.postValue(NetworkResult.Loading())
         val response = userAPI!!.workoutRide(acceptLanguage, workoutRequest)
         handleResponse3(response)
+    }
+
+    suspend fun subscribeClub(subscribeDTO: SubscribeDTO) {
+
+        val response = clientAPI!!.subscribeToClub(acceptLanguage, subscribeDTO)
+    }
+    suspend fun unsubscribeClub(subscribeDTO: SubscribeDTO) {
+        val response = clientAPI!!.unsubscribeFromClub(acceptLanguage, subscribeDTO)
     }
 
  /*   private fun handleResponse3(response: Response<UserRideResponse>) {

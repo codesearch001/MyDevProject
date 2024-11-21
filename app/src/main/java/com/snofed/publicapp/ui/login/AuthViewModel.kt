@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.snofed.publicapp.db.WorkoutResponse
+import com.snofed.publicapp.dto.SubscribeDTO
 import com.snofed.publicapp.membership.model.ActiveMembership
 import com.snofed.publicapp.membership.model.MembershipDetails
 import com.snofed.publicapp.membership.model.BuyMembership
@@ -242,6 +243,18 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
     fun clubRequestUser() {
         viewModelScope.launch {
             userRepository.getClub()
+        }
+    }
+    fun subscribeClubService(subscribeDTO: SubscribeDTO) {
+        viewModelScope.launch {
+            userRepository.subscribeClub(subscribeDTO)
+            // _uploadResult.postValue(result)
+        }
+    }
+    fun unsubscribeClubService(subscribeDTO: SubscribeDTO) {
+        viewModelScope.launch {
+            userRepository.unsubscribeClub(subscribeDTO)
+            // _uploadResult.postValue(result)
         }
     }
 

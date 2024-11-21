@@ -1,6 +1,7 @@
 package com.snofed.publicapp.di
 
 import com.snofed.publicapp.api.AuthInterceptor
+import com.snofed.publicapp.api.ClientAPI
 import com.snofed.publicapp.api.FeedBackUserAPI
 import com.snofed.publicapp.api.MembershipApi
 import com.snofed.publicapp.api.UserAPI
@@ -27,6 +28,14 @@ class NetworkModule {
     @Provides
     @Named("UserApiBaseUrl")
     fun providesRetrofit(): Retrofit.Builder {
+        return Retrofit.Builder().baseUrl(ServiceUtil.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+    }
+
+    @Singleton
+    @Provides
+    @Named("ClientApiBaseUrl")
+    fun providesClientRetrofit(): Retrofit.Builder {
         return Retrofit.Builder().baseUrl(ServiceUtil.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
     }
@@ -78,6 +87,12 @@ class NetworkModule {
     @Named("UserAPI")
     fun providesUserAPI(@Named("UserApiBaseUrl")retrofitBuilder: Retrofit.Builder, okHttpClient: OkHttpClient): UserAPI {
         return retrofitBuilder.client(okHttpClient).build().create(UserAPI::class.java)
+    }
+    @Singleton
+    @Provides
+    @Named("ClientAPI")
+    fun providesClientAPI(@Named("ClientApiBaseUrl")retrofitBuilder: Retrofit.Builder, okHttpClient: OkHttpClient): ClientAPI {
+        return retrofitBuilder.client(okHttpClient).build().create(ClientAPI::class.java)
     }
 
     @Singleton
