@@ -160,7 +160,7 @@ class LoginFragment : Fragment() {
                 showToast(getString(R.string.t_h_enter_your_password)) // Empty password message
                 false
             }
-            password.length < 6 -> {
+            password.length < 8 -> {
                 showToast(getString(R.string.password_must_be_8_chars)) // Password length message
                 false
             }

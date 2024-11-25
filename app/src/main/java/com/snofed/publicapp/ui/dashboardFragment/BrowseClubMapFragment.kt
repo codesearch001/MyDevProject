@@ -124,6 +124,7 @@ class BrowseClubMapFragment : Fragment() {
             //showCustomDialog2()
             //Toast.makeText(requireContext(), "folder click", Toast.LENGTH_SHORT).show()
         }
+
         binding.mapView.mapboxMap.loadStyle(Style.STANDARD) {
             Log.d("BrowseClubMapFragment", "Map style loaded successfully")
 
@@ -324,9 +325,7 @@ class BrowseClubMapFragment : Fragment() {
             // Create the annotation and attach the client data as metadata
             val pointAnnotation = pointAnnotationManager.create(pointAnnotationOptions)
 
-
             val gson = Gson()
-            // Convert Client object to JsonElement
             val clientJson: JsonElement = gson.toJsonTree(client)
             pointAnnotation.setData(clientJson)
         }
