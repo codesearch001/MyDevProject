@@ -347,8 +347,8 @@ class MapExploreFragment : Fragment(){
             val trails = response?.data?.trails?.filter { trail ->
                 trail.visibility.toInt() == 1 //Assuming visibility is already an integer
             }
-            val zones = response?.data?.zones ?: emptyList()//1
-            val pois = response?.data?.pois ?: emptyList()//1
+            val zones = response?.data?.zones ?: emptyList()
+            val pois = response?.data?.pois ?: emptyList()
             val areas = response?.data?.areas ?: emptyList()
             Log.d("Tag_Trails", "trails size: ${trails?.size}")
             Log.d("Tag_Zones", "zones size: ${zones.size}")

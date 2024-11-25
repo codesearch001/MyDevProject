@@ -11,6 +11,7 @@ import android.graphics.Paint
 import android.graphics.Shader
 import android.graphics.BitmapShader
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
@@ -61,7 +62,6 @@ class MediaReader(
             .error(R.drawable.user_profile) // Optional: error image if loading fails
             .transform(CircleCrop()) // Circle crop transformation to make the image circular
             .into(imageView) // Set the ImageView
-
     }
 
     // Launcher for picking an image from the gallery
@@ -83,7 +83,8 @@ class MediaReader(
 
     // Check and request camera permissions
     fun checkPermissionsAndOpenCamera() {
-        if (ContextCompat.checkSelfPermission(fragment.requireContext(), android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(fragment.requireContext(), android.Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED) {
             requestPermissionLauncher.launch(android.Manifest.permission.CAMERA)
         } else {
             dispatchTakePictureIntent()
@@ -92,10 +93,16 @@ class MediaReader(
 
     // Check and request gallery permissions
     fun checkPermissionsAndOpenGallery() {
-        if (ContextCompat.checkSelfPermission(fragment.requireContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-        } else {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // Scoped Storage (Android 10+), no need for READ_EXTERNAL_STORAGE permission
             dispatchPickImageIntent()
+        } else {
+            // For Android versions below Android 10 (API level 29), check the READ_EXTERNAL_STORAGE permission
+            if (ContextCompat.checkSelfPermission(fragment.requireContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+            } else {
+                dispatchPickImageIntent()
+            }
         }
     }
 
@@ -124,7 +131,7 @@ class MediaReader(
         }
     }
 
-    // Launch gallery picker
+    // Launch gallery picker (for Android 10+)
     private fun dispatchPickImageIntent() {
         pickImageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }

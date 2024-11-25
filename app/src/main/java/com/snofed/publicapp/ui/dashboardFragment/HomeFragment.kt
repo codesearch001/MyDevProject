@@ -117,6 +117,13 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.settingFragment,bundle)
         }
 
+        binding.txtUpgradeMembershipType.setOnClickListener {
+            val bundle = Bundle().apply {
+                //putInt("tabIndex", 1) // 1 opens the second tab
+            }
+            findNavController().navigate(R.id.purchaseOptionsFragment,bundle)
+        }
+
         fetchResponse()
         clubViewModel.userDashBoardLiveData.observe(viewLifecycleOwner, Observer { it ->
             // binding.progressBar.isVisible = false
@@ -142,9 +149,7 @@ class HomeFragment : Fragment() {
                         it.distance
                     }
                     //binding.txtIdPreviousDistance.text = String.format("%.2f",latestWorkout?.distance)+"m"
-                    binding.txtIdPreviousDistance.text = String.format("%.2f",
-                        Helper.m2Km(
-                            latestWorkout?.distance)) + " km"
+                    binding.txtIdPreviousDistance.text = String.format("%.2f", Helper.m2Km(latestWorkout?.distance)) + " km"
 
                     /* binding.txtIdTotalTime.text = data?.sumOf {
                          it.duration
