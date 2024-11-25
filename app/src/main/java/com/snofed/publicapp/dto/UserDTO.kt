@@ -3,9 +3,9 @@ package com.snofed.publicapp.dto
 open class UserDTO(
     val id: String,
     val email: String,
-    val firstName: String,
-    val lastName: String,
-    val fullName: String,
+    var firstName: String,
+    var lastName: String,
+    var fullName: String,
     val username: String,
     val phone: String,
     val cellphone: String,
@@ -17,10 +17,10 @@ open class UserDTO(
     val clientId: String? = null,
     val token: String? = null,
     val userGroupId: String? = null,
-    val gender: Int? = null,
-    val weight: Int? = null,
-    val age: Int? = null,
-    val isSubscribed: Boolean? = null,
+    var gender: Int? = null,
+    var weight: Int? = null,
+    var age: Int? = null,
+    var isSubscribed: Boolean? = null,
     val publicUserSettings: List<PublicUserSettingsDTO>? = null,
     val favouriteClients: List<String>? = null
 )

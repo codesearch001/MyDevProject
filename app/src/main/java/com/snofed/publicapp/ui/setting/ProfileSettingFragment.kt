@@ -1,6 +1,7 @@
 package com.snofed.publicapp.ui.setting
 
 
+import RealmRepository
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,12 +11,20 @@ import androidx.fragment.app.Fragment
 import com.snofed.publicapp.databinding.FragmentProfileSettingBinding
 import android.content.DialogInterface
 import android.util.Log
+import android.widget.EditText
 import android.widget.ImageView
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
+import com.google.gson.Gson
 import com.snofed.publicapp.R
+import com.snofed.publicapp.models.User
+import com.snofed.publicapp.models.toUser
+import com.snofed.publicapp.ui.User.UserViewModelRealm
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.AppPreference
 import com.snofed.publicapp.utils.ClientPrefrences
@@ -31,6 +40,7 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
     private var _binding: FragmentProfileSettingBinding? = null
     private val binding get() = _binding!!
 
+    private val authViewModel by activityViewModels<AuthViewModel>()
     private val viewModel by viewModels<AuthViewModel>()
     private lateinit var mediaReader: MediaReader
     private var imageView: ImageView? = null
@@ -59,16 +69,25 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
             showImageOptionsDialog()
         }
 
+        binding.switchWifi.isChecked =
+            ClientPrefrences.getSwitchState(requireContext(), SharedPreferenceKeys.SWITCH_WIFI_STATE)
 
 
-        binding.switchWifi.isChecked = ClientPrefrences.getSwitchState(requireContext(), SharedPreferenceKeys.SWITCH_WIFI_STATE)
-
-
-        binding.switchCompat.isChecked = ClientPrefrences.getSwitchState(requireContext(), SharedPreferenceKeys.SWITCH_COMPAT_STATE)
+        binding.switchCompat.isChecked =
+            ClientPrefrences.getSwitchState(requireContext(), SharedPreferenceKeys.SWITCH_COMPAT_STATE)
 
 
         binding.switchWifi.setOnCheckedChangeListener { _, isChecked ->
             ClientPrefrences.saveSwitchState(requireContext(), SharedPreferenceKeys.SWITCH_COMPAT_STATE, isChecked)
+
+
+            val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
+
+            val realmRepository = RealmRepository()
+            val userViewModelRealm = UserViewModelRealm(realmRepository)
+            val userDTO = userViewModelRealm.getUserDTOById(userId)
+            // Update settings before saving
+            authViewModel.updateUser(userDTO!!.toUser());
         }
 
 
@@ -92,7 +111,113 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.txtFirstName.setOnClickListener {
+            showEditablePopup( EditType.FIRST_NAME, "", binding.txtFirstName.text.toString()) { newValue ->
+                binding.txtFirstName.text = newValue
+            }
+        }
 
+        binding.txtLastName.setOnClickListener {
+            showEditablePopup(EditType.LAST_NAME, "", binding.txtLastName.text.toString()) { newValue ->
+                binding.txtLastName.text = newValue
+            }
+        }
+
+        binding.txtUserGender.setOnClickListener {
+            showGenderSelectionPopup(EditType.GENDER, "") { selectedGender ->
+                binding.txtUserGender.text = selectedGender
+            }
+        }
+    }
+
+    private fun showEditablePopup(field: EditType, message: String, currentValue: String, onSave: (String) -> Unit) {
+        val inputField = EditText(requireContext()).apply {
+            setText(currentValue)
+        }
+
+        AlertDialog.Builder(requireContext())
+            .setTitle(field.toString())
+            .setMessage(message)
+            .setView(inputField)
+            .setPositiveButton("Save") { dialog, which ->
+                val newValue = inputField.text.toString()
+                onSave(newValue) // Update the field with the new value
+
+                saveToRealmAndServer(newValue, field)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showGenderSelectionPopup(field: EditType, message: String, onSave: (String) -> Unit) {
+        // Create a RadioGroup for gender options
+        val radioGroup = RadioGroup(requireContext()).apply {
+            orientation = RadioGroup.VERTICAL
+
+            // Create radio buttons for Male, Female, Other
+            val radioMale = RadioButton(requireContext()).apply {
+                text = "Male"
+            }
+            val radioFemale = RadioButton(requireContext()).apply {
+                text = "Female"
+            }
+            val radioOther = RadioButton(requireContext()).apply {
+                text = "Other"
+            }
+
+            // Add radio buttons to the RadioGroup
+            addView(radioMale)
+            addView(radioFemale)
+            addView(radioOther)
+        }
+
+        // Show the dialog with the radio buttons
+        AlertDialog.Builder(requireContext())
+            .setTitle(field.toString())
+            .setMessage(message)
+            .setView(radioGroup)
+            .setPositiveButton("Save") { dialog, which ->
+                // Get selected radio button text and pass it to onSave callback
+                val selectedRadioButton = radioGroup.findViewById<RadioButton>(radioGroup.checkedRadioButtonId)
+                onSave(selectedRadioButton?.text.toString()) // Update the gender field with the selected option
+            //Save to Realm
+            // Call the API
+            //saveToRealmAndServer(selectedRadioButton?.text.toString(), title)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun saveToRealmAndServer(newValue: String, field: EditType) {
+        val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
+
+        val realmRepository = RealmRepository()
+        val userViewModelRealm = UserViewModelRealm(realmRepository)
+        val user = userViewModelRealm.getUserById(userId)
+        //user!!.firstName = newValue
+        userViewModelRealm.updateUser(userId, user!!)
+        // Save the updated user back to Realm
+
+
+        val userDTO = userViewModelRealm.getUserDTOById(userId)
+
+        if(EditType.FIRST_NAME == field){
+            userDTO!!.firstName = newValue
+        }
+        else if(EditType.LAST_NAME == field){
+            userDTO!!.lastName = newValue
+        }
+        else if(EditType.GENDER == field){
+            userDTO!!.gender = newValue?.toInt()
+        }
+
+        //Save to realm
+        //val updatedUserRealm = userDTO.toUserRealm()
+        //userViewModelRealm.updateUser(userId, updatedUserRealm)
+        //userViewModelRealm.updateUser(userId, user!!)
+        // Call the API
+
+        authViewModel.updateUser(userDTO!!.toUser());
     }
 
     private fun showImageOptionsDialog() {
@@ -174,4 +299,8 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
         return tempFile
     }
 
+}
+
+enum class EditType{
+    FIRST_NAME,LAST_NAME,GENDER
 }

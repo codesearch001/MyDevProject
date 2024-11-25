@@ -36,9 +36,9 @@ class ClubFavAdapter() : RecyclerView.Adapter<ClubFavAdapter.ClubViewHolder>() {
 //    }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setClubs(newClubs: List<NewClubData>) {
+    fun setClubs(newClubs: List<Client>) {
         clubs.clear()
-        clubs.addAll(newClubs.flatMap { it.data.clients })
+        clubs.addAll(newClubs)
         notifyDataSetChanged()
     }
 //    @SuppressLint("NotifyDataSetChanged")

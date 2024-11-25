@@ -18,11 +18,11 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
 //    }
 
     // update a user
-    fun updateUser(user: User) {
-        viewModelScope.launch {
-            userRepository.updateUser(user)
-        }
-    }
+//    fun updateUser(user: User) {
+//        viewModelScope.launch {
+//            userRepository.updateUser(user)
+//        }
+//    }
 
 //    // Retrieve all users
 //    fun getAllUsers() = liveData {

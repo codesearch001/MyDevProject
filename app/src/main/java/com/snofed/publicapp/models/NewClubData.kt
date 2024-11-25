@@ -27,9 +27,9 @@ data class Client(
     val country: String,
     val county: String,
     val coverImagePath: String,
-    val description: String,
+    val description: String?,
     val hasTicketing: Boolean,
-    val isInWishlist: Boolean,
+    var isInWishlist: Boolean,
     val location: String,
     val logoPath: String,
     val publicName: String,
@@ -44,7 +44,7 @@ data class Client(
    // val activities: List<Activity> = emptyList(),
    // val clientSettings: List<ClientSetting> = emptyList(),
     @Relation(parentColumn = "id", entityColumn = "clientId")
-    val publicData: List<PublicData> = emptyList(),
+    val publicData: List<PublicData?>? = emptyList(),
 )
 
 data class PublicData(

@@ -98,6 +98,8 @@
                 android:hint="@string/t_h_enter_your_fname"
                 android:inputType="textEmailAddress"
                 android:text="Jone"
+                android:clickable="true"
+                android:focusable="true"
                 android:textSize="16sp" />
 
             <View
@@ -114,6 +116,8 @@
                 android:hint="@string/t_h_enter_your_lname"
                 android:inputType="textEmailAddress"
                 android:text="Smith"
+                android:clickable="true"
+                android:focusable="true"
                 android:textSize="16sp" />
 
             <TextView
