@@ -44,6 +44,7 @@ class ClubSubMembersFragment : Fragment() {
     private val hideSubMebTab = true
     var isParentMember: ParentOrganisation? = null
     var isSubMember : Boolean? = false
+    var isSubsricedClub : Boolean = false
     //var tabs = listOf<String>()
     @Inject lateinit var tokenManager: TokenManager
 
@@ -114,8 +115,10 @@ class ClubSubMembersFragment : Fragment() {
                     } else {
                         holder.imgIdWishlist.setImageResource(R.drawable.hearth_empty)
                     }*/
-                    val isSubsricedClub = it.data?.data?.isSubscribed
+                    isSubsricedClub = it.data?.data?.isSubscribed!!
 
+
+                    // Subscride to Club
                     binding.isfavSubscribed.setOnClickListener{
                         val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
                         val subscribeDTO : SubscribeDTO = SubscribeDTO(
@@ -124,11 +127,30 @@ class ClubSubMembersFragment : Fragment() {
                             subscribeDate = SnofedUtils.getDateNow(SnofedConstants.DATETIME_SERVER_FORMAT)
                         )
                         // call subscribe api on isSubscribe condition
-                        if(isSubsricedClub ==  true){
-                            clubViewModel.subscribeClubService(subscribeDTO)
-                        }else{
-                            clubViewModel.unsubscribeClubService(subscribeDTO)
-                        }
+                        // call subscribe api
+                        clubViewModel.subscribeClubService(subscribeDTO)
+                        binding.isfavSubscribed.isVisible = false
+                        binding.isfavFillSubscribed.isVisible = true
+                        isSubsricedClub == !isSubsricedClub
+
+                        // add fav clients in UserRealm
+
+                    }
+                    // UnSubscribe to Club
+                    binding.isfavFillSubscribed.setOnClickListener{
+                        val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
+                        val subscribeDTO : SubscribeDTO = SubscribeDTO(
+                            clientId = clientId,
+                            publicUserId = userId,
+                            subscribeDate = SnofedUtils.getDateNow(SnofedConstants.DATETIME_SERVER_FORMAT)
+                        )
+                        // call subscribe api
+                        clubViewModel.unsubscribeClubService(subscribeDTO)
+                        binding.isfavSubscribed.isVisible = true
+                        binding.isfavFillSubscribed.isVisible = false
+                        isSubsricedClub == !isSubsricedClub
+
+                        // Remove fav clients from UserRealm
 
                     }
 

@@ -37,7 +37,7 @@ class BrowseAllClubFragmentTwo : Fragment(),BrowseClubListAdapter.OnItemClickLis
     }
 
     private fun setupRecyclerView() {
-        clubAdapter = BrowseClubListAdapter(this)
+        //clubAdapter = BrowseClubListAdapter(rquireContext(),this)
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.recyclerView.adapter = clubAdapter
     }

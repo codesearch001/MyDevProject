@@ -1,5 +1,6 @@
 package com.snofed.publicapp.ui.dashboardFragment
 
+import RealmRepository
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -21,6 +22,7 @@ import com.snofed.publicapp.adapter.BrowseClubListAdapter
 import com.snofed.publicapp.databinding.FragmentBrowseAllClubBinding
 import com.snofed.publicapp.models.Client
 import com.snofed.publicapp.repository.UserRepository
+import com.snofed.publicapp.ui.User.UserViewModelRealm
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.AppPreference
 import com.snofed.publicapp.utils.ClientPrefrences
@@ -59,20 +61,34 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
                     //val data = it.data?.data?.clients
                     sharedViewModel.browseClubResponse.value = it.data
 
+
+                    val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
+
+                    val realmRepository = RealmRepository()
+                    val userViewModelRealm = UserViewModelRealm(realmRepository)
+                    val userRealm = userViewModelRealm.getUserById(userId!!)
+                    val getFavClients: List<String> = userRealm?.favouriteClients ?: emptyList()
+
                     val filteredClients = it.data?.data?.clients?.filter { client ->
                         client.visibility == 0 //true 1->false
                     }
 
-                    Log.e("filter","filterSize " +filteredClients?.size)
+                    filteredClients?.forEach { client ->
+                        if (getFavClients.contains(client.id)) {
+                            client.isInWishlist = true
+                        }
+                    }
+
+                    Log.e("filter","filterSize " +filteredClients)
 
                     if (filteredClients.isNullOrEmpty()){
-                        clubAdapter = BrowseClubListAdapter(this)
+                        clubAdapter = BrowseClubListAdapter(requireContext(),this, clubViewModel )
                         // Set up the RecyclerView with GridLayoutManager
                         binding.recyclerView.layoutManager = GridLayoutManager(requireActivity(), 2)
                         binding.recyclerView.adapter = clubAdapter
                         clubAdapter.setClubs(filteredClients)
                     }else{
-                        clubAdapter = BrowseClubListAdapter(this)
+                        clubAdapter = BrowseClubListAdapter(requireContext(),this, clubViewModel)
                         // Set up the RecyclerView with GridLayoutManager
                         binding.recyclerView.layoutManager = GridLayoutManager(requireActivity(), 2)
                         binding.recyclerView.adapter = clubAdapter

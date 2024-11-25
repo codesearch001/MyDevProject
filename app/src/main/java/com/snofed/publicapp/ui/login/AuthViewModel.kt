@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.snofed.publicapp.db.WorkoutResponse
 import com.snofed.publicapp.dto.SubscribeDTO
+import com.snofed.publicapp.dto.UserDTO
 import com.snofed.publicapp.membership.model.ActiveMembership
 import com.snofed.publicapp.membership.model.MembershipDetails
 import com.snofed.publicapp.membership.model.BuyMembership
@@ -16,6 +17,7 @@ import com.snofed.publicapp.models.RideApiResponse
 import com.snofed.publicapp.models.TrailGraphData
 import com.snofed.publicapp.models.TrailPolyLinesResponse
 import com.snofed.publicapp.models.TrailsDetilsResponse
+import com.snofed.publicapp.models.User
 import com.snofed.publicapp.models.UserRecoverRequest
 import com.snofed.publicapp.models.UserRegRequest
 import com.snofed.publicapp.models.UserReport
@@ -31,6 +33,7 @@ import com.snofed.publicapp.purchasehistory.model.TicketPurchaseHistory
 import com.snofed.publicapp.repository.MembershipRepository
 import com.snofed.publicapp.repository.UserFeedBackRepository
 import com.snofed.publicapp.repository.UserRepository
+import com.snofed.publicapp.response.SubscribeResponse
 import com.snofed.publicapp.ui.feedback.FeedApiResponse
 import com.snofed.publicapp.ui.feedback.adapter.FeedBackDetails
 import com.snofed.publicapp.ui.feedback.model.FeedBackCategories
@@ -141,6 +144,9 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
     val clubFavLiveData: LiveData<NetworkResult<BrowseSubClubResponse>>
         get() = userRepository.clubFavLiveData
 
+    val subscribeResponseLiveData: LiveData<NetworkResult<SubscribeResponse>>
+        get() = userRepository.subscribeResponseLiveData
+
 
     fun registerUser(userRequest: UserRegRequest) {
         viewModelScope.launch {
@@ -152,6 +158,13 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
         viewModelScope.launch {
             userRepository.loginUser(userRequest)
         }
+    }
+
+    fun updateUser(user: User) {
+        viewModelScope.launch {
+            userRepository.updateUser(user)
+        }
+
     }
 
     //RECOVER_PASSWORD

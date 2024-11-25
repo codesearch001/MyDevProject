@@ -32,6 +32,7 @@ import com.snofed.publicapp.models.realmModels.PublicUserSettingsRealm
 import com.snofed.publicapp.models.userData
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
+import com.snofed.publicapp.response.SubscribeResponse
 import com.snofed.publicapp.ui.User.UserViewModelRealm
 import com.snofed.publicapp.ui.setting.UploadResponse
 import com.snofed.publicapp.ui.setting.UploadWorkoutResponse
@@ -140,6 +141,10 @@ class UserRepository @Inject constructor(
         get() = _trailsDrawPolyLinesByIDLiveData
 
 
+    private val _subscribeResponseLiveData = MutableLiveData<NetworkResult<SubscribeResponse>>()
+    val subscribeResponseLiveData: LiveData<NetworkResult<SubscribeResponse>>
+        get() = _subscribeResponseLiveData
+
     //REGISTER
     suspend fun registerUser(userRequest: UserRegRequest) {
         _userResponseLiveData.postValue(NetworkResult.Loading())
@@ -156,8 +161,15 @@ class UserRepository @Inject constructor(
 
     suspend fun updateUser(user: User) {
         _userResponseLiveData.postValue(NetworkResult.Loading())
+        var gson = Gson()
+        var json = gson.toJson(user)
+        Log.e("TAG_UserRepository", "updateUser: $json")
         val response = userAPI!!.settings(acceptLanguage, user)
-        handleResponse(response)
+        //val jsonResponse = gson.toJson(response)
+
+// Log the JSON response
+        //Log.d("API Response", jsonResponse)
+        //handleResponse(response)
     }
     suspend fun getUserById(userId: String) {
         TODO()
@@ -184,7 +196,7 @@ class UserRepository @Inject constructor(
     }
 
     suspend fun subscribeClub(subscribeDTO: SubscribeDTO) {
-
+        _subscribeResponseLiveData.postValue(NetworkResult.Loading())
         val response = clientAPI!!.subscribeToClub(acceptLanguage, subscribeDTO)
     }
     suspend fun unsubscribeClub(subscribeDTO: SubscribeDTO) {
@@ -554,10 +566,10 @@ class UserRepository @Inject constructor(
             //val savedUser = realmRepository.getById(UserRealm::class.java, userRealm.id)
             //val getUser = userViewModelRealm.getUserById(userRealm.id)
 
-            val userDTO = userViewModelRealm.getUserById(userRealm.id)
-            val jsonUser = Gson().toJson(userDTO)
+            //val userDTO = userViewModelRealm.getUserById(userRealm.id)
+            //val jsonUser = Gson().toJson(userDTO)
 
-            Log.e("SavedUserNew", "Saved User Data: $jsonUser")
+            //Log.e("SavedUserNew", "Saved User Data: $jsonUser")
 
             // Log the publicUserSettings if available
 //            getUser?.publicUserSettings?.forEach {

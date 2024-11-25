@@ -10,11 +10,24 @@ import io.realm.RealmList
 class UserViewModelRealm(private val realmRepository: RealmRepository) {
 
     // Retrieve a user by ID
-    fun getUserById(userId: String): UserDTO? {
+    fun getUserById(userId: String): UserRealm? {
+        val user = realmRepository.getById(UserRealm::class.java, userId)
+        return user
+    }
+
+    fun getUserDTOById(userId: String): UserDTO? {
         val user = realmRepository.getById(UserRealm::class.java, userId)
         return user?.toUserDTO()
     }
 
+    fun updateUser(userId: String, updatedUser: UserRealm) {
+        val existingUser = realmRepository.getById(UserRealm::class.java, userId)
+        if (existingUser != null) {
+            realmRepository.insertOrUpdate(updatedUser.apply {
+                id = userId // Ensure the user ID remains the same
+            })
+        }
+    }
     // Add or update a user
     fun addUser(user: UserRealm) {
         realmRepository.insertOrUpdate(user)
@@ -105,4 +118,37 @@ class UserViewModelRealm(private val realmRepository: RealmRepository) {
             } ?: emptyList()
         )
     }
+
+//    fun UserDTO.toUserRealm(): UserRealm {
+//        return UserRealm().apply {
+//            id = this@toUserRealm.id
+//            email = this@toUserRealm.email
+//            firstName = this@toUserRealm.firstName
+//            lastName = this@toUserRealm.lastName
+//            fullName = this@toUserRealm.fullName
+//            username = this@toUserRealm.username
+//            phone = this@toUserRealm.phone
+//            cellphone = this@toUserRealm.cellphone
+//            isConfirmed = this@toUserRealm.isConfirmed
+//            isDeleted = this@toUserRealm.isDeleted
+//            password = this@toUserRealm.password
+//            roleName = this@toUserRealm.roleName
+//            clientName = this@toUserRealm.clientName
+//            clientId = this@toUserRealm.clientId
+//            token = this@toUserRealm.token
+//            userGroupId = this@toUserRealm.userGroupId
+//            gender = this@toUserRealm.gender
+//            weight = this@toUserRealm.weight
+//            age = this@toUserRealm.age
+//            isSubscribed = this@toUserRealm.isSubscribed
+//            favouriteClients = this@toUserRealm.favouriteClients.toRealmList()
+//            publicUserSettings = this@toUserRealm.publicUserSettings.map {
+//                PublicUserSettingsRealm().apply {
+//                    key = it.key
+//                    value = it.value
+//                }
+//            }.toRealmList()
+//        }
+//    }
+
 }
