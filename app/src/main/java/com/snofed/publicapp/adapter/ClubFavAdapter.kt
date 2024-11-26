@@ -99,7 +99,7 @@ class ClubFavAdapter() : RecyclerView.Adapter<ClubFavAdapter.ClubViewHolder>() {
         if (wishlistItems.contains(reslult.id)) {
             holder.imgIdWishlist.setImageResource(R.drawable.hearth_filled)
         } else {
-            holder.imgIdWishlist.setImageResource(R.drawable.hearth_empty)
+            holder.imgIdWishlist.setImageResource(R.drawable.hearth_filled)
         }
         /* holder.imgIdWishlist.setOnClickListener {
              listener.onWishlistClick(reslult.id)

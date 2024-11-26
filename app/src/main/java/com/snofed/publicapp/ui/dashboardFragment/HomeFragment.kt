@@ -1,5 +1,6 @@
 package com.snofed.publicapp.ui.dashboardFragment
 
+import RealmRepository
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -22,12 +23,14 @@ import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.RecentFeedAdpater
 import com.snofed.publicapp.databinding.FragmentHomeBinding
 import com.snofed.publicapp.models.workoutfeed.Daum
+import com.snofed.publicapp.ui.User.UserViewModelRealm
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.AppPreference
 import com.snofed.publicapp.utils.DateTimeConverter
 import com.snofed.publicapp.utils.DrawerController
 import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.NetworkResult
+import com.snofed.publicapp.utils.ServiceUtil
 import com.snofed.publicapp.utils.SharedPreferenceKeys
 import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.TokenManager
@@ -72,11 +75,18 @@ class HomeFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Get ViewModel instance
-        binding.nameTextView.text = tokenManager.getFullName()
+
 
         // Retrieve the saved image URL
-        val savedImageUrl = AppPreference.getPreference(context, SharedPreferenceKeys.PREFS_PROFILE_FILE)
+        //val savedImageUrl = AppPreference.getPreference(context, SharedPreferenceKeys.PREFS_PROFILE_FILE)
+
+        val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
+        val realmRepository = RealmRepository()
+        val userViewModelRealm = UserViewModelRealm(realmRepository)
+        // Get ViewModel instance
+        binding.nameTextView.text = userViewModelRealm.getUserById(userId)?.fullName
+        // Retrieve the saved image URL
+        val savedImageUrl = ServiceUtil.BASE_URL_IMAGE + userViewModelRealm.getPublicUserSettingValue(userId,"Image")
 
         savedImageUrl?.let {
             // Load the image using Glide with circle crop transformation

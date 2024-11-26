@@ -1,5 +1,9 @@
 package com.snofed.publicapp.dto
 
+import com.snofed.publicapp.models.realmModels.PublicUserSettingsRealm
+import com.snofed.publicapp.models.realmModels.UserRealm
+import io.realm.RealmList
+
 open class UserDTO(
     val id: String,
     val email: String,
@@ -21,6 +25,34 @@ open class UserDTO(
     var weight: Int? = null,
     var age: Int? = null,
     var isSubscribed: Boolean? = null,
-    val publicUserSettings: List<PublicUserSettingsDTO>? = null,
-    val favouriteClients: List<String>? = null
+    var publicUserSettings: List<PublicUserSettingsDTO>? = null,
+    var favouriteClients: List<String>? = null
 )
+
+fun UserDTO.toRealm(): UserRealm {
+    return UserRealm().apply {
+        id = this@toRealm.id
+        email = this@toRealm.email
+        firstName = this@toRealm.firstName
+        lastName = this@toRealm.lastName
+        fullName = this@toRealm.fullName
+        username = this@toRealm.username
+        phone = this@toRealm.phone
+        cellphone = this@toRealm.cellphone
+        isConfirmed = this@toRealm.isConfirmed
+        isDeleted = this@toRealm.isDeleted
+        password = this@toRealm.password
+        roleName = this@toRealm.roleName
+        clientName = this@toRealm.clientName
+        clientId = this@toRealm.clientId
+        token = this@toRealm.token
+        userGroupId = this@toRealm.userGroupId
+        gender = this@toRealm.gender
+        weight = this@toRealm.weight
+        age = this@toRealm.age
+        isSubscribed = this@toRealm.isSubscribed
+        favouriteClients = this@toRealm.favouriteClients?.let { RealmList<String>().apply { addAll(it) } }
+        publicUserSettings = this@toRealm.publicUserSettings?.let { RealmList<PublicUserSettingsRealm>().apply { addAll(it.map { dto -> dto.toRealm() }) } }
+    }
+}
+

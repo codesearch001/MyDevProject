@@ -4,7 +4,7 @@ import com.snofed.publicapp.dto.PublicUserSettingsDTO
 import com.snofed.publicapp.dto.UserDTO
 
 data class PublicUserSettings(
-    var key: String? = null,
+    var key: String,
     val value: String? = null
 )
 
