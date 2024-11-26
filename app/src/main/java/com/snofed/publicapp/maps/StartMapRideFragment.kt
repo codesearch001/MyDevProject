@@ -1,5 +1,6 @@
 package com.snofed.publicapp.maps
 
+import RealmRepository
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -68,6 +69,7 @@ import com.snofed.publicapp.db.WorkoutResponse
 import com.snofed.publicapp.ridelog.NewRideWorkout
 import com.snofed.publicapp.ridelog.NewWorkoutImage
 import com.snofed.publicapp.ridelog.NewWorkoutPoint
+import com.snofed.publicapp.ui.User.UserViewModelRealm
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.ui.setting.WorkoutDataImages
 import com.snofed.publicapp.utils.AppPreference
@@ -190,6 +192,16 @@ class StartMapRideFragment : Fragment(),WorkoutMediaReader.OnImageUriReceivedLis
          }*/
         mediaReader = WorkoutMediaReader(this,this)
         userId = tokenManager.getUserId()
+        val realmRepository = RealmRepository()
+        val userViewModelRealm = UserViewModelRealm(realmRepository)
+        var userSettingScreenOn = userViewModelRealm.getPublicUserSettingValue(userId!!,"ScreenAlwaysOn")
+        var isScreenOn = if(userSettingScreenOn.isNullOrEmpty()) false else if(userSettingScreenOn.toBoolean()) true else false
+
+        if (isScreenOn) {
+            requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        } else {
+            requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
 
         userName = tokenManager.getFullName()
 

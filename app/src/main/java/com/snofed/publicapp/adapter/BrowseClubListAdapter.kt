@@ -120,9 +120,20 @@ class BrowseClubListAdapter(private val context: Context, private val listener: 
                 )
                 // call subscribe api
                 clubViewModel.subscribeClubService(subscribeDTO)
+
                 // update userRealm
                 val realmRepository = RealmRepository()
                 val userViewModelRealm = UserViewModelRealm(realmRepository)
+                val realm = realmRepository.getRealmInstance() // Get a Realm instance from your repository
+
+                realm.executeTransaction { transactionRealm ->
+                    val userRealm = userViewModelRealm.getUserById(userId!!)
+                    userRealm?.let {
+                        it.favouriteClients?.add(clientId)
+                        transactionRealm.insertOrUpdate(it) // Save the updated object
+                    }
+                }
+
             } else {
                 holder.imgIdWishlist.setImageResource(R.drawable.hearth_empty)
                 val userId = AppPreference.getPreference(context, SharedPreferenceKeys.USER_USER_ID).toString()
@@ -132,8 +143,20 @@ class BrowseClubListAdapter(private val context: Context, private val listener: 
                     subscribeDate = SnofedUtils.getDateNow(SnofedConstants.DATETIME_SERVER_FORMAT)
                 )
                 // call unsubscribe api
-                clubViewModel.unsubscribeClubService(subscribeDTO)
+               clubViewModel.unsubscribeClubService(subscribeDTO)
+
                 // update userRealm
+                val realmRepository = RealmRepository()
+                val userViewModelRealm = UserViewModelRealm(realmRepository)
+                val realm = realmRepository.getRealmInstance() // Get a Realm instance from your repository
+
+                realm.executeTransaction { transactionRealm ->
+                    val userRealm = userViewModelRealm.getUserById(userId!!)
+                    userRealm?.let {
+                        it.favouriteClients?.remove(clientId)
+                        transactionRealm.insertOrUpdate(it) // Save the updated object
+                    }
+                }
             }
             listener.onWishlistClick(clientId) // Notify the listener of the change
         }

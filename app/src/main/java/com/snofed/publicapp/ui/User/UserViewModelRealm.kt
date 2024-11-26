@@ -3,6 +3,7 @@ package com.snofed.publicapp.ui.User
 import RealmRepository
 import com.snofed.publicapp.dto.PublicUserSettingsDTO
 import com.snofed.publicapp.dto.UserDTO
+import com.snofed.publicapp.dto.toRealm
 import com.snofed.publicapp.models.realmModels.PublicUserSettingsRealm
 import com.snofed.publicapp.models.realmModels.UserRealm
 import io.realm.RealmList
@@ -20,14 +21,6 @@ class UserViewModelRealm(private val realmRepository: RealmRepository) {
         return user?.toUserDTO()
     }
 
-    fun updateUser(userId: String, updatedUser: UserRealm) {
-        val existingUser = realmRepository.getById(UserRealm::class.java, userId)
-        if (existingUser != null) {
-            realmRepository.insertOrUpdate(updatedUser.apply {
-                id = userId // Ensure the user ID remains the same
-            })
-        }
-    }
     // Add or update a user
     fun addUser(user: UserRealm) {
         realmRepository.insertOrUpdate(user)
@@ -62,6 +55,12 @@ class UserViewModelRealm(private val realmRepository: RealmRepository) {
         } ?: emptyList()
     }
 
+    fun getPublicUserSettingValue(userId: String, key: String): String? {
+        val user = realmRepository.getById(UserRealm::class.java, userId)
+        return user?.publicUserSettings?.find { it.key == key }?.value
+    }
+
+
     // Add or update PublicUserSettings for a user
     fun addOrUpdatePublicUserSettings(userId: String, settings: List<PublicUserSettingsDTO>) {
         val user = realmRepository.getById(UserRealm::class.java, userId)
@@ -74,6 +73,61 @@ class UserViewModelRealm(private val realmRepository: RealmRepository) {
                     }
                 }.toRealmList()
             })
+        }
+    }
+
+    fun updateUserSubscriptionStatus(userId: String, isSubscribed: Boolean) {
+        val user = realmRepository.getById(UserRealm::class.java, userId)
+        user?.let {
+            realmRepository.insertOrUpdate(it.apply {
+                this.isSubscribed = isSubscribed
+            })
+        }
+    }
+
+    fun updatePublicUserSetting(userId: String, setting: PublicUserSettingsDTO) {
+        val user = realmRepository.getById(UserRealm::class.java, userId)
+        if (user != null) {
+            realmRepository.getRealmInstance().executeTransaction { transactionRealm ->
+                val managedUser = transactionRealm.where(UserRealm::class.java).equalTo("id", userId).findFirst()
+                if (managedUser != null) {
+                    // Find the setting in the managed list
+                    val existingSetting = managedUser.publicUserSettings?.find { it.key == setting.key }
+
+                    if (existingSetting != null) {
+                        // Update the value of the existing setting
+                        existingSetting.value = setting.value
+                    }
+                    // Insert or update the user object in Realm
+                    transactionRealm.insertOrUpdate(managedUser)
+                } else {
+                    println("User with ID $userId not found in Realm.")
+                }
+            }
+        } else {
+            println("User with ID $userId not found.")
+        }
+    }
+
+    fun updateUser(userId: String, userDTO: UserDTO) {
+        val user = realmRepository.getById(UserRealm::class.java, userId)
+        if (user != null) {
+            realmRepository.getRealmInstance().executeTransaction { transactionRealm ->
+                // Update all fields in the user object
+                user.firstName = userDTO.firstName
+                user.lastName = userDTO.lastName
+                user.fullName = userDTO.firstName + " " + userDTO.lastName
+                user.gender = userDTO.gender
+                user.weight = userDTO.weight
+                user.age = userDTO.age
+
+                // Update `favouriteClients`
+//                user.favouriteClients = RealmList<String>().apply {
+//                    userDTO.favouriteClients?.let { addAll(it) }
+//                }
+
+
+            }
         }
     }
 
@@ -118,37 +172,5 @@ class UserViewModelRealm(private val realmRepository: RealmRepository) {
             } ?: emptyList()
         )
     }
-
-//    fun UserDTO.toUserRealm(): UserRealm {
-//        return UserRealm().apply {
-//            id = this@toUserRealm.id
-//            email = this@toUserRealm.email
-//            firstName = this@toUserRealm.firstName
-//            lastName = this@toUserRealm.lastName
-//            fullName = this@toUserRealm.fullName
-//            username = this@toUserRealm.username
-//            phone = this@toUserRealm.phone
-//            cellphone = this@toUserRealm.cellphone
-//            isConfirmed = this@toUserRealm.isConfirmed
-//            isDeleted = this@toUserRealm.isDeleted
-//            password = this@toUserRealm.password
-//            roleName = this@toUserRealm.roleName
-//            clientName = this@toUserRealm.clientName
-//            clientId = this@toUserRealm.clientId
-//            token = this@toUserRealm.token
-//            userGroupId = this@toUserRealm.userGroupId
-//            gender = this@toUserRealm.gender
-//            weight = this@toUserRealm.weight
-//            age = this@toUserRealm.age
-//            isSubscribed = this@toUserRealm.isSubscribed
-//            favouriteClients = this@toUserRealm.favouriteClients.toRealmList()
-//            publicUserSettings = this@toUserRealm.publicUserSettings.map {
-//                PublicUserSettingsRealm().apply {
-//                    key = it.key
-//                    value = it.value
-//                }
-//            }.toRealmList()
-//        }
-//    }
 
 }

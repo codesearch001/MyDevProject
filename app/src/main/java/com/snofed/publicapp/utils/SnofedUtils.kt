@@ -16,6 +16,7 @@ import com.snofed.publicapp.utils.SnofedConstants.Companion.FIRST_TIME_APP_USE
 import com.snofed.publicapp.utils.SnofedConstants.Companion.PREFS_NAME
 import java.io.IOException
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -24,6 +25,22 @@ class SnofedUtils {
     companion object {
         const val LOCATION_PERMISSION_REQUEST_CODE = 1001
 
+
+        fun getYearFromDate(date: Date? = null): Int {
+            val calendar = Calendar.getInstance()
+            calendar.time = date ?: Date() // If date is null, use the current date
+            return calendar.get(Calendar.YEAR)
+        }
+
+        fun getAgeFromBirthYear(birthYear: Int): Int {
+            val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+            return currentYear - birthYear
+        }
+
+        fun getBirthYearFromAge(age: Int): Int {
+            val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+            return currentYear - age
+        }
 
         // Function to check if location permissions are granted
         fun isLocationPermissionGranted(context: Context): Boolean {

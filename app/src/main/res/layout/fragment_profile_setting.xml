@@ -155,6 +155,7 @@
                     android:textSize="14sp" />
 
                 <ImageView
+                    android:id="@+id/txt_user_age_arrow"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_gravity="center"
@@ -196,6 +197,7 @@
                     android:textSize="14sp" />
 
                 <ImageView
+                    android:id="@+id/txt_user_weight_arrow"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_gravity="center"
@@ -236,6 +238,7 @@
                     android:textSize="14sp" />
 
                 <ImageView
+                    android:id="@+id/txt_user_gender_arrow"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_gravity="center"
@@ -277,7 +280,7 @@
 
 
                 <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switchCompat"
+                    android:id="@+id/switchScreenOn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:elevation="@dimen/_1sdp"
@@ -312,9 +315,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="(null) km/h"
+                    android:text=""
                     android:layout_marginEnd="24dp"
                     android:gravity="center"
+                    android:id="@+id/switchAutoSpeedTxt"
                     android:textColor="@color/blue_txt_light"
                     android:textSize="14sp" />
 
@@ -322,6 +326,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_gravity="center"
+                    android:id="@+id/switchAutoSpeedArrow"
                     android:src="@drawable/right" />
 
 

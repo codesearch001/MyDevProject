@@ -7,6 +7,10 @@ class RealmRepository {
 
     private val realm: Realm = Realm.getDefaultInstance()
 
+    fun getRealmInstance(): Realm {
+        return realm
+    }
+
     // Insert or update any RealmObject
     fun <T : RealmObject> insertOrUpdate(model: T) {
         realm.executeTransactionAsync { transactionRealm ->

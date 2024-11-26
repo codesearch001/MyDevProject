@@ -10,19 +10,29 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.snofed.publicapp.databinding.FragmentProfileSettingBinding
 import android.content.DialogInterface
+import android.text.InputType
 import android.util.Log
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.NumberPicker
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.compose.ui.text.toLowerCase
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.gson.Gson
 import com.snofed.publicapp.R
+import com.snofed.publicapp.dto.PublicUserSettingsDTO
 import com.snofed.publicapp.models.User
+import com.snofed.publicapp.models.realmModels.PublicUserSettingsRealm
+import com.snofed.publicapp.models.realmModels.UserRealm
 import com.snofed.publicapp.models.toUser
 import com.snofed.publicapp.ui.User.UserViewModelRealm
 import com.snofed.publicapp.ui.login.AuthViewModel
@@ -32,7 +42,13 @@ import com.snofed.publicapp.utils.MediaReader
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.ServiceUtil
 import com.snofed.publicapp.utils.SharedPreferenceKeys
+import com.snofed.publicapp.utils.SnofedUtils.Companion.getAgeFromBirthYear
+import com.snofed.publicapp.utils.SnofedUtils.Companion.getBirthYearFromAge
+import com.snofed.publicapp.utils.SnofedUtils.Companion.getYearFromDate
 import dagger.hilt.android.AndroidEntryPoint
+import io.realm.RealmList
+import io.realm.kotlin.where
+import kotlinx.coroutines.selects.select
 import java.io.File
 
 @AndroidEntryPoint
@@ -43,7 +59,6 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
     private val authViewModel by activityViewModels<AuthViewModel>()
     private val viewModel by viewModels<AuthViewModel>()
     private lateinit var mediaReader: MediaReader
-    private var imageView: ImageView? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -54,12 +69,7 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
         // Initialize MediaReader with this fragment
         mediaReader = MediaReader(this,this)
 
-        // Retrieve the saved image URL
-        val savedImageUrl = AppPreference.getPreference(context, SharedPreferenceKeys.PREFS_PROFILE_FILE)
-        savedImageUrl?.let {
-            // Use Glide to set the image URL to the ImageView
-            mediaReader.setImageView(binding.profileImageView, it)
-        }
+
         // Set click listener on ImageView
         binding.profileImageView.setOnClickListener {
             showImageOptionsDialog()
@@ -69,41 +79,9 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
             showImageOptionsDialog()
         }
 
-        binding.switchWifi.isChecked =
-            ClientPrefrences.getSwitchState(requireContext(), SharedPreferenceKeys.SWITCH_WIFI_STATE)
-
-
-        binding.switchCompat.isChecked =
-            ClientPrefrences.getSwitchState(requireContext(), SharedPreferenceKeys.SWITCH_COMPAT_STATE)
-
-
-        binding.switchWifi.setOnCheckedChangeListener { _, isChecked ->
-            ClientPrefrences.saveSwitchState(requireContext(), SharedPreferenceKeys.SWITCH_COMPAT_STATE, isChecked)
-
-
-            val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
-
-            val realmRepository = RealmRepository()
-            val userViewModelRealm = UserViewModelRealm(realmRepository)
-            val userDTO = userViewModelRealm.getUserDTOById(userId)
-            // Update settings before saving
-            authViewModel.updateUser(userDTO!!.toUser());
-        }
-
-
-        binding.switchCompat.setOnCheckedChangeListener { _, isChecked ->
-            ClientPrefrences.saveSwitchState(requireContext(), SharedPreferenceKeys.SWITCH_COMPAT_STATE, isChecked)
-        }
-
         binding.changePassword.setOnClickListener {
             it.findNavController().navigate(R.id.recoverFragment)
         }
-
-            binding.txtFirstName.text =  AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_FIRST_NAME)
-            binding.txtLastName.text =AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_LAST_NAME)
-            binding.txtUserAge.text = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_AGE)
-            binding.txtUserWeight.text = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_WEIGHT) + " Kg"
-            binding.txtUserGender.text = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_GENDER_TYPE)
 
 
         return view
@@ -111,64 +89,254 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
+        val realmRepository = RealmRepository()
+        val userViewModelRealm = UserViewModelRealm(realmRepository)
+
+        // Retrieve the saved image URL
+        val savedImageUrl = ServiceUtil.BASE_URL_IMAGE + userViewModelRealm.getPublicUserSettingValue(userId,"Image")
+        //Log.e("IMAGE","IMAGE"+savedImageUrl)
+        savedImageUrl?.let {
+            // Use Glide to set the image URL to the ImageView
+            mediaReader.setImageView(binding.profileImageView, it)
+        }
+
+        var userGender = if (userViewModelRealm.getUserById(userId)?.gender.toString()
+                .equals("0", ignoreCase = true)) "Male" else "Female"
+        var userweight = userViewModelRealm.getUserById(userId)?.weight.toString()
+        var userAge = userViewModelRealm.getUserById(userId)?.age.toString()
+        
+        binding.txtFirstName.text =  userViewModelRealm.getUserById(userId)?.firstName
+        binding.txtLastName.text = userViewModelRealm.getUserById(userId)?.lastName
+        binding.txtUserAge.text = if(userAge.isNullOrEmpty()) "0" else getAgeFromBirthYear(userAge.toInt()).toString()
+        binding.txtUserWeight.text =  if(userweight.isNullOrEmpty()) "0" else "$userweight Kg"
+        binding.txtUserGender.text = userGender
+
+
         binding.txtFirstName.setOnClickListener {
-            showEditablePopup( EditType.FIRST_NAME, "", binding.txtFirstName.text.toString()) { newValue ->
+            showEditablePopup( EditType.FIRSTNAME, "", binding.txtFirstName.text.toString()) { newValue ->
                 binding.txtFirstName.text = newValue
             }
         }
 
         binding.txtLastName.setOnClickListener {
-            showEditablePopup(EditType.LAST_NAME, "", binding.txtLastName.text.toString()) { newValue ->
+            showEditablePopup(EditType.LASTNAME, "", binding.txtLastName.text.toString()) { newValue ->
                 binding.txtLastName.text = newValue
             }
         }
 
-        binding.txtUserGender.setOnClickListener {
-            showGenderSelectionPopup(EditType.GENDER, "") { selectedGender ->
+        binding.txtUserAgeArrow.setOnClickListener {
+            showAgeSelectionPopup(EditType.AGE, "", binding.txtUserAge.text.toString()) { selectedAge ->
+                binding.txtUserAge.text = getAgeFromBirthYear(selectedAge!!.toInt()).toString()
+            }
+        }
+
+        binding.txtUserWeightArrow.setOnClickListener {
+            showWeightSelectionPopup(EditType.WEIGHT, "", userweight.toString()) { selectedWeight ->
+                binding.txtUserWeight.text = selectedWeight + "Kg"
+            }
+        }
+        binding.txtUserGenderArrow.setOnClickListener {
+            showGenderSelectionPopup(EditType.GENDER, "", binding.txtUserGender.text.toString()) { selectedGender ->
                 binding.txtUserGender.text = selectedGender
             }
         }
+
+        val switchScreen = userViewModelRealm.getPublicUserSettingValue(userId,"ScreenAlwaysOn")
+        val switchWifiNew = userViewModelRealm.getPublicUserSettingValue(userId,"SyncOnWifi")
+        val switchAutoSpeedTxt = userViewModelRealm.getPublicUserSettingValue(userId,"AutoPauseSpeed")
+        val finalAutoSpeedTxt = if(switchAutoSpeedTxt.isNullOrEmpty()) "0" else if(switchAutoSpeedTxt == "0") "2" else "4"
+        Log.e("AUTOSPEED","switch auto speed "+switchAutoSpeedTxt)
+
+        // Set Log
+        binding.switchWifi.isChecked = if (switchWifiNew.equals("true", ignoreCase = true)) true else false
+
+        binding.switchAutoSpeedTxt.text = finalAutoSpeedTxt + " km/h"
+
+        binding.switchScreenOn.isChecked = if (switchScreen.equals("true", ignoreCase = true)) true else false
+
+        binding.switchWifi.setOnCheckedChangeListener { _, isChecked ->
+            //ClientPrefrences.saveSwitchState(requireContext(), SharedPreferenceKeys.SWITCH_COMPAT_STATE, isChecked)
+
+
+            val realmRepository = RealmRepository()
+            val userViewModelRealm = UserViewModelRealm(realmRepository)
+
+            // Update settings before saving
+            userViewModelRealm.updatePublicUserSetting(userId, PublicUserSettingsDTO("SyncOnWifi", isChecked.toString()))
+
+            var userDTO = userViewModelRealm.getUserDTOById(userId)
+
+            authViewModel.updateUser(userDTO!!.toUser())
+        }
+
+
+        binding.switchScreenOn.setOnCheckedChangeListener { _, isChecked ->
+            //ClientPrefrences.saveSwitchState(requireContext(), SharedPreferenceKeys.SWITCH_COMPAT_STATE, isChecked)
+            val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
+
+            val realmRepository = RealmRepository()
+            val userViewModelRealm = UserViewModelRealm(realmRepository)
+
+            // Update settings before saving
+            userViewModelRealm.updatePublicUserSetting(userId, PublicUserSettingsDTO("ScreenAlwaysOn", isChecked.toString()))
+
+            var userDTO = userViewModelRealm.getUserDTOById(userId)
+
+            authViewModel.updateUser(userDTO!!.toUser())
+        }
+
+        binding.switchAutoSpeedArrow.setOnClickListener{
+            showLogSpeedSelectionPopup(EditType.AUTOPAUSESPEED, "", finalAutoSpeedTxt.toString()) { selectedSpeed ->
+                binding.switchAutoSpeedTxt.text = selectedSpeed
+            }
+        }
+
     }
 
     private fun showEditablePopup(field: EditType, message: String, currentValue: String, onSave: (String) -> Unit) {
-        val inputField = EditText(requireContext()).apply {
+        // Create an EditText for user input
+        val inputField = TextInputEditText(requireContext()).apply {
             setText(currentValue)
+            //hint = "Enter ${field.toString().replace("_", " ").lowercase()}" // Add a helpful hint
+            inputType = InputType.TYPE_CLASS_TEXT // Adjust input type based on expected input
+            setPadding(20, 10, 20, 40) // Add padding for better spacing
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+            )
+            background = ContextCompat.getDrawable(requireContext(), android.R.color.transparent)
         }
 
-        AlertDialog.Builder(requireContext())
-            .setTitle(field.toString())
-            .setMessage(message)
-            .setView(inputField)
-            .setPositiveButton("Save") { dialog, which ->
-                val newValue = inputField.text.toString()
-                onSave(newValue) // Update the field with the new value
+        // Wrap EditText in a TextInputLayout for better visual appearance
+        val textInputLayout = TextInputLayout(requireContext()).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+            )
+            setPadding(20,0,20,0)
+            //isHintEnabled = true // Enable hint above input field
+            addView(inputField)
+        }
 
-                saveToRealmAndServer(newValue, field)
+        // Create a parent layout for spacing and alignment
+        val parentLayout = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+            )
+            setPadding(50, 20, 50, 20) // Add margins around the dialog box content
+            addView(textInputLayout)
+        }
+
+
+        AlertDialog.Builder(requireContext())
+            .setTitle(field.toString().replace("_"," "))
+            .setMessage(message)
+            .setView(parentLayout)
+            .setPositiveButton("Save") { dialog, which ->
+                val newValue = inputField.text.toString().trim()
+                if (newValue.isEmpty()) {
+                    Toast.makeText(requireContext(), "Field cannot be empty", Toast.LENGTH_SHORT).show()
+                }
+                else if(newValue.length < 3){
+                    Toast.makeText(requireContext(), "Name minimin should be of 3 char", Toast.LENGTH_SHORT).show()
+                }
+                else {
+                    onSave(newValue) // Update the field with the new value
+                    saveToRealmAndServer(newValue, field)
+                }
             }
             .setNegativeButton("Cancel", null)
             .show()
     }
 
-    private fun showGenderSelectionPopup(field: EditType, message: String, onSave: (String) -> Unit) {
+    private fun showAgeSelectionPopup(field: EditType, message: String,currentValue: String,  onSave: (String) -> Unit) {
+        val newCal = if (currentValue.isNullOrEmpty()) 2000 else getBirthYearFromAge(currentValue.toInt())
+        val numberPicker = NumberPicker(requireContext()).apply {
+            minValue = 1900 // Set the minimum value
+            maxValue = getYearFromDate() - 4// Set the maximum value
+            value = newCal // Set default value (optional)
+            wrapSelectorWheel = true // Enable or disable cycling of values
+            setPadding(20, 10, 20, 40) // Add padding for better spacing
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+            )
+        }
+
+        // Show the dialog with the NumberPicker
+        AlertDialog.Builder(requireContext())
+            .setTitle(field.toString())
+            .setMessage(message)
+            .setView(numberPicker)
+            .setPositiveButton("Save") { dialog, which ->
+                // Pass the selected value to the onSave callback
+                onSave(numberPicker.value.toString())
+                // Save to Realm and server
+                saveToRealmAndServer(numberPicker.value.toString(), field)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showWeightSelectionPopup(field: EditType, message: String,currentValue: String?,  onSave: (String) -> Unit) {
+        val newCal = if (currentValue.isNullOrEmpty()) 2000 else currentValue.toInt()
+        val numberPicker = NumberPicker(requireContext()).apply {
+            minValue = 10 // Set the minimum value
+            maxValue = 300 // Set the maximum value
+            value = newCal // Set default value (optional)
+            wrapSelectorWheel = true // Enable or disable cycling of values
+            setPadding(20, 10, 20, 40) // Add padding for better spacing
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+            )
+        }
+
+        // Show the dialog with the NumberPicker
+        AlertDialog.Builder(requireContext())
+            .setTitle(field.toString())
+            .setMessage(message)
+            .setView(numberPicker)
+            .setPositiveButton("Save") { dialog, which ->
+                // Pass the selected value to the onSave callback
+                onSave(numberPicker.value.toString())
+                // Save to Realm and server
+                saveToRealmAndServer(numberPicker.value.toString(), field)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showGenderSelectionPopup(field: EditType, message: String,currentValue: String,  onSave: (String) -> Unit) {
         // Create a RadioGroup for gender options
         val radioGroup = RadioGroup(requireContext()).apply {
             orientation = RadioGroup.VERTICAL
-
             // Create radio buttons for Male, Female, Other
             val radioMale = RadioButton(requireContext()).apply {
                 text = "Male"
+                id = View.generateViewId()
             }
             val radioFemale = RadioButton(requireContext()).apply {
                 text = "Female"
+                id = View.generateViewId()
             }
-            val radioOther = RadioButton(requireContext()).apply {
-                text = "Other"
-            }
+            setPadding(40, 10, 20, 40) // Add padding for better spacing
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+            )
 
             // Add radio buttons to the RadioGroup
             addView(radioMale)
             addView(radioFemale)
-            addView(radioOther)
+            when (currentValue.lowercase()) {
+                "male" -> check(radioMale.id) // Select "Male" if currentValue is "male"
+                "female" -> check(radioFemale.id) // Select "Female" if currentValue is "female"
+                else -> check(radioMale.id) // Default to "Male" if no valid currentValue
+            }
         }
 
         // Show the dialog with the radio buttons
@@ -180,9 +348,53 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
                 // Get selected radio button text and pass it to onSave callback
                 val selectedRadioButton = radioGroup.findViewById<RadioButton>(radioGroup.checkedRadioButtonId)
                 onSave(selectedRadioButton?.text.toString()) // Update the gender field with the selected option
-            //Save to Realm
-            // Call the API
-            //saveToRealmAndServer(selectedRadioButton?.text.toString(), title)
+            //SAVE TO REALM AND SERVER
+            saveToRealmAndServer(selectedRadioButton?.text.toString(), field)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showLogSpeedSelectionPopup(field: EditType, message: String,currentValue: String,  onSave: (String) -> Unit) {
+        // Create a RadioGroup for gender options
+        val radioGroup = RadioGroup(requireContext()).apply {
+            orientation = RadioGroup.VERTICAL
+            // Create radio buttons for Male, Female, Other
+            val radio2 = RadioButton(requireContext()).apply {
+                text = "2 km/h"
+                id = View.generateViewId()
+            }
+            val radio4 = RadioButton(requireContext()).apply {
+                text = "4 km/h"
+                id = View.generateViewId()
+            }
+            setPadding(40, 10, 20, 40) // Add padding for better spacing
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+            )
+
+            // Add radio buttons to the RadioGroup
+            addView(radio2)
+            addView(radio4)
+            when (currentValue.lowercase()) {
+                "2" -> check(radio2.id) // Select "Male" if currentValue is "male"
+                "4" -> check(radio4.id) // Select "Female" if currentValue is "female"
+                else -> check(radio2.id) // Default to "Male" if no valid currentValue
+            }
+        }
+
+        // Show the dialog with the radio buttons
+        AlertDialog.Builder(requireContext())
+            .setTitle(field.toString())
+            .setMessage(message)
+            .setView(radioGroup)
+            .setPositiveButton("Save") { dialog, which ->
+                // Get selected radio button text and pass it to onSave callback
+                val selectedRadioButton = radioGroup.findViewById<RadioButton>(radioGroup.checkedRadioButtonId)
+                onSave(selectedRadioButton?.text.toString()) // Update the gender field with the selected option
+                //SAVE TO REALM AND SERVER
+                saveToRealmAndServer(selectedRadioButton?.text.toString(), field)
             }
             .setNegativeButton("Cancel", null)
             .show()
@@ -193,31 +405,57 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
 
         val realmRepository = RealmRepository()
         val userViewModelRealm = UserViewModelRealm(realmRepository)
-        val user = userViewModelRealm.getUserById(userId)
-        //user!!.firstName = newValue
-        userViewModelRealm.updateUser(userId, user!!)
-        // Save the updated user back to Realm
-
+        val realm = realmRepository.getRealmInstance() // Get a Realm instance from your repository
 
         val userDTO = userViewModelRealm.getUserDTOById(userId)
 
-        if(EditType.FIRST_NAME == field){
+        if(EditType.FIRSTNAME == field){
             userDTO!!.firstName = newValue
         }
-        else if(EditType.LAST_NAME == field){
+        else if(EditType.LASTNAME == field){
             userDTO!!.lastName = newValue
         }
         else if(EditType.GENDER == field){
-            userDTO!!.gender = newValue?.toInt()
+            userDTO?.gender = if (newValue.equals("male", ignoreCase = true)) 0 else 1
+        }
+        else if(EditType.AGE == field){
+            userDTO?.age = newValue?.toInt()
+        }
+        else if(EditType.WEIGHT == field){
+            userDTO?.weight = newValue?.toInt()
+        }
+        else if(EditType.AUTOPAUSESPEED == field){
+            val updateValue = if (newValue.equals("2 km/h", ignoreCase = true)) 0 else 1
+            userViewModelRealm.updatePublicUserSetting(userId, PublicUserSettingsDTO("AutoPauseSpeed", updateValue.toString()))
         }
 
-        //Save to realm
-        //val updatedUserRealm = userDTO.toUserRealm()
-        //userViewModelRealm.updateUser(userId, updatedUserRealm)
-        //userViewModelRealm.updateUser(userId, user!!)
-        // Call the API
+        //Update the UserRealm
+        if(EditType.AUTOPAUSESPEED != field) {
+            userViewModelRealm.updateUser(userId, userDTO!!)
+        }
 
-        authViewModel.updateUser(userDTO!!.toUser());
+        var sendUserDTO = userViewModelRealm.getUserDTOById(userId)
+
+
+        // Call the API to save to Server
+        authViewModel.updateUser(sendUserDTO!!.toUser());
+    }
+
+    fun SaveUserPublicSettings(type: EditType, value: String,realmRepository: RealmRepository,userViewModelRealm: UserViewModelRealm){
+        val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
+        val realm = realmRepository.getRealmInstance() // Get a Realm instance from your repository
+        realm.executeTransaction { transactionRealm ->
+            val userRealm = userViewModelRealm.getUserById(userId!!)
+            userRealm?.let {
+                // Find and update the setting with a specific key
+                it.publicUserSettings?.forEach { setting ->
+                    if (setting.key == "desiredKey") {
+                        setting.value = value  // Modify the value of the matching setting
+                    }
+                }
+                transactionRealm.insertOrUpdate(it)
+            }
+        }
     }
 
     private fun showImageOptionsDialog() {
@@ -247,12 +485,22 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
             when (result) {
                 is NetworkResult.Success -> {
                     val uploadMessage = result.data?.message ?: resources.getString(R.string.upload_successful)
-                    Log.e("ProfileSettingFragment", "Upload successful: $uploadMessage")
+                    //("ProfileSettingFragment", "Upload successful: $uploadMessage")
                     // Construct the URL for the uploaded image
-                    val imageUrl = ServiceUtil.BASE_URL_IMAGE + result.data?.data.toString()
-                    AppPreference.savePreference(context, SharedPreferenceKeys.PREFS_PROFILE_FILE, imageUrl)
+                    val imageResponseUri = result.data?.data.toString()
+                    val imageUrl = ServiceUtil.BASE_URL_IMAGE + imageResponseUri
+                    //AppPreference.savePreference(context, SharedPreferenceKeys.PREFS_PROFILE_FILE, imageUrl)
+                    //Log.e("IMAGE_UPLOAD","IMAGE NEW"+imageUrl)
+                    //Update UserRealm Settings
+                    val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
+                    val realmRepository = RealmRepository()
+                    val userViewModelRealm = UserViewModelRealm(realmRepository)
 
-                    mediaReader.setImageView(binding.profileImageView,imageUrl)
+                    // Update image uri to publicUserSettings in UserRealm
+                    userViewModelRealm.updatePublicUserSetting(userId, PublicUserSettingsDTO("Image", imageResponseUri))
+
+                    //Commented, no need to bind the image
+                    //mediaReader.setImageView(binding.profileImageView,imageUrl)
 
                     Toast.makeText(requireActivity(), uploadMessage, Toast.LENGTH_SHORT).show()
                 }
@@ -302,5 +550,13 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
 }
 
 enum class EditType{
-    FIRST_NAME,LAST_NAME,GENDER
+    FIRSTNAME,LASTNAME,AGE,WEIGHT,GENDER, AUTOPAUSESPEED
+}
+
+enum class GenderType{
+    MALE,FEMALE
+}
+
+enum class PublicUserSettings{
+
 }
