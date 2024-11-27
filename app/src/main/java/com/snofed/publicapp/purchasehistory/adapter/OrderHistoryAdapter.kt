@@ -2,6 +2,7 @@ package com.snofed.publicapp.purchasehistory.adapter
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,20 +12,21 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import com.snofed.publicapp.R
-import com.snofed.publicapp.purchasehistory.model.Daum
+import com.snofed.publicapp.models.Order
 import com.snofed.publicapp.utils.DateTimeConverter
 import com.snofed.publicapp.utils.enums.PaymentOrderStatus
 
 
 class OrderHistoryAdapter(private val listener: OnItemClickListener) : RecyclerView.Adapter<OrderHistoryAdapter.ClubViewHolder>(){
 
-    private var orderHistoryArray: List<Daum> = listOf()
+    private var orderHistoryArray: List<Order> = listOf()
     val dateTimeConverter = DateTimeConverter()
 
     // Define the OnItemClickListener interface
     interface OnItemClickListener {
-        fun onItemClick(daum: Daum)
+        fun onItemClick(daum: Order)
     }
     /*init {
         // Calculate the total price when the adapter is initialized and set it to the provided TextView
@@ -33,7 +35,7 @@ class OrderHistoryAdapter(private val listener: OnItemClickListener) : RecyclerV
     }*/
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setFeed(clubs: List<Daum>?) {
+    fun setFeed(clubs: List<Order>?) {
         if (clubs != null) {
             this.orderHistoryArray = clubs
         }
@@ -51,6 +53,10 @@ class OrderHistoryAdapter(private val listener: OnItemClickListener) : RecyclerV
     override fun onBindViewHolder(holder: ClubViewHolder, position: Int) {
         val reslult = orderHistoryArray[position]
 
+        // Convert object to JSON
+        val gson = Gson()
+        val json = gson.toJson(reslult)
+        Log.e("ORDERDATA"  ,"ORDERJSON  "+ json)
         //holder.txt_order_title.text =
         dateTimeConverter.convertDateTime(reslult.createdDate)//convert data
         holder.tv_created_date.text =dateTimeConverter.outputFormatterOnlyDate

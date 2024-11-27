@@ -4,6 +4,7 @@ package com.snofed.publicapp.api
 import com.snofed.publicapp.membership.model.ActiveMembership
 import com.snofed.publicapp.membership.model.MembershipDetails
 import com.snofed.publicapp.membership.model.BuyMembership
+import com.snofed.publicapp.models.Order
 import com.snofed.publicapp.purchasehistory.model.TicketPurchaseHistory
 import com.snofed.publicapp.ui.order.model.TicketTypeData
 import com.snofed.publicapp.ui.order.ticketing.OrderDTO
@@ -12,6 +13,7 @@ import com.snofed.publicapp.ui.order.ticketing.SwishResponseDTO
 import com.snofed.publicapp.utils.ServiceUtil.GET_ACTIVE_MEMBERSHIP
 import com.snofed.publicapp.utils.ServiceUtil.GET_BENIFET_MEMBERSHIP
 import com.snofed.publicapp.utils.ServiceUtil.GET_MEMBERSHIP
+import com.snofed.publicapp.utils.ServiceUtil.GET_ORDER_BY_ID
 import com.snofed.publicapp.utils.ServiceUtil.GET_TICKET_TYPE
 import com.snofed.publicapp.utils.ServiceUtil.SEND_ORDER_DIRECT
 import com.snofed.publicapp.utils.ServiceUtil.SEND_ORDER_SWISH
@@ -45,6 +47,10 @@ interface MembershipApi {
     @GET(TICKET_PURCHASE_ORDER_HISTORY)
     suspend fun getPurchaseOrderHistory(@Header("Accept-Language") acceptLanguage: String,
                                         @Path("userRef") id: String): Response<TicketPurchaseHistory>    //TICKET_PURCHASE_ORDER_HISTORY
+
+    @GET(GET_ORDER_BY_ID)
+    suspend fun getOrderById(@Header("Accept-Language") acceptLanguage: String,
+                             @Path("orderId") id: String): Response<Order>
 
     //TICKET_PURCHASE_ORDER_HISTORY_PRO_TRAILS
     @GET(TICKET_PURCHASE_ORDER_HISTORY_PRO_TRAILS)

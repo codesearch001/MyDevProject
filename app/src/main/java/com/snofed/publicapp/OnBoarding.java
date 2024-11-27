@@ -25,7 +25,7 @@ public class OnBoarding extends AppCompatActivity {
     TextView[] dots;
     Button letsGetStarted, next_btn, done_btn,skip_btn;
     Animation animation;
-    int currentPos;
+    int currentPos = 0;
     private int dotsCount;
   //  SharePreferenceProvider pref;
 
@@ -82,7 +82,7 @@ public class OnBoarding extends AppCompatActivity {
 
         for (int i = 0; i < dots.length; i++) {
             dots[i] = new TextView(this);
-            dots[i].setText(Html.fromHtml("&#8226;"));
+            dots[i].setText(Html.fromHtml("&#8226;", Html.FROM_HTML_MODE_LEGACY));
             dots[i].setTextSize(50);
             dots[i].setTextColor(getResources().getColor(R.color.white));
             dotsLayout.addView(dots[i]);
