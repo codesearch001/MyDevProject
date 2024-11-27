@@ -406,4 +406,7 @@
     <string name="link_sent_email">Länk är skickad till din mailadress.</string>
     <string name="email_follow_instruction">Vänligen följ instruktionerna som är skickad till din mailadress!</string>
 
+    <string name="field_not_empty">Field cannot be empty</string>
+    <string name="name_min_length">Name minimum should be of 3 char</string>
+
 </resources>

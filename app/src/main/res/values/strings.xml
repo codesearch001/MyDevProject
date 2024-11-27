@@ -405,4 +405,8 @@
     <string name="link_sent_email">Link is sent to your Email address.</string>
     <string name="email_follow_instruction">Please follow the instructions in the email to access your account.</string>
 
+    <string name="field_not_empty">Field cannot be empty</string>
+    <string name="name_min_length">Name minimum should be of 3 char</string>
+
+
 </resources>
