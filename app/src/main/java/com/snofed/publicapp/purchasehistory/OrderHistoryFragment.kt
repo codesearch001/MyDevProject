@@ -17,8 +17,8 @@ import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.FragmentLoginBinding
 import com.snofed.publicapp.databinding.FragmentOrderHistoryBinding
 import com.snofed.publicapp.membership.adapter.ActiveMembershipAdapter
+import com.snofed.publicapp.models.Order
 import com.snofed.publicapp.purchasehistory.adapter.OrderHistoryAdapter
-import com.snofed.publicapp.purchasehistory.model.Daum
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.TokenManager
@@ -80,14 +80,14 @@ class OrderHistoryFragment : Fragment(), OrderHistoryAdapter.OnItemClickListener
         viewModel.getPurchaseOrderHistory(tokenManager.getUserId().toString())
     }
 
-    override fun onItemClick(daum: Daum) {
+    override fun onItemClick(order: Order) {
         //Toast.makeText(context, "Clicked on ${daum.id}", Toast.LENGTH_SHORT).show()
         val bundle = Bundle().apply {
-            putString("ticketOrderID", daum.id)
-            putString("createdDate", daum.createdDate)
-            putDouble("totalPrice", daum.totalPrice)
-            putInt("status", daum.ticketOrderStatus.toInt())
-            putInt("numberOfTickets", daum.tickets.count())
+            putString("ticketOrderID", order.id)
+            putString("createdDate", order.createdDate)
+            putDouble("totalPrice", order.totalPrice)
+            putInt("status", order.ticketOrderStatus.toInt())
+            putInt("numberOfTickets", order.tickets.count())
         }
         findNavController().navigate(R.id.purchaseOrderDetilsFragment, bundle)
         //findNavController().navigate(R.id.purchaseHistroryDeatisFragment, bundle)

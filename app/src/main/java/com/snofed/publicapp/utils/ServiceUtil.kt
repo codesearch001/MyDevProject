@@ -80,6 +80,8 @@ object ServiceUtil {
 
     const val GET_TICKET_TYPE = "ticket-type/client/{clientId}"
 
+    const val GET_ORDER_BY_ID = "ticket-order/get-order/{orderId}";
+
     /**********************Payment Gateway API********************/
 
     const val SEND_ORDER_DIRECT = "direct2internet/new-order"
