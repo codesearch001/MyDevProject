@@ -29,6 +29,7 @@ import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
 import com.mapbox.geojson.Point.fromLngLat
 import com.mapbox.maps.CameraOptions
+import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.Style
@@ -41,6 +42,7 @@ import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.maps.extension.style.sources.getSource
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.camera
+import com.mapbox.maps.plugin.animation.easeTo
 import com.mapbox.maps.plugin.locationcomponent.LocationComponentPlugin
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.snofed.publicapp.R
@@ -392,35 +394,40 @@ class MapFeedFragment : Fragment(){
 
             // Calculate the bounding box to include the start and end points
             if (workoutPoints.isNotEmpty()) {
-                val startPoint = workoutPoints.first()
-                val endPoint = workoutPoints.last()
-
                 val boundsBuilder = LatLngBounds.Builder()
-                boundsBuilder.include(startPoint.toLatLng())
-                boundsBuilder.include(endPoint.toLatLng())
+                workoutPoints.forEach { point ->
+                    boundsBuilder.include(point.toLatLng())
+                }
                 val bounds = boundsBuilder.build()
 
-                // Add margin to the bounding box
-                val marginRatio = 1.0 // Adjust this ratio to fit your margin needs
-                val expandedBounds = expandBounds(bounds, marginRatio)
-
-
-                // Access the CameraAnimationsPlugin
-                val cameraAnimationsPlugin = mapView.camera
-                cameraAnimationsPlugin.easeTo(
-                    CameraOptions.Builder()
-                        .center(expandedBounds.center.toPoint()) // Center the camera on the expanded bounding box center
-                        .zoom(calculateZoomLevel(expandedBounds)) // Set zoom level to fit the expanded bounding box
-                        .build(),
-                    MapAnimationOptions.Builder()
-                        .startDelay(500)
-                        .duration(800) // Duration in milliseconds (e.g., 3 seconds)
-                        .build()
+                val cameraOptions = mapboxMap.cameraForCoordinates(
+                    bounds.toPointList(),
+                    EdgeInsets(75.0, 50.0, 675.0, 50.0) // Padding: top, left, bottom, right
                 )
+
+                val animationOptions = MapAnimationOptions.Builder()
+                    .duration(2000) // Duration in milliseconds
+                    .build()
+                mapboxMap.easeTo(cameraOptions, animationOptions)
                 enableLocationComponent()
             }
         }
     }
+    fun LatLngBounds.toPointList(): List<Point> {
+        return listOf(
+            Point.fromLngLat(this.southwest.longitude, this.northeast.latitude), // Top-left corner
+            Point.fromLngLat(this.northeast.longitude, this.northeast.latitude), // Top-right corner
+            Point.fromLngLat(this.northeast.longitude, this.southwest.latitude), // Bottom-right corner
+            Point.fromLngLat(this.southwest.longitude, this.southwest.latitude)  // Bottom-left corner
+        )
+    }
+
+    private fun calculateBoundingBox(points: List<Point>): LatLngBounds {
+        val boundsBuilder = LatLngBounds.Builder()
+        points.forEach { boundsBuilder.include(it.toLatLng()) }
+        return boundsBuilder.build()
+    }
+
 
     private fun enableLocationComponent() {
         // Get the location component
