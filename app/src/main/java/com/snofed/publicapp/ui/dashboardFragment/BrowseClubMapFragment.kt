@@ -1,5 +1,6 @@
 package com.snofed.publicapp.ui.dashboardFragment
 
+import RealmRepository
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
@@ -12,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.DrawableRes
@@ -51,6 +53,9 @@ import com.mapbox.maps.viewannotation.geometry
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
 import com.snofed.publicapp.models.Client
 import com.snofed.publicapp.models.ClientResponse
+import com.snofed.publicapp.ui.User.UserViewModelRealm
+import com.snofed.publicapp.utils.AppPreference
+import com.snofed.publicapp.utils.SharedPreferenceKeys
 
 
 @AndroidEntryPoint
@@ -74,7 +79,7 @@ class BrowseClubMapFragment : Fragment() {
     // Desired width and height for the icon in pixels
     val iconWidth = 70  // for example, 50px
     val iconHeight = 105 // for example, 50px
-
+    var favClient : List<String> = emptyList()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentBrowseClubMapBinding.inflate(inflater, container, false)
@@ -102,6 +107,13 @@ class BrowseClubMapFragment : Fragment() {
         fabClose = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
         rotateForward = AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_forward)
         rotateBackward = AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_backward)
+
+
+        // Get UserRealm
+        val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
+        val realmRepository = RealmRepository()
+        val userViewModelRealm = UserViewModelRealm(realmRepository)
+        favClient = userViewModelRealm.getFavClients(userId)
 
         binding.fab.setOnClickListener {
             animateFab()
@@ -224,6 +236,14 @@ class BrowseClubMapFragment : Fragment() {
             val destination = R.id.clubSubMembersFragment
             findNavController().navigate(destination, bundle)
         }
+        //Bind favorite
+        if (clientData.isInWishlist) {
+            popupView.findViewById<ImageView>(R.id.heart_icon)
+                .setImageResource(R.drawable.hearth_filled)
+        }else{
+            popupView.findViewById<ImageView>(R.id.heart_icon)
+                .setImageResource(R.drawable.hearth_empty)
+        }
 
         val adjustedCoordinates = Point.fromLngLat(
             coordinates.longitude(),
@@ -274,6 +294,11 @@ class BrowseClubMapFragment : Fragment() {
                 }
                 //updateMapWithPoints()
                 setDefaultCamera()
+                clients?.forEach { client ->
+                    if (favClient.contains(client.id)) {
+                        client.isInWishlist = true
+                    }
+                }
                 setupAnnotationManager(clients)
             } ?: Log.e("browseClubResponse", "Failed to fetch response")
         })
