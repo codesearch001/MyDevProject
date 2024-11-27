@@ -12,7 +12,6 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
 import com.snofed.publicapp.R
 import com.snofed.publicapp.models.Order
 import com.snofed.publicapp.utils.DateTimeConverter
@@ -52,11 +51,7 @@ class OrderHistoryAdapter(private val listener: OnItemClickListener) : RecyclerV
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ClubViewHolder, position: Int) {
         val reslult = orderHistoryArray[position]
-
-        // Convert object to JSON
-        val gson = Gson()
-        val json = gson.toJson(reslult)
-        Log.e("ORDERDATA"  ,"ORDERJSON  "+ json)
+        
         //holder.txt_order_title.text =
         dateTimeConverter.convertDateTime(reslult.createdDate)//convert data
         holder.tv_created_date.text =dateTimeConverter.outputFormatterOnlyDate
