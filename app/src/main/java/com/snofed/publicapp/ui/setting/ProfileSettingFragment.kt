@@ -101,11 +101,10 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
             mediaReader.setImageView(binding.profileImageView, it)
         }
 
-        var userGender = if (userViewModelRealm.getUserById(userId)?.gender.toString()
-                .equals("0", ignoreCase = true)) "Male" else "Female"
+        var userGender = if (userViewModelRealm.getUserById(userId)?.gender.toString().equals("0", ignoreCase = true)) "Male" else "Female"
         var userweight = userViewModelRealm.getUserById(userId)?.weight.toString()
         var userAge = userViewModelRealm.getUserById(userId)?.age.toString()
-        
+
         binding.txtFirstName.text =  userViewModelRealm.getUserById(userId)?.firstName
         binding.txtLastName.text = userViewModelRealm.getUserById(userId)?.lastName
         binding.txtUserAge.text = if(userAge.isNullOrEmpty()) "0" else getAgeFromBirthYear(userAge.toInt()).toString()
@@ -145,13 +144,13 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
         val switchScreen = userViewModelRealm.getPublicUserSettingValue(userId,"ScreenAlwaysOn")
         val switchWifiNew = userViewModelRealm.getPublicUserSettingValue(userId,"SyncOnWifi")
         val switchAutoSpeedTxt = userViewModelRealm.getPublicUserSettingValue(userId,"AutoPauseSpeed")
-        val finalAutoSpeedTxt = if(switchAutoSpeedTxt.isNullOrEmpty()) "0" else if(switchAutoSpeedTxt == "0") "2" else "4"
+        //val finalAutoSpeedTxt = if(switchAutoSpeedTxt.isNullOrEmpty()) "0" else if(switchAutoSpeedTxt == "0") "2" else "4"
         Log.e("AUTOSPEED","switch auto speed "+switchAutoSpeedTxt)
 
         // Set Log
         binding.switchWifi.isChecked = if (switchWifiNew.equals("true", ignoreCase = true)) true else false
 
-        binding.switchAutoSpeedTxt.text = finalAutoSpeedTxt + " km/h"
+        binding.switchAutoSpeedTxt.text = switchAutoSpeedTxt
 
         binding.switchScreenOn.isChecked = if (switchScreen.equals("true", ignoreCase = true)) true else false
 
@@ -187,7 +186,7 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
         }
 
         binding.switchAutoSpeedArrow.setOnClickListener{
-            showLogSpeedSelectionPopup(EditType.AUTOPAUSESPEED, "", finalAutoSpeedTxt.toString()) { selectedSpeed ->
+            showLogSpeedSelectionPopup(EditType.AUTOPAUSESPEED, "", switchAutoSpeedTxt.toString()) { selectedSpeed ->
                 binding.switchAutoSpeedTxt.text = selectedSpeed
             }
         }
@@ -378,9 +377,9 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
             addView(radio2)
             addView(radio4)
             when (currentValue.lowercase()) {
-                "2" -> check(radio2.id) // Select "Male" if currentValue is "male"
-                "4" -> check(radio4.id) // Select "Female" if currentValue is "female"
-                else -> check(radio2.id) // Default to "Male" if no valid currentValue
+                "2 km/h" -> check(radio2.id)
+                "4 km/h" -> check(radio4.id)
+                else -> check(radio2.id)
             }
         }
 
@@ -425,8 +424,8 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
             userDTO?.weight = newValue?.toInt()
         }
         else if(EditType.AUTOPAUSESPEED == field){
-            val updateValue = if (newValue.equals("2 km/h", ignoreCase = true)) 0 else 1
-            userViewModelRealm.updatePublicUserSetting(userId, PublicUserSettingsDTO("AutoPauseSpeed", updateValue.toString()))
+            //val updateValue = if (newValue.equals("2 km/h", ignoreCase = true)) 0 else 1
+            userViewModelRealm.updatePublicUserSetting(userId, PublicUserSettingsDTO("AutoPauseSpeed", newValue.toString()))
         }
 
         //Update the UserRealm
@@ -435,7 +434,7 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
         }
 
         var sendUserDTO = userViewModelRealm.getUserDTOById(userId)
-
+        
 
         // Call the API to save to Server
         authViewModel.updateUser(sendUserDTO!!.toUser());
