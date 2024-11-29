@@ -13,7 +13,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.TileViewListBinding
 import com.snofed.publicapp.models.Client
-import com.snofed.publicapp.models.browseSubClub.Trail
+import com.snofed.publicapp.models.realmModels.Trail
 import com.snofed.publicapp.utils.DateTimeConverter
 import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.enums.PageType
@@ -64,7 +64,7 @@ class TrailListAdapter(private var trails: List<Trail>,
                     outerArray
                 } else {
                     outerArray.filter {
-                        it.name.lowercase().contains(filterPattern)
+                        it.name?.lowercase()?.contains(filterPattern) ?: false
                     }
                 }
 
@@ -89,9 +89,9 @@ class TrailListAdapter(private var trails: List<Trail>,
                 binding.proTrailsLayout.isVisible = true
                 //binding.length.text = trail.length.toString() + " m"
                 //binding.length.text = Helper.m2Km(trail.length.toDouble()).toString() + R.string.t_km
-                binding.length.text  = Helper.m2Km(trail.length.toDouble()).toString() +  binding.root.context.getString(R.string.t_km)
+                binding.length.text  = Helper.m2Km(trail.length?.toDouble()).toString() +  binding.root.context.getString(R.string.t_km)
                 val dateTimeConverter = DateTimeConverter()//Date format
-                dateTimeConverter.convertDateTime(trail.lastUpdateDate)//convert data
+                dateTimeConverter.convertDateTime(trail.lastUpdateDate!!)//convert data
                 val getDate = dateTimeConverter.dateandtimePart
                 binding.lastUpdateDate.text = getDate
 
@@ -119,9 +119,9 @@ class TrailListAdapter(private var trails: List<Trail>,
                 binding.proTrailsLayout.isVisible = false
                 //binding.length.text = trail.length.toString() + " m"
                 //binding.length.text = Helper.m2Km(trail.length.toDouble()).toString() + R.string.t_km
-                binding.length.text  = Helper.m2Km(trail.length.toDouble()).toString() +  binding.root.context.getString(R.string.t_km)
+                binding.length.text  = Helper.m2Km(trail.length?.toDouble()).toString() +  binding.root.context.getString(R.string.t_km)
                 val dateTimeConverter = DateTimeConverter()//Date format
-                dateTimeConverter.convertDateTime(trail.lastUpdateDate)//convert data
+                dateTimeConverter.convertDateTime(trail.lastUpdateDate!!)//convert data
                 val getDate = dateTimeConverter.dateandtimePart
                 binding.lastUpdateDate.text = getDate
 

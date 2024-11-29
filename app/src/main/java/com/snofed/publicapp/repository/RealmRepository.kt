@@ -3,7 +3,7 @@ import io.realm.RealmObject
 
 
 // Generic Realm Repository class
-class RealmRepository {
+open class RealmRepository {
 
     private val realm: Realm = Realm.getDefaultInstance()
 

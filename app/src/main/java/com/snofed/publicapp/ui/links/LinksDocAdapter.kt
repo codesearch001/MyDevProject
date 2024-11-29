@@ -13,18 +13,18 @@ import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.snofed.publicapp.R
-import com.snofed.publicapp.models.browseSubClub.Link
+import com.snofed.publicapp.models.realmModels.ClientLink
 
 class LinksDocAdapter() : RecyclerView.Adapter<LinksDocAdapter.ClubViewHolder>() {
 
-    private var linksArray: List<Link> = listOf()
+    private var linksArray: List<ClientLink> = listOf()
 
     interface OnItemClickListener {
         fun onItemClick(eventId: String, link: String)
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setEvent(links: List<Link>?) {
+    fun setEvent(links: List<ClientLink>?) {
         if (links != null) {
             this.linksArray = links
         }

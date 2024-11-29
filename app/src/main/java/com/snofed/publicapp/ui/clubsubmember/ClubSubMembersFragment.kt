@@ -18,7 +18,8 @@ import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.TabClubsSubMemAdapter
 import com.snofed.publicapp.databinding.FragmentClubSubMembersBinding
 import com.snofed.publicapp.dto.SubscribeDTO
-import com.snofed.publicapp.models.browseSubClub.ParentOrganisation
+import com.snofed.publicapp.models.realmModels.ParentOrganisation
+//import com.snofed.publicapp.models.browseSubClub.ParentOrganisation
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.AppPreference
 import com.snofed.publicapp.utils.Helper

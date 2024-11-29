@@ -20,7 +20,7 @@ import com.snofed.publicapp.adapter.TabTrailsTileStatusAdapter
 import com.snofed.publicapp.databinding.FragmentPurchaseHistoryBinding
 import com.snofed.publicapp.databinding.FragmentTrailsStatusBinding
 import com.snofed.publicapp.databinding.FragmentTrailsStatusTileViewBinding
-import com.snofed.publicapp.models.browseSubClub.Trail
+import com.snofed.publicapp.models.realmModels.Trail
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.SharedViewModel
