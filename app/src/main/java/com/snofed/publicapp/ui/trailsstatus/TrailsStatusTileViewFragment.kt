@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.FragmentTrailsStatusTileViewBinding
-import com.snofed.publicapp.models.browseSubClub.Trail
+import com.snofed.publicapp.models.realmModels.Trail
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.enums.PageType

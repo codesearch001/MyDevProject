@@ -15,12 +15,13 @@ import com.snofed.publicapp.models.UserResponse
 import com.snofed.publicapp.models.browseSubClub.BrowseSubClubResponse
 import com.snofed.publicapp.models.events.EventDetailsResponse
 import com.snofed.publicapp.models.events.EventResponse
+import com.snofed.publicapp.models.realmModels.Club
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
 import com.snofed.publicapp.ui.setting.UploadResponse
 import com.snofed.publicapp.ui.setting.UploadWorkoutResponse
-import com.snofed.publicapp.utils.ServiceUtil.BROWSE_CLUB_DETAILS
 import com.snofed.publicapp.utils.ServiceUtil.BROWSE_CLUB_LIST
+import com.snofed.publicapp.utils.ServiceUtil.CLUB_DETAILS
 import com.snofed.publicapp.utils.ServiceUtil.CLUB_EVENT
 import com.snofed.publicapp.utils.ServiceUtil.CLUB_EVENT_DETAILS
 import com.snofed.publicapp.utils.ServiceUtil.CLUB_FAV_ITEMS
@@ -87,15 +88,25 @@ interface UserAPI {
     suspend fun uploadWorkoutImage(@Part("WorkoutId") workoutId: RequestBody,
                                    @Part WorkoutImages: List<MultipartBody.Part>): Response<UploadWorkoutResponse>  // Define `UploadResponse` based on your API response
 
-    //BROWSE_CLUB
+/*    //BROWSE_CLUB
     @GET(BROWSE_CLUB_LIST)
-    suspend fun club(@Header("Accept-Language") acceptLanguage: String): Response<NewClubData>
+    suspend fun club(@Header("Accept-Language") acceptLanguage: String): Response<NewClubData>*/
 
-    //BROWSE_CLUB_DETAILS
+    /*//BROWSE_CLUB_DETAILS
     @GET(BROWSE_CLUB_DETAILS)
     suspend fun subClub(@Header("Accept-Language") acceptLanguage: String,
                         @Query("ClientId") clientId: String,
-                        @Query("HasProTrails") hasProTrails: Boolean = false): Response<BrowseSubClubResponse>
+                        @Query("HasProTrails") hasProTrails: Boolean = false): Response<BrowseSubClubResponse>*/
+
+    //BROWSE_CLUB
+    @GET(BROWSE_CLUB_LIST)
+    suspend fun allClubs(@Header("Accept-Language") acceptLanguage: String): Response<NewClubData>
+
+    //BROWSE_CLUB_DETAILS
+    @GET(CLUB_DETAILS)
+    suspend fun getClub(@Header("Accept-Language") acceptLanguage: String,
+                        @Query("ClientId") clientId: String,
+                        @Query("HasProTrails") hasProTrails: Boolean = false): Response<ResponseObject<Club>>
 
 
 

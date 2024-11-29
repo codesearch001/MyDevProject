@@ -43,18 +43,18 @@ class TwitterFragment : Fragment() {
             // Set up click listeners for each social media icon
             socialMediaLinks?.let { links ->
                 binding.txtTwitter.text = resources.getString(R.string.visit_x)// add text here
-                binding.XUseName.text = extractProfileName(links.twitterLink)
+                binding.XUseName.text = extractProfileName(links.twitterLink!!)
 
                 binding.txtFacebook.text = resources.getString(R.string.visit_fb)// add text here
-                binding.fbUserName.text = extractProfileName(links.facebookLink)
+                binding.fbUserName.text = extractProfileName(links.facebookLink!!)
 
                 binding.instaURL.text = resources.getString(R.string.visit_insta)// add text here
-                binding.instaUserName.text = extractProfileName(links.instagramLink)
+                binding.instaUserName.text = extractProfileName(links.instagramLink!!)
 
 
                 // Twitter link
                 binding.twitterImage.setOnClickListener {
-                    links.twitterLink.takeIf { it.isNotEmpty() }?.let { twitterLink ->
+                    links.twitterLink.takeIf { it?.isNotEmpty() ?: false }?.let { twitterLink ->
                         openLink(twitterLink)
 
                     } ?: showToast(resources.getString(R.string.not_vailable_link_x))
@@ -62,7 +62,7 @@ class TwitterFragment : Fragment() {
 
                 // Facebook link
                 binding.facebookImage.setOnClickListener {
-                    links.facebookLink.takeIf { it.isNotEmpty() }?.let { facebookLink ->
+                    links.facebookLink.takeIf { it?.isNotEmpty() ?: false }?.let { facebookLink ->
                         openLink(facebookLink)
 
                     } ?: showToast(resources.getString(R.string.not_vailable_link_fb))
@@ -70,7 +70,7 @@ class TwitterFragment : Fragment() {
 
                 // Instagram link
                 binding.instagramImage.setOnClickListener {
-                    links.instagramLink.takeIf { it.isNotEmpty() }?.let { instagramLink ->
+                    links.instagramLink.takeIf { it?.isNotEmpty() ?: true }?.let { instagramLink ->
                         openLink(instagramLink)
 
                         //val profileName = extractProfileName(instagramLink)
