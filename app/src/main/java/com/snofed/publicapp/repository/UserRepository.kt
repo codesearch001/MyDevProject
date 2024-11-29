@@ -8,12 +8,13 @@ import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.snofed.publicapp.R
 import com.snofed.publicapp.api.ClientAPI
+import com.snofed.publicapp.api.ResponseObject
 import com.snofed.publicapp.api.UserAPI
 import com.snofed.publicapp.db.WorkoutResponse
 import com.snofed.publicapp.dto.PublicUserSettingsDTO
 import com.snofed.publicapp.dto.SubscribeDTO
+import com.snofed.publicapp.dto.UserDTO
 import com.snofed.publicapp.membership.model.BuyMembership
-import com.snofed.publicapp.models.Data
 import com.snofed.publicapp.models.NewClubData
 import com.snofed.publicapp.models.RideApiResponse
 import com.snofed.publicapp.models.TrailGraphData
@@ -28,12 +29,15 @@ import com.snofed.publicapp.models.UserResponse
 import com.snofed.publicapp.models.browseSubClub.BrowseSubClubResponse
 import com.snofed.publicapp.models.events.EventDetailsResponse
 import com.snofed.publicapp.models.events.EventResponse
+import com.snofed.publicapp.models.realmModels.Club
 import com.snofed.publicapp.models.realmModels.PublicUserSettingsRealm
+import com.snofed.publicapp.models.toRealm
 import com.snofed.publicapp.models.userData
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
 import com.snofed.publicapp.response.SubscribeResponse
 import com.snofed.publicapp.ui.User.UserViewModelRealm
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.ClubViewModelRealm
 import com.snofed.publicapp.ui.setting.UploadResponse
 import com.snofed.publicapp.ui.setting.UploadWorkoutResponse
 import com.snofed.publicapp.utils.AppPreference
@@ -41,6 +45,7 @@ import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.SharedPreferenceKeys
 import com.snofed.publicapp.utils.TokenManager
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.realm.Realm
 import io.realm.RealmList
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -61,7 +66,7 @@ class UserRepository @Inject constructor(
                         @ApplicationContext private val context: Context) {
     private val acceptLanguage = R.string.backend_localization.toString()
 
-    private val realmRepository = RealmRepository()
+
     /////////////////////////////////////////
 
     // private val _notesLiveData = MutableLiveData<NetworkResult<NewClubData>>()
@@ -92,8 +97,8 @@ class UserRepository @Inject constructor(
     val userDashBoardLiveData: LiveData<NetworkResult<FeedListResponse>>
         get() = _userDashBoardLiveData
 
-    private val _subClubLiveData = MutableLiveData<NetworkResult<BrowseSubClubResponse>>()
-    val subClubLiveData: LiveData<NetworkResult<BrowseSubClubResponse>>
+    private val _subClubLiveData = MutableLiveData<NetworkResult<ResponseObject<Club>>>()
+    val subClubLiveData: LiveData<NetworkResult<ResponseObject<Club>>>
         get() = _subClubLiveData
 
     private val _membershipLiveData = MutableLiveData<NetworkResult<BuyMembership>>()
@@ -331,12 +336,14 @@ class UserRepository @Inject constructor(
 //    }
 
 
-    suspend fun getClub() {
+    suspend fun getAllClub() {
         _clubLiveData.postValue(NetworkResult.Loading())
-        val response = userAPI!!.club(acceptLanguage)
+        val response = userAPI!!.allClubs(acceptLanguage)
         Log.e("response", "clubResponse " + response)
         if (response.isSuccessful && response.body() != null) {
-
+            // Save to Room database
+            //roomRepository.saveClients(response.body()!!)
+            // clientDatabase.clientDao().insertClient(response.body()!!.data.clients)
             Log.e("jsonResponseData", "clubResponse " + response.body())
             _clubLiveData.postValue(NetworkResult.Success(response.body()!!))
 
@@ -349,22 +356,17 @@ class UserRepository @Inject constructor(
         }
     }
 
-
-
-
-
-
-    suspend fun getSubClub(clientId: String) {
+    suspend fun getClubDetails(clientId: String) {
         _subClubLiveData.postValue(NetworkResult.Loading())
-        val response = userAPI!!.subClub(acceptLanguage, clientId, false)
+//        val response = userAPI!!.subClub(acceptLanguage, clientId, false)
+        val response = userAPI!!.getClub(acceptLanguage, clientId, false)
         Log.e("response", "subClubResponse " + response)
         if (response.isSuccessful && response.body() != null) {
             Log.e("jsonResponseData", "subClubResponse " + response.body())
-
-
             _subClubLiveData.postValue(NetworkResult.Success(response.body()!!))
             //_subClubLiveData_gallery_l.postValue(response.body())
-
+            val userResponseData = response.body()!!.data
+            saveRootToRealm(userResponseData)
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
             _subClubLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
@@ -373,7 +375,11 @@ class UserRepository @Inject constructor(
         }
     }
 
-
+    fun saveRootToRealm(clubResponseData: Club) {
+        val realmRepository = RealmRepository()
+        val clubViewModelRealm = ClubViewModelRealm(realmRepository)
+        clubViewModelRealm.addClub(clubResponseData)
+    }
 
 
     suspend fun getEvent() {
@@ -564,8 +570,8 @@ class UserRepository @Inject constructor(
             // Use the generic RealmRepository to save the UserRealm object
             val realmRepository = RealmRepository()
             val userViewModelRealm = UserViewModelRealm(realmRepository)
-            realmRepository.insertOrUpdate(userRealm)
-            //userViewModelRealm.addUser(userRealm)
+            //realmRepository.insertOrUpdate(userRealm)
+            userViewModelRealm.addUser(userRealm)
             // Print saved data
             //val savedUser = realmRepository.getById(UserRealm::class.java, userRealm.id)
             //val getUser = userViewModelRealm.getUserById(userRealm.id)

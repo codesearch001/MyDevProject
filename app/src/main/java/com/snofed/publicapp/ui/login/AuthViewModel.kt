@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.snofed.publicapp.api.ResponseObject
 import com.snofed.publicapp.db.WorkoutResponse
 import com.snofed.publicapp.dto.SubscribeDTO
 import com.snofed.publicapp.dto.UserDTO
@@ -29,6 +30,7 @@ import com.snofed.publicapp.models.browseSubClub.BrowseSubClubResponse
 import com.snofed.publicapp.models.events.EventDetailsResponse
 import com.snofed.publicapp.models.events.EventResponse
 import com.snofed.publicapp.models.membership.Membership
+import com.snofed.publicapp.models.realmModels.Club
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
 import com.snofed.publicapp.purchasehistory.model.TicketOrderDetails
@@ -121,7 +123,7 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
     val userDashBoardLiveData: LiveData<NetworkResult<FeedListResponse>>
         get() = userRepository.userDashBoardLiveData
 
-    val subClubLiveData: LiveData<NetworkResult<BrowseSubClubResponse>>
+    val subClubLiveData: LiveData<NetworkResult<ResponseObject<Club>>>
         get() = userRepository.subClubLiveData
 
     val eventLiveData: LiveData<NetworkResult<EventResponse>>
@@ -267,7 +269,7 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
 
     fun clubRequestUser() {
         viewModelScope.launch {
-            userRepository.getClub()
+            userRepository.getAllClub()
         }
     }
     fun subscribeClubService(subscribeDTO: SubscribeDTO) {
@@ -305,7 +307,7 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
 
     fun subClubRequestUser(clientId: String) {
         viewModelScope.launch {
-            userRepository.getSubClub(clientId)
+            userRepository.getClubDetails(clientId)
         }
     }
 

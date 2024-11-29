@@ -1,12 +1,22 @@
 package com.snofed.publicapp.models.browseSubClub
 
+import com.snofed.publicapp.models.realmModels.Club
+
 /*
 class BrowseSubClubResponse {
 }*/
-data class BrowseSubClubResponse(
+/*data class BrowseSubClubResponse(
     val success: Boolean,
     val message: Any?,
     val data: ClubData,
+    val statusCode: Long,
+    val totalItems: Long,
+)*/
+
+data class BrowseSubClubResponse(
+    val success: Boolean,
+    val message: Any?,
+    val data: Club,
     val statusCode: Long,
     val totalItems: Long,
 )

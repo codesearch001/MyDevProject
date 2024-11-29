@@ -15,8 +15,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.BrowseClubListAdapter.OnItemClickListener
 import com.snofed.publicapp.models.Client
-import com.snofed.publicapp.models.browseSubClub.ParentOrganisation
-import com.snofed.publicapp.models.browseSubClub.SubOrganisation
+import com.snofed.publicapp.models.realmModels.ParentOrganisation
+import com.snofed.publicapp.models.realmModels.SubOrganisation
 import com.snofed.publicapp.utils.Constants
 import com.snofed.publicapp.utils.ServiceUtil
 

@@ -20,6 +20,7 @@ import com.snofed.publicapp.adapter.ClubActionAdapter
 import com.snofed.publicapp.databinding.FragmentActionsBinding
 import com.snofed.publicapp.models.browseSubClub.ClubData
 import com.snofed.publicapp.models.browseclubaction.GridItem
+import com.snofed.publicapp.models.realmModels.Club
 import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.OnItemClickListener
@@ -39,7 +40,8 @@ class ActionsFragment : Fragment(),OnItemClickListener {
     lateinit var tokenManager: TokenManager
     private val sharedViewModel by activityViewModels<SharedViewModel>()
     private var clientId: String? = null
-    var clubData: ClubData? = null
+//    var clubData: ClubData? = null
+    var clubData: Club? = null
     var defaultLocationJson : String? = null
 
     override fun onCreateView(
@@ -57,8 +59,8 @@ class ActionsFragment : Fragment(),OnItemClickListener {
         sharedViewModel.browseSubClubResponse.observe(viewLifecycleOwner) { response ->
             clubData = response.data
             val defaultLocation = mutableMapOf<String, String>()
-            defaultLocation["Latitude"] = clubData!!.startLatitude
-            defaultLocation["Longitude"] = clubData!!.startLongitude
+            defaultLocation["Latitude"] = clubData!!.startLatitude.toString()
+            defaultLocation["Longitude"] = clubData!!.startLongitude.toString()
             val gson = Gson()
             defaultLocationJson = gson.toJson(defaultLocation)
         }

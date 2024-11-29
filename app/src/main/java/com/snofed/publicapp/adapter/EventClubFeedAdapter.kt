@@ -12,7 +12,7 @@ import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.snofed.publicapp.R
-import com.snofed.publicapp.models.browseSubClub.Event
+import com.snofed.publicapp.models.realmModels.Event
 import com.snofed.publicapp.models.events.EventResponseList
 import com.snofed.publicapp.utils.DateTimeConverter
 
@@ -56,7 +56,8 @@ class EventClubFeedAdapter(private var eventList: List<Event>,private val listen
                     feedArray
                 } else {
                     feedArray.filter {
-                        it.name.lowercase().contains(filterPattern)
+//                        it.name.lowercase().contains(filterPattern)
+                        it.name?.lowercase()?.contains(filterPattern) ?: false
                     }
                 }
 
@@ -78,7 +79,7 @@ class EventClubFeedAdapter(private var eventList: List<Event>,private val listen
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ClubViewHolder, position: Int) {
         val reslult =feedArray[position]
-        dateTimeConverter.convertDateTime(reslult.startDate)//convert data
+        dateTimeConverter.convertDateTime(reslult.startDate!!)//convert data
         val getDate=dateTimeConverter.datePartOnly
         val getDateOfMonth=dateTimeConverter.dateOfMonthPartOnly
         /* val newDate = SpannableString(getDate)
@@ -93,14 +94,20 @@ class EventClubFeedAdapter(private var eventList: List<Event>,private val listen
             holder.textEventLocation.text = reslult.location
         }
         holder.textMaxAttendees.text = reslult.maxAttendees.toString()
-        if (reslult.ticketPrice.equals(0.0)){
-            holder.textTicketPrice.text = "Free Ticket "
-        }else{
-            holder.textTicketPrice.text = reslult.ticketPrice.toString()
+//        if (reslult.ticketPrice!!.equals(0.0)){
+//            holder.textTicketPrice.text = "Free Ticket "
+//        }else{
+//            holder.textTicketPrice.text = reslult.ticketPrice.toString()
+//        }
+        val ticketPrice = reslult.ticketPrice ?: 0.0 // Handle null with a default value
+        holder.textTicketPrice.text = if (ticketPrice == 0.0) {
+            "Free Ticket"
+        } else {
+            String.format("%.2f", ticketPrice) // Format ticket price to 2 decimal places
         }
         holder.eventCardId.setOnClickListener {
             Log.e("click..", "clickClubItem")
-            listener.onItemClick(reslult.id) // Assuming Client has an 'id' property
+            listener.onItemClick(reslult.id!!) // Assuming Client has an 'id' property
         }
     }
 

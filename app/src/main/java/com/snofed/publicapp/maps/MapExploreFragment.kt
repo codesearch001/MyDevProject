@@ -87,11 +87,11 @@ import com.snofed.publicapp.databinding.BottomSheetApartmentsBinding
 import com.snofed.publicapp.databinding.FragmentMapExploreBinding
 import com.snofed.publicapp.databinding.FragmentMapFeedBinding
 import com.snofed.publicapp.databinding.MapFilterBinding
-import com.snofed.publicapp.models.browseSubClub.Area
-import com.snofed.publicapp.models.browseSubClub.Poi
+import com.snofed.publicapp.models.realmModels.Area
+import com.snofed.publicapp.models.realmModels.Poi
 import com.snofed.publicapp.models.browseSubClub.Properties
-import com.snofed.publicapp.models.browseSubClub.Trail
-import com.snofed.publicapp.models.browseSubClub.Zone
+import com.snofed.publicapp.models.realmModels.Trail
+import com.snofed.publicapp.models.realmModels.Zone
 import com.snofed.publicapp.models.workoutfeed.WorkoutPointResponse
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.DrawerController
@@ -356,7 +356,7 @@ class MapExploreFragment : Fragment(){
         // Observe the SharedViewModel for data updates
         sharedViewModel.browseSubClubResponse.observe(viewLifecycleOwner, Observer { response ->
             val trails = response?.data?.trails?.filter { trail ->
-                trail.visibility.toInt() == 1 //Assuming visibility is already an integer
+                trail.visibility?.toInt() == 1 //Assuming visibility is already an integer
             }
             val zones = response?.data?.zones ?: emptyList()
             val pois = response?.data?.pois ?: emptyList()
@@ -382,7 +382,78 @@ class MapExploreFragment : Fragment(){
         })
     }
 
+    /////////////////////////
+
     private fun addTrailsToMap(trails: List<Trail>) {
+        mapboxMap.getStyle { style ->
+            trails.forEach { trail ->
+                val coordinates = trail.polyLine?.features?.mapNotNull { feature ->
+                    feature.geometry?.coordinates
+                }
+
+                if (!coordinates.isNullOrEmpty() && !coordinates[0].isNullOrEmpty()) {
+                    hasCoordinates = true
+
+                    // Include bounds
+                    coordinates[0]?.forEach { coord ->
+                        boundsBuilder.include(LatLng(coord[1], coord[0]))
+                    }
+
+                    // Create LineString and Feature
+                    val lineString = LineString.fromLngLats(
+                        coordinates[0].map { coord ->
+                            Point.fromLngLat(coord[0], coord[1])
+                        }
+                    )
+                    val feature = Feature.fromGeometry(lineString)
+                    val featureCollection = FeatureCollection.fromFeatures(listOf(feature))
+
+                    // Extract properties
+                    val properties = trail.polyLine?.features?.firstOrNull()?.properties
+                    val color = properties?.color ?: "#FF0000" // Default to red
+
+                    // Define source and layer IDs
+                    val sourceId = "line-source-${trail.id}"
+                    val layerId = "line-layer-${trail.id}"
+
+                    // Add GeoJSON source
+                    if (style.getSource(sourceId) == null) {
+                        style.addSource(geoJsonSource(sourceId) {
+                            featureCollection(featureCollection)
+                        })
+                    }
+
+                    // Add line layer
+                    if (style.getLayer(layerId) == null) {
+                        style.addLayer(lineLayer(layerId, sourceId) {
+                            lineColor(color)
+                            lineWidth(6.0)
+                        })
+                    }
+                }
+            }
+
+            // Adjust camera bounds if coordinates exist
+            if (hasCoordinates) {
+                val latLngBounds = boundsBuilder.build()
+                //val centerPoint = latLngBounds.center
+                val centerPoint = Point.fromLngLat(latLngBounds.center.longitude, latLngBounds.center.latitude)
+                mapView.camera.easeTo(
+                    CameraOptions.Builder()
+                        .center(centerPoint)
+                        .zoom(8.0)
+                        .build(),
+                    MapAnimationOptions.Builder().duration(2000).build()
+                )
+            } else {
+                Toast.makeText(requireContext(), "No coordinates available to adjust camera bounds.", Toast.LENGTH_SHORT).show()
+                Log.e("MapError", "No coordinates available to adjust camera bounds.")
+            }
+        }
+    }
+
+    ///////////////////////
+    /*private fun addTrailsToMap(trails: List<Trail>) {
         mapboxMap.getStyle { style ->
 
             trails.forEach { trail ->
@@ -414,10 +485,10 @@ class MapExploreFragment : Fragment(){
                     //Extract properties from the first feature
                     val properties = trail.polyLine.features[0].properties
 
-                    /*  // Use GeoJsonSource.Builder to create the source
+                    *//*  // Use GeoJsonSource.Builder to create the source
                       val lineSource = geoJsonSource("line-source-${trail.id}") {
                           featureCollection(featureCollection)
-                      }*/
+                      }*//*
                     // Define source and layer IDs
                     val sourceId = "line-source-${trail.id}"
                     val layerId = "line-layer-${trail.id}"
@@ -476,7 +547,7 @@ class MapExploreFragment : Fragment(){
 
             //cameraAnimationsPlugin!!.easeTo(cameraOptions, animationOptions) // Smooth animation to the bounds
         }
-    }
+    }*/
 
     /*fun calculateZoomLevel(minLng: Double, maxLng: Double, minLat: Double, maxLat: Double, mapView: MapView): Double {
         // You can implement custom logic here, or use a basic approximation
@@ -495,7 +566,7 @@ class MapExploreFragment : Fragment(){
                 val coordinates = area.name // This should be a List<LatLng> or similar
 
                 // Convert coordinates to a list of Point objects
-                val points = coordinates.map { coord ->
+                val points = coordinates?.map { coord ->
                     //Point.fromLngLat(coord.longitude, coord.latitude)
                 }
 
@@ -541,7 +612,7 @@ class MapExploreFragment : Fragment(){
             pointAnnotationManager?.let { manager ->
                 // Add annotations for each POI
                 pois.forEach { poi ->
-                    val point = Point.fromLngLat(poi.longitude, poi.latitude)
+                    val point = Point.fromLngLat(poi.longitude!!, poi.latitude!!)
 
                     val options = PointAnnotationOptions()
                         .withPoint(point)
@@ -566,7 +637,7 @@ class MapExploreFragment : Fragment(){
         mapboxMap.getStyle { style ->
             zones.forEach { zone ->
                 val polygon = Polygon.fromLngLats(
-                    listOf(zone.definitions.map { definition ->
+                    listOf(zone.definitions?.map { definition ->
                             Point.fromLngLat(definition.longitude, definition.latitude)
                         }
                     )
@@ -588,7 +659,7 @@ class MapExploreFragment : Fragment(){
                     style.addLayer(fillLayer(layerId, sourceId) {
                       //  lineColor(zone.color) // Customize color
                        // lineWidth(2.0)
-                        fillColor(zone.color)
+                        fillColor(zone.color!!)
                         fillOpacity(0.7)
                     }
                     )

@@ -47,11 +47,15 @@ object ServiceUtil {
     //GET_USER_WORKOUTS
     const val GET_USER_WORKOUTS = "public-app/workouts/for-user/{id}"
 
-    //BROWSE_CLUB_LIST-> Browse Clubs
+    /*//BROWSE_CLUB_LIST
     const val BROWSE_CLUB_LIST = "public-app/sync/system-data?HasProTrails=false"
 
-    //BROWSE_CLUB_DETAILS
-    const val BROWSE_CLUB_DETAILS = "public-app/sync/client?"
+    const val BROWSE_CLUB_DETAILS = "public-app/sync/client?"*/
+
+    //BROWSE_CLUB_LIST
+    const val BROWSE_CLUB_LIST = "public-app/sync/system-data"
+
+    const val CLUB_DETAILS = "public-app/sync/client?"
 
     const val GET_ALL_FEEDS = "public-app/workouts/feed?"
 
