@@ -5,6 +5,8 @@ import com.snofed.publicapp.membership.model.ActiveMembership
 import com.snofed.publicapp.membership.model.MembershipDetails
 import com.snofed.publicapp.membership.model.BuyMembership
 import com.snofed.publicapp.models.Order
+import com.snofed.publicapp.models.Ticket
+import com.snofed.publicapp.purchasehistory.model.TicketOrderDetails
 import com.snofed.publicapp.purchasehistory.model.TicketPurchaseHistory
 import com.snofed.publicapp.ui.order.model.TicketTypeData
 import com.snofed.publicapp.ui.order.ticketing.OrderDTO
@@ -50,7 +52,7 @@ interface MembershipApi {
 
     @GET(GET_ORDER_BY_ID)
     suspend fun getOrderById(@Header("Accept-Language") acceptLanguage: String,
-                             @Path("orderId") id: String): Response<Order>
+                             @Path("orderId") orderId: String): Response<TicketOrderDetails>
 
     //TICKET_PURCHASE_ORDER_HISTORY_PRO_TRAILS
     @GET(TICKET_PURCHASE_ORDER_HISTORY_PRO_TRAILS)

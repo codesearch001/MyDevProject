@@ -169,7 +169,7 @@ class BrowseClubListAdapter(private val context: Context, private val listener: 
             Glide.with(holder.backgroundImage)
                 .load(ServiceUtil.BASE_URL_IMAGE + reslult.coverImagePath).diskCacheStrategy(
                 DiskCacheStrategy.ALL
-            ).fitCenter()
+            ).fitCenter().error(R.drawable.resort_card_bg)
                 .into(holder.backgroundImage)
         }
     }

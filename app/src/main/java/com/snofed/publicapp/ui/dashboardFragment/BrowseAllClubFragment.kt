@@ -58,8 +58,11 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
             when (it) {
                 is NetworkResult.Success -> {
                     // Log.i("it.data?.clients","it.data?.clients "+it.data?.data?.clients)
-                    //val data = it.data?.data?.clients
+                    val data = it.data?.data?.clients
+
                     sharedViewModel.browseClubResponse.value = it.data
+
+
 
 
                     val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
@@ -119,6 +122,8 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
             }
         })
     }
+
+
     private fun fetchResponse() {
         clubViewModel.clubRequestUser()
     }

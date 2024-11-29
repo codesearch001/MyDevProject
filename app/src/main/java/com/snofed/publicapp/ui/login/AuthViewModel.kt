@@ -13,7 +13,9 @@ import com.snofed.publicapp.membership.model.ActiveMembership
 import com.snofed.publicapp.membership.model.MembershipDetails
 import com.snofed.publicapp.membership.model.BuyMembership
 import com.snofed.publicapp.models.NewClubData
+import com.snofed.publicapp.models.Order
 import com.snofed.publicapp.models.RideApiResponse
+import com.snofed.publicapp.models.Ticket
 import com.snofed.publicapp.models.TrailGraphData
 import com.snofed.publicapp.models.TrailPolyLinesResponse
 import com.snofed.publicapp.models.TrailsDetilsResponse
@@ -29,6 +31,7 @@ import com.snofed.publicapp.models.events.EventResponse
 import com.snofed.publicapp.models.membership.Membership
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
+import com.snofed.publicapp.purchasehistory.model.TicketOrderDetails
 import com.snofed.publicapp.purchasehistory.model.TicketPurchaseHistory
 import com.snofed.publicapp.repository.MembershipRepository
 import com.snofed.publicapp.repository.UserFeedBackRepository
@@ -87,6 +90,9 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
 
    val purchaseOrderHistoryMembershipResponseLiveData: LiveData<NetworkResult<TicketPurchaseHistory>>
         get() = membershipRepository.purchaseOrderHistoryMembershipResponseLiveData
+
+ val purchaseOrderHistoryDetailsResponseLiveData: LiveData<NetworkResult<TicketOrderDetails>>
+        get() = membershipRepository.purchaseOrderHistoryDetailsResponseLiveData
 
    val getTicketTypeResponseLiveData: LiveData<NetworkResult<TicketTypeData>>
         get() = membershipRepository.getTicketTypeResponseLiveData
@@ -219,6 +225,12 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
     fun getPurchaseOrderHistory(userId: String) {
         viewModelScope.launch {
             membershipRepository.getPurchaseOrderHistory(userId)
+        }
+    }
+
+    fun getOrderById(userId: String) {
+        viewModelScope.launch {
+            membershipRepository.getOrderById(userId)
         }
     }
     fun getTicketType(userId: String) {

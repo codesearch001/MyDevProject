@@ -1,10 +1,7 @@
 package com.snofed.publicapp.models
 
-import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.Relation
 
-//data class NewClubData()
 
 data class NewClubData(
     val success: Boolean,
@@ -21,7 +18,7 @@ data class Data(
     val clients: List<Client>
 )
 
-@Entity(tableName = "clients")
+
 data class Client(
     @PrimaryKey val id: String,
     val country: String,
@@ -41,9 +38,8 @@ data class Client(
     val trialPeriod: Int,
     val trialPeriodTo: String,
     val visibility: Int,
-   // val activities: List<Activity> = emptyList(),
-   // val clientSettings: List<ClientSetting> = emptyList(),
-    @Relation(parentColumn = "id", entityColumn = "clientId")
+    val activities: List<Activity> = emptyList(),
+    val clientSettings: List<ClientSetting> = emptyList(),
     val publicData: List<PublicData?>? = emptyList(),
 )
 

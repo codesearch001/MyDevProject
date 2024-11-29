@@ -86,6 +86,7 @@ import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.BottomSheetApartmentsBinding
 import com.snofed.publicapp.databinding.FragmentMapExploreBinding
 import com.snofed.publicapp.databinding.FragmentMapFeedBinding
+import com.snofed.publicapp.databinding.MapFilterBinding
 import com.snofed.publicapp.models.browseSubClub.Area
 import com.snofed.publicapp.models.browseSubClub.Poi
 import com.snofed.publicapp.models.browseSubClub.Properties
@@ -118,7 +119,6 @@ class MapExploreFragment : Fragment(){
     private lateinit var rotateForward: Animation
     private lateinit var rotateBackward: Animation
     private var isOpen = false
-    private lateinit var mMap: GoogleMap
     val gson = Gson()
     var defaultLat :String = ""
     var defaultLong :String = ""
@@ -230,6 +230,9 @@ class MapExploreFragment : Fragment(){
         rotateForward = AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_forward)
         rotateBackward = AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_backward)
 
+        binding.mapByFilter.setOnClickListener {
+            showBottomMapFilter()
+        }
         binding.fab.setOnClickListener {
             animateFab()
         }
@@ -251,6 +254,14 @@ class MapExploreFragment : Fragment(){
             showCustomDialog2()
             //Toast.makeText(requireContext(), "folder click", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun showBottomMapFilter() {
+        val bottomSheetDialog = BottomSheetDialog(requireContext(),R.style.TransparentBottomSheetDialog)
+        val bottomSheetViewBinding = DataBindingUtil.inflate<MapFilterBinding>(
+            layoutInflater, R.layout.map_filter, null, false)
+        bottomSheetDialog.setContentView(bottomSheetViewBinding.root)
+        bottomSheetDialog.show()
     }
 
     private fun checkPermissionsAndGps() {

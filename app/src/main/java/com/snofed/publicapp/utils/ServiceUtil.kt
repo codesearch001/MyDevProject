@@ -2,7 +2,7 @@ package com.snofed.publicapp.utils
 
 object ServiceUtil {
 
-    const val BASE_URL = "http://161.97.121.63:5000/api/"
+   /* const val BASE_URL = "http://161.97.121.63:5000/api/"
 
     const val BASE_URL_IMAGE = "http://161.97.121.63:5000"
 
@@ -11,33 +11,46 @@ object ServiceUtil {
     const val MEMBERSHIP_BASE_URL = "http://161.97.121.63:5006/api/"
 
     //FOR MEMBERSHIP IMAGE
-    const val BASE_URL_MEMB_IMAGE = "http://161.97.121.63:5006"
+    const val BASE_URL_MEMB_IMAGE = "http://161.97.121.63:5006"*/
+
+
+    const val BASE_URL = "http://135.181.65.93:5000/api/"
+
+    const val BASE_URL_IMAGE = "http://135.181.65.93:5000"
+
+    const val FEED_BACK_BASE_URL = "http://135.181.65.93:5005/api/"
+
+    const val MEMBERSHIP_BASE_URL = "http://135.181.65.93:5006/api/"
+
+    //FOR MEMBERSHIP IMAGE
+    const val BASE_URL_MEMB_IMAGE = "http://135.181.65.93:5006"
 
 
     //FOR REGISTER
     const val REGISTER = "account/register-public-user"
+
     //FOR LOGIN
     const val LOGIN = "account/public-app/sign-in"
 
+    //USER_SETTINGS
     const val USER_SETTINGS = "public-app/sync/user/settings"
 
     //FOR FORGOT PASSWORD
     const val RECOVER_PASSWORD = "account/mobile-apps/forgot-password"
 
-    //USER_PROFILE_SETTING
-    const val USER_PROFILE_SETTING = "public-app/sync/user/settings"
-
     //USER_PROFILE_IMAGE
     const val USER_PROFILE_IMAGE = "public-app/upload/profile-image/{userId}"
 
+    //UPLOAD_WORKOUT_IMAGES
     const val UPLOAD_WORKOUT_IMAGES = "public-app/workouts/upload-images"
 
     //GET_USER_WORKOUTS
     const val GET_USER_WORKOUTS = "public-app/workouts/for-user/{id}"
 
-    //BROWSE_CLUB_LIST
+    //BROWSE_CLUB_LIST-> Browse Clubs
     const val BROWSE_CLUB_LIST = "public-app/sync/system-data?HasProTrails=false"
 
+    //BROWSE_CLUB_DETAILS
     const val BROWSE_CLUB_DETAILS = "public-app/sync/client?"
 
     const val GET_ALL_FEEDS = "public-app/workouts/feed?"

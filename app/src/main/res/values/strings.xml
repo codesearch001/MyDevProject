@@ -274,6 +274,8 @@
     <string name="hide_benefits">Hide benefits</string>
     <string name="member_of">Member of</string>
 
+    <string name="show_tickets">Show tickets</string>
+    <string name="hide_tickets">Hide tickets</string>
     <!--Become a Mem-->
     <string name="first_name">FIRST NAME</string>
     <string name="last_name">LAST NAME</string>

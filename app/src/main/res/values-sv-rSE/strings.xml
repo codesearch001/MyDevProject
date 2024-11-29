@@ -275,6 +275,9 @@
     <string name="hide_benefits">Dölj förmåner</string>
     <string name="member_of">Medlem i</string>
 
+    <string name="show_tickets">Show tickets</string>
+    <string name="hide_tickets">Hide tickets</string>
+
     <!--Become a Mem-->
     <string name="first_name">FÖRNAMN</string>
     <string name="last_name">EFTERNAMN</string>

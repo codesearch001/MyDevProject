@@ -7,7 +7,10 @@ import com.snofed.publicapp.api.MembershipApi
 import com.snofed.publicapp.membership.model.ActiveMembership
 import com.snofed.publicapp.membership.model.MembershipDetails
 import com.snofed.publicapp.membership.model.BuyMembership
+import com.snofed.publicapp.models.Order
+import com.snofed.publicapp.models.Ticket
 import com.snofed.publicapp.models.membership.Membership
+import com.snofed.publicapp.purchasehistory.model.TicketOrderDetails
 import com.snofed.publicapp.purchasehistory.model.TicketPurchaseHistory
 import com.snofed.publicapp.ui.order.model.TicketTypeData
 import com.snofed.publicapp.ui.order.ticketing.OrderDTO
@@ -40,6 +43,10 @@ class MembershipRepository @Inject constructor(@Named("MembershipApi") private v
     private val _purchaseOrderHistoryMembershipResponseLiveData = MutableLiveData<NetworkResult<TicketPurchaseHistory>>()
     val purchaseOrderHistoryMembershipResponseLiveData: LiveData<NetworkResult<TicketPurchaseHistory>>
         get() = _purchaseOrderHistoryMembershipResponseLiveData
+
+    private val _purchaseOrderHistoryDetailsResponseLiveData = MutableLiveData<NetworkResult<TicketOrderDetails>>()
+    val purchaseOrderHistoryDetailsResponseLiveData: LiveData<NetworkResult<TicketOrderDetails>>
+        get() = _purchaseOrderHistoryDetailsResponseLiveData
 
    private val _getTicketTypeResponseLiveData = MutableLiveData<NetworkResult<TicketTypeData>>()
     val getTicketTypeResponseLiveData: LiveData<NetworkResult<TicketTypeData>>
@@ -137,6 +144,23 @@ class MembershipRepository @Inject constructor(@Named("MembershipApi") private v
             _purchaseOrderHistoryMembershipResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _purchaseOrderHistoryMembershipResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+        }
+    }
+
+    suspend fun getOrderById(userId: String) {
+        _purchaseOrderHistoryDetailsResponseLiveData.postValue(NetworkResult.Loading())
+        val response = membershipApi!!.getOrderById(acceptLanguage, userId)
+        Log.e("response", "response " + response)
+        if (response.isSuccessful && response.body() != null) {
+            Log.e("response", "response " + response.body())
+            _purchaseOrderHistoryDetailsResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+            //_subClubLiveData_gallery_l.postValue(response.body())
+
+        } else if (response.errorBody() != null) {
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+            _purchaseOrderHistoryDetailsResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+        } else {
+            _purchaseOrderHistoryDetailsResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
     }
 

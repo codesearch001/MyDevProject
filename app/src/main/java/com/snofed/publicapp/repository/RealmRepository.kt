@@ -43,6 +43,7 @@ class RealmRepository {
         }
     }
 
+
     // Close the Realm instance when done
     fun close() {
         realm.close()

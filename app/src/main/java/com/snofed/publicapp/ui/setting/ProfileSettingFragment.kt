@@ -159,7 +159,7 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
             // Update settings before saving
             userViewModelRealm.updatePublicUserSetting(userId, PublicUserSettingsDTO("SyncOnWifi", isChecked.toString()))
 
-            var userDTO = userViewModelRealm.getUserDTOById(userId)
+            val userDTO = userViewModelRealm.getUserDTOById(userId)
 
             authViewModel.updateUser(userDTO!!.toUser())
         }

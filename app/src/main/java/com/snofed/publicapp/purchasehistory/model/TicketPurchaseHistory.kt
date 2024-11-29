@@ -9,3 +9,11 @@ data class TicketPurchaseHistory(
     val statusCode: Long,
     val totalItems: Long,
 )
+
+data class TicketOrderDetails(
+    val success: Boolean,
+    val message: Any?,
+    val data: Order,
+    val statusCode: Long,
+    val totalItems: Long,
+)

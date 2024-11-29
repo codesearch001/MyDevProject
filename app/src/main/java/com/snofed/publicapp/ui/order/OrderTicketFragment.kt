@@ -29,6 +29,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class OrderTicketFragment : Fragment() {
+
     private var _binding: FragmentOrderTicketBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: TicketViewModel

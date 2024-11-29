@@ -8,6 +8,7 @@
     <color name="highlight_text_color">#2196F3</color>
     <color name="holo_blue_light">#ff33b5e5</color>
     <color name="start_btn">#0080C8</color>
+    <color name="maps_btn">#0080C8</color>
     <color name="t4t_bg">#005387</color>
     <color name="t_bg">#00000000</color>
     <color name="lavender">#8692f7</color>
@@ -16,6 +17,12 @@
     <color name="dialogTitleTextColor">#FF0000</color> <!-- Red color for the title -->
     <color name="dialogMessageTextColor">#000000</color> <!-- Black color for the message -->
     <color name="dialogButtonTextColor">#0000FF</color> <!-- Blue color for the buttons -->
+
+    <!-- Add these colors -->
+    <color name="unselectedColor">#E0E0E0</color>
+    <color name="selectedColor">#1976D2</color>
+
+
 
     <color name="error_color">#FF0000</color>
     <color name="card_bg_color">#F8F8F8</color>

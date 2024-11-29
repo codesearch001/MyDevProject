@@ -81,13 +81,9 @@ class OrderHistoryFragment : Fragment(), OrderHistoryAdapter.OnItemClickListener
     }
 
     override fun onItemClick(order: Order) {
-        //Toast.makeText(context, "Clicked on ${daum.id}", Toast.LENGTH_SHORT).show()
+
         val bundle = Bundle().apply {
             putString("ticketOrderID", order.id)
-            putString("createdDate", order.createdDate)
-            putDouble("totalPrice", order.totalPrice)
-            putInt("status", order.ticketOrderStatus.toInt())
-            putInt("numberOfTickets", order.tickets.count())
         }
         findNavController().navigate(R.id.purchaseOrderDetilsFragment, bundle)
         //findNavController().navigate(R.id.purchaseHistroryDeatisFragment, bundle)
