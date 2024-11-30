@@ -50,11 +50,10 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.mySpinner.adapter = adapter
 
-        binding.mySpinner.setOnItemClickListener { parent, view, position, id  ->
+       /* binding.mySpinner.setOnItemClickListener { parent, view, position, id  ->
             val selectedItem = itemList[position]
 
-        }
-
+        }*/
 
     }
 
