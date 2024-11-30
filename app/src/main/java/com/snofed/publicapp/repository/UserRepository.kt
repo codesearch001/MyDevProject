@@ -31,13 +31,21 @@ import com.snofed.publicapp.models.events.EventDetailsResponse
 import com.snofed.publicapp.models.events.EventResponse
 import com.snofed.publicapp.models.realmModels.Club
 import com.snofed.publicapp.models.realmModels.PublicUserSettingsRealm
+import com.snofed.publicapp.models.realmModels.SystemDataHolder
 import com.snofed.publicapp.models.toRealm
 import com.snofed.publicapp.models.userData
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
 import com.snofed.publicapp.response.SubscribeResponse
 import com.snofed.publicapp.ui.User.UserViewModelRealm
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.ActivityViewModelRealm
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.ClientViewModelRealm
 import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.ClubViewModelRealm
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.HelpViewModelRealm
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.IntervalViewModelRealm
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.PoisTypeViewModelRealm
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.TaskCategoryViewModelRealm
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.ZoneTypeViewModelRealm
 import com.snofed.publicapp.ui.setting.UploadResponse
 import com.snofed.publicapp.ui.setting.UploadWorkoutResponse
 import com.snofed.publicapp.utils.AppPreference
@@ -89,8 +97,8 @@ class UserRepository @Inject constructor(
     val uploadWorkoutResult: LiveData<NetworkResult<UploadWorkoutResponse>>
         get() = _uploadWorkoutResult
 
-    private val _clubLiveData = MutableLiveData<NetworkResult<NewClubData>>()
-    val clubLiveData: LiveData<NetworkResult<NewClubData>>
+    private val _clubLiveData = MutableLiveData<NetworkResult<ResponseObject<SystemDataHolder>>>()
+    val clubLiveData: LiveData<NetworkResult<ResponseObject<SystemDataHolder>>>
         get() = _clubLiveData
 
     private val _userDashBoardLiveData = MutableLiveData<NetworkResult<FeedListResponse>>()
@@ -346,7 +354,9 @@ class UserRepository @Inject constructor(
             // clientDatabase.clientDao().insertClient(response.body()!!.data.clients)
             Log.e("jsonResponseData", "clubResponse " + response.body())
             _clubLiveData.postValue(NetworkResult.Success(response.body()!!))
-
+            //Save to realm
+            val userResponseData = response.body()!!.data
+            saveSytemDataToRealm(userResponseData)
 
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
@@ -355,7 +365,38 @@ class UserRepository @Inject constructor(
             _clubLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
     }
+    fun saveSytemDataToRealm(systemDataRealm: SystemDataHolder) {
+        val clients = systemDataRealm.clients
+        val activities = systemDataRealm.systemData?.activities
+        val poiTypes = systemDataRealm.systemData?.poiTypes
+        val zoneTypes = systemDataRealm.systemData?.zoneTypes
+        val helpArticles = systemDataRealm.systemData?.helpArticles
+        val taskCategories = systemDataRealm.systemData?.taskCategories
+        val intervals = systemDataRealm.systemData?.intervals
 
+
+        val vmClient = ClientViewModelRealm(RealmRepository())
+        val vmActivity = ActivityViewModelRealm(RealmRepository())
+        val vmPoiType = PoisTypeViewModelRealm(RealmRepository())
+        val vmZoneType = ZoneTypeViewModelRealm(RealmRepository())
+        val vmHelpArticle = HelpViewModelRealm(RealmRepository())
+        val vmTaskCategory = TaskCategoryViewModelRealm(RealmRepository())
+        val vmInterval = IntervalViewModelRealm(RealmRepository())
+
+        // Update a list of class in a single transaction
+        val filterClient = clients?.filter { it.visibility == 0 }
+        filterClient?.let { vmClient.addOrUpdateClients(it) }
+        activities?.let { vmActivity.addOrUpdateActivities(it) }
+        poiTypes?.let { vmPoiType.addOrUpdatePoisTypes(it) }
+        zoneTypes?.let { vmZoneType.addOrUpdateZoneTypes(it) }
+        helpArticles?.let { vmHelpArticle.addOrUpdateHelpArticles(it) }
+        taskCategories?.let { vmTaskCategory.addOrUpdateTaskCategories(it) }
+        intervals?.let { vmInterval.addOrUpdateIntervals(it) }
+
+
+
+
+    }
     suspend fun getClubDetails(clientId: String) {
         _subClubLiveData.postValue(NetworkResult.Loading())
 //        val response = userAPI!!.subClub(acceptLanguage, clientId, false)
@@ -365,8 +406,8 @@ class UserRepository @Inject constructor(
             Log.e("jsonResponseData", "subClubResponse " + response.body())
             _subClubLiveData.postValue(NetworkResult.Success(response.body()!!))
             //_subClubLiveData_gallery_l.postValue(response.body())
-            val userResponseData = response.body()!!.data
-            saveRootToRealm(userResponseData)
+            val clubDeatilsResponseData = response.body()!!.data
+            saveClubToRealm(clubDeatilsResponseData)
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
             _subClubLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
@@ -375,10 +416,10 @@ class UserRepository @Inject constructor(
         }
     }
 
-    fun saveRootToRealm(clubResponseData: Club) {
+    fun saveClubToRealm(clubResponseData: Club) {
         val realmRepository = RealmRepository()
         val clubViewModelRealm = ClubViewModelRealm(realmRepository)
-        clubViewModelRealm.addClub(clubResponseData)
+        clubViewModelRealm.addOrUpdateClub(clubResponseData)
     }
 
 
@@ -571,7 +612,7 @@ class UserRepository @Inject constructor(
             val realmRepository = RealmRepository()
             val userViewModelRealm = UserViewModelRealm(realmRepository)
             //realmRepository.insertOrUpdate(userRealm)
-            userViewModelRealm.addUser(userRealm)
+            userViewModelRealm.addOrUpdateUser(userRealm)
             // Print saved data
             //val savedUser = realmRepository.getById(UserRealm::class.java, userRealm.id)
             //val getUser = userViewModelRealm.getUserById(userRealm.id)
@@ -663,7 +704,7 @@ class UserRepository @Inject constructor(
             val realmRepository = RealmRepository()
             val userViewModelRealm = UserViewModelRealm(realmRepository)
             //realmRepository.insertOrUpdate(userRealm)
-            userViewModelRealm.addUser(userRealm)
+            userViewModelRealm.addOrUpdateUser(userRealm)
             // Print saved data
             //val savedUser = realmRepository.getById(UserRealm::class.java, userRealm.id)
             //val getUser = userViewModelRealm.getUserById(userRealm.id)

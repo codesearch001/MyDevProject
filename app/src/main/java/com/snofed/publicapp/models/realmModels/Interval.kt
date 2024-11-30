@@ -16,5 +16,5 @@ open class Interval : RealmObject(){
     var order: Int? = null
     var poiBorderPath: String? = null
     var clientId: String? = null
-    var activities: RealmList<Activity>? = null
+    var activities: RealmList<Activities>? = null
 }

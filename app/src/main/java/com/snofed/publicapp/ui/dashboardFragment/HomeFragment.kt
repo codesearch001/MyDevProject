@@ -80,13 +80,15 @@ class HomeFragment : Fragment() {
         // Retrieve the saved image URL
         //val savedImageUrl = AppPreference.getPreference(context, SharedPreferenceKeys.PREFS_PROFILE_FILE)
 
-        val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
-        val realmRepository = RealmRepository()
-        val userViewModelRealm = UserViewModelRealm(realmRepository)
+        //val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
+        //val realmRepository = RealmRepository()
+        //val userViewModelRealm = UserViewModelRealm(realmRepository)
+        //Log.e("TAG_Home_Fragment","userId "+userId)
+
         // Get ViewModel instance
-        binding.nameTextView.text = userViewModelRealm.getUserById(userId)?.fullName
+        //binding.nameTextView.text = userViewModelRealm.getUserById(userId)?.fullName
         // Retrieve the saved image URL
-        val savedImageUrl = ServiceUtil.BASE_URL_IMAGE + userViewModelRealm.getPublicUserSettingValue(userId,"Image")
+        val savedImageUrl = ServiceUtil.BASE_URL_IMAGE + AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.PREFS_PROFILE_FILE)
 
         savedImageUrl?.let {
             // Load the image using Glide with circle crop transformation

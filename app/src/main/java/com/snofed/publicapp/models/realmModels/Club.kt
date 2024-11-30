@@ -23,7 +23,7 @@ open class Club :  RealmObject() {
     var totalTrailsLength: Int? = null
     var isSubscribed = false
     var areas: RealmList<Area>? = null
-    var activities: RealmList<Activity>? = null
+    var activities: RealmList<Activities>? = null
     var trails: RealmList<Trail>? = null
     var intervals: RealmList<Interval>? = null
     var banners: RealmList<Banner>? = null

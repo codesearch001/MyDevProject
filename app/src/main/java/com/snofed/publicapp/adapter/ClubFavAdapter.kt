@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.snofed.publicapp.R
-import com.snofed.publicapp.models.Client
+import com.snofed.publicapp.models.realmModels.Client
 import com.snofed.publicapp.models.Data
 import com.snofed.publicapp.models.NewClubData
 import com.snofed.publicapp.models.browseSubClub.BrowseSubClubResponse
