@@ -31,6 +31,7 @@ import com.snofed.publicapp.models.events.EventDetailsResponse
 import com.snofed.publicapp.models.events.EventResponse
 import com.snofed.publicapp.models.membership.Membership
 import com.snofed.publicapp.models.realmModels.Club
+import com.snofed.publicapp.models.realmModels.SystemDataHolder
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
 import com.snofed.publicapp.purchasehistory.model.TicketOrderDetails
@@ -111,7 +112,7 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
     val feedBackTaskDetailsLiveData: LiveData<NetworkResult<FeedBackDetails>>
         get() = feedBackRepository.feedBackTaskDetailsLiveData
 
-    val clubLiveData: LiveData<NetworkResult<NewClubData>>
+    val clubLiveData: LiveData<NetworkResult<ResponseObject<SystemDataHolder>>>
         get() = userRepository.clubLiveData
 
     val uploadResult: LiveData<NetworkResult<UploadResponse>>

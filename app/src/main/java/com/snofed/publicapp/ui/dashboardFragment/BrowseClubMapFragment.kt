@@ -51,7 +51,7 @@ import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.viewannotation.ViewAnnotationManager
 import com.mapbox.maps.viewannotation.geometry
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
-import com.snofed.publicapp.models.Client
+import com.snofed.publicapp.models.realmModels.Client
 import com.snofed.publicapp.models.ClientResponse
 import com.snofed.publicapp.ui.User.UserViewModelRealm
 import com.snofed.publicapp.utils.AppPreference

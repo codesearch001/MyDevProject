@@ -11,7 +11,7 @@ open class UserRealm : RealmObject() {
     var email: String = ""
     var firstName: String = ""
     var lastName: String = ""
-    var fullName: String = ""
+    var fullName: String? = null
     var username: String = ""
     var phone: String = ""
     var cellphone: String = ""
@@ -38,7 +38,7 @@ fun UserRealm.toDTO(): UserDTO {
         email = this.email,
         firstName = this.firstName,
         lastName = this.lastName,
-        fullName = this.fullName,
+        fullName = this.fullName!!,
         username = this.username,
         phone = this.phone,
         cellphone = this.cellphone,

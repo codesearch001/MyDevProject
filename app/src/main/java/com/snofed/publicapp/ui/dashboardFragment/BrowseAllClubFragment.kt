@@ -58,7 +58,7 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
             when (it) {
                 is NetworkResult.Success -> {
                     // Log.i("it.data?.clients","it.data?.clients "+it.data?.data?.clients)
-                    val data = it.data?.data?.clients
+                    //val data = it.data?.data?.clients
 
                     sharedViewModel.browseClubResponse.value = it.data
 
@@ -67,10 +67,12 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
 
                     val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
 
-                    val realmRepository = RealmRepository()
-                    val userViewModelRealm = UserViewModelRealm(realmRepository)
-                    val userRealm = userViewModelRealm.getUserById(userId!!)
-                    val getFavClients: List<String> = userRealm?.favouriteClients ?: emptyList()
+                    // userViewModelRealm = UserViewModelRealm(RealmRepository())
+                    //val userFavClientsRealm = userViewModelRealm.getFavClients(userId)
+                    //val getFavClients: List<String> = emptyList()
+                    //Log.e("userRealm","userRealm " +userRealm?.favouriteClients.toString() )
+                    //val getFavClients: List<String> = userFavClientsRealm ?: emptyList()
+                    val getFavClients: List<String> = emptyList()
 
                     val filteredClients = it.data?.data?.clients?.filter { client ->
                         client.visibility == 0 //true 1->false
