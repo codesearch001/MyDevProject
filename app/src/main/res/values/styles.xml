@@ -65,5 +65,13 @@
         <item name="android:textColor">@android:color/black</item> <!-- Set button text color to black -->
     </style>
 
+    <style name="RoundedBottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/RoundedCornerBottomSheet</item>
+    </style>
+
+    <style name="RoundedCornerBottomSheet" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/rounded_bottom_sheet</item>
+    </style>
+
 
 </resources>

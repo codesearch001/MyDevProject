@@ -23,6 +23,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_6sdp"
                 android:layout_marginStart="@dimen/_6sdp"
                 android:layout_weight="2"
                 android:text="Filter"
@@ -31,8 +32,9 @@
                 android:textStyle="bold" />
 
             <ImageView
-                android:layout_width="@dimen/_26sdp"
-                android:layout_height="@dimen/_26sdp"
+                android:id="@+id/close_button"
+                android:layout_width="@dimen/_18sdp"
+                android:layout_height="@dimen/_18sdp"
                 android:layout_marginTop="@dimen/_8sdp"
                 android:src="@drawable/cross_icon" />
 
@@ -92,11 +94,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_11sdp"
-            android:gravity="start"
-            android:orientation="horizontal">
+            android:layout_margin="@dimen/_11sdp">
 
-            <TextView
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <!--<TextView
                 android:id="@+id/textView"
                 android:layout_width="@dimen/_48sdp"
                 android:layout_height="@dimen/_48sdp"
@@ -116,70 +119,14 @@
                 android:background="@drawable/outline"
                 android:gravity="center"
                 android:padding="@dimen/_14sdp"
-                android:src="@drawable/dinner" />
+                android:src="@drawable/dinner" />-->
 
-            <ImageView
-                android:layout_width="@dimen/_48sdp"
-                android:layout_height="@dimen/_48sdp"
-                android:layout_marginStart="@dimen/_4sdp"
-                android:layout_marginEnd="@dimen/_4sdp"
-                android:background="@drawable/outline"
-                android:gravity="center"
-                android:padding="@dimen/_14sdp"
-                android:src="@drawable/dinner" />
 
-            <ImageView
-                android:layout_width="@dimen/_48sdp"
-                android:layout_height="@dimen/_48sdp"
-                android:layout_marginStart="@dimen/_4sdp"
-                android:layout_marginEnd="@dimen/_4sdp"
-                android:background="@drawable/outline"
-                android:gravity="center"
-                android:padding="@dimen/_14sdp"
-                android:src="@drawable/dinner" />
-
-            <ImageView
-                android:layout_width="@dimen/_48sdp"
-                android:layout_height="@dimen/_48sdp"
-                android:layout_marginStart="@dimen/_4sdp"
-                android:layout_marginEnd="@dimen/_4sdp"
-                android:background="@drawable/outline"
-                android:gravity="center"
-                android:padding="@dimen/_14sdp"
-                android:src="@drawable/dinner" />
 
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_11sdp"
-            android:gravity="start"
-            android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="@dimen/_48sdp"
-                android:layout_height="@dimen/_48sdp"
-
-                android:layout_marginEnd="@dimen/_4sdp"
-                android:background="@drawable/outline"
-                android:gravity="center"
-                android:padding="@dimen/_14sdp"
-                android:src="@drawable/dinner" />
-
-            <ImageView
-                android:layout_width="@dimen/_48sdp"
-                android:layout_height="@dimen/_48sdp"
-                android:layout_marginStart="@dimen/_4sdp"
-                android:layout_marginEnd="@dimen/_4sdp"
-                android:background="@drawable/outline"
-                android:gravity="center"
-                android:padding="@dimen/_14sdp"
-                android:src="@drawable/dinner" />
-
-
-        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
@@ -197,6 +144,10 @@
             android:layout_margin="@dimen/_11sdp"
             android:gravity="start"
             android:orientation="horizontal">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
             <TextView
                 android:layout_width="@dimen/_50sdp"
@@ -234,38 +185,7 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_11sdp"
-            android:gravity="start"
-            android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/_30sdp"
-                android:layout_marginEnd="@dimen/_6sdp"
-                android:background="@drawable/text_outline"
-                android:gravity="center"
-                android:text="Long trail category"
-                android:textColor="@color/blue"
-                android:textSize="@dimen/_11sdp"
-                android:textStyle="normal" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/_30sdp"
-                android:layout_marginEnd="@dimen/_6sdp"
-                android:background="@drawable/text_outline"
-                android:gravity="center"
-                android:padding="@dimen/_6sdp"
-                android:text="Open Territory"
-                android:textColor="@color/blue"
-                android:textSize="@dimen/_11sdp"
-                android:textStyle="normal" />
-
-
-        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
@@ -284,6 +204,12 @@
             android:gravity="start"
             android:orientation="horizontal">
 
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+
             <TextView
                 android:layout_width="@dimen/_50sdp"
                 android:layout_height="@dimen/_30sdp"
@@ -296,26 +222,7 @@
                 android:textSize="@dimen/_11sdp"
                 android:textStyle="normal" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/_30sdp"
-                android:layout_marginEnd="@dimen/_6sdp"
-                android:background="@drawable/text_outline"
-                android:gravity="center"
-                android:text="Zone 1 text"
-                android:textColor="@color/blue"
-                android:textSize="@dimen/_11sdp"
-                android:textStyle="normal" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/_30sdp"
-                android:background="@drawable/text_outline"
-                android:gravity="center"
-                android:text="Zone 1 text"
-                android:textColor="@color/blue"
-                android:textSize="@dimen/_11sdp"
-                android:textStyle="normal" />
 
 
         </LinearLayout>

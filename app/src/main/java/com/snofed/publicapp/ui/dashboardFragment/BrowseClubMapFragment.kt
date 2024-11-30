@@ -270,7 +270,9 @@ class BrowseClubMapFragment : Fragment() {
 //                .pitch(9.0)
 //                .build()
 //        )
-        MapAnimationOptions.mapAnimationOptions { duration(3000) }
+        MapAnimationOptions.mapAnimationOptions {
+            duration(3000)
+        }
         // Dismiss popup when clicking outside
         mapboxMap.addOnMapClickListener {
             viewAnnotationManager.removeAllViewAnnotations()
