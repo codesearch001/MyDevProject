@@ -1,8 +1,8 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#FFFFFF" /> <!-- Background color -->
+    <solid android:color="@color/edit_gray" /> <!-- Background color -->
     <stroke
         android:width="@dimen/_1sdp"
-        android:color="@color/blue" />
+        android:color="@color/maps_btn" />
     <corners android:radius="8dp" />
     <padding
         android:left="8dp"

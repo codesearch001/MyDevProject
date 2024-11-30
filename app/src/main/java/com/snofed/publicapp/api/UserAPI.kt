@@ -60,7 +60,7 @@ interface UserAPI {
 
     //LOGIN
     @POST(LOGIN)
-    suspend fun signIn(@Header("Accept-Language") acceptLanguage: String, @Body userRequest: UserRequest) : Response<UserResponse>
+    suspend fun signIn( @Body userRequest: UserRequest) : Response<UserResponse>
 
     //SETTINGS
     @POST(USER_SETTINGS)
@@ -101,12 +101,11 @@ interface UserAPI {
 
     //BROWSE_CLUB
     @GET(BROWSE_CLUB_LIST)
-    suspend fun allClubs(@Header("Accept-Language") acceptLanguage: String): Response<ResponseObject<SystemDataHolder>>
+    suspend fun allClubs(): Response<ResponseObject<SystemDataHolder>>
 
     //BROWSE_CLUB_DETAILS
     @GET(CLUB_DETAILS)
-    suspend fun getClub(@Header("Accept-Language") acceptLanguage: String,
-                        @Query("ClientId") clientId: String,
+    suspend fun getClub(@Query("ClientId") clientId: String,
                         @Query("HasProTrails") hasProTrails: Boolean = false): Response<ResponseObject<Club>>
 
 

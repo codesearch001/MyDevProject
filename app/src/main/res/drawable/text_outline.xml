@@ -2,7 +2,7 @@
     <solid android:color="#FFFFFF" /> <!-- Background color -->
     <stroke
         android:width="@dimen/_1sdp"
-        android:color="@color/blue" />
+        android:color="@color/maps_btn" />
     <corners android:radius="@dimen/_12sdp" />
     <padding
         android:left="8dp"

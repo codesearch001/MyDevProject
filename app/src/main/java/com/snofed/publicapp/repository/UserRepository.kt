@@ -72,7 +72,7 @@ class UserRepository @Inject constructor(
                         @Named("UserAPI") private val userAPI: UserAPI?,
                         @Named("ClientAPI") private val clientAPI: ClientAPI?,
                         @ApplicationContext private val context: Context) {
-    private val acceptLanguage = R.string.backend_localization.toString()
+    private val acceptLanguage =""
 
 
     /////////////////////////////////////////
@@ -167,7 +167,7 @@ class UserRepository @Inject constructor(
     //LOGIN
     suspend fun loginUser(userRequest: UserRequest) {
         _userResponseLiveData.postValue(NetworkResult.Loading())
-        val response = userAPI!!.signIn(acceptLanguage, userRequest)
+        val response = userAPI!!.signIn(userRequest)
         handleResponse(response)
     }
 
@@ -346,7 +346,7 @@ class UserRepository @Inject constructor(
 
     suspend fun getAllClub() {
         _clubLiveData.postValue(NetworkResult.Loading())
-        val response = userAPI!!.allClubs(acceptLanguage)
+        val response = userAPI!!.allClubs()
         Log.e("response", "clubResponse " + response)
         if (response.isSuccessful && response.body() != null) {
             // Save to Room database
@@ -401,7 +401,7 @@ class UserRepository @Inject constructor(
     suspend fun getClubDetails(clientId: String) {
         _subClubLiveData.postValue(NetworkResult.Loading())
 //        val response = userAPI!!.subClub(acceptLanguage, clientId, false)
-        val response = userAPI!!.getClub(acceptLanguage, clientId, false)
+        val response = userAPI!!.getClub(clientId, false)
         Log.e("response", "subClubResponse " + response)
         if (response.isSuccessful && response.body() != null) {
             Log.e("jsonResponseData", "subClubResponse " + response.body())
@@ -610,8 +610,8 @@ class UserRepository @Inject constructor(
 
             // Save UserRealm in Realm
             // Use the generic RealmRepository to save the UserRealm object
-            val realmRepository = RealmRepository()
-            val userViewModelRealm = UserViewModelRealm(realmRepository)
+            //val realmRepository = RealmRepository()
+            val userViewModelRealm = UserViewModelRealm()
             //realmRepository.insertOrUpdate(userRealm)
             userViewModelRealm.addOrUpdateUser(userRealm)
             // Print saved data
@@ -702,8 +702,8 @@ class UserRepository @Inject constructor(
 
             // Save UserRealm in Realm
             // Use the generic RealmRepository to save the UserRealm object
-            val realmRepository = RealmRepository()
-            val userViewModelRealm = UserViewModelRealm(realmRepository)
+            //val realmRepository = RealmRepository()
+            val userViewModelRealm = UserViewModelRealm()
             //realmRepository.insertOrUpdate(userRealm)
             userViewModelRealm.addOrUpdateUser(userRealm)
             // Print saved data
