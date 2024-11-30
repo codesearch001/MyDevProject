@@ -18,7 +18,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.gson.Gson
 import com.snofed.publicapp.R
 import com.snofed.publicapp.dto.SubscribeDTO
-import com.snofed.publicapp.models.Client
+import com.snofed.publicapp.models.realmModels.Client
 import com.snofed.publicapp.ui.User.UserViewModelRealm
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.AppPreference
@@ -127,7 +127,7 @@ class BrowseClubListAdapter(private val context: Context, private val listener: 
                 val realm = realmRepository.getRealmInstance() // Get a Realm instance from your repository
 
                 realm.executeTransaction { transactionRealm ->
-                    val userRealm = userViewModelRealm.getUserById(userId!!)
+                    val userRealm = userViewModelRealm.getUserById(userId)
                     userRealm?.let {
                         it.favouriteClients?.add(clientId)
                         transactionRealm.insertOrUpdate(it) // Save the updated object
@@ -151,7 +151,7 @@ class BrowseClubListAdapter(private val context: Context, private val listener: 
                 val realm = realmRepository.getRealmInstance() // Get a Realm instance from your repository
 
                 realm.executeTransaction { transactionRealm ->
-                    val userRealm = userViewModelRealm.getUserById(userId!!)
+                    val userRealm = userViewModelRealm.getUserById(userId)
                     userRealm?.let {
                         it.favouriteClients?.remove(clientId)
                         transactionRealm.insertOrUpdate(it) // Save the updated object

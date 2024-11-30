@@ -21,7 +21,7 @@ import com.snofed.publicapp.adapter.BrowseClubListAdapter
 import com.snofed.publicapp.adapter.ClubFavAdapter
 import com.snofed.publicapp.databinding.FragmentBrowseAllClubBinding
 import com.snofed.publicapp.databinding.FragmentBrowseFavBinding
-import com.snofed.publicapp.models.Client
+import com.snofed.publicapp.models.realmModels.Client
 import com.snofed.publicapp.models.NewClubData
 import com.snofed.publicapp.models.browseSubClub.BrowseSubClubResponse
 import com.snofed.publicapp.ui.User.UserViewModelRealm

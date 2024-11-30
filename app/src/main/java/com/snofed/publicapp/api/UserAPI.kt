@@ -16,6 +16,7 @@ import com.snofed.publicapp.models.browseSubClub.BrowseSubClubResponse
 import com.snofed.publicapp.models.events.EventDetailsResponse
 import com.snofed.publicapp.models.events.EventResponse
 import com.snofed.publicapp.models.realmModels.Club
+import com.snofed.publicapp.models.realmModels.SystemDataHolder
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
 import com.snofed.publicapp.ui.setting.UploadResponse
@@ -100,7 +101,7 @@ interface UserAPI {
 
     //BROWSE_CLUB
     @GET(BROWSE_CLUB_LIST)
-    suspend fun allClubs(@Header("Accept-Language") acceptLanguage: String): Response<NewClubData>
+    suspend fun allClubs(@Header("Accept-Language") acceptLanguage: String): Response<ResponseObject<SystemDataHolder>>
 
     //BROWSE_CLUB_DETAILS
     @GET(CLUB_DETAILS)

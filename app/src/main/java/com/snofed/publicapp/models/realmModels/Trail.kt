@@ -48,7 +48,7 @@ open class Trail : RealmObject() {
     var isActiveSkidSparService = false
     var skidSparServiceDays: Int? = null
     var skidSparLastPreparation: String? = null
-    var activity: Activity? = null
+    var activity: Activities? = null
     var trailQuality: TrailQuality? = null
     var difficulty: Difficulty? = null
     var images: RealmList<TrailImage>? = null
