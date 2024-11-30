@@ -21,6 +21,7 @@
     <!-- Add these colors -->
     <color name="unselectedColor">#E0E0E0</color>
     <color name="selectedColor">#1976D2</color>
+    <color name="intervalTxtColor">#66757F</color>
 
 
 

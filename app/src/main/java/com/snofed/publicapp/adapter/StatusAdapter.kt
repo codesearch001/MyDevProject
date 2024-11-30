@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.snofed.publicapp.R
 
+/*
 class StatusAdapter(private val items: List<StatusItem>) :
     RecyclerView.Adapter<StatusAdapter.StatusViewHolder>() {
 
@@ -30,3 +31,4 @@ class StatusAdapter(private val items: List<StatusItem>) :
 
     override fun getItemCount() = items.size
 }
+*/

@@ -81,7 +81,7 @@ class TrailListAdapter(private var trails: List<Trail>,
     class TrailViewHolder(private val binding: TileViewListBinding) : RecyclerView.ViewHolder(binding.root) {
         @RequiresApi(Build.VERSION_CODES.O)
         fun bind(trail: Trail, onItemClick: (Trail) -> Unit, onMapClick: (Trail) -> Unit, onClickUpgrade: (Trail) -> Unit, pageType: PageType) {
-            binding.trailName.text = trail.name
+            binding.trailName.text = trail.name?.trimStart()?.trimEnd()
 
             val isProTrail = trail.isProTrail
 

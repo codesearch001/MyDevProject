@@ -1,6 +1,7 @@
 package com.snofed.publicapp.maps
 
 import PolylineManager
+import StatusItem
 import android.Manifest
 import android.content.Context
 import android.content.Intent
@@ -29,7 +30,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -83,6 +87,9 @@ import com.mapbox.maps.plugin.gestures.OnMapClickListener
 import com.mapbox.maps.plugin.locationcomponent.LocationComponentPlugin
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.snofed.publicapp.R
+import com.snofed.publicapp.adapter.BrowseClubListAdapter
+import com.snofed.publicapp.adapter.MapIntervalAdapter
+import com.snofed.publicapp.adapter.ZonesTypeAdapter
 import com.snofed.publicapp.databinding.BottomSheetApartmentsBinding
 import com.snofed.publicapp.databinding.FragmentMapExploreBinding
 import com.snofed.publicapp.databinding.FragmentMapFeedBinding
@@ -90,9 +97,13 @@ import com.snofed.publicapp.databinding.MapFilterBinding
 import com.snofed.publicapp.models.realmModels.Area
 import com.snofed.publicapp.models.realmModels.Poi
 import com.snofed.publicapp.models.browseSubClub.Properties
+import com.snofed.publicapp.models.realmModels.Interval
 import com.snofed.publicapp.models.realmModels.Trail
 import com.snofed.publicapp.models.realmModels.Zone
 import com.snofed.publicapp.models.workoutfeed.WorkoutPointResponse
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.AreaViewModelRealm
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.IntervalViewModelRealm
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.ZoneTypeViewModelRealm
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.DrawerController
 import com.snofed.publicapp.utils.NetworkResult
@@ -132,11 +143,23 @@ class MapExploreFragment : Fragment(){
     var maxLng = Double.MIN_VALUE
     var maxLat = Double.MIN_VALUE
     var clientId : String? =""
-
+    private lateinit var clubAdapter: MapIntervalAdapter
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
 
+    //Map Interval
+    private lateinit var viewModelInterval: IntervalViewModelRealm
+    private lateinit var mapIntervalAdapter: MapIntervalAdapter
+    var allClientMapInterval : List<StatusItem> = emptyList()
+
+  /*  val statusList = listOf(
+        StatusItem("Freshly groomed", "#00FF00"),
+        StatusItem("1-2 days", "#FFEB3B"),
+        StatusItem("2-3 days", "#FF9800"),
+        StatusItem("3-5 days", "#9C27B0"),
+        StatusItem("Closed", "#FF0000")
+    )*/
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -198,6 +221,25 @@ class MapExploreFragment : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Area
+        viewModelInterval = ViewModelProvider(this).get(IntervalViewModelRealm::class.java)
+        val allClientAreas = viewModelInterval.getAllIntervals()
+
+        // Map the data to a list for your RecyclerView adapter
+        allClientMapInterval = allClientAreas.map { interval ->
+            StatusItem(
+                text = interval.name ?: "No Name",
+                color = interval.color ?: "#FFFFFF" // Default color
+
+            )
+        }
+
+        //Map Interval type
+        mapIntervalAdapter = MapIntervalAdapter(allClientMapInterval)
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.adapter = mapIntervalAdapter
+
 
         val defaultLocationJson = arguments?.getString("DefaultClubLocation") ?: ""
         val gson = Gson()

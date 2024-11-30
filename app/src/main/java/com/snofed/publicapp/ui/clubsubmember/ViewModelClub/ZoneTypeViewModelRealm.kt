@@ -22,11 +22,11 @@ open class ZoneTypeViewModelRealm : ViewModel() {
     fun getZoneTypeById(zoneTypeId: String): ZoneType? {
         return realmRepository.getById(ZoneType::class.java, zoneTypeId)
     }
-    fun getZonesByClientId(clientId: String): List<ZoneType> {
+    /*fun getZonesByClientId(clientId: String): List<ZoneType> {
         return realmRepository.query(ZoneType::class.java) {
             equalTo("clientId", clientId, Case.INSENSITIVE)
         }
-    }
+    }*/
     fun addOrUpdateZoneType(zoneType: ZoneType) {
         realmRepository.insertOrUpdate(zoneType)
     }
