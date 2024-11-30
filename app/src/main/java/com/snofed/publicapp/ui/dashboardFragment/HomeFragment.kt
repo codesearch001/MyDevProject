@@ -15,6 +15,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -52,12 +53,14 @@ class HomeFragment : Fragment() {
     //private var lastDaysData: Long = 7
     private var lastDaysData: Long = 1000
 
+    private lateinit var viewModelUserRealm: UserViewModelRealm
+
     @Inject
     lateinit var tokenManager: TokenManager
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-
+        viewModelUserRealm = ViewModelProvider(this).get(UserViewModelRealm::class.java)
         //for using status bar space
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 
@@ -80,15 +83,15 @@ class HomeFragment : Fragment() {
         // Retrieve the saved image URL
         //val savedImageUrl = AppPreference.getPreference(context, SharedPreferenceKeys.PREFS_PROFILE_FILE)
 
-        //val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
+        val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
         //val realmRepository = RealmRepository()
         //val userViewModelRealm = UserViewModelRealm(realmRepository)
         //Log.e("TAG_Home_Fragment","userId "+userId)
 
         // Get ViewModel instance
-        //binding.nameTextView.text = userViewModelRealm.getUserById(userId)?.fullName
+        binding.nameTextView.text = viewModelUserRealm.getUserById(userId)?.fullName
         // Retrieve the saved image URL
-        val savedImageUrl = ServiceUtil.BASE_URL_IMAGE + AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.PREFS_PROFILE_FILE)
+        val savedImageUrl = ServiceUtil.BASE_URL_IMAGE + viewModelUserRealm.getPublicUserSettingValue(userId,"Image")
 
         savedImageUrl?.let {
             // Load the image using Glide with circle crop transformation

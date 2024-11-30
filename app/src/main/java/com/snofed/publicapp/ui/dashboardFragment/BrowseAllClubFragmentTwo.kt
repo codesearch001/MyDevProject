@@ -63,7 +63,7 @@ class BrowseAllClubFragmentTwo : Fragment(),BrowseClubListAdapter.OnItemClickLis
         TODO("Not yet implemented")
     }
 
-    override fun onWishlistClick(clientId: String) {
+    override fun onWishlistClick(clientId: String, isWishlisted: Boolean) {
         TODO("Not yet implemented")
     }
 }

@@ -12,14 +12,18 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.gson.Gson
 import com.snofed.publicapp.R
 import com.snofed.publicapp.dto.SubscribeDTO
+import com.snofed.publicapp.models.User
 import com.snofed.publicapp.models.realmModels.Client
+import com.snofed.publicapp.models.realmModels.UserRealm
 import com.snofed.publicapp.ui.User.UserViewModelRealm
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.AreaViewModelRealm
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.AppPreference
 import com.snofed.publicapp.utils.Constants
@@ -27,6 +31,7 @@ import com.snofed.publicapp.utils.ServiceUtil
 import com.snofed.publicapp.utils.SharedPreferenceKeys
 import com.snofed.publicapp.utils.SnofedConstants
 import com.snofed.publicapp.utils.SnofedUtils
+import io.realm.RealmList
 
 
 class BrowseClubListAdapter(private val context: Context, private val listener: OnItemClickListener, private val clubViewModel: AuthViewModel) : RecyclerView.Adapter<BrowseClubListAdapter.ClubViewHolder>() {
@@ -38,7 +43,7 @@ class BrowseClubListAdapter(private val context: Context, private val listener: 
 
     interface OnItemClickListener {
         fun onItemClick(clientId: String)
-        fun onWishlistClick(clientId: String) // Callback for wishlist icon clicks
+        fun onWishlistClick(clientId: String, favRefferal : Boolean) // Callback for wishlist icon clicks
     }
     init {
         filteredClubs = outerArray
@@ -85,7 +90,7 @@ class BrowseClubListAdapter(private val context: Context, private val listener: 
 
     override fun onBindViewHolder(holder: ClubViewHolder, position: Int) {
         //val reslult=holder.bind(outerArray[position])
-        var favRefferal : Boolean = false;
+        var isWishlisted : Boolean = false;
         val reslult = filteredClubs[position]
         holder.clientRating.text = reslult.clientRating.toString()
         holder.totalRatings.text = "(" + reslult.totalRatings.toString() + ")"
@@ -100,17 +105,17 @@ class BrowseClubListAdapter(private val context: Context, private val listener: 
 
         if (reslult.isInWishlist == true) {
             holder.imgIdWishlist.setImageResource(R.drawable.hearth_filled)
-            favRefferal = true
+            isWishlisted = true
         } else {
             holder.imgIdWishlist.setImageResource(R.drawable.hearth_empty)
-            favRefferal = false
+            isWishlisted = false
         }
 
         // Handle wishlist icon click
         holder.imgIdWishlist.setOnClickListener {
             val clientId = reslult.id
-            favRefferal = !favRefferal // Toggle the referral state
-            if (favRefferal) {
+            isWishlisted = !isWishlisted // Toggle the referral state
+            if (isWishlisted) {
                 holder.imgIdWishlist.setImageResource(R.drawable.hearth_filled)
                 val userId = AppPreference.getPreference(context, SharedPreferenceKeys.USER_USER_ID).toString()
                 val subscribeDTO : SubscribeDTO = SubscribeDTO(
@@ -120,20 +125,6 @@ class BrowseClubListAdapter(private val context: Context, private val listener: 
                 )
                 // call subscribe api
                 clubViewModel.subscribeClubService(subscribeDTO)
-
-                // update userRealm
-                val realmRepository = RealmRepository()
-                val userViewModelRealm = UserViewModelRealm(realmRepository)
-                val realm = realmRepository.getRealmInstance() // Get a Realm instance from your repository
-
-                realm.executeTransaction { transactionRealm ->
-                    val userRealm = userViewModelRealm.getUserById(userId)
-                    userRealm?.let {
-                        it.favouriteClients?.add(clientId)
-                        transactionRealm.insertOrUpdate(it) // Save the updated object
-                    }
-                }
-
             } else {
                 holder.imgIdWishlist.setImageResource(R.drawable.hearth_empty)
                 val userId = AppPreference.getPreference(context, SharedPreferenceKeys.USER_USER_ID).toString()
@@ -144,21 +135,8 @@ class BrowseClubListAdapter(private val context: Context, private val listener: 
                 )
                 // call unsubscribe api
                clubViewModel.unsubscribeClubService(subscribeDTO)
-
-                // update userRealm
-                val realmRepository = RealmRepository()
-                val userViewModelRealm = UserViewModelRealm(realmRepository)
-                val realm = realmRepository.getRealmInstance() // Get a Realm instance from your repository
-
-                realm.executeTransaction { transactionRealm ->
-                    val userRealm = userViewModelRealm.getUserById(userId)
-                    userRealm?.let {
-                        it.favouriteClients?.remove(clientId)
-                        transactionRealm.insertOrUpdate(it) // Save the updated object
-                    }
-                }
             }
-            listener.onWishlistClick(clientId) // Notify the listener of the change
+            listener.onWishlistClick(clientId,isWishlisted) // Notify the listener of the change
         }
 
         if (reslult.coverImagePath == null) {

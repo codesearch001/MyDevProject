@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.gson.Gson
 import com.snofed.publicapp.R
@@ -46,6 +47,8 @@ class BrowseFavFragment : Fragment() {//ClubFavAdapter.OnItemClickListener
     var allClubResponses = mutableListOf<NewClubData>()
     var favClubResponses = mutableListOf<Client>() // Replace `ClubFavResponseType` with the actual data type of `clubFavResponse.data`
 
+    private lateinit var viewModelUserRealm: UserViewModelRealm
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
        // return inflater.inflate(R.layout.fragment_browse_fav, container, false)
@@ -56,6 +59,7 @@ class BrowseFavFragment : Fragment() {//ClubFavAdapter.OnItemClickListener
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModelUserRealm = ViewModelProvider(this).get(UserViewModelRealm::class.java)
         fetchResponse()
         // Bind the adapter to the RecyclerView
         viewFavClubModel.clubLiveData.observe(viewLifecycleOwner) { result ->
@@ -67,9 +71,9 @@ class BrowseFavFragment : Fragment() {//ClubFavAdapter.OnItemClickListener
                     Log.d("BrowseClubResponse", json)
                     val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
 
-                    val realmRepository = RealmRepository()
-                    val userViewModelRealm = UserViewModelRealm(realmRepository)
-                    val userRealm = userViewModelRealm.getUserById(userId!!)
+//                    val realmRepository = RealmRepository()
+//                    val userViewModelRealm = UserViewModelRealm(realmRepository)
+                    val userRealm = viewModelUserRealm.getUserById(userId!!)
                     val getFavClients: List<String> = userRealm?.favouriteClients ?: emptyList()
 
 //                    result.data?.let { data ->

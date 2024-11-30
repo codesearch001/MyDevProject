@@ -23,6 +23,7 @@ import com.snofed.publicapp.databinding.FragmentBrowseAllClubBinding
 import com.snofed.publicapp.models.Client
 import com.snofed.publicapp.repository.UserRepository
 import com.snofed.publicapp.ui.User.UserViewModelRealm
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.ActivityViewModelRealm
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.AppPreference
 import com.snofed.publicapp.utils.ClientPrefrences
@@ -42,8 +43,11 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
     private lateinit var clubAdapter: BrowseClubListAdapter
     private val sharedViewModel by activityViewModels<SharedViewModel>()
 
+    private lateinit var viewModelUserRealm: UserViewModelRealm
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentBrowseAllClubBinding.inflate(inflater, container, false)
+        viewModelUserRealm = ViewModelProvider(this).get(UserViewModelRealm::class.java)
         return binding.root
     }
 
@@ -62,17 +66,11 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
 
                     sharedViewModel.browseClubResponse.value = it.data
 
-
-
-
                     val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
 
-                    // userViewModelRealm = UserViewModelRealm(RealmRepository())
-                    //val userFavClientsRealm = userViewModelRealm.getFavClients(userId)
-                    //val getFavClients: List<String> = emptyList()
-                    //Log.e("userRealm","userRealm " +userRealm?.favouriteClients.toString() )
-                    //val getFavClients: List<String> = userFavClientsRealm ?: emptyList()
-                    val getFavClients: List<String> = emptyList()
+                    val userFavClientsRealm =  viewModelUserRealm.getFavClients(userId)
+
+                    val getFavClients: List<String> = userFavClientsRealm
 
                     val filteredClients = it.data?.data?.clients?.filter { client ->
                         client.visibility == 0 //true 1->false
@@ -140,15 +138,16 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
 
     }
 
-    override fun onWishlistClick(clientId: String) {
-        Log.d("TAG_WishList","Wishlist_Item " + clientId )
-
-        if (ClientPrefrences.containsClientId(requireContext(),clientId)) {
-
-            ClientPrefrences.removeClientId(requireContext(),clientId)
+    override fun onWishlistClick(clientId: String, isWishlisted : Boolean) {
+        Log.d("TAG_WishList","Wishlist_Item " + clientId + " -- " + isWishlisted )
+        val userId = AppPreference.getPreference(context, SharedPreferenceKeys.USER_USER_ID).toString()
+        if (isWishlisted) {
+            viewModelUserRealm.addFavouriteClient(userId,clientId)
+            //ClientPrefrences.removeClientId(requireContext(),clientId)
 
         } else {
-            ClientPrefrences.saveClientId(requireContext(),clientId)
+            viewModelUserRealm.removeFavouriteClient(userId,clientId)
+            //ClientPrefrences.saveClientId(requireContext(),clientId)
         }
 
         Log.d("BrowseAllClubFragment","save me as  " + ClientPrefrences.getClientIds(requireContext()) )
