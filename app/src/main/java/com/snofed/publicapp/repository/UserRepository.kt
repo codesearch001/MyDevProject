@@ -375,13 +375,14 @@ class UserRepository @Inject constructor(
         val intervals = systemDataRealm.systemData?.intervals
 
 
-        val vmClient = ClientViewModelRealm(RealmRepository())
-        val vmActivity = ActivityViewModelRealm(RealmRepository())
-        val vmPoiType = PoisTypeViewModelRealm(RealmRepository())
-        val vmZoneType = ZoneTypeViewModelRealm(RealmRepository())
-        val vmHelpArticle = HelpViewModelRealm(RealmRepository())
-        val vmTaskCategory = TaskCategoryViewModelRealm(RealmRepository())
-        val vmInterval = IntervalViewModelRealm(RealmRepository())
+        val vmClient = ClientViewModelRealm()
+
+        val vmActivity = ActivityViewModelRealm()
+        val vmPoiType = PoisTypeViewModelRealm()
+        val vmZoneType = ZoneTypeViewModelRealm()
+        val vmHelpArticle = HelpViewModelRealm()
+        val vmTaskCategory = TaskCategoryViewModelRealm()
+        val vmInterval = IntervalViewModelRealm()
 
         // Update a list of class in a single transaction
         val filterClient = clients?.filter { it.visibility == 0 }
@@ -418,7 +419,7 @@ class UserRepository @Inject constructor(
 
     fun saveClubToRealm(clubResponseData: Club) {
         val realmRepository = RealmRepository()
-        val clubViewModelRealm = ClubViewModelRealm(realmRepository)
+        val clubViewModelRealm = ClubViewModelRealm()
         clubViewModelRealm.addOrUpdateClub(clubResponseData)
     }
 
