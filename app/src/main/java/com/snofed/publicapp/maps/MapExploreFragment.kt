@@ -257,11 +257,17 @@ class MapExploreFragment : Fragment(){
     }
 
     private fun showBottomMapFilter() {
-        val bottomSheetDialog = BottomSheetDialog(requireContext(),R.style.TransparentBottomSheetDialog)
+
+        // Show the BottomSheetFragment
+        val bottomSheet = FilterMapBottomSheetFragment()
+
+        bottomSheet.show(parentFragmentManager, "MyBottomSheetFragment")
+
+        /*val bottomSheetDialog = BottomSheetDialog(requireContext(),R.style.TransparentBottomSheetDialog)
         val bottomSheetViewBinding = DataBindingUtil.inflate<MapFilterBinding>(
             layoutInflater, R.layout.map_filter, null, false)
-        bottomSheetDialog.setContentView(bottomSheetViewBinding.root)
-        bottomSheetDialog.show()
+        bottomSheetDialog.setContentView(bottomSheetViewBinding.root)*/
+        //bottomSheetDialog.show()
     }
 
     private fun checkPermissionsAndGps() {

@@ -110,11 +110,11 @@ class BrowseClubMapFragment : Fragment() {
 
 
         // Get UserRealm
-        val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
+       /* val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
         val realmRepository = RealmRepository()
         val userViewModelRealm = UserViewModelRealm(realmRepository)
         favClient = userViewModelRealm.getFavClients(userId)
-
+*/
         binding.fab.setOnClickListener {
             animateFab()
         }
@@ -189,13 +189,13 @@ class BrowseClubMapFragment : Fragment() {
 
     private fun setupAnnotationManager(clients: List<Client>) {
         val annotationPlugin = mapView.annotations
-       pointAnnotationManager = annotationPlugin.createPointAnnotationManager(AnnotationConfig(layerId = LAYER_ID))
+        pointAnnotationManager = annotationPlugin.createPointAnnotationManager(AnnotationConfig(layerId = LAYER_ID))
 
-       // Click listener to show the custom info window
-       pointAnnotationManager.addClickListener { clickedAnnotation ->
+        // Click listener to show the custom info window
+        pointAnnotationManager.addClickListener { clickedAnnotation ->
             showCustomInfoWindow(clickedAnnotation)
-          true
-      }
+            true
+        }
 
         // Add markers to the map
         updateMapWithPoints(clients)
@@ -227,7 +227,7 @@ class BrowseClubMapFragment : Fragment() {
 
         //val view = LayoutInflater.from(requireContext()).inflate(R.layout.map_popup_layout, null)
         popupView.findViewById<TextView>(R.id.club_name).text = clientData?.publicName?.trimStart()?.trimEnd()
-       // popupView.findViewById<TextView>(R.id.club_main_name).text =
+        // popupView.findViewById<TextView>(R.id.club_main_name).text =
         popupView.findViewById<TextView>(R.id.rating_text).text =clientData.clientRating
         popupView.findViewById<TextView>(R.id.review_count).text ="(${clientData.totalRatings})"
         popupView.findViewById<TextView>(R.id.view_club_page_button).setOnClickListener {
@@ -249,7 +249,7 @@ class BrowseClubMapFragment : Fragment() {
             coordinates.longitude(),
             coordinates.latitude() - calculateOffset(mapboxMap.cameraState.zoom) // Dynamic latitude offset
         )
-            /*"Longitude: ${coordinates.longitude()}, Latitude: ${coordinates.latitude()}"*/
+        /*"Longitude: ${coordinates.longitude()}, Latitude: ${coordinates.latitude()}"*/
 
         // Add the custom view as an annotation
         viewAnnotationManager.addViewAnnotation(
@@ -270,7 +270,9 @@ class BrowseClubMapFragment : Fragment() {
 //                .pitch(9.0)
 //                .build()
 //        )
-        MapAnimationOptions.mapAnimationOptions { duration(3000) }
+        MapAnimationOptions.mapAnimationOptions {
+            duration(3000)
+        }
         // Dismiss popup when clicking outside
         mapboxMap.addOnMapClickListener {
             viewAnnotationManager.removeAllViewAnnotations()
@@ -346,7 +348,7 @@ class BrowseClubMapFragment : Fragment() {
                 .withIconImage(iconBitmap)
                 .withIconAnchor(IconAnchor.BOTTOM)
                 .withDraggable(false)
-           // pointAnnotationManager.create(pointAnnotationOptions)
+            // pointAnnotationManager.create(pointAnnotationOptions)
             // Create the annotation and attach the client data as metadata
             val pointAnnotation = pointAnnotationManager.create(pointAnnotationOptions)
 
