@@ -1,10 +1,22 @@
 package com.snofed.publicapp.ui.clubsubmember.ViewModelClub
 
 import RealmRepository
+import androidx.lifecycle.ViewModel
 import com.snofed.publicapp.models.realmModels.Interval
+import io.realm.Realm
 
-open class IntervalViewModelRealm(private val realmRepository: RealmRepository) {
+open class IntervalViewModelRealm : ViewModel() {
 
+    private val realmRepository: RealmRepository = RealmRepository()
+    private val realm: Realm = realmRepository.getRealmInstance()
+
+    override fun onCleared() {
+        super.onCleared()
+        // Close Realm instance when ViewModel is cleared
+        if (!realm.isClosed) {
+            realm.close()
+        }
+    }
     fun getIntervalById(intervalId: String): Interval? {
         return realmRepository.getById(Interval::class.java, intervalId)
     }

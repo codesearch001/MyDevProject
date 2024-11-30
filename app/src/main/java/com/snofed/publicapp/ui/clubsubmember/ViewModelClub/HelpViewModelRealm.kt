@@ -2,10 +2,22 @@ package com.snofed.publicapp.ui.clubsubmember.ViewModelClub
 
 
 import RealmRepository
+import androidx.lifecycle.ViewModel
 import com.snofed.publicapp.models.realmModels.HelpArticle
+import io.realm.Realm
 
-open class HelpViewModelRealm(private val realmRepository: RealmRepository) {
+open class HelpViewModelRealm : ViewModel() {
 
+    private val realmRepository: RealmRepository = RealmRepository()
+    private val realm: Realm = realmRepository.getRealmInstance()
+
+    override fun onCleared() {
+        super.onCleared()
+        // Close Realm instance when ViewModel is cleared
+        if (!realm.isClosed) {
+            realm.close()
+        }
+    }
     fun getHelpArticleById(articleId: String): HelpArticle? {
         return realmRepository.getById(HelpArticle::class.java, articleId)
     }

@@ -1,10 +1,22 @@
 package com.snofed.publicapp.ui.clubsubmember.ViewModelClub
 
 import RealmRepository
+import androidx.lifecycle.ViewModel
 import com.snofed.publicapp.models.realmModels.TaskCategories
+import io.realm.Realm
 
-open class TaskCategoryViewModelRealm(private val realmRepository: RealmRepository) {
+open class TaskCategoryViewModelRealm : ViewModel() {
 
+    private val realmRepository: RealmRepository = RealmRepository()
+    private val realm: Realm = realmRepository.getRealmInstance()
+
+    override fun onCleared() {
+        super.onCleared()
+        // Close Realm instance when ViewModel is cleared
+        if (!realm.isClosed) {
+            realm.close()
+        }
+    }
     fun getTaskCategoryById(categoryId: String): TaskCategories? {
         return realmRepository.getById(TaskCategories::class.java, categoryId)
     }

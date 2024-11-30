@@ -131,6 +131,7 @@ class MapExploreFragment : Fragment(){
     var minLat = Double.MAX_VALUE
     var maxLng = Double.MIN_VALUE
     var maxLat = Double.MIN_VALUE
+    var clientId : String? =""
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
@@ -148,7 +149,7 @@ class MapExploreFragment : Fragment(){
         // Initialize the FusedLocationProviderClient
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         setupLocationRequest()
-
+        clientId = arguments?.getString("clientId").toString()
         return binding.root
     }
 
@@ -260,8 +261,11 @@ class MapExploreFragment : Fragment(){
 
         // Show the BottomSheetFragment
         val bottomSheet = FilterMapBottomSheetFragment()
-
-        bottomSheet.show(parentFragmentManager, "MyBottomSheetFragment")
+        val bundle = Bundle().apply {
+            putString("clientId",clientId) // Replace with your data
+        }
+        bottomSheet.arguments = bundle
+        bottomSheet.show(parentFragmentManager, "FilterMapBottomSheetFragment")
 
         /*val bottomSheetDialog = BottomSheetDialog(requireContext(),R.style.TransparentBottomSheetDialog)
         val bottomSheetViewBinding = DataBindingUtil.inflate<MapFilterBinding>(

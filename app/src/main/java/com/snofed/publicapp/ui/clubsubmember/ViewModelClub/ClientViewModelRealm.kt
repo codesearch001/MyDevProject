@@ -1,10 +1,22 @@
 package com.snofed.publicapp.ui.clubsubmember.ViewModelClub
 
 import RealmRepository
+import androidx.lifecycle.ViewModel
 import com.snofed.publicapp.models.realmModels.Client
+import io.realm.Realm
 
-open class ClientViewModelRealm(private val realmRepository: RealmRepository) {
+open class ClientViewModelRealm : ViewModel() {
 
+    private val realmRepository: RealmRepository = RealmRepository()
+    private val realm: Realm = realmRepository.getRealmInstance()
+
+    override fun onCleared() {
+        super.onCleared()
+        // Close Realm instance when ViewModel is cleared
+        if (!realm.isClosed) {
+            realm.close()
+        }
+    }
     // Retrieve a Client by its ID
     fun getClientById(clientId: String): Client? {
         return realmRepository.getById(Client::class.java, clientId)

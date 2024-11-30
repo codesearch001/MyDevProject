@@ -1,9 +1,22 @@
 package com.snofed.publicapp.ui.clubsubmember.ViewModelClub
 
 import RealmRepository
+import androidx.lifecycle.ViewModel
 import com.snofed.publicapp.models.realmModels.Activities
+import io.realm.Realm
 
-open class ActivityViewModelRealm(private val realmRepository: RealmRepository) {
+open class ActivityViewModelRealm : ViewModel() {
+
+    private val realmRepository: RealmRepository = RealmRepository()
+    private val realm: Realm = realmRepository.getRealmInstance()
+
+    override fun onCleared() {
+        super.onCleared()
+        // Close Realm instance when ViewModel is cleared
+        if (!realm.isClosed) {
+            realm.close()
+        }
+    }
 
     fun getActivityById(activityId: String): Activities? {
         return realmRepository.getById(Activities::class.java, activityId)
@@ -39,3 +52,4 @@ open class ActivityViewModelRealm(private val realmRepository: RealmRepository) 
         }
     }
 }
+
