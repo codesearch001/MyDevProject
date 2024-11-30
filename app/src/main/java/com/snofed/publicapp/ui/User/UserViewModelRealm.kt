@@ -1,15 +1,27 @@
 package com.snofed.publicapp.ui.User
 
 import RealmRepository
+import androidx.lifecycle.ViewModel
 import com.snofed.publicapp.dto.PublicUserSettingsDTO
 import com.snofed.publicapp.dto.UserDTO
 import com.snofed.publicapp.dto.toRealm
 import com.snofed.publicapp.models.realmModels.PublicUserSettingsRealm
 import com.snofed.publicapp.models.realmModels.UserRealm
+import io.realm.Realm
 import io.realm.RealmList
 
-open class UserViewModelRealm(private val realmRepository: RealmRepository) {
+open class UserViewModelRealm : ViewModel() {
 
+    private val realmRepository: RealmRepository = RealmRepository()
+    private val realm: Realm = realmRepository.getRealmInstance()
+
+    override fun onCleared() {
+        super.onCleared()
+        // Close Realm instance when ViewModel is cleared
+        if (!realm.isClosed) {
+            realm.close()
+        }
+    }
     // Retrieve a User by ID
     fun getUserById(userId: String): UserRealm? {
         return realmRepository.getById(UserRealm::class.java, userId)
@@ -45,7 +57,34 @@ open class UserViewModelRealm(private val realmRepository: RealmRepository) {
     // Get favorite Clients for a User
     fun getFavClients(userId: String): List<String> {
         val user = realmRepository.getById(UserRealm::class.java, userId)
-        return user?.favouriteClients ?: emptyList()
+        return user?.favouriteClients.orEmpty()
+    }
+
+    // Add a client ID to the Favourite Clients list
+    fun addFavouriteClient(userId: String, clientId: String) {
+        realm.executeTransaction { transactionRealm ->
+            val user = transactionRealm.where(UserRealm::class.java).equalTo("id", userId).findFirst()
+            user?.let {
+                if (it.favouriteClients == null) {
+                    it.favouriteClients = RealmList() // Initialize if null
+                }
+                if (!it.favouriteClients.orEmpty().contains(clientId)) {
+                    it.favouriteClients?.add(clientId) // Add if not already present
+                    transactionRealm.insertOrUpdate(it) // Save the updated object
+                }
+            }
+        }
+    }
+
+    // Remove a client ID from the Favourite Clients list
+    fun removeFavouriteClient(userId: String, clientId: String) {
+        realm.executeTransaction { transactionRealm ->
+            val user = getUserById(userId)
+            user?.let {
+                it.favouriteClients?.remove(clientId) // Remove the client ID
+                transactionRealm.insertOrUpdate(it) // Save the updated object
+            }
+        }
     }
 
     // Retrieve PublicUserSettings for a specific User

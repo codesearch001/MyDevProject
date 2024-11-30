@@ -161,6 +161,7 @@ class StartMapRideFragment : Fragment(),WorkoutMediaReader.OnImageUriReceivedLis
    // private var workoutImgTemp : List<String> = listOf()
     private var workoutImgTemp: MutableList<String> = mutableListOf()
 
+    private lateinit var viewModelUserRealm: UserViewModelRealm
 
 
     @Inject
@@ -178,12 +179,13 @@ class StartMapRideFragment : Fragment(),WorkoutMediaReader.OnImageUriReceivedLis
         }
         // Initialize MediaReader with this fragment
         workoutViewModel = ViewModelProvider(this)[WorkoutViewModel::class.java]
-
+        viewModelUserRealm = ViewModelProvider(this).get(UserViewModelRealm::class.java)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         // Insert or fetch data from Realm
         /* realm.executeTransaction { realm ->
              // Example: Insert data into Realm
@@ -192,9 +194,8 @@ class StartMapRideFragment : Fragment(),WorkoutMediaReader.OnImageUriReceivedLis
          }*/
         mediaReader = WorkoutMediaReader(this,this)
         userId = tokenManager.getUserId()
-        val realmRepository = RealmRepository()
-        val userViewModelRealm = UserViewModelRealm(realmRepository)
-        var userSettingScreenOn = userViewModelRealm.getPublicUserSettingValue(userId!!,"ScreenAlwaysOn")
+
+        var userSettingScreenOn = viewModelUserRealm.getPublicUserSettingValue(userId!!,"ScreenAlwaysOn")
         var isScreenOn = if(userSettingScreenOn.isNullOrEmpty()) false else if(userSettingScreenOn.toBoolean()) true else false
 
         if (isScreenOn) {
