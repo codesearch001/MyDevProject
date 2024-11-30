@@ -239,5 +239,10 @@
         android:id="@+id/purchaseOrderDetilsFragment"
         android:name="com.snofed.publicapp.purchasehistory.PurchaseOrderDetilsFragment"
         android:label="PurchaseOrderDetilsFragment" />
+    <dialog
+        android:id="@+id/filterMapBottomSheetFragment"
+        android:name="com.snofed.publicapp.maps.FilterMapBottomSheetFragment"
+        android:label="fragment_filter_map_bottom_sheet"
+        tools:layout="@layout/map_filter" />
 
 </navigation>
