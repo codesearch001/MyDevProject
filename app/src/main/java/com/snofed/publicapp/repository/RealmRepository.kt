@@ -64,5 +64,33 @@ open class RealmRepository {
             realm.where(clazz).count()
         }
     }
+
+    /**
+     * Query distinct values of a specific field in the provided class.
+     *
+     * @param clazz The class to query.
+     * @param fieldName The name of the field to get distinct values for.
+     * @return A list of distinct values for the specified field.
+     */
+    fun <T : RealmObject> queryDistinct(clazz: Class<T>, fieldName: String): List<Any?> {
+        return getRealmInstance().use { realm ->
+            realm.where(clazz)
+                .distinct(fieldName) // Query distinct values
+                .findAll()
+                .map { it -> it.fieldValue(fieldName) }
+        }
+    }
+
+    /**
+     * Helper function to retrieve the field value using reflection.
+     *
+     * @param fieldName The name of the field to extract the value from.
+     */
+    private fun <T : RealmObject> T.fieldValue(fieldName: String): Any? {
+        return this::class.java.getDeclaredField(fieldName).let { field ->
+            field.isAccessible = true
+            field.get(this)
+        }
+    }
 }
 
