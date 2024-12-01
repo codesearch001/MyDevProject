@@ -94,6 +94,7 @@ import com.snofed.publicapp.databinding.BottomSheetApartmentsBinding
 import com.snofed.publicapp.databinding.FragmentMapExploreBinding
 import com.snofed.publicapp.databinding.FragmentMapFeedBinding
 import com.snofed.publicapp.databinding.MapFilterBinding
+import com.snofed.publicapp.databinding.MapFilterDetailsBinding
 import com.snofed.publicapp.models.realmModels.Area
 import com.snofed.publicapp.models.realmModels.Poi
 import com.snofed.publicapp.models.browseSubClub.Properties
@@ -696,6 +697,7 @@ class MapExploreFragment : Fragment(){
                     manager.addClickListener { clickedAnnotation ->
                         if (clickedAnnotation == annotation) {
                             Log.e("TAG_Pois", "Clicked on POI: ${poi.poiTypeId}")
+                            showCustomPoisDialog()
                             Toast.makeText(context, "Clicked POI: ${poi.name}", Toast.LENGTH_SHORT).show()
                             true
                         } else {
@@ -708,6 +710,22 @@ class MapExploreFragment : Fragment(){
                 Log.e("MapError", "PointAnnotationManager is not initialized.")
             }
         }
+    }
+
+
+
+    private fun showCustomPoisDialog() {
+//        val customDialog = CustomDialogFragmentFragment()
+//        customDialog.show(parentFragmentManager, "CustomDialogTag")
+        val bottomSheetDialog = BottomSheetDialog(requireContext(),R.style.TransparentBottomSheetDialog)
+        val bottomSheetViewBinding = DataBindingUtil.inflate<MapFilterDetailsBinding>(
+            layoutInflater, R.layout.map_filter_details, null, false)
+
+        bottomSheetViewBinding?.close?.setOnClickListener {
+            bottomSheetDialog.dismiss()
+        }
+        bottomSheetDialog.setContentView(bottomSheetViewBinding.root)
+        bottomSheetDialog.show()
     }
 
     private fun initializePointAnnotationManager(style: Style) {
