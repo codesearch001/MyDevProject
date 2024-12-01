@@ -25,13 +25,14 @@
 
         <ImageView
             android:id="@+id/img_pois_type"
-            android:layout_width="@dimen/_48sdp"
-            android:layout_height="@dimen/_48sdp"
-            android:layout_marginStart="@dimen/_4sdp"
-            android:layout_marginEnd="@dimen/_4sdp"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
             android:background="@drawable/outline"
             android:gravity="center"
             android:padding="@dimen/_14sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
             android:src="@drawable/dinner" />
     </LinearLayout>
 </layout>

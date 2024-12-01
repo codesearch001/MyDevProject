@@ -94,7 +94,7 @@ class BrowseClubListAdapter(private val context: Context, private val listener: 
         val reslult = filteredClubs[position]
         holder.clientRating.text = reslult.clientRating.toString()
         holder.totalRatings.text = "(" + reslult.totalRatings.toString() + ")"
-        holder.tvName.text = reslult.publicName
+        holder.tvName.text = reslult.publicName.trimEnd().trimStart()
         holder.tvLable.text = reslult.county
 
         holder.cardIdLayout.setOnClickListener {
