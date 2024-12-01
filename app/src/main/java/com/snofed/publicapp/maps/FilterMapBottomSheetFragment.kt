@@ -30,9 +30,11 @@ import com.snofed.publicapp.models.realmModels.Zone
 import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.ActivityViewModelRealm
 import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.AreaViewModelRealm
 import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.PoisTypeViewModelRealm
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.PoisViewModelRealm
 import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.TaskCategoryViewModelRealm
 import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.ZoneTypeViewModelRealm
 import com.snofed.publicapp.utils.SharedViewModel
+import com.snofed.publicapp.utils.enums.SyncActionEnum
 import dagger.hilt.android.AndroidEntryPoint
 import io.realm.Realm
 
@@ -52,6 +54,9 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
     private lateinit var viewModelTaskCategory: TaskCategoryViewModelRealm
     private lateinit var viewModelZoneType: ZoneTypeViewModelRealm
 
+    //For Client Data
+    private lateinit var viewModelPois: PoisViewModelRealm
+
 
 
     private lateinit var poisTypeAdapter: PoisTypeAdapter
@@ -68,6 +73,7 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
     var allPoisType : MutableList<StatusItem> = mutableListOf()
     var allTaskCategory : MutableList<StatusItem> = mutableListOf()
     var allZonesType : MutableList<StatusItem> = mutableListOf()
+    var allActivity : MutableList<StatusItem> = mutableListOf()
 
     // Client MAP Data
     var clientTrails    : MutableList<Trail> = mutableListOf()
@@ -101,6 +107,17 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
         // Activity
         viewModelActivity = ViewModelProvider(this).get(ActivityViewModelRealm::class.java)
         val allActivities = viewModelActivity.getAllActivities()
+        //Add All Type in allActivity
+        allActivity.add(StatusItem(
+            id = "0",
+            text = "ALL",
+            iconPath = R.drawable.dinner.toString())
+        )
+        allActivity.addAll(allActivities.map { activity ->
+            StatusItem(
+                id = activity.id!!,
+                text = activity.name ?: "No Name",)
+        }.toMutableList())
 
 
         // Area
@@ -114,40 +131,61 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
             )
         }.toMutableList()
 
-        // POIs Type
-        viewModelPoisType = ViewModelProvider(this).get(PoisTypeViewModelRealm::class.java)
-        val allPOISTypes = viewModelPoisType.getAllPoiTypes()
-        //allClientPoisType = allPOISTypes.map { it.iconPath!! }
-        allPoisType = allPOISTypes.map { poisType ->
-            StatusItem(
-                id = poisType.id!!,
-                text = poisType.name ?: "No Name",
-                iconPath = poisType.iconPath ?: R.drawable.dinner.toString())
 
-        }.toMutableList()
+        // Poi for Client
+        viewModelPois = ViewModelProvider(this).get(PoisViewModelRealm::class.java)
+        val clientPois = viewModelPois.getDistinctPioTypesByClientId(clientId!!)
+
+        // POIType
+        viewModelPoisType = ViewModelProvider(this).get(PoisTypeViewModelRealm::class.java)
+        val allPoiTypes = viewModelPoisType.getAllPoiTypes()
+
+        var filterPoisType = allPoiTypes.filter { poiType -> clientPois.contains(poiType.id) && poiType.syncAction != SyncActionEnum.DELETED.getValue() }
+        //Add All Type in allZonesType
+        allPoisType.add(StatusItem(
+            id = "0",
+            text = "ALL",
+            iconPath = R.drawable.dinner.toString())
+        )
+
+        allPoisType.addAll(filterPoisType.map { poiType ->
+            StatusItem(
+                id = poiType.id!!,
+                text = poiType.name ?: "No Name",
+                iconPath = poiType.iconPath ?: R.drawable.dinner.toString())
+
+        }.toMutableList())
 
 
         //Task Category
         viewModelTaskCategory = ViewModelProvider(this).get(TaskCategoryViewModelRealm::class.java)
         val allTaskCategories = viewModelTaskCategory.getAllTaskCategories()
-        //allClientTaskCategory = allTaskCategories.map { it.name!! }
-        allTaskCategory = allTaskCategories.map { taskCategoryType ->
+        //Add All Type in allZonesType
+        allTaskCategory.add(StatusItem(
+            id = "0",
+            text = "ALL"
+        ))
+        allTaskCategory.addAll(allTaskCategories.map { taskCategoryType ->
             StatusItem(
                 id = taskCategoryType.id!!,
                 text = taskCategoryType.name ?: "No Name",)
-        }.toMutableList()
+        }.toMutableList())
 
 
 
         //Zones Type
         viewModelZoneType = ViewModelProvider(this).get(ZoneTypeViewModelRealm::class.java)
         val allZoneTypes = viewModelZoneType.getAllZoneTypes()
-        //allClientZonesType = allZoneTypes.map { it.name!! }
-        allZonesType = allZoneTypes.map { zoneType ->
+        //Add All Type in allZonesType
+        allZonesType.add(StatusItem(
+            id = "0",
+            text = "ALL"
+        ))
+        allZonesType.addAll(allZoneTypes.map { zoneType ->
             StatusItem(
                 id = zoneType.id!!,
                 text = zoneType.name ?: "No Name",)
-        }.toMutableList()
+        }.toMutableList())
 
         //Zone
        /* viewModelZoneType = ViewModelProvider(this).get(ZoneTypeViewModelRealm::class.java)
@@ -206,7 +244,7 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
 
 
         // Set up RecyclerView and Adapter fro PoisType
-        trailCategoryAdapter = MapTrailCategoryAdapter(allTaskCategory) { selectedIdsString ->
+        trailCategoryAdapter = MapTrailCategoryAdapter(allActivity) { selectedIdsString ->
             Log.d("trailCategoryAdapter", "Comma-separated IDs: $selectedIdsString")
             // Update the shared ViewModel with the new selected IDs
             val selectedIds = selectedIdsString.split(",")
@@ -245,7 +283,7 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
             }
 
         }
-        val layoutManager = GridLayoutManager(requireActivity(), 2)
+        val layoutManager = GridLayoutManager(requireActivity(),3)
         binding.rvZonesType.layoutManager = layoutManager
         binding.rvZonesType.adapter = zonesTypeAdapter
 

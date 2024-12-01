@@ -40,6 +40,7 @@ import com.google.android.gms.location.Priority
 
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
 
@@ -77,6 +78,7 @@ import com.snofed.publicapp.databinding.FragmentMapExploreBinding
 import com.snofed.publicapp.databinding.MapFilterDetailsBinding
 import com.snofed.publicapp.models.realmModels.Area
 import com.snofed.publicapp.models.realmModels.Poi
+import com.snofed.publicapp.models.realmModels.Resource
 import com.snofed.publicapp.models.realmModels.Trail
 import com.snofed.publicapp.models.realmModels.Zone
 import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.IntervalViewModelRealm
@@ -125,6 +127,24 @@ class MapExploreFragment : Fragment(){
    // var allClientMapInterval : List<StatusItem> = emptyList()
     var allClientMapInterval : MutableList<StatusItem> = mutableListOf()
 
+//    val allTrails: MutableList<Trail> = mutableListOf()
+//    val allPois: MutableList<Poi> = mutableListOf()
+//    val allZones: MutableList<Zone> = mutableListOf()
+//    val allResources: MutableList<Resource> = mutableListOf()
+
+    // Client MAP Data
+    var clientTrails    : MutableList<Trail> = mutableListOf()
+    var clientPois      : MutableList<Poi> = mutableListOf()
+    var clientZones     : MutableList<Zone> = mutableListOf()
+    var clientResources : MutableList<Resource> = mutableListOf()
+    var clientAreas     : MutableList<Area> = mutableListOf()
+
+    var filterTrailsIds : List<String> = emptyList()
+    var filterPoiIds : List<String> = emptyList()
+    var filterZoneIds : List<String> = emptyList()
+    var filterAreaIds : List<String> = emptyList()
+    var filterResourceIds : List<String> = emptyList()
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -141,6 +161,7 @@ class MapExploreFragment : Fragment(){
             // Update the UI with the selected IDs
             Log.d("selectedAreaIds", "Selected1 IDs: $selectedIds")
             // Use the selectedIds to update the UI as needed
+            filterAreaIds = selectedIds
         })
 
         //Trails
@@ -148,6 +169,7 @@ class MapExploreFragment : Fragment(){
             // Update the UI with the selected IDs
             Log.d("selectedTrailId", "Selected2 IDs: $selectedIds")
             // Use the selectedIds to update the UI as needed
+            filterTrailsIds = selectedIds
         })
 
         // Pass the selected POI IDs to the SharedViewModel
@@ -155,6 +177,7 @@ class MapExploreFragment : Fragment(){
             // Update the UI with the selected IDs
             Log.d("selectedPoisIds", "Selected3 IDs: $selectedIds")
             // Use the selectedIds to update the UI as needed
+            filterPoiIds = selectedIds
         })
 
 
@@ -163,6 +186,7 @@ class MapExploreFragment : Fragment(){
             // Update the UI with the selected IDs
             Log.d("selectedZoneTypeId", "Selected4 IDs: $selectedIds")
             // Use the selectedIds to update the UI as needed
+            filterZoneIds = selectedIds
         })
 
 
@@ -250,7 +274,28 @@ class MapExploreFragment : Fragment(){
         ))
 
         //////////////////////////////////////
+        binding.intervalsButton.setOnClickListener {
 
+
+            // Show or hide the CardView with animation
+            val cardView = binding.intervalCardView
+            if (cardView.visibility == View.GONE || cardView.visibility == View.INVISIBLE) {
+                cardView.visibility = View.VISIBLE
+                cardView.alpha = 0f
+                cardView.animate()
+                    .alpha(1f)
+                    .setDuration(300)
+                    .start()
+            } else {
+                cardView.animate()
+                    .alpha(0f)
+                    .setDuration(300)
+                    .withEndAction {
+                        cardView.visibility = View.GONE
+                    }
+                    .start()
+            }
+        }
 
         //Map Interval type
         mapIntervalAdapter = MapIntervalAdapter(allClientMapInterval)
@@ -424,22 +469,30 @@ class MapExploreFragment : Fragment(){
 
         // Observe the SharedViewModel for data updates
         sharedViewModel.browseSubClubResponse.observe(viewLifecycleOwner, Observer { response ->
-            val trails = response?.data?.trails?.filter { trail ->
-                trail.visibility?.toInt() == 1 //Assuming visibility is already an integer
-            }
-            val zones = response?.data?.zones ?: emptyList()
-            val pois = response?.data?.pois ?: emptyList()
-            val areas = response?.data?.areas ?: emptyList()
-            Log.d("Tag_Trails", "trails size: ${trails?.size}")
-            Log.d("Tag_Zones", "zones size: ${zones.size}")
-            Log.d("Tag_POIs", "pois size: ${pois.size}")
-            Log.d("Tag_Areas", "areas size: ${areas.size}")
+//            val trails = response?.data?.trails?.filter { trail ->
+//                trail.visibility?.toInt() == 1 //Assuming visibility is already an integer
+//            }
+//            val zones = response?.data?.zones ?: emptyList()
+//            val pois = response?.data?.pois ?: emptyList()
+//            val areas = response?.data?.areas ?: emptyList()
 
+
+            clientTrails = (response?.data?.trails ?: emptyList()).toMutableList()
+            clientZones = (response?.data?.zones ?: emptyList()).toMutableList()
+            clientPois = (response?.data?.pois ?: emptyList()).toMutableList()
+            clientResources = (response?.data?.resources ?: emptyList()).toMutableList()
+
+            clientTrails = clientTrails.filter { it.visibility == 1 }.toMutableList()
+
+            Log.d("Tag_Trails", "trails size: ${clientTrails?.size}")
+            Log.d("Tag_Zones", "zones size: ${clientZones.size}")
+            Log.d("Tag_POIs", "pois size: ${clientPois.size}")
+            Log.d("Tag_Resources", "resources size: ${clientResources.size}")
 
             if (trails != null) {
-                addTrailsToMap(trails)
+                addTrailsToMap(clientTrails)
             }
-            if (zones.isNotEmpty()) {
+            /*if (zones.isNotEmpty()) {
                 addZonesToMap(zones)
             }
             if (pois.isNotEmpty()) {
@@ -447,7 +500,7 @@ class MapExploreFragment : Fragment(){
             }
             if (areas.isNotEmpty()) {
                 addAreasToMap(areas)
-            }
+            }*/
         })
     }
 
@@ -712,22 +765,34 @@ class MapExploreFragment : Fragment(){
         }
     }
 
-
-
     private fun showCustomPoisDialog(poi: Poi) {
-//        val customDialog = CustomDialogFragmentFragment()
-//        customDialog.show(parentFragmentManager, "CustomDialogTag")
-        val bottomSheetDialog = BottomSheetDialog(requireContext(),R.style.TransparentBottomSheetDialog)
-        val bottomSheetViewBinding = DataBindingUtil.inflate<MapFilterDetailsBinding>(
-            layoutInflater, R.layout.map_filter_details, null, false)
-
+        val bottomSheetDialog = BottomSheetDialog(requireContext(), R.style.RoundedBottomSheetDialog)
+        val bottomSheetViewBinding = DataBindingUtil.inflate<MapFilterDetailsBinding>(layoutInflater,
+            R.layout.map_filter_details, null, false)
 
         bottomSheetViewBinding?.close?.setOnClickListener {
             bottomSheetDialog.dismiss()
         }
+        bottomSheetViewBinding?.idTxtDateTime?.text = poi.lastUpdateDate
+        bottomSheetViewBinding?.idTxtDescription?.text = poi.description
+
+
+        // Make sure the bottom sheet content fits properly on the screen
+        bottomSheetDialog.setOnShowListener { dialog ->
+            val bottomSheet = (dialog as BottomSheetDialog).findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            val behavior = BottomSheetBehavior.from(bottomSheet!!)
+
+            // Adjust peekHeight to control the collapsed view's height
+            behavior.peekHeight = resources.getDimensionPixelSize(R.dimen._120sdp) // Example: 200dp
+
+            // Set state to fully expanded, or collapsed to just show a portion of the sheet
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED  // Or STATE_HALF_EXPANDED based on your preference
+        }
+
         bottomSheetDialog.setContentView(bottomSheetViewBinding.root)
         bottomSheetDialog.show()
     }
+
 
     private fun initializePointAnnotationManager(style: Style) {
         if (pointAnnotationManager == null) {
