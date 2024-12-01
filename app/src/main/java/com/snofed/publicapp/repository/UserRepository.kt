@@ -610,7 +610,7 @@ class UserRepository @Inject constructor(
 
             // Save UserRealm in Realm
             // Use the generic RealmRepository to save the UserRealm object
-            //val realmRepository = RealmRepository()
+           // val realmRepository = RealmRepository()
             val userViewModelRealm = UserViewModelRealm()
             //realmRepository.insertOrUpdate(userRealm)
             userViewModelRealm.addOrUpdateUser(userRealm)
@@ -702,7 +702,7 @@ class UserRepository @Inject constructor(
 
             // Save UserRealm in Realm
             // Use the generic RealmRepository to save the UserRealm object
-            //val realmRepository = RealmRepository()
+           // val realmRepository = RealmRepository()
             val userViewModelRealm = UserViewModelRealm()
             //realmRepository.insertOrUpdate(userRealm)
             userViewModelRealm.addOrUpdateUser(userRealm)

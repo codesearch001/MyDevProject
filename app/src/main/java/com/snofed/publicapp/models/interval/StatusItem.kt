@@ -1,4 +1,6 @@
 data class StatusItem(
-    val text: String,
-    val color: String? = null // Color code for the color strip, e.g., Color.RED, Color.BLUE, etc. // Resource ID for the color
+    var id : String,
+    var text: String,
+    var iconPath: String? = null,
+    var color: String? = null
 )
