@@ -163,11 +163,12 @@
                 app:cardCornerRadius="@dimen/_6sdp"
                 android:layout_marginBottom="@dimen/_8sdp"
                 app:cardElevation="@dimen/_2sdp"
+                android:visibility="gone"
                 android:layout_height="wrap_content">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="16dp"/>
             </androidx.cardview.widget.CardView>
@@ -178,7 +179,6 @@
                 android:layout_height="@dimen/_22sdp"
                 android:layout_marginBottom="@dimen/_38sdp"
                 android:background="@drawable/interval_button_background"
-                android:drawableEnd="@drawable/ic_dropdown"
                 android:padding="@dimen/_4sdp"
                 android:text="Intervals"
                 android:textAllCaps="false"

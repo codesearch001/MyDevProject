@@ -10,7 +10,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
         android:orientation="vertical">
 
 
@@ -35,9 +34,9 @@
 
             <ImageView
                 android:id="@+id/close"
-                android:layout_width="@dimen/_30sdp"
-                android:layout_height="@dimen/_30sdp"
-                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:src="@drawable/cross_icon" />
 
         </LinearLayout>
@@ -98,7 +97,7 @@
                             android:text="@string/t_opened"
                             android:textColor="@android:color/white"
                             android:textStyle="bold"
-                            android:visibility="gone" />
+                            android:visibility="visible" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/idTxtStatusClose"
