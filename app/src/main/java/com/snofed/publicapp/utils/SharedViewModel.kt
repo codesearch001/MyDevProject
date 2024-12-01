@@ -1,5 +1,6 @@
 package com.snofed.publicapp.utils
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.snofed.publicapp.api.ResponseObject
@@ -22,5 +23,31 @@ class SharedViewModel : ViewModel() {
     val feedListResponse = MutableLiveData<FeedListResponse>()
     val membershipResponse = MutableLiveData<Membership>()
 
+
+    //POIS ID
+    private val _selectedPoiIds = MutableLiveData<List<String>>()
+    val selectedIds: LiveData<List<String>> get() = _selectedPoiIds
+
+    fun updateSelectedIds(ids: List<String>) {
+        _selectedPoiIds.value = ids
+    }
+
+
+    //Trails ID
+    private val _selectedTrailId = MutableLiveData<List<String>>()
+    val selectedTrailId: LiveData<List<String>> get() = _selectedTrailId
+
+    fun updateSelectedTrailsIds(ids: List<String>) {
+        _selectedTrailId.value = ids
+    }
+
+
+    //ZoneType ID
+    private val _selectedZoneId = MutableLiveData<List<String>>()
+    val selectedZoneTypeId: LiveData<List<String>> get() = _selectedZoneId
+
+    fun updateSelectedZoneIds(ids: List<String>) {
+        _selectedZoneId.value = ids
+    }
 
 }

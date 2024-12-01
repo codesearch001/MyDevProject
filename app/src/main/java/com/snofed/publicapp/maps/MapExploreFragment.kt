@@ -109,6 +109,7 @@ import com.snofed.publicapp.utils.DrawerController
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.SnofedConstants
+import com.snofed.publicapp.utils.enums.SyncActionEnum
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.System.setProperties
 import java.util.Locale
@@ -119,6 +120,7 @@ class MapExploreFragment : Fragment(){
     private val binding get() = _binding!!
 
     private val sharedViewModel by activityViewModels<SharedViewModel>()
+    private lateinit var sharedViewModell: SharedViewModel
     private lateinit var mapView: MapView
     private lateinit var mapboxMap: MapboxMap
     private var cameraAnimationsPlugin: CameraAnimationsPlugin? = null // Nullable type
@@ -151,24 +153,26 @@ class MapExploreFragment : Fragment(){
     //Map Interval
     private lateinit var viewModelInterval: IntervalViewModelRealm
     private lateinit var mapIntervalAdapter: MapIntervalAdapter
-    var allClientMapInterval : List<StatusItem> = emptyList()
+   // var allClientMapInterval : List<StatusItem> = emptyList()
+    var allClientMapInterval : MutableList<StatusItem> = mutableListOf()
 
-  /*  val statusList = listOf(
-        StatusItem("Freshly groomed", "#00FF00"),
-        StatusItem("1-2 days", "#FFEB3B"),
-        StatusItem("2-3 days", "#FF9800"),
-        StatusItem("3-5 days", "#9C27B0"),
-        StatusItem("Closed", "#FF0000")
-    )*/
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_map_explore, container, false)
         _binding = FragmentMapExploreBinding.inflate(inflater, container, false)
-
         binding.backBtn.setOnClickListener {
             it.findNavController().popBackStack()
         }
+
+        sharedViewModell = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+        // Pass the selected POI IDs to the SharedViewModel
+        sharedViewModell.selectedIds.observe(viewLifecycleOwner, Observer { selectedIds ->
+            // Update the UI with the selected IDs
+            Log.d("SelectedIdss", "Selected IDs: $selectedIds")
+            // Use the selectedIds to update the UI as needed
+        })
+
         // Initialize the FusedLocationProviderClient
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         setupLocationRequest()
@@ -222,18 +226,32 @@ class MapExploreFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Area
-        viewModelInterval = ViewModelProvider(this).get(IntervalViewModelRealm::class.java)
-        val allClientAreas = viewModelInterval.getAllIntervals()
+///////////////////////////////////////////////
 
-        // Map the data to a list for your RecyclerView adapter
-        allClientMapInterval = allClientAreas.map { interval ->
+        // Intervals
+        viewModelInterval = ViewModelProvider(this).get(IntervalViewModelRealm::class.java)
+        var allIntervals = viewModelInterval.getAllIntervals()
+
+        allIntervals = allIntervals.filter { it.syncAction != SyncActionEnum.DELETED.getValue() }
+        allClientMapInterval = allIntervals.map { interval ->
             StatusItem(
+                id = interval.id!!,
                 text = interval.name ?: "No Name",
                 color = interval.color ?: "#FFFFFF" // Default color
 
             )
-        }
+        }.toMutableList()
+
+        /* text = "Closed",
+           color = "Red"*/
+        allClientMapInterval.add(StatusItem(
+            id = "0",
+            text = resources.getString(R.string.t_close),
+            color = "#eb4034"
+        ))
+
+        //////////////////////////////////////
+
 
         //Map Interval type
         mapIntervalAdapter = MapIntervalAdapter(allClientMapInterval)
@@ -671,7 +689,20 @@ class MapExploreFragment : Fragment(){
                         .withIconImage("poi-icon") // Use the icon image ID
                         .withIconSize(0.05) // Adjust icon size if needed
 
-                    manager.create(options)
+                   // manager.create(options)
+                    ///////////////////////
+                    val annotation = manager.create(options)
+                    // Add click listener for the annotation
+                    manager.addClickListener { clickedAnnotation ->
+                        if (clickedAnnotation == annotation) {
+                            Log.e("TAG_Pois", "Clicked on POI: ${poi.poiTypeId}")
+                            Toast.makeText(context, "Clicked POI: ${poi.name}", Toast.LENGTH_SHORT).show()
+                            true
+                        } else {
+                            false
+                        }
+                    }
+
                 }
             } ?: run {
                 Log.e("MapError", "PointAnnotationManager is not initialized.")

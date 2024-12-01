@@ -53,7 +53,7 @@ class MapIntervalAdapter(private val items: List<StatusItem>) : RecyclerView.Ada
             // Bind the data to the views
             binding.statusText.text = item.text
 
-            // Set the background color dynamically
+
             // Set the background color dynamically
             try {
                 // Attempt to parse the color from item.color

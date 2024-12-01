@@ -23,6 +23,8 @@
     <color name="selectedColor">#1976D2</color>
     <color name="intervalTxtColor">#66757F</color>
 
+    <color name="selected_color">#FFFFFF</color>
+    <color name="default_color">#000000</color>
 
 
     <color name="error_color">#FF0000</color>
@@ -57,5 +59,12 @@
     <color name="txt_green">#6FCF97</color> <!-- Red -->
     <color name="txt_red">#EB5757</color> <!-- Red -->
     <color name="star_color_yellow">#FABD21</color> <!-- Red -->
+
+
+    <color name="selected_background">#FFDDDD</color>
+    <color name="default_background">#FFFFFF</color>
+    <color name="selected_icon">#FF0000</color>
+    <color name="default_icon">#000000</color>
+
 
 </resources>

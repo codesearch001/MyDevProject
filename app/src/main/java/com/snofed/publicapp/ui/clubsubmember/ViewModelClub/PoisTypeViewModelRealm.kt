@@ -33,6 +33,11 @@ open class PoisTypeViewModelRealm : ViewModel() {
         return realmRepository.getAll(PoiType::class.java)
     }
 
+    fun getIconPathByPoiTypeId(poiTypeId: String): String? {
+        val poiType = getPoiTypeById(poiTypeId)
+        return poiType?.iconPath
+    }
+
     fun deletePoiTypeById(poiTypeId: String) {
         realmRepository.deleteById(PoiType::class.java, poiTypeId)
     }
