@@ -20,6 +20,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -31,6 +32,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -82,6 +85,8 @@ import com.snofed.publicapp.models.realmModels.Resource
 import com.snofed.publicapp.models.realmModels.Trail
 import com.snofed.publicapp.models.realmModels.Zone
 import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.IntervalViewModelRealm
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.PoisTypeViewModelRealm
+import com.snofed.publicapp.utils.ServiceUtil
 import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.SnofedConstants
 import com.snofed.publicapp.utils.enums.SyncActionEnum
@@ -116,6 +121,7 @@ class MapExploreFragment : Fragment(){
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
 
+    private lateinit var viewModelPoisType: PoisTypeViewModelRealm
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
@@ -140,7 +146,7 @@ class MapExploreFragment : Fragment(){
     var clientAreas     : MutableList<Area> = mutableListOf()
 
     var filterTrailsIds : List<String> = emptyList()
-    var filterPoiIds : List<String> = emptyList()
+    var filterPoiIds : Set<String> = emptySet()
     var filterZoneIds : List<String> = emptyList()
     var filterAreaIds : List<String> = emptyList()
     var filterResourceIds : List<String> = emptyList()
@@ -155,7 +161,7 @@ class MapExploreFragment : Fragment(){
         }
 
         sharedViewModell = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
-
+        viewModelPoisType = ViewModelProvider(this).get(PoisTypeViewModelRealm::class.java)
         //Area
         sharedViewModell.selectedAreaIds.observe(viewLifecycleOwner, Observer { selectedIds ->
             // Update the UI with the selected IDs
@@ -177,7 +183,14 @@ class MapExploreFragment : Fragment(){
             // Update the UI with the selected IDs
             Log.d("selectedPoisIds", "Selected3 IDs: $selectedIds")
             // Use the selectedIds to update the UI as needed
-            filterPoiIds = selectedIds
+            filterPoiIds = selectedIds.toSet()
+            val filteredData = clientPois.filter { poi -> filterPoiIds.contains(poi.id) }
+            val gson = Gson()
+            val json = gson.toJson(clientPois)
+            Log.e("payData"  ,"hello  "+ json)
+            Log.e("filterPoiIds_JAGGU", "filterPoiIds NEW :: $clientPois")
+            Log.e("filterPoiIds_JAGGU", "filterPoiIds DATA :: $filteredData")
+            addPoisToMap(clientPois)
         })
 
 
@@ -187,6 +200,8 @@ class MapExploreFragment : Fragment(){
             Log.d("selectedZoneTypeId", "Selected4 IDs: $selectedIds")
             // Use the selectedIds to update the UI as needed
             filterZoneIds = selectedIds
+            var filteredData = clientZones.filter { it.id in filterZoneIds }
+            addZonesToMap(clientZones)
         })
 
 
@@ -492,15 +507,15 @@ class MapExploreFragment : Fragment(){
             if (trails != null) {
                 addTrailsToMap(clientTrails)
             }
-            /*if (zones.isNotEmpty()) {
-                addZonesToMap(zones)
-            }
-            if (pois.isNotEmpty()) {
-                addPoisToMap(pois)
-            }
-            if (areas.isNotEmpty()) {
-                addAreasToMap(areas)
-            }*/
+//            if (clientZones.isNotEmpty()) {
+//                addZonesToMap(clientZones)
+//            }
+//            if (clientPois.isNotEmpty()) {
+//                addPoisToMap(clientPois)
+//            }
+//            if (areas.isNotEmpty()) {
+//                addAreasToMap(areas)
+//            }
         })
     }
 
@@ -773,9 +788,64 @@ class MapExploreFragment : Fragment(){
         bottomSheetViewBinding?.close?.setOnClickListener {
             bottomSheetDialog.dismiss()
         }
+        val lastPoiTypeStatusName = poi.poiStatusHistories
+            ?.reversed()                      // Reverse the list to start from the last element
+            ?.firstOrNull { it.poiTypeStatus != null } // Get the first non-null PoiTypeStatus
+            ?.poiTypeStatus?.name             // Get the 'name' from the PoiTypeStatus
+
+
+        val statusDates = poi.poiStatusHistories?.map { it.statusDate }
+
+        val statusDatesText = statusDates?.joinToString(separator = "\n") { it.toString() }
+
+        bottomSheetViewBinding.txtPoisStatusHostory.text = statusDatesText
+
+
+        bottomSheetViewBinding?.idTxtStatusOpen?.text =lastPoiTypeStatusName
         bottomSheetViewBinding?.idTxtDateTime?.text = poi.lastUpdateDate
         bottomSheetViewBinding?.idTxtDescription?.text = poi.description
+        //bottomSheetViewBinding?.txtPoisStatusHostory?.text =
+        val poiTypeIcon = viewModelPoisType.getIconPathByPoiTypeId(poi.poiTypeId!!)
 
+        val poisImages = poi.images?.map { it.path }
+        // Get reference to the container (LinearLayout)
+        val imagesContainer = bottomSheetViewBinding.imagesContainer
+
+// Remove any existing views (to avoid duplicates if reloading)
+        imagesContainer.removeAllViews()
+        Log.d("sssss" ," sssss" +poisImages)
+// Iterate through the images and add them dynamically to the layout
+        poisImages?.forEach { imagePath ->
+            val imageView = ImageView(requireContext()).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    resources.getDimensionPixelSize(com.intuit.sdp.R.dimen._300sdp), // Adjust size as needed
+                    resources.getDimensionPixelSize(com.intuit.sdp.R.dimen._150sdp)
+                ).apply {
+                    setMargins(8, 0, 8, 0) // Adjust margins as needed
+                }
+                Glide.with(this)
+                    .load(ServiceUtil.BASE_URL_IMAGE + imagePath)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .error(R.drawable.clubs) // Default image if loading fails
+                    .into(this)
+            }
+
+            // Add the ImageView to the container
+            imagesContainer.addView(imageView)
+        }
+        /*      Log.d("poiImages" ," sssss" +poisImages)
+              Glide.with(bottomSheetViewBinding.backgroundImage)
+                  .load(poisImages?.get(0)).diskCacheStrategy(
+                      DiskCacheStrategy.ALL
+                  ).fitCenter().error(R.drawable.clubs)
+                  .into(bottomSheetViewBinding.backgroundImage)*/
+        Log.d("poiTypeIcon" ," sssss" +poiTypeIcon)
+
+        Glide.with(bottomSheetViewBinding.poisTypeIcon)
+            .load(poiTypeIcon).diskCacheStrategy(
+                DiskCacheStrategy.ALL
+            ).fitCenter().error(R.drawable.dinner)
+            .into(bottomSheetViewBinding.poisTypeIcon)
 
         // Make sure the bottom sheet content fits properly on the screen
         bottomSheetDialog.setOnShowListener { dialog ->
