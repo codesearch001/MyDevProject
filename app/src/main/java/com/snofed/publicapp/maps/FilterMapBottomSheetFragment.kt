@@ -168,7 +168,8 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
                 val selectedStatusItem = allClientAreas[position] // Get the StatusItem for the selected position
                 val selectedId = selectedStatusItem.id
                 val selectedText = selectedStatusItem.text
-
+                val areaIds = listOf(selectedId)
+                sharedViewModel.updateSelectedAreaIds(areaIds)
                 Log.d("SpinnerSelection", "Selected ID: $selectedId, Selected Name: $selectedText")
             }
 

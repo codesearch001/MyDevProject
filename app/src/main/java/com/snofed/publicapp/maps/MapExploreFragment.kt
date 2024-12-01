@@ -1,6 +1,5 @@
 package com.snofed.publicapp.maps
 
-import PolylineManager
 import StatusItem
 import android.Manifest
 import android.content.Context
@@ -28,11 +27,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -40,19 +37,12 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
 
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
-import com.mapbox.android.core.permissions.PermissionsManager
-import com.mapbox.common.location.Location
 
-import com.mapbox.geojson.BoundingBox
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.LineString
@@ -60,18 +50,14 @@ import com.mapbox.geojson.Point
 import com.mapbox.geojson.Point.fromLngLat
 import com.mapbox.geojson.Polygon
 import com.mapbox.maps.CameraOptions
-import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.Style
-import com.mapbox.maps.dsl.cameraOptions
 import com.mapbox.maps.extension.style.layers.addLayer
-import com.mapbox.maps.extension.style.layers.generated.LineLayer
 import com.mapbox.maps.extension.style.layers.generated.fillLayer
 import com.mapbox.maps.extension.style.layers.generated.lineLayer
 import com.mapbox.maps.extension.style.layers.getLayer
 import com.mapbox.maps.extension.style.sources.addSource
-import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.maps.extension.style.sources.getSource
 import com.mapbox.maps.plugin.animation.CameraAnimationsPlugin
@@ -79,40 +65,25 @@ import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.camera
 import com.mapbox.maps.plugin.animation.easeTo
 import com.mapbox.maps.plugin.annotation.annotations
-import com.mapbox.maps.plugin.annotation.createAnnotationPlugin
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
-import com.mapbox.maps.plugin.gestures.OnMapClickListener
 import com.mapbox.maps.plugin.locationcomponent.LocationComponentPlugin
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.snofed.publicapp.R
-import com.snofed.publicapp.adapter.BrowseClubListAdapter
 import com.snofed.publicapp.adapter.MapIntervalAdapter
-import com.snofed.publicapp.adapter.ZonesTypeAdapter
 import com.snofed.publicapp.databinding.BottomSheetApartmentsBinding
 import com.snofed.publicapp.databinding.FragmentMapExploreBinding
-import com.snofed.publicapp.databinding.FragmentMapFeedBinding
-import com.snofed.publicapp.databinding.MapFilterBinding
 import com.snofed.publicapp.databinding.MapFilterDetailsBinding
 import com.snofed.publicapp.models.realmModels.Area
 import com.snofed.publicapp.models.realmModels.Poi
-import com.snofed.publicapp.models.browseSubClub.Properties
-import com.snofed.publicapp.models.realmModels.Interval
 import com.snofed.publicapp.models.realmModels.Trail
 import com.snofed.publicapp.models.realmModels.Zone
-import com.snofed.publicapp.models.workoutfeed.WorkoutPointResponse
-import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.AreaViewModelRealm
 import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.IntervalViewModelRealm
-import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.ZoneTypeViewModelRealm
-import com.snofed.publicapp.ui.login.AuthViewModel
-import com.snofed.publicapp.utils.DrawerController
-import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.SnofedConstants
 import com.snofed.publicapp.utils.enums.SyncActionEnum
 import dagger.hilt.android.AndroidEntryPoint
-import java.lang.System.setProperties
 import java.util.Locale
 
 @AndroidEntryPoint
@@ -122,6 +93,7 @@ class MapExploreFragment : Fragment(){
 
     private val sharedViewModel by activityViewModels<SharedViewModel>()
     private lateinit var sharedViewModell: SharedViewModel
+
     private lateinit var mapView: MapView
     private lateinit var mapboxMap: MapboxMap
     private var cameraAnimationsPlugin: CameraAnimationsPlugin? = null // Nullable type
@@ -136,17 +108,13 @@ class MapExploreFragment : Fragment(){
     val gson = Gson()
     var defaultLat :String = ""
     var defaultLong :String = ""
+    var clientId : String? =""
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
 
-    var minLng = Double.MAX_VALUE
-    var minLat = Double.MAX_VALUE
-    var maxLng = Double.MIN_VALUE
-    var maxLat = Double.MIN_VALUE
-    var clientId : String? =""
-    private lateinit var clubAdapter: MapIntervalAdapter
+
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
@@ -167,12 +135,42 @@ class MapExploreFragment : Fragment(){
         }
 
         sharedViewModell = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
-        // Pass the selected POI IDs to the SharedViewModel
-        sharedViewModell.selectedIds.observe(viewLifecycleOwner, Observer { selectedIds ->
+
+        //Area
+        sharedViewModell.selectedAreaIds.observe(viewLifecycleOwner, Observer { selectedIds ->
             // Update the UI with the selected IDs
-            Log.d("SelectedIdss", "Selected IDs: $selectedIds")
+            Log.d("selectedAreaIds", "Selected1 IDs: $selectedIds")
             // Use the selectedIds to update the UI as needed
         })
+
+        //Trails
+        sharedViewModell.selectedTrailId.observe(viewLifecycleOwner, Observer { selectedIds ->
+            // Update the UI with the selected IDs
+            Log.d("selectedTrailId", "Selected2 IDs: $selectedIds")
+            // Use the selectedIds to update the UI as needed
+        })
+
+        // Pass the selected POI IDs to the SharedViewModel
+        sharedViewModell.selectedPoisIds.observe(viewLifecycleOwner, Observer { selectedIds ->
+            // Update the UI with the selected IDs
+            Log.d("selectedPoisIds", "Selected3 IDs: $selectedIds")
+            // Use the selectedIds to update the UI as needed
+        })
+
+
+       //Zone
+        sharedViewModell.selectedZoneTypeId.observe(viewLifecycleOwner, Observer { selectedIds ->
+            // Update the UI with the selected IDs
+            Log.d("selectedZoneTypeId", "Selected4 IDs: $selectedIds")
+            // Use the selectedIds to update the UI as needed
+        })
+
+
+
+
+
+
+
 
         // Initialize the FusedLocationProviderClient
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
@@ -685,6 +683,7 @@ class MapExploreFragment : Fragment(){
                 pois.forEach { poi ->
                     val point = Point.fromLngLat(poi.longitude!!, poi.latitude!!)
 
+
                     val options = PointAnnotationOptions()
                         .withPoint(point)
                         .withIconImage("poi-icon") // Use the icon image ID
@@ -697,7 +696,8 @@ class MapExploreFragment : Fragment(){
                     manager.addClickListener { clickedAnnotation ->
                         if (clickedAnnotation == annotation) {
                             Log.e("TAG_Pois", "Clicked on POI: ${poi.poiTypeId}")
-                            showCustomPoisDialog()
+
+                            showCustomPoisDialog(poi)
                             Toast.makeText(context, "Clicked POI: ${poi.name}", Toast.LENGTH_SHORT).show()
                             true
                         } else {
@@ -714,12 +714,13 @@ class MapExploreFragment : Fragment(){
 
 
 
-    private fun showCustomPoisDialog() {
+    private fun showCustomPoisDialog(poi: Poi) {
 //        val customDialog = CustomDialogFragmentFragment()
 //        customDialog.show(parentFragmentManager, "CustomDialogTag")
         val bottomSheetDialog = BottomSheetDialog(requireContext(),R.style.TransparentBottomSheetDialog)
         val bottomSheetViewBinding = DataBindingUtil.inflate<MapFilterDetailsBinding>(
             layoutInflater, R.layout.map_filter_details, null, false)
+
 
         bottomSheetViewBinding?.close?.setOnClickListener {
             bottomSheetDialog.dismiss()
