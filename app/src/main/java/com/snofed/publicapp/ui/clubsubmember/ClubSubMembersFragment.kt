@@ -176,7 +176,7 @@ class ClubSubMembersFragment : Fragment() {
                     if (it.data?.data?.publicName == null){
                         binding.idPublicName.text = ""
                     }else{
-                        binding.idPublicName.text = it.data.data.publicName.toString()
+                        binding.idPublicName.text = it.data.data.publicName?.trimEnd()?.trimStart()
                     }
                     binding.idTotalTrails.text = it.data?.data?.totalTrails.toString()
                     binding.idTotalTrailsLength.text = Helper.m2Km(it.data?.data?.totalTrailsLength?.toDouble()).toString() + " km"

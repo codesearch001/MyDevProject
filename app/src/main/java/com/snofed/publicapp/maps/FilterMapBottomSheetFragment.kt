@@ -23,6 +23,10 @@ import com.snofed.publicapp.adapter.PoisTypeAdapter
 import com.snofed.publicapp.adapter.ZonesTypeAdapter
 import com.snofed.publicapp.databinding.FragmentMapExploreBinding
 import com.snofed.publicapp.databinding.MapFilterBinding
+import com.snofed.publicapp.models.realmModels.Poi
+import com.snofed.publicapp.models.realmModels.Resource
+import com.snofed.publicapp.models.realmModels.Trail
+import com.snofed.publicapp.models.realmModels.Zone
 import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.ActivityViewModelRealm
 import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.AreaViewModelRealm
 import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.PoisTypeViewModelRealm
@@ -48,6 +52,8 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
     private lateinit var viewModelTaskCategory: TaskCategoryViewModelRealm
     private lateinit var viewModelZoneType: ZoneTypeViewModelRealm
 
+
+
     private lateinit var poisTypeAdapter: PoisTypeAdapter
     private lateinit var trailCategoryAdapter: MapTrailCategoryAdapter
     private lateinit var zonesTypeAdapter: ZonesTypeAdapter
@@ -58,10 +64,16 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
     var allClientTaskCategory : List<StatusItem> = emptyList()
     var allClientZonesType : List<StatusItem> = emptyList()   */
 
-    var allClientAreaNames : MutableList<StatusItem> = mutableListOf()
-    var allClientPoisType : MutableList<StatusItem> = mutableListOf()
-    var allClientTaskCategory : MutableList<StatusItem> = mutableListOf()
-    var allClientZonesType : MutableList<StatusItem> = mutableListOf()
+    var allClientAreas : MutableList<StatusItem> = mutableListOf()
+    var allPoisType : MutableList<StatusItem> = mutableListOf()
+    var allTaskCategory : MutableList<StatusItem> = mutableListOf()
+    var allZonesType : MutableList<StatusItem> = mutableListOf()
+
+    // Client MAP Data
+    var clientTrails    : MutableList<Trail> = mutableListOf()
+    var clientPois      : MutableList<Poi> = mutableListOf()
+    var clientZones     : MutableList<Zone> = mutableListOf()
+    var clientResources : MutableList<Resource> = mutableListOf()
 
     private var selectedPoisIds: List<String> = emptyList()
 
@@ -95,7 +107,7 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
         viewModelArea = ViewModelProvider(this).get(AreaViewModelRealm::class.java)
         val clientAreas = viewModelArea.getAreasByClientId(clientId!!)
        // allClientAreaNames = allClientAreas.map { it.name!! }
-        allClientAreaNames = clientAreas.map { area ->
+        allClientAreas = clientAreas.map { area ->
             StatusItem(
                 id = area.id!!,
                 text = area.name ?: "No Name",
@@ -106,7 +118,7 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
         viewModelPoisType = ViewModelProvider(this).get(PoisTypeViewModelRealm::class.java)
         val allPOISTypes = viewModelPoisType.getAllPoiTypes()
         //allClientPoisType = allPOISTypes.map { it.iconPath!! }
-        allClientPoisType = allPOISTypes.map { poisType ->
+        allPoisType = allPOISTypes.map { poisType ->
             StatusItem(
                 id = poisType.id!!,
                 text = poisType.name ?: "No Name",
@@ -119,7 +131,7 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
         viewModelTaskCategory = ViewModelProvider(this).get(TaskCategoryViewModelRealm::class.java)
         val allTaskCategories = viewModelTaskCategory.getAllTaskCategories()
         //allClientTaskCategory = allTaskCategories.map { it.name!! }
-        allClientTaskCategory = allTaskCategories.map { taskCategoryType ->
+        allTaskCategory = allTaskCategories.map { taskCategoryType ->
             StatusItem(
                 id = taskCategoryType.id!!,
                 text = taskCategoryType.name ?: "No Name",)
@@ -131,7 +143,7 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
         viewModelZoneType = ViewModelProvider(this).get(ZoneTypeViewModelRealm::class.java)
         val allZoneTypes = viewModelZoneType.getAllZoneTypes()
         //allClientZonesType = allZoneTypes.map { it.name!! }
-        allClientZonesType = allZoneTypes.map { zoneType ->
+        allZonesType = allZoneTypes.map { zoneType ->
             StatusItem(
                 id = zoneType.id!!,
                 text = zoneType.name ?: "No Name",)
@@ -142,7 +154,7 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
         val allZonesTypes = viewModelZoneType.getZonesByClientId(clientId!!)*/
 
 
-        val areaNamesList = allClientAreaNames.map { it.text }
+        val areaNamesList = allClientAreas.map { it.text }
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, areaNamesList)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.mySpinner.adapter = adapter
@@ -153,7 +165,7 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
         }
         binding.mySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                val selectedStatusItem = allClientAreaNames[position] // Get the StatusItem for the selected position
+                val selectedStatusItem = allClientAreas[position] // Get the StatusItem for the selected position
                 val selectedId = selectedStatusItem.id
                 val selectedText = selectedStatusItem.text
 
@@ -171,7 +183,7 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
 
 
         // Set up RecyclerView and Adapter for PoisType
-        poisTypeAdapter = PoisTypeAdapter(allClientPoisType) { selectedIdsString ->
+        poisTypeAdapter = PoisTypeAdapter(allPoisType) { selectedIdsString ->
             Log.d("poisTypeAdapter", "Comma-separated IDs: $selectedIdsString")
             // Update the shared ViewModel with the new selected IDs
             val selectedIds = selectedIdsString.split(",")
@@ -193,7 +205,7 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
 
 
         // Set up RecyclerView and Adapter fro PoisType
-        trailCategoryAdapter = MapTrailCategoryAdapter(allClientTaskCategory) { selectedIdsString ->
+        trailCategoryAdapter = MapTrailCategoryAdapter(allTaskCategory) { selectedIdsString ->
             Log.d("trailCategoryAdapter", "Comma-separated IDs: $selectedIdsString")
             // Update the shared ViewModel with the new selected IDs
             val selectedIds = selectedIdsString.split(",")
@@ -217,7 +229,7 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
 */
 
         // Set up RecyclerView and Adapter fro PoisType
-        zonesTypeAdapter = ZonesTypeAdapter(allClientZonesType) { selectedIdsString ->
+        zonesTypeAdapter = ZonesTypeAdapter(allZonesType) { selectedIdsString ->
             Log.d("trailCategoryAdapter", "Comma-separated IDs: $selectedIdsString")
             // Update the shared ViewModel with the new selected IDs
             val selectedIds = selectedIdsString.split(",")
