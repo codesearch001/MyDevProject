@@ -81,7 +81,11 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
     var clientZones     : MutableList<Zone> = mutableListOf()
     var clientResources : MutableList<Resource> = mutableListOf()
 
+    private var selectedAreaIds: List<String> = emptyList()
     private var selectedPoisIds: List<String> = emptyList()
+    private var selectedTrailsIds: List<String> = emptyList()
+    private var selectedZoneIds: List<String> = emptyList()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -125,12 +129,16 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
         viewModelArea = ViewModelProvider(this).get(AreaViewModelRealm::class.java)
         val clientAreas = viewModelArea.getAreasByClientId(clientId!!)
        // allClientAreaNames = allClientAreas.map { it.name!! }
-        allClientAreas = clientAreas.map { area ->
+        allClientAreas.add(StatusItem(
+            id = "0",
+            text = "All Areas",
+        ))
+        allClientAreas.addAll(clientAreas.map { area ->
             StatusItem(
                 id = area.id!!,
                 text = area.name ?: "No Name",
             )
-        }.toMutableList()
+        }.toMutableList())
 
 
         // Poi for Client
@@ -146,14 +154,14 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
         allPoisType.add(StatusItem(
             id = "0",
             text = "ALL",
-            iconPath = R.drawable.dinner.toString())
+            iconPath = R.drawable.drawer_rounded_corners.toString())
         )
 
         allPoisType.addAll(filterPoisType.map { poiType ->
             StatusItem(
                 id = poiType.id!!,
                 text = poiType.name ?: "No Name",
-                iconPath = poiType.iconPath ?: R.drawable.dinner.toString())
+                iconPath = poiType.iconPath ?: R.drawable.drawer_rounded_corners.toString())
 
         }.toMutableList())
 
@@ -192,12 +200,13 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
        /* viewModelZoneType = ViewModelProvider(this).get(ZoneTypeViewModelRealm::class.java)
         val allZonesTypes = viewModelZoneType.getZonesByClientId(clientId!!)*/
 
+        val selectedAreaId = sharedViewModel.getSelectedAreaId()
 
         val areaNamesList = allClientAreas.map { it.text }
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, areaNamesList)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.mySpinner.adapter = adapter
-        val selectedAreaName = "Select"
+        val selectedAreaName = selectedAreaId.text
         val selectedIndex = areaNamesList.indexOf(selectedAreaName)
         if (selectedIndex >= 0) { // Check if the value exists in the list
             binding.mySpinner.setSelection(selectedIndex)
@@ -208,7 +217,7 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
                 val selectedId = selectedStatusItem.id
                 val selectedText = selectedStatusItem.text
                 val areaId = selectedId
-                sharedViewModel.updateSelectedAreaIds(areaId)
+                sharedViewModel.updateSelectedAreaIds(areaId,selectedText)
                 Log.d("SpinnerSelection", "Selected ID: $selectedId, Selected Name: $selectedText")
             }
 

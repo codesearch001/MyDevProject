@@ -153,6 +153,9 @@ class MapExploreFragment : Fragment() {
     var selectedZoneIds: Set<String> = emptySet()
     var selectedResourceIds: Set<String> = emptySet()
 
+    var filteredZones : List<Zone> = emptyList()
+    var filteredPois : List<Poi> = emptyList()
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -169,9 +172,32 @@ class MapExploreFragment : Fragment() {
         //Area
         sharedViewModell.selectedAreaId.observe(viewLifecycleOwner, Observer { selectedId ->
             // Update the UI with the selected IDs
-            Log.d("selectedAreaId", "Selected1 IDs: $selectedId")
+            Log.d("selectedAreaId", "Selected1 IDs: ${selectedId.id}")
             // Use the selectedIds to update the UI as needed
-            selectedAreaId = selectedId
+            selectedAreaId = selectedId.id
+
+            // filter pois again and draw again
+            if (selectedAreaId != "0") {
+                filteredPois = clientPois.filter { poi -> poi.areaId == selectedAreaId && selectedPoiIds.contains(poi.poiTypeId) }
+            }
+            else {
+                if(selectedPoiIds.contains("0"))
+                    filteredPois = clientPois
+                else
+                    filteredPois = clientPois.filter { poi -> selectedPoiIds.contains(poi.poiTypeId)}
+            }
+
+            addPoisToMap(filteredPois)
+
+
+            // filter Zone again and draw again
+            removeZones(clientZones)
+            if (selectedAreaId != "0")
+                filteredZones = filteredZones.filter { zone -> zone.areaId == selectedAreaId }
+            else
+                filteredZones = clientZones.filter { zone -> selectedZoneIds.contains(zone.zoneTypeId) }
+
+            addZonesToMap(filteredZones)
         })
 
         //Trails
@@ -182,49 +208,23 @@ class MapExploreFragment : Fragment() {
             selectedTrailsIds = selectedIds.toSet()
         })
 
-     /*   // Pass the selected POI IDs to the SharedViewModel
-        sharedViewModell.selectedPoisIds.observe(viewLifecycleOwner, Observer { selectedIds ->
-            // Update the UI with the selected IDs
-            //Log.d("selectedPoisIds", "Selected3 IDs: $selectedIds")
-            // Use the selectedIds to update the UI as needed
-            selectedPoiIds = selectedIds.toSet()
-            val filteredData = clientPois.filter { poi -> selectedPoiIds.contains(poi.poiTypeId) }
-            addPoisToMap(filteredData)
-        })*/
-
-        ////////////////////////////////////////
         // Pass the selected POI IDs to the SharedViewModel
         sharedViewModell.selectedPoisIds.observe(viewLifecycleOwner, Observer { selectedIds ->
             // Update the UI with the selected IDs
             Log.d("selectedPoisIds", "Selected3 IDs: $selectedIds")
             // Use the selectedIds to update the UI as needed
             selectedPoiIds = selectedIds.toSet()
-            var filteredData = clientPois.filter { poi -> selectedPoiIds.contains(poi.poiTypeId) }
+
+            filteredPois = clientPois.filter { poi -> selectedPoiIds.contains(poi.poiTypeId) }
             //filter with areaId
             if (selectedAreaId != "0") {
-                filteredData = filteredData.filter { poi -> poi.areaId == selectedAreaId }
+                filteredPois = filteredPois.filter { poi -> poi.areaId == selectedAreaId }
             }
+            if(selectedPoiIds.contains("0"))
+                filteredPois = clientPois
 
-            addPoisToMap(filteredData)
+            addPoisToMap(filteredPois)
         })
-
-
-        //////////////////////////////////////
-
-
-
-        //Zone
-        /*sharedViewModell.selectedZoneTypeId.observe(viewLifecycleOwner, Observer { selectedIds ->
-            // Update the UI with the selected IDs
-            Log.d("selectedZoneTypeId", "Selected4 IDs: $selectedIds")
-            // Use the selectedIds to update the UI as needed
-            selectedZoneIds = selectedIds.toSet()
-            val filteredData =
-                clientZones.filter { zone -> selectedZoneIds.contains(zone.zoneTypeId) }
-            addZonesToMap(filteredData)
-        })*/
-
-        ////////////////////////////////////////////////
 
         //Zone
         sharedViewModell.selectedZoneTypeId.observe(viewLifecycleOwner, Observer { selectedIds ->
@@ -233,25 +233,20 @@ class MapExploreFragment : Fragment() {
             // Use the selectedIds to update the UI as needed
             selectedZoneIds = selectedIds.toSet()
 
-            var filteredData : List<Zone> = emptyList()
-
             if(selectedZoneIds.contains("0"))
-                filteredData =  clientZones
+                filteredZones =  clientZones
             else if(selectedZoneIds.isNotEmpty() && !selectedZoneIds.contains("0"))
-                filteredData =  clientZones.filter { zone -> selectedZoneIds.contains(zone.zoneTypeId) }
+                filteredZones =  clientZones.filter { zone -> selectedZoneIds.contains(zone.zoneTypeId) }
 
             //filter with areaId
             if (selectedAreaId != "0") {
-                filteredData = filteredData.filter { zone -> zone.areaId == selectedAreaId }
+                filteredZones = filteredZones.filter { zone -> zone.areaId == selectedAreaId }
             }
-            if(!selectedZoneIds.contains("0"))
-                removeZones(clientZones)
 
-            addZonesToMap(filteredData)
+            removeZones(clientZones)
+
+            addZonesToMap(filteredZones)
         })
-
-
-                ////////////////////////////
 
         // Initialize the FusedLocationProviderClient
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())

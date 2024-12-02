@@ -87,7 +87,7 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
         super.onViewCreated(view, savedInstanceState)
 
         val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
-
+        viewModelUserRealm = ViewModelProvider(requireActivity()).get(UserViewModelRealm::class.java)
         // Retrieve the saved image URL
         val savedImageUrl = ServiceUtil.BASE_URL_IMAGE + viewModelUserRealm.getPublicUserSettingValue(userId,"Image")
         //Log.e("IMAGE","IMAGE"+savedImageUrl)
