@@ -879,11 +879,11 @@ class MapExploreFragment : Fragment() {
                                     val markerBase = BitmapFactory.decodeResource(resources, R.drawable.icon_layer)
 
                                     // Create a 1024x1024 bitmap for the final marker (larger size)
-                                    val finalBitmap = Bitmap.createBitmap(1024, 1024, markerBase.config)
+                                    val finalBitmap = Bitmap.createBitmap(950, 1200, markerBase.config)
                                     val canvas = Canvas(finalBitmap)
 
                                     // Draw the base marker icon (scaled up)
-                                    val scaledMarkerBase = Bitmap.createScaledBitmap(markerBase, 900, 1024, true)
+                                    val scaledMarkerBase = Bitmap.createScaledBitmap(markerBase, 950, 1200, true)
                                     canvas.drawBitmap(scaledMarkerBase, 0f, 0f, null)
 
                                     // Fill inside the circle (adjusted size)
@@ -894,7 +894,7 @@ class MapExploreFragment : Fragment() {
                                     // Draw the larger filled circle
                                     val centerX = 470f
                                     val centerY = 400f
-                                    val radius = 400f // Increase the circle's radius for visibility
+                                    val radius = 350f // Increase the circle's radius for visibility
                                     canvas.drawCircle(centerX, centerY, radius, paint)
 
                                     // Overlay the URL image inside the larger circle
@@ -922,7 +922,7 @@ class MapExploreFragment : Fragment() {
                     val options = PointAnnotationOptions()
                         .withPoint(point)
                         .withIconImage("poi-icon"+poi.id) // Use the icon image ID
-                        .withIconSize(0.1) // Adjust icon size if needed
+                        .withIconSize(0.101) // Adjust icon size if needed
                         .withIconAnchor(IconAnchor.BOTTOM)
                         .withDraggable(false)
 
