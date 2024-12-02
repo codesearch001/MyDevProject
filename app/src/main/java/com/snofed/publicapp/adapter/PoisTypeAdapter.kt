@@ -57,9 +57,10 @@ import com.snofed.publicapp.databinding.PoisTypeListBinding
     override fun getItemCount(): Int = poiList.size
 }*/
 
-class PoisTypeAdapter(private val poiList: List<StatusItem>, private val onItemClick: (String) -> Unit) : RecyclerView.Adapter<PoisTypeAdapter.PoisTypeViewHolder>() {
+class PoisTypeAdapter(private val poiList: List<StatusItem>, private val selectedIds: List<String>, private val onItemClick: (String) -> Unit) : RecyclerView.Adapter<PoisTypeAdapter.PoisTypeViewHolder>() {
 
-    private val selectedIds = mutableListOf<String>()
+    //private val selectedIds = mutableListOf<String>()
+    private val selected= selectedIds.toMutableList()
     private var onItemSelectedListener: OnItemSelectedListener? = null
 
     inner class PoisTypeViewHolder(private val binding: PoisTypeListBinding) :
@@ -106,24 +107,25 @@ class PoisTypeAdapter(private val poiList: List<StatusItem>, private val onItemC
     override fun onBindViewHolder(holder: PoisTypeViewHolder, position: Int) {
         val poisType = poiList[position]
         val poisTypeId = poisType.id // Assume each item has a unique 'id'
-        val isSelected = selectedIds.contains(poisTypeId) // Use position as the ID
+        val isSelected = selected.contains(poisTypeId) // Use position as the ID
 
         holder.bind(poisType.iconPath!!, isSelected)
 
         // Handle item click
         holder.itemView.setOnClickListener {
-            if (selectedIds.contains(poisTypeId)) {
-                selectedIds.remove(poisTypeId)
+            if (selected.contains(poisTypeId)) {
+                selected.remove(poisTypeId)
             } else {
-                selectedIds.add(poisTypeId)
+                selected.add(poisTypeId)
             }
 
-            val selectedIdsList = selectedIds.toList()  // Get selected IDs as a list
+            val selectedIdsList = selected.toList()  // Get selected IDs as a list
             onItemClick(selectedIdsList.joinToString(",")) // Call the item click callback
             notifyItemChanged(position)
+            onItemSelectedListener?.onItemsSelected(selected)
 
-            // Notify the listener when the selection changes
-            onItemSelectedListener?.onItemsSelected(selectedIds)
+            /*// Notify the listener when the selection changes
+            onItemSelectedListener?.onItemsSelected(selectedIds)*/
 
         }
     }

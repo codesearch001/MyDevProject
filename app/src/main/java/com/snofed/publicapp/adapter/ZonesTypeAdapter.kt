@@ -11,8 +11,9 @@ import com.snofed.publicapp.adapter.PoisTypeAdapter.OnItemSelectedListener
 import com.snofed.publicapp.databinding.ZonesTypeListBinding
 
 
-class ZonesTypeAdapter(private val zonesList: List<StatusItem>,private val onItemClick: (String) -> Unit) : RecyclerView.Adapter<ZonesTypeAdapter.TrailCategoryViewHolder>() {
-    private val selectedIds = mutableListOf<String>()
+class ZonesTypeAdapter(private val zonesList: List<StatusItem>,private val selectedZoneIds: List<String>,private val onItemClick: (String) -> Unit) : RecyclerView.Adapter<ZonesTypeAdapter.TrailCategoryViewHolder>() {
+    //private val selectedIds = mutableListOf<String>()
+    private val selectedZone= selectedZoneIds.toMutableList()
     private var onItemSelectedListener: OnItemSelectedListener? = null
     inner class TrailCategoryViewHolder(private val binding: ZonesTypeListBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -54,24 +55,24 @@ class ZonesTypeAdapter(private val zonesList: List<StatusItem>,private val onIte
         //holder.bind(zonesList[position])
         val zoneType = zonesList[position]
         val zoneTypeId = zoneType.id // Assume each item has a unique 'id'
-        val isSelected = selectedIds.contains(zoneTypeId) // Use position as the ID
+        val isSelected = selectedZone.contains(zoneTypeId) // Use position as the ID
 
         holder.bind(zoneType, isSelected)
 
         // Handle item click
         holder.itemView.setOnClickListener {
-            if (selectedIds.contains(zoneTypeId)) {
-                selectedIds.remove(zoneTypeId)
+            if (selectedZone.contains(zoneTypeId)) {
+                selectedZone.remove(zoneTypeId)
             } else {
-                selectedIds.add(zoneTypeId)
+                selectedZone.add(zoneTypeId)
             }
 
-            val selectedIdsList = selectedIds.toList()  // Get selected IDs as a list
+            val selectedIdsList = selectedZone.toList()  // Get selected IDs as a list
             onItemClick(selectedIdsList.joinToString(",")) // Call the item click callback
             notifyItemChanged(position)
 
             // Notify the listener when the selection changes
-            onItemSelectedListener?.onItemsSelected(selectedIds)
+            onItemSelectedListener?.onItemsSelected(selectedZone)
         }
     }
 

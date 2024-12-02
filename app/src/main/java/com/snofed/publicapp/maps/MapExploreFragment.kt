@@ -94,7 +94,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 
 @AndroidEntryPoint
-class MapExploreFragment : Fragment(){
+class MapExploreFragment : Fragment() {
     private var _binding: FragmentMapExploreBinding? = null
     private val binding get() = _binding!!
 
@@ -113,9 +113,9 @@ class MapExploreFragment : Fragment(){
     private lateinit var rotateBackward: Animation
     private var isOpen = false
     val gson = Gson()
-    var defaultLat :String = ""
-    var defaultLong :String = ""
-    var clientId : String? =""
+    var defaultLat: String = ""
+    var defaultLong: String = ""
+    var clientId: String? = ""
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
@@ -130,8 +130,9 @@ class MapExploreFragment : Fragment(){
     //Map Interval
     private lateinit var viewModelInterval: IntervalViewModelRealm
     private lateinit var mapIntervalAdapter: MapIntervalAdapter
-   // var allClientMapInterval : List<StatusItem> = emptyList()
-    var allClientMapInterval : MutableList<StatusItem> = mutableListOf()
+
+    // var allClientMapInterval : List<StatusItem> = emptyList()
+    var allClientMapInterval: MutableList<StatusItem> = mutableListOf()
 
 //    val allTrails: MutableList<Trail> = mutableListOf()
 //    val allPois: MutableList<Poi> = mutableListOf()
@@ -139,26 +140,28 @@ class MapExploreFragment : Fragment(){
 //    val allResources: MutableList<Resource> = mutableListOf()
 
     // Client MAP Data
-    var clientTrails    : MutableList<Trail> = mutableListOf()
-    var clientPois      : MutableList<Poi> = mutableListOf()
-    var clientZones     : MutableList<Zone> = mutableListOf()
-    var clientResources : MutableList<Resource> = mutableListOf()
-    var clientAreas     : MutableList<Area> = mutableListOf()
+    var clientTrails: MutableList<Trail> = mutableListOf()
+    var clientPois: MutableList<Poi> = mutableListOf()
+    var clientZones: MutableList<Zone> = mutableListOf()
+    var clientResources: MutableList<Resource> = mutableListOf()
+    var clientAreas: MutableList<Area> = mutableListOf()
 
-    var selectedAreaId : String = "0"
+    var selectedAreaId: String = "0"
 
-    var selectedTrailsIds : Set<String> = emptySet()
-    var selectedPoiIds : Set<String> = emptySet()
-    var selectedZoneIds : Set<String> = emptySet()
-    var selectedResourceIds : Set<String> = emptySet()
+    var selectedTrailsIds: Set<String> = emptySet()
+    var selectedPoiIds: Set<String> = emptySet()
+    var selectedZoneIds: Set<String> = emptySet()
+    var selectedResourceIds: Set<String> = emptySet()
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_map_explore, container, false)
         _binding = FragmentMapExploreBinding.inflate(inflater, container, false)
+        clearSelectedIds()
         binding.backBtn.setOnClickListener {
             it.findNavController().popBackStack()
+
         }
 
         sharedViewModell = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
@@ -179,7 +182,7 @@ class MapExploreFragment : Fragment(){
             selectedTrailsIds = selectedIds.toSet()
         })
 
-        // Pass the selected POI IDs to the SharedViewModel
+     /*   // Pass the selected POI IDs to the SharedViewModel
         sharedViewModell.selectedPoisIds.observe(viewLifecycleOwner, Observer { selectedIds ->
             // Update the UI with the selected IDs
             //Log.d("selectedPoisIds", "Selected3 IDs: $selectedIds")
@@ -187,25 +190,68 @@ class MapExploreFragment : Fragment(){
             selectedPoiIds = selectedIds.toSet()
             val filteredData = clientPois.filter { poi -> selectedPoiIds.contains(poi.poiTypeId) }
             addPoisToMap(filteredData)
+        })*/
+
+        ////////////////////////////////////////
+        // Pass the selected POI IDs to the SharedViewModel
+        sharedViewModell.selectedPoisIds.observe(viewLifecycleOwner, Observer { selectedIds ->
+            // Update the UI with the selected IDs
+            Log.d("selectedPoisIds", "Selected3 IDs: $selectedIds")
+            // Use the selectedIds to update the UI as needed
+            selectedPoiIds = selectedIds.toSet()
+            var filteredData = clientPois.filter { poi -> selectedPoiIds.contains(poi.poiTypeId) }
+            //filter with areaId
+            if (selectedAreaId != "0") {
+                filteredData = filteredData.filter { poi -> poi.areaId == selectedAreaId }
+            }
+
+            addPoisToMap(filteredData)
         })
 
 
-       //Zone
+        //////////////////////////////////////
+
+
+
+        //Zone
+        /*sharedViewModell.selectedZoneTypeId.observe(viewLifecycleOwner, Observer { selectedIds ->
+            // Update the UI with the selected IDs
+            Log.d("selectedZoneTypeId", "Selected4 IDs: $selectedIds")
+            // Use the selectedIds to update the UI as needed
+            selectedZoneIds = selectedIds.toSet()
+            val filteredData =
+                clientZones.filter { zone -> selectedZoneIds.contains(zone.zoneTypeId) }
+            addZonesToMap(filteredData)
+        })*/
+
+        ////////////////////////////////////////////////
+
+        //Zone
         sharedViewModell.selectedZoneTypeId.observe(viewLifecycleOwner, Observer { selectedIds ->
             // Update the UI with the selected IDs
             Log.d("selectedZoneTypeId", "Selected4 IDs: $selectedIds")
             // Use the selectedIds to update the UI as needed
             selectedZoneIds = selectedIds.toSet()
-            val filteredData = clientZones.filter { zone -> selectedZoneIds.contains(zone.zoneTypeId) }
+
+            var filteredData : List<Zone> = emptyList()
+
+            if(selectedZoneIds.contains("0"))
+                filteredData =  clientZones
+            else if(selectedZoneIds.isNotEmpty() && !selectedZoneIds.contains("0"))
+                filteredData =  clientZones.filter { zone -> selectedZoneIds.contains(zone.zoneTypeId) }
+
+            //filter with areaId
+            if (selectedAreaId != "0") {
+                filteredData = filteredData.filter { zone -> zone.areaId == selectedAreaId }
+            }
+            if(!selectedZoneIds.contains("0"))
+                removeZones(clientZones)
+
             addZonesToMap(filteredData)
         })
 
 
-
-
-
-
-
+                ////////////////////////////
 
         // Initialize the FusedLocationProviderClient
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
@@ -213,6 +259,14 @@ class MapExploreFragment : Fragment(){
         clientId = arguments?.getString("clientId").toString()
         return binding.root
     }
+
+
+    private fun clearSelectedIds() {
+        sharedViewModel.updateSelectedIds(emptyList()) // Clear POIs
+        sharedViewModel.updateSelectedTrailsIds(emptyList()) // Clear Zones
+        sharedViewModel.updateSelectedZoneIds(emptyList()) // Clear Zones
+    }
+
 
     private fun setupLocationRequest() {
         locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000L)
@@ -278,11 +332,13 @@ class MapExploreFragment : Fragment(){
 
         /* text = "Closed",
            color = "Red"*/
-        allClientMapInterval.add(StatusItem(
-            id = "0",
-            text = resources.getString(R.string.t_close),
-            color = "#eb4034"
-        ))
+        allClientMapInterval.add(
+            StatusItem(
+                id = "0",
+                text = resources.getString(R.string.t_close),
+                color = "#eb4034"
+            )
+        )
 
         //////////////////////////////////////
         binding.intervalsButton.setOnClickListener {
@@ -318,8 +374,14 @@ class MapExploreFragment : Fragment(){
         val gson = Gson()
         val data = gson.fromJson(defaultLocationJson, Map::class.java)
 
-        defaultLat = "%.6f".format(Locale.US,data["Latitude"]?.toString()?.toDoubleOrNull() ?: SnofedConstants.CENTER_LAT)
-        defaultLong = "%.6f".format(Locale.US,data["Longitude"]?.toString()?.toDoubleOrNull() ?: SnofedConstants.CENTER_LONG)
+        defaultLat = "%.6f".format(
+            Locale.US,
+            data["Latitude"]?.toString()?.toDoubleOrNull() ?: SnofedConstants.CENTER_LAT
+        )
+        defaultLong = "%.6f".format(
+            Locale.US,
+            data["Longitude"]?.toString()?.toDoubleOrNull() ?: SnofedConstants.CENTER_LONG
+        )
 
 
         // Initialize MapView and MapboxMap
@@ -330,7 +392,12 @@ class MapExploreFragment : Fragment(){
         cameraAnimationsPlugin = mapView.getPlugin(CameraAnimationsPlugin::class.java.toString())
         mapboxMap.setCamera(
             CameraOptions.Builder()
-                .center(Point.fromLngLat(defaultLong.toDouble(), defaultLat.toDouble())) // Set desired center
+                .center(
+                    Point.fromLngLat(
+                        defaultLong.toDouble(),
+                        defaultLat.toDouble()
+                    )
+                ) // Set desired center
                 .zoom(6.0) // Set desired zoom level
                 .pitch(9.0)
                 .build()
@@ -377,7 +444,7 @@ class MapExploreFragment : Fragment(){
         // Show the BottomSheetFragment
         val bottomSheet = FilterMapBottomSheetFragment()
         val bundle = Bundle().apply {
-            putString("clientId",clientId) // Replace with your data
+            putString("clientId", clientId) // Replace with your data
         }
         bottomSheet.arguments = bundle
         bottomSheet.show(parentFragmentManager, "FilterMapBottomSheetFragment")
@@ -391,8 +458,12 @@ class MapExploreFragment : Fragment(){
 
     private fun checkPermissionsAndGps() {
         // Check if the app has location permission
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+            != PackageManager.PERMISSION_GRANTED
+        ) {
 
             // Request location permission
             requestLocationPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -402,18 +473,24 @@ class MapExploreFragment : Fragment(){
 
 
     }
+
     // Register the permission result launcher
     private val requestLocationPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
                 enableGPS()
             } else {
-                Toast.makeText(requireContext(), "Location permission is required", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Location permission is required",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
     private fun enableGPS() {
-        val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val locationManager =
+            requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             // If GPS is not enabled, open GPS settings screen
             val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
@@ -425,6 +502,7 @@ class MapExploreFragment : Fragment(){
 //            Toast.makeText(requireContext(), "GPS is already enabled", Toast.LENGTH_SHORT).show()
         }
     }
+
     private fun requestLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
@@ -443,13 +521,18 @@ class MapExploreFragment : Fragment(){
             // for ActivityCompat#requestPermissions for more details.
             return
         }
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
     }
 
     // Register the ActivityResultLauncher for GPS settings
     private val gpsSettingsLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            val locationManager =
+                requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
             if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 Toast.makeText(requireContext(), "GPS enabled", Toast.LENGTH_SHORT).show()
             } else {
@@ -570,7 +653,8 @@ class MapExploreFragment : Fragment(){
             if (hasCoordinates) {
                 val latLngBounds = boundsBuilder.build()
                 //val centerPoint = latLngBounds.center
-                val centerPoint = Point.fromLngLat(latLngBounds.center.longitude, latLngBounds.center.latitude)
+                val centerPoint =
+                    Point.fromLngLat(latLngBounds.center.longitude, latLngBounds.center.latitude)
                 mapView.camera.easeTo(
                     CameraOptions.Builder()
                         .center(centerPoint)
@@ -579,7 +663,11 @@ class MapExploreFragment : Fragment(){
                     MapAnimationOptions.Builder().duration(2000).build()
                 )
             } else {
-                Toast.makeText(requireContext(), "No coordinates available to adjust camera bounds.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "No coordinates available to adjust camera bounds.",
+                    Toast.LENGTH_SHORT
+                ).show()
                 Log.e("MapError", "No coordinates available to adjust camera bounds.")
             }
         }
@@ -704,9 +792,9 @@ class MapExploreFragment : Fragment(){
                 }
 
                 // Create a Polygon with a single ring (if it has holes, add them as additional rings)
-               // val polygon = Polygon.fromLngLats(listOf(points))
+                // val polygon = Polygon.fromLngLats(listOf(points))
 
-               // val feature = Feature.fromGeometry(polygon)
+                // val feature = Feature.fromGeometry(polygon)
                 //val featureCollection = FeatureCollection.fromFeatures(listOf(feature))
 
                 val sourceId = "area-source-${area.id}"
@@ -715,7 +803,7 @@ class MapExploreFragment : Fragment(){
                 if (style.getSource(sourceId) == null) {
                     style.addSource(
                         geoJsonSource(sourceId) {
-                           // featureCollection(featureCollection)
+                            // featureCollection(featureCollection)
                         }
                     )
                 }
@@ -734,7 +822,10 @@ class MapExploreFragment : Fragment(){
         mapboxMap.getStyle { style ->
             // Ensure the icon image is added to the style
             if (style.getSource("poi-icon") == null) {
-                val iconBitmap = BitmapFactory.decodeResource(resources, R.drawable.petrol_open) // Replace with your drawable resource
+                val iconBitmap = BitmapFactory.decodeResource(
+                    resources,
+                    R.drawable.petrol_open
+                ) // Replace with your drawable resource
                 style.addImage("poi-icon", iconBitmap)
             }
 
@@ -743,17 +834,20 @@ class MapExploreFragment : Fragment(){
 
             // Check if pointAnnotationManager is initialized
             pointAnnotationManager?.let { manager ->
+
+                // Remove all existing annotations
+                manager.deleteAll()
+
                 // Add annotations for each POI
                 pois.forEach { poi ->
                     val point = Point.fromLngLat(poi.longitude!!, poi.latitude!!)
-
 
                     val options = PointAnnotationOptions()
                         .withPoint(point)
                         .withIconImage("poi-icon") // Use the icon image ID
                         .withIconSize(0.1) // Adjust icon size if needed
 
-                   // manager.create(options)
+                    // manager.create(options)
                     ///////////////////////
                     val annotation = manager.create(options)
                     // Add click listener for the annotation
@@ -776,9 +870,12 @@ class MapExploreFragment : Fragment(){
     }
 
     private fun showCustomPoisDialog(poi: Poi) {
-        val bottomSheetDialog = BottomSheetDialog(requireContext(), R.style.RoundedBottomSheetDialog)
-        val bottomSheetViewBinding = DataBindingUtil.inflate<MapFilterDetailsBinding>(layoutInflater,
-            R.layout.map_filter_details, null, false)
+        val bottomSheetDialog =
+            BottomSheetDialog(requireContext(), R.style.RoundedBottomSheetDialog)
+        val bottomSheetViewBinding = DataBindingUtil.inflate<MapFilterDetailsBinding>(
+            layoutInflater,
+            R.layout.map_filter_details, null, false
+        )
 
         bottomSheetViewBinding?.close?.setOnClickListener {
             bottomSheetDialog.dismiss()
@@ -796,7 +893,7 @@ class MapExploreFragment : Fragment(){
         bottomSheetViewBinding.txtPoisStatusHostory.text = statusDatesText
 
 
-        bottomSheetViewBinding?.idTxtStatusOpen?.text =lastPoiTypeStatusName
+        bottomSheetViewBinding?.idTxtStatusOpen?.text = lastPoiTypeStatusName
         bottomSheetViewBinding?.idTxtDateTime?.text = poi.lastUpdateDate
         bottomSheetViewBinding?.idTxtDescription?.text = poi.description
         //bottomSheetViewBinding?.txtPoisStatusHostory?.text =
@@ -808,7 +905,7 @@ class MapExploreFragment : Fragment(){
 
 // Remove any existing views (to avoid duplicates if reloading)
         imagesContainer.removeAllViews()
-        Log.d("sssss" ," sssss" +poisImages)
+        Log.d("sssss", " sssss" + poisImages)
 // Iterate through the images and add them dynamically to the layout
         poisImages?.forEach { imagePath ->
             val imageView = ImageView(requireContext()).apply {
@@ -834,7 +931,7 @@ class MapExploreFragment : Fragment(){
                       DiskCacheStrategy.ALL
                   ).fitCenter().error(R.drawable.clubs)
                   .into(bottomSheetViewBinding.backgroundImage)*/
-        Log.d("poiTypeIcon" ," sssss" +poiTypeIcon)
+        Log.d("poiTypeIcon", " sssss" + poiTypeIcon)
 
         Glide.with(bottomSheetViewBinding.poisTypeIcon)
             .load(poiTypeIcon).diskCacheStrategy(
@@ -844,14 +941,16 @@ class MapExploreFragment : Fragment(){
 
         // Make sure the bottom sheet content fits properly on the screen
         bottomSheetDialog.setOnShowListener { dialog ->
-            val bottomSheet = (dialog as BottomSheetDialog).findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            val bottomSheet =
+                (dialog as BottomSheetDialog).findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
             val behavior = BottomSheetBehavior.from(bottomSheet!!)
 
             // Adjust peekHeight to control the collapsed view's height
             behavior.peekHeight = resources.getDimensionPixelSize(R.dimen._120sdp) // Example: 200dp
 
             // Set state to fully expanded, or collapsed to just show a portion of the sheet
-            behavior.state = BottomSheetBehavior.STATE_EXPANDED  // Or STATE_HALF_EXPANDED based on your preference
+            behavior.state =
+                BottomSheetBehavior.STATE_EXPANDED  // Or STATE_HALF_EXPANDED based on your preference
         }
 
         bottomSheetDialog.setContentView(bottomSheetViewBinding.root)
@@ -870,8 +969,8 @@ class MapExploreFragment : Fragment(){
             zones.forEach { zone ->
                 val polygon = Polygon.fromLngLats(
                     listOf(zone.definitions?.map { definition ->
-                            Point.fromLngLat(definition.longitude, definition.latitude)
-                        }
+                        Point.fromLngLat(definition.longitude, definition.latitude)
+                    }
                     )
                 )
 
@@ -889,8 +988,8 @@ class MapExploreFragment : Fragment(){
 
                 if (style.getLayer(layerId) == null) {
                     style.addLayer(fillLayer(layerId, sourceId) {
-                      //  lineColor(zone.color) // Customize color
-                       // lineWidth(2.0)
+                        //  lineColor(zone.color) // Customize color
+                        // lineWidth(2.0)
                         fillColor(zone.color!!)
                         fillOpacity(0.7)
                     }
@@ -900,9 +999,23 @@ class MapExploreFragment : Fragment(){
         }
     }
 
+    ////////////////////
+    private fun removeZones(clientZones: MutableList<Zone>) {
+        mapboxMap.getStyle { style ->
+            clientZones.forEach { zone ->
+                val sourceId = "polygon-source-${zone.id}"
+                val layerId = "polygon-layer-${zone.id}"
 
+                if (style.getSource(sourceId) != null) {
+                    style.removeStyleSource(sourceId)
+                }
 
-
+                if (style.getLayer(layerId) != null) {
+                    style.removeStyleLayer(layerId)
+                }
+            }
+        }
+    }
 
 
     private fun showCustomDialog() {
@@ -944,9 +1057,11 @@ class MapExploreFragment : Fragment(){
     private fun showCustomDialog2() {
 //        val customDialog = CustomDialogFragmentFragment()
 //        customDialog.show(parentFragmentManager, "CustomDialogTag")
-        val bottomSheetDialog = BottomSheetDialog(requireContext(),R.style.TransparentBottomSheetDialog)
+        val bottomSheetDialog =
+            BottomSheetDialog(requireContext(), R.style.TransparentBottomSheetDialog)
         val bottomSheetViewBinding = DataBindingUtil.inflate<BottomSheetApartmentsBinding>(
-            layoutInflater, R.layout.bottom_sheet_apartments, null, false)
+            layoutInflater, R.layout.bottom_sheet_apartments, null, false
+        )
         bottomSheetViewBinding?.btnLeaveFeedback?.setOnClickListener {
             showCustomDialog()
             bottomSheetDialog.dismiss()
@@ -982,9 +1097,6 @@ class MapExploreFragment : Fragment(){
             isOpen = true
         }
     }
-
-
-
 
 
 }

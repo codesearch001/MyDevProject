@@ -100,6 +100,7 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+
         binding.closeButton.setOnClickListener {
             dismiss()
         }
@@ -220,14 +221,18 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
          binding.rvPoisType.layoutManager = GridLayoutManager(requireActivity(), 5)
          binding.rvPoisType.adapter = poisTypeAdapter*/
 
+        // Get the selected IDs (either from SharedPreferences or ViewModel)
+        val selectedPoisIds = sharedViewModel.getSelectedIds()
+        val selectedTrailsIds = sharedViewModel.getSelectedTrailsIds()
+        val selectedZoneIds = sharedViewModel.getSelectedZoneIds()
 
         // Set up RecyclerView and Adapter for PoisType
-        poisTypeAdapter = PoisTypeAdapter(allPoisType) { selectedIdsString ->
+        poisTypeAdapter = PoisTypeAdapter(allPoisType,selectedPoisIds) { selectedIdsString ->
             Log.d("poisTypeAdapter", "Comma-separated IDs: $selectedIdsString")
             // Update the shared ViewModel with the new selected IDs
-            val selectedIds = selectedIdsString.split(",")
-                .filter { it.isNotBlank() }  
-                .mapNotNull { it }
+            Log.d("poisTypeAdapter", "Comma-separated IDs: $selectedIdsString")
+            val selectedIds = selectedIdsString.split(",").filter { it.isNotBlank() }
+            sharedViewModel.updateSelectedIds(selectedIds)
 
             if (selectedIds.isNotEmpty()) {
                 // Update the shared ViewModel with the new selected IDs
@@ -244,7 +249,7 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
 
 
         // Set up RecyclerView and Adapter fro PoisType
-        trailCategoryAdapter = MapTrailCategoryAdapter(allActivity) { selectedIdsString ->
+        trailCategoryAdapter = MapTrailCategoryAdapter(allActivity,selectedTrailsIds) { selectedIdsString ->
             Log.d("trailCategoryAdapter", "Comma-separated IDs: $selectedIdsString")
             // Update the shared ViewModel with the new selected IDs
             val selectedIds = selectedIdsString.split(",")
@@ -268,7 +273,7 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
 */
 
         // Set up RecyclerView and Adapter fro PoisType
-        zonesTypeAdapter = ZonesTypeAdapter(allZonesType) { selectedIdsString ->
+        zonesTypeAdapter = ZonesTypeAdapter(allZonesType,selectedZoneIds) { selectedIdsString ->
             Log.d("trailCategoryAdapter", "Comma-separated IDs: $selectedIdsString")
             // Update the shared ViewModel with the new selected IDs
             val selectedIds = selectedIdsString.split(",")
