@@ -21,13 +21,15 @@ class OrderDetailsAdapter() : RecyclerView.Adapter<OrderDetailsAdapter.ClubViewH
 
     private var orderHistoryDetailsArray: List<Ticket> = listOf()
     val dateTimeConverter = DateTimeConverter()
+    var clientName: String? = ""
 
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setFeed(clubs: List<Ticket>?) {
+    fun setFeed(clubs: List<Ticket>?, clientNameRef : String?) {
         if (clubs != null) {
             this.orderHistoryDetailsArray = clubs
         }
+        clientName = clientNameRef
         notifyDataSetChanged()
     }
 
@@ -40,14 +42,15 @@ class OrderDetailsAdapter() : RecyclerView.Adapter<OrderDetailsAdapter.ClubViewH
     @SuppressLint("DefaultLocale", "SetTextI18n")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ClubViewHolder, position: Int) {
-        val reslult = orderHistoryDetailsArray[position]
+        val ticket = orderHistoryDetailsArray[position]
 
-            dateTimeConverter.convertDateTime(reslult.createdDate) // Convert date
+            dateTimeConverter.convertDateTime(ticket.createdDate) // Convert date
+            holder.tv_title.text = ticket.ticketType.name
             holder.txtStartDate.text = dateTimeConverter.outputFormatterOnlyDate
-            holder.txtFirstName.text = reslult.buyerFirstName
-            holder.txtLastName.text = reslult.buyerLastName
-            holder.txtEmail.text = reslult.buyerEmail
-            holder.txtPrice.text = reslult.issuedDateTotalTicketPrice.toString()
+            holder.txtFirstName.text = ticket.buyerFirstName
+            holder.txtLastName.text = ticket.buyerLastName
+            holder.txtEmail.text = ticket.buyerEmail
+            holder.txtPrice.text = ticket.issuedDateTotalTicketPrice.toString()
 
     }
 
@@ -56,6 +59,7 @@ class OrderDetailsAdapter() : RecyclerView.Adapter<OrderDetailsAdapter.ClubViewH
 
 
     class ClubViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val tv_title: TextView = itemView.findViewById(R.id.tv_title)
         val txtStartDate: TextView = itemView.findViewById(R.id.txtStartDate)
         val txtFirstName: TextView = itemView.findViewById(R.id.txtFirstName)
         val txtLastName: TextView = itemView.findViewById(R.id.txtLastName)

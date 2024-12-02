@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,6 +20,7 @@ import com.snofed.publicapp.databinding.FragmentOrderHistoryBinding
 import com.snofed.publicapp.membership.adapter.ActiveMembershipAdapter
 import com.snofed.publicapp.models.Order
 import com.snofed.publicapp.purchasehistory.adapter.OrderHistoryAdapter
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.ClientViewModelRealm
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.TokenManager
@@ -31,6 +33,7 @@ class OrderHistoryFragment : Fragment(), OrderHistoryAdapter.OnItemClickListener
     private val binding get() = _binding!!
     private val viewModel by viewModels<AuthViewModel>()
     private lateinit var orderHistoryAdapter: OrderHistoryAdapter
+    private lateinit var vmClientRealm: ClientViewModelRealm
 
     @Inject
     lateinit var tokenManager: TokenManager
@@ -44,7 +47,7 @@ class OrderHistoryFragment : Fragment(), OrderHistoryAdapter.OnItemClickListener
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        vmClientRealm = ViewModelProvider(this).get(ClientViewModelRealm::class.java)
         fetchResponse()
         viewModel.purchaseOrderHistoryMembershipResponseLiveData.observe(
             viewLifecycleOwner,
@@ -59,7 +62,7 @@ class OrderHistoryFragment : Fragment(), OrderHistoryAdapter.OnItemClickListener
                             binding.tvSplashText.isVisible = false
                         }
                         // Initialize adapter with the click listener
-                        orderHistoryAdapter = OrderHistoryAdapter(this)
+                        orderHistoryAdapter = OrderHistoryAdapter(this, vmClientRealm)
                         binding.feedRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
                         binding.feedRecyclerView.adapter = orderHistoryAdapter
                         orderHistoryAdapter.setFeed(data)
@@ -84,6 +87,7 @@ class OrderHistoryFragment : Fragment(), OrderHistoryAdapter.OnItemClickListener
 
         val bundle = Bundle().apply {
             putString("ticketOrderID", order.id)
+            putString("clientId", order.clientRef)
         }
         findNavController().navigate(R.id.purchaseOrderDetilsFragment, bundle)
         //findNavController().navigate(R.id.purchaseHistroryDeatisFragment, bundle)

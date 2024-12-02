@@ -25,11 +25,11 @@ class SharedViewModel : ViewModel() {
 
 
     //Area ID
-    private val _selectedAreaIds = MutableLiveData<List<String>>()
-    val selectedAreaIds: LiveData<List<String>> get() = _selectedAreaIds
+    private val _selectedAreaId = MutableLiveData<String>()
+    val selectedAreaId: LiveData<String> get() = _selectedAreaId
 
-    fun updateSelectedAreaIds(ids: List<String>) {
-        _selectedAreaIds.value = ids
+    fun updateSelectedAreaIds(id: String) {
+        _selectedAreaId.value = id
     }
 
     //POIS ID
