@@ -51,7 +51,10 @@ class SharedViewModel : ViewModel() {
     fun updateSelectedTrailsIds(ids: List<String>) {
         _selectedTrailId.value = ids
     }
-
+    // Use this method to get the selected IDs from SharedPreferences or other sources
+    fun getSelectedTrailsIds(): List<String> {
+        return _selectedTrailId.value ?: emptyList()
+    }
 
     //ZoneType ID
     private val _selectedZoneId = MutableLiveData<List<String>>()

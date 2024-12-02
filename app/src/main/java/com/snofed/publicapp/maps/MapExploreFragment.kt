@@ -154,11 +154,7 @@ class MapExploreFragment : Fragment() {
     var selectedResourceIds: Set<String> = emptySet()
 
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_map_explore, container, false)
         _binding = FragmentMapExploreBinding.inflate(inflater, container, false)
@@ -267,6 +263,7 @@ class MapExploreFragment : Fragment() {
 
     private fun clearSelectedIds() {
         sharedViewModel.updateSelectedIds(emptyList()) // Clear POIs
+        sharedViewModel.updateSelectedTrailsIds(emptyList()) // Clear Zones
         sharedViewModel.updateSelectedZoneIds(emptyList()) // Clear Zones
     }
 

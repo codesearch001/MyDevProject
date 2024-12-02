@@ -13,8 +13,9 @@ import com.snofed.publicapp.adapter.PoisTypeAdapter.OnItemSelectedListener
 import com.snofed.publicapp.databinding.TrailCategoryListBinding
 
 
-class MapTrailCategoryAdapter(private val trailList: List<StatusItem>,private val onItemClick: (String) -> Unit) : RecyclerView.Adapter<MapTrailCategoryAdapter.TrailCategoryViewHolder>() {
-    private val selectedIds = mutableListOf<String>()
+class MapTrailCategoryAdapter(private val trailList: List<StatusItem>,private val selectedZoneIds: List<String>,private val onItemClick: (String) -> Unit) : RecyclerView.Adapter<MapTrailCategoryAdapter.TrailCategoryViewHolder>() {
+   // private val selectedIds = mutableListOf<String>()
+    private val selectedZone= selectedZoneIds.toMutableList()
     private var onItemSelectedListener: OnItemSelectedListener? = null
 
 
@@ -59,24 +60,24 @@ class MapTrailCategoryAdapter(private val trailList: List<StatusItem>,private va
 
         val trailType = trailList[position]
         val trailTypeId = trailType.id // Assume each item has a unique 'id'
-        val isSelected = selectedIds.contains(trailTypeId) // Use position as the ID
+        val isSelected = selectedZone.contains(trailTypeId) // Use position as the ID
 
         holder.bind(trailType, isSelected)
 
         // Handle item click
         holder.itemView.setOnClickListener {
-            if (selectedIds.contains(trailTypeId)) {
-                selectedIds.remove(trailTypeId)
+            if (selectedZone.contains(trailTypeId)) {
+                selectedZone.remove(trailTypeId)
             } else {
-                selectedIds.add(trailTypeId)
+                selectedZone.add(trailTypeId)
             }
 
-            val selectedIdsList = selectedIds.toList()  // Get selected IDs as a list
+            val selectedIdsList = selectedZone.toList()  // Get selected IDs as a list
             onItemClick(selectedIdsList.joinToString(",")) // Call the item click callback
             notifyItemChanged(position)
 
             // Notify the listener when the selection changes
-            onItemSelectedListener?.onItemsSelected(selectedIds)
+            onItemSelectedListener?.onItemsSelected(selectedZone)
 
         }
     }
