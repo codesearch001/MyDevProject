@@ -5,10 +5,14 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.util.Log
@@ -87,12 +91,16 @@ import com.snofed.publicapp.models.realmModels.Trail
 import com.snofed.publicapp.models.realmModels.Zone
 import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.IntervalViewModelRealm
 import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.PoisTypeViewModelRealm
+import com.snofed.publicapp.utils.DateTimeConverter
 import com.snofed.publicapp.utils.ServiceUtil
 import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.SnofedConstants
 import com.snofed.publicapp.utils.enums.SyncActionEnum
 import dagger.hilt.android.AndroidEntryPoint
+import java.net.HttpURLConnection
+import java.net.URL
 import java.util.Locale
+import java.util.concurrent.Executors
 
 @AndroidEntryPoint
 class MapExploreFragment : Fragment() {
@@ -156,7 +164,7 @@ class MapExploreFragment : Fragment() {
 
     var filteredZones : List<Zone> = emptyList()
     var filteredPois : List<Poi> = emptyList()
-
+    private val dateTimeConverter = DateTimeConverter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -834,10 +842,7 @@ class MapExploreFragment : Fragment() {
         mapboxMap.getStyle { style ->
             // Ensure the icon image is added to the style
             if (style.getSource("poi-icon") == null) {
-                val iconBitmap = BitmapFactory.decodeResource(
-                    resources,
-                    R.drawable.petrol_open
-                ) // Replace with your drawable resource
+                val iconBitmap = BitmapFactory.decodeResource(resources, R.drawable.petrol_open) // Replace with your drawable resource
                 style.addImage("poi-icon", iconBitmap)
             }
 
@@ -850,13 +855,73 @@ class MapExploreFragment : Fragment() {
                 // Remove all existing annotations
                 manager.deleteAll()
 
+
                 // Add annotations for each POI
                 pois.forEach { poi ->
                     val point = Point.fromLngLat(poi.longitude!!, poi.latitude!!)
+                    val poisTypeImage = viewModelPoisType.getIconPathByPoiTypeId(poi.poiTypeId!!)
+
+
+                    if (style.getSource("poi-icon" + poi.id) == null) {
+                        if (!poisTypeImage.isNullOrEmpty()) {
+                            // Asynchronously fetch the image from URL
+                            val executor = Executors.newSingleThreadExecutor()
+                            val handler = Handler(Looper.getMainLooper())
+                            executor.execute {
+                                try {
+                                    val url = URL(poisTypeImage)
+                                    val connection = url.openConnection() as HttpURLConnection
+                                    connection.doInput = true
+                                    connection.connect()
+                                    val inputStream = connection.inputStream
+                                    val urlBitmap = BitmapFactory.decodeStream(inputStream)
+                                    // Load the marker background (local drawable)
+                                    val markerBase = BitmapFactory.decodeResource(resources, R.drawable.icon_layer)
+
+                                    // Create a 1024x1024 bitmap for the final marker (larger size)
+                                    val finalBitmap = Bitmap.createBitmap(1024, 1024, markerBase.config)
+                                    val canvas = Canvas(finalBitmap)
+
+                                    // Draw the base marker icon (scaled up)
+                                    val scaledMarkerBase = Bitmap.createScaledBitmap(markerBase, 900, 1024, true)
+                                    canvas.drawBitmap(scaledMarkerBase, 0f, 0f, null)
+
+                                    // Fill inside the circle (adjusted size)
+                                    val paint = Paint()
+                                    paint.color = Color.parseColor("#97D1FF") // Set your desired fill color
+                                    paint.style = Paint.Style.FILL
+
+                                    // Draw the larger filled circle
+                                    val centerX = 470f
+                                    val centerY = 400f
+                                    val radius = 400f // Increase the circle's radius for visibility
+                                    canvas.drawCircle(centerX, centerY, radius, paint)
+
+                                    // Overlay the URL image inside the larger circle
+                                    val scaledUrlBitmap = Bitmap.createScaledBitmap(urlBitmap, 450, 450, true) // Increase size of overlay
+                                    val overlayLeft = centerX - scaledUrlBitmap.width / 2f
+                                    val overlayTop = centerY - scaledUrlBitmap.height / 2f
+                                    canvas.drawBitmap(scaledUrlBitmap, overlayLeft, overlayTop, null)
+
+
+                                    // Post to main thread to update Mapbox style
+                                    handler.post {
+                                        style.addImage("poi-icon" + poi.id, finalBitmap)
+                                        Log.d("TAG_POI", "Image added for POI: ${poi.id}")
+                                    }
+                                } catch (e: Exception) {
+                                    Log.e("TAG_POI", "Error fetching image: ${e.message}")
+                                }
+                            }
+                        } else {
+                            // Fallback to default drawable resource if URL is not available
+                            val fallbackBitmap = BitmapFactory.decodeResource(resources, R.drawable.petrol_open)
+                            style.addImage("poi-icon" + poi.id, fallbackBitmap)
+                        }}
 
                     val options = PointAnnotationOptions()
                         .withPoint(point)
-                        .withIconImage("poi-icon") // Use the icon image ID
+                        .withIconImage("poi-icon"+poi.id) // Use the icon image ID
                         .withIconSize(0.1) // Adjust icon size if needed
                         .withIconAnchor(IconAnchor.BOTTOM)
                         .withDraggable(false)
@@ -866,6 +931,8 @@ class MapExploreFragment : Fragment() {
                     val annotation = manager.create(options)
                     // Add click listener for the annotation
                     manager.addClickListener { clickedAnnotation ->
+
+
                         if (clickedAnnotation == annotation) {
                             Log.e("TAG_Pois", "Clicked on POI: ${poi.poiTypeId}")
 
@@ -906,10 +973,11 @@ class MapExploreFragment : Fragment() {
 
         bottomSheetViewBinding.txtPoisStatusHostory.text = statusDatesText
 
-
+        dateTimeConverter.convertDateTime(poi.lastUpdateDate!!)//convert data
+        val lastPoiTypeStatusDate = dateTimeConverter.dateandtimePart
         bottomSheetViewBinding?.idTxtPoisName?.text = poi.name
         bottomSheetViewBinding?.idTxtStatusOpen?.text = lastPoiTypeStatusName
-        bottomSheetViewBinding?.idTxtDateTime?.text = poi.lastUpdateDate
+        bottomSheetViewBinding?.idTxtDateTime?.text = lastPoiTypeStatusDate
         bottomSheetViewBinding?.idTxtDescription?.text = poi.description
         //bottomSheetViewBinding?.txtPoisStatusHostory?.text =
         val poiTypeIcon = viewModelPoisType.getIconPathByPoiTypeId(poi.poiTypeId!!)

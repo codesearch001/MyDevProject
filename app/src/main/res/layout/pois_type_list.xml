@@ -34,5 +34,18 @@
             android:padding="@dimen/_14sdp"
             android:layout_marginBottom="@dimen/_4sdp"
             android:src="@drawable/dinner" />
+        <TextView
+            android:id="@+id/txtPoisType"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:gravity="center"
+            android:visibility="gone"
+            android:text="All"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:background="@drawable/outline"
+            android:textSize="@dimen/_12sdp" />
     </LinearLayout>
 </layout>

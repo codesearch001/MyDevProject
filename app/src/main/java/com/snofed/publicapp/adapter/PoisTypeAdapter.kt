@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.core.content.ContextCompat
@@ -69,13 +70,30 @@ class PoisTypeAdapter(private val poiList: List<StatusItem>, private val selecte
     inner class PoisTypeViewHolder(private val binding: PoisTypeListBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(iconPath: String, isSelected: Boolean) {
+       // fun bind(iconPath: String, text: String, isSelected: Boolean) {
+        fun bind(iconPath: String,isSelected: Boolean) {
             // Load the icon into the ImageView
             Glide.with(binding.imgPoisType.context)
                 .load(iconPath) // Load the image URL/path
-                .placeholder(R.drawable.dinner) // Placeholder while loading
+                .placeholder(R.drawable.filters) // Placeholder while loading
                 .error(R.drawable.filters) // Error image if loading fails
                 .into(binding.imgPoisType) // Set image in ImageView
+           /* if (iconPath.isBlank()) {
+                // Show text and hide the image
+                binding.txtPoisType.visibility = View.VISIBLE
+                binding.imgPoisType.visibility = View.GONE
+                binding.txtPoisType.text = text
+            } else {
+                // Show image and hide the text
+                binding.txtPoisType.visibility = View.GONE
+                binding.imgPoisType.visibility = View.VISIBLE
+
+                Glide.with(binding.imgPoisType.context)
+                    .load(iconPath) // Load the image URL/path
+                    .placeholder(R.drawable.dinner1) // Placeholder while loading
+                    .error(R.drawable.dinner1) // Error image if loading fails
+                    .into(binding.imgPoisType) // Set image in ImageView
+            }*/
 
             // Update background color based on selection
             binding.imgPoisType.setBackgroundColor(
@@ -114,6 +132,7 @@ class PoisTypeAdapter(private val poiList: List<StatusItem>, private val selecte
 //        Log.e("icon_NEW", "ICON_MAP_POIS_1: $isSelected")
 //        Log.e("icon_NEW", "ICON_MAP_POIS_2{$poisType}--: $poisTypeId")
 //        Log.e("icon_NEW", "ICON_MAP_POIS_3: $position")
+       // holder.bind(poisType.iconPath!!,poisType.text, isSelected)
         holder.bind(poisType.iconPath!!, isSelected)
 
 
