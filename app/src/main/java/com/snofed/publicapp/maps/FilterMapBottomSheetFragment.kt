@@ -159,7 +159,7 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment()
         allPoisType.add(StatusItem(
             id = "0",
             text = "ALL",
-            iconPath = ContextCompat.getString(requireContext(), R.drawable.filter_all)
+            iconPath = ""
         ))
 
         allPoisType.addAll(filterPoisType.map { poiType ->
@@ -198,7 +198,7 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment()
         allZonesType.addAll(allZoneTypes.map { zoneType ->
             StatusItem(
                 id = zoneType.id!!,
-                text = zoneType.name ?: "No Name",)
+                text = zoneType.name ?: "No Name")
         }.toMutableList())
 
         //Zone

@@ -87,6 +87,7 @@ import com.snofed.publicapp.models.realmModels.Trail
 import com.snofed.publicapp.models.realmModels.Zone
 import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.IntervalViewModelRealm
 import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.PoisTypeViewModelRealm
+import com.snofed.publicapp.utils.DateTimeConverter
 import com.snofed.publicapp.utils.ServiceUtil
 import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.SnofedConstants
@@ -156,7 +157,7 @@ class MapExploreFragment : Fragment() {
 
     var filteredZones : List<Zone> = emptyList()
     var filteredPois : List<Poi> = emptyList()
-
+    private val dateTimeConverter = DateTimeConverter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -834,10 +835,7 @@ class MapExploreFragment : Fragment() {
         mapboxMap.getStyle { style ->
             // Ensure the icon image is added to the style
             if (style.getSource("poi-icon") == null) {
-                val iconBitmap = BitmapFactory.decodeResource(
-                    resources,
-                    R.drawable.petrol_open
-                ) // Replace with your drawable resource
+                val iconBitmap = BitmapFactory.decodeResource(resources, R.drawable.petrol_open) // Replace with your drawable resource
                 style.addImage("poi-icon", iconBitmap)
             }
 
@@ -906,10 +904,11 @@ class MapExploreFragment : Fragment() {
 
         bottomSheetViewBinding.txtPoisStatusHostory.text = statusDatesText
 
-
+        dateTimeConverter.convertDateTime(poi.lastUpdateDate!!)//convert data
+        val lastPoiTypeStatusDate = dateTimeConverter.dateandtimePart
         bottomSheetViewBinding?.idTxtPoisName?.text = poi.name
         bottomSheetViewBinding?.idTxtStatusOpen?.text = lastPoiTypeStatusName
-        bottomSheetViewBinding?.idTxtDateTime?.text = poi.lastUpdateDate
+        bottomSheetViewBinding?.idTxtDateTime?.text = lastPoiTypeStatusDate
         bottomSheetViewBinding?.idTxtDescription?.text = poi.description
         //bottomSheetViewBinding?.txtPoisStatusHostory?.text =
         val poiTypeIcon = viewModelPoisType.getIconPathByPoiTypeId(poi.poiTypeId!!)
