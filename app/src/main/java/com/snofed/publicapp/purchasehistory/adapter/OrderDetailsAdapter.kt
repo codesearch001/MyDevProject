@@ -43,9 +43,9 @@ class OrderDetailsAdapter() : RecyclerView.Adapter<OrderDetailsAdapter.ClubViewH
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ClubViewHolder, position: Int) {
         val ticket = orderHistoryDetailsArray[position]
-
+            holder.tv_title.text = clientName
             dateTimeConverter.convertDateTime(ticket.createdDate) // Convert date
-            holder.tv_title.text = ticket.ticketType.name
+            //holder.tv_title.text = ticket.ticketType.name
             holder.txtStartDate.text = dateTimeConverter.outputFormatterOnlyDate
             holder.txtFirstName.text = ticket.buyerFirstName
             holder.txtLastName.text = ticket.buyerLastName

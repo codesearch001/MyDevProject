@@ -41,6 +41,7 @@ class PurchaseOrderDetilsFragment : Fragment() {
     private lateinit var vmClientRealm: ClientViewModelRealm
     var ticketOrderID: String = ""
     var clientId:String = ""
+    var clientNameRef:String? = ""
     val dateTimeConverter = DateTimeConverter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -59,7 +60,7 @@ class PurchaseOrderDetilsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         vmClientRealm = ViewModelProvider(this).get(ClientViewModelRealm::class.java)
-        val clientNameRef = vmClientRealm.getClientNameById(clientId)
+        clientNameRef = vmClientRealm.getClientNameById(clientId)
         fetchResponse()
         viewModel.purchaseOrderHistoryDetailsResponseLiveData.observe(viewLifecycleOwner, Observer {
                 binding.progressBar.isVisible = false
@@ -77,6 +78,7 @@ class PurchaseOrderDetilsFragment : Fragment() {
                         binding.tvCreatedDate.text =  dateTimeConverter.outputFormatterOnlyDate
                         binding.txtNumberOfTickets.text = it.data?.data?.tickets?.count().toString()
                         binding.txtTotalPrice.text = it.data?.data?.totalPrice.toString()
+                        binding.txtOrderTitle.text = clientNameRef
 
                         val ticketOrderStatus: Int = it.data?.data?.ticketOrderStatus?.toInt() ?: -1
 
@@ -92,7 +94,6 @@ class PurchaseOrderDetilsFragment : Fragment() {
                                 binding.statusApproved.visibility = View.VISIBLE
                                 binding.statusCancelled.visibility = View.GONE
                             }
-                            // You can add cases for other statuses if needed
                             else -> {
                                 binding.statusCancelled.visibility = View.GONE
                                 binding.statusApproved.visibility = View.GONE
