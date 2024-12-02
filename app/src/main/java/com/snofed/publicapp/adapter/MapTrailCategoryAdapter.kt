@@ -15,7 +15,7 @@ import com.snofed.publicapp.databinding.TrailCategoryListBinding
 
 class MapTrailCategoryAdapter(private val trailList: List<StatusItem>,private val selectedZoneIds: List<String>,private val onItemClick: (String) -> Unit) : RecyclerView.Adapter<MapTrailCategoryAdapter.TrailCategoryViewHolder>() {
    // private val selectedIds = mutableListOf<String>()
-    private val selectedZone= selectedZoneIds.toMutableList()
+    private var selectedZone= selectedZoneIds.toMutableList()
     private var onItemSelectedListener: OnItemSelectedListener? = null
 
 
@@ -66,6 +66,14 @@ class MapTrailCategoryAdapter(private val trailList: List<StatusItem>,private va
 
         // Handle item click
         holder.itemView.setOnClickListener {
+            if(trailTypeId == "0"){
+                if(selectedZone.joinToString(",").length > 1) {
+                    selectedZone = emptyList<String>().toMutableList()
+                }
+            }
+            else{
+                selectedZone.remove("0")
+            }
             if (selectedZone.contains(trailTypeId)) {
                 selectedZone.remove(trailTypeId)
             } else {
@@ -74,10 +82,10 @@ class MapTrailCategoryAdapter(private val trailList: List<StatusItem>,private va
 
             val selectedIdsList = selectedZone.toList()  // Get selected IDs as a list
             onItemClick(selectedIdsList.joinToString(",")) // Call the item click callback
-            notifyItemChanged(position)
+            notifyDataSetChanged()
 
             // Notify the listener when the selection changes
-            onItemSelectedListener?.onItemsSelected(selectedZone)
+            onItemSelectedListener?.onItemsSelected(selectedZone,"trail")
 
         }
     }

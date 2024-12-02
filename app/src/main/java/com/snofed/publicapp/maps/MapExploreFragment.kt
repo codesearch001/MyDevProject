@@ -61,6 +61,7 @@ import com.mapbox.maps.extension.style.layers.addLayer
 import com.mapbox.maps.extension.style.layers.generated.fillLayer
 import com.mapbox.maps.extension.style.layers.generated.lineLayer
 import com.mapbox.maps.extension.style.layers.getLayer
+import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
 import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.maps.extension.style.sources.getSource
@@ -178,7 +179,10 @@ class MapExploreFragment : Fragment() {
 
             // filter pois again and draw again
             if (selectedAreaId != "0") {
-                filteredPois = clientPois.filter { poi -> poi.areaId == selectedAreaId && selectedPoiIds.contains(poi.poiTypeId) }
+                if(selectedPoiIds.contains("0"))
+                    filteredPois = clientPois.filter { poi -> poi.areaId == selectedAreaId }
+                else
+                    filteredPois = clientPois.filter { poi -> poi.areaId == selectedAreaId && selectedPoiIds.contains(poi.poiTypeId)}
             }
             else {
                 if(selectedPoiIds.contains("0"))
@@ -192,10 +196,18 @@ class MapExploreFragment : Fragment() {
 
             // filter Zone again and draw again
             removeZones(clientZones)
-            if (selectedAreaId != "0")
-                filteredZones = filteredZones.filter { zone -> zone.areaId == selectedAreaId }
-            else
-                filteredZones = clientZones.filter { zone -> selectedZoneIds.contains(zone.zoneTypeId) }
+            if (selectedAreaId != "0") {
+                if(selectedZoneIds.contains("0"))
+                    filteredZones = clientZones.filter { zone -> zone.areaId == selectedAreaId }
+                else
+                    filteredZones = clientZones.filter { zone -> zone.areaId == selectedAreaId && selectedZoneIds.contains(zone.zoneTypeId)}
+            }
+            else {
+                if(selectedZoneIds.contains("0"))
+                    filteredZones = clientZones
+                else
+                    filteredZones = clientZones.filter { zone -> selectedPoiIds.contains(zone.zoneTypeId)}
+            }
 
             addZonesToMap(filteredZones)
         })
@@ -216,12 +228,15 @@ class MapExploreFragment : Fragment() {
             selectedPoiIds = selectedIds.toSet()
 
             filteredPois = clientPois.filter { poi -> selectedPoiIds.contains(poi.poiTypeId) }
+            if(selectedPoiIds.contains("0"))
+                filteredPois =  clientPois
+            else if(selectedPoiIds.isNotEmpty() && !selectedPoiIds.contains("0"))
+                filteredPois =  clientPois.filter { poi -> selectedPoiIds.contains(poi.poiTypeId) }
+
             //filter with areaId
             if (selectedAreaId != "0") {
                 filteredPois = filteredPois.filter { poi -> poi.areaId == selectedAreaId }
             }
-            if(selectedPoiIds.contains("0"))
-                filteredPois = clientPois
 
             addPoisToMap(filteredPois)
         })
@@ -232,6 +247,8 @@ class MapExploreFragment : Fragment() {
             Log.d("selectedZoneTypeId", "Selected4 IDs: $selectedIds")
             // Use the selectedIds to update the UI as needed
             selectedZoneIds = selectedIds.toSet()
+
+            filteredZones = clientZones.filter { zone -> selectedZoneIds.contains(zone.zoneTypeId) }
 
             if(selectedZoneIds.contains("0"))
                 filteredZones =  clientZones
@@ -841,6 +858,8 @@ class MapExploreFragment : Fragment() {
                         .withPoint(point)
                         .withIconImage("poi-icon") // Use the icon image ID
                         .withIconSize(0.1) // Adjust icon size if needed
+                        .withIconAnchor(IconAnchor.BOTTOM)
+                        .withDraggable(false)
 
                     // manager.create(options)
                     ///////////////////////
@@ -888,6 +907,7 @@ class MapExploreFragment : Fragment() {
         bottomSheetViewBinding.txtPoisStatusHostory.text = statusDatesText
 
 
+        bottomSheetViewBinding?.idTxtPoisName?.text = poi.name
         bottomSheetViewBinding?.idTxtStatusOpen?.text = lastPoiTypeStatusName
         bottomSheetViewBinding?.idTxtDateTime?.text = poi.lastUpdateDate
         bottomSheetViewBinding?.idTxtDescription?.text = poi.description

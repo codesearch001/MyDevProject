@@ -35,6 +35,9 @@ class SharedViewModel : ViewModel() {
     fun getSelectedAreaId(): StatusItem {
         return _selectedAreaId.value ?: StatusItem("0", "")
     }
+    fun clearSelectedAreaIds() {
+        _selectedAreaId.value = StatusItem("0", "")
+    }
 
     //POIS ID
     private val _selectedPoiIds = MutableLiveData<List<String>>()
@@ -46,6 +49,10 @@ class SharedViewModel : ViewModel() {
     // Use this method to get the selected IDs from SharedPreferences or other sources
     fun getSelectedIds(): List<String> {
         return _selectedPoiIds.value ?: emptyList()
+    }
+
+    fun clearSelectedIds() {
+        _selectedPoiIds.value = emptyList()
     }
 
     //Trails ID
@@ -60,6 +67,10 @@ class SharedViewModel : ViewModel() {
         return _selectedTrailId.value ?: emptyList()
     }
 
+    fun clearSelectedTrailsIds() {
+        _selectedTrailId.value = emptyList()
+    }
+
     //ZoneType ID
     private val _selectedZoneId = MutableLiveData<List<String>>()
     val selectedZoneTypeId: LiveData<List<String>> get() = _selectedZoneId
@@ -71,5 +82,9 @@ class SharedViewModel : ViewModel() {
     // Use this method to get the selected IDs from SharedPreferences or other sources
     fun getSelectedZoneIds(): List<String> {
         return _selectedZoneId.value ?: emptyList()
+    }
+
+    fun clearSelectedZoneIds() {
+        _selectedZoneId.value = emptyList()
     }
 }
