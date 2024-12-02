@@ -1,5 +1,6 @@
 package com.snofed.publicapp.utils
 
+import StatusItem
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,11 +26,14 @@ class SharedViewModel : ViewModel() {
 
 
     //Area ID
-    private val _selectedAreaId = MutableLiveData<String>()
-    val selectedAreaId: LiveData<String> get() = _selectedAreaId
+    private val _selectedAreaId = MutableLiveData<StatusItem>()
+    val selectedAreaId: LiveData<StatusItem> get() = _selectedAreaId
 
-    fun updateSelectedAreaIds(id: String) {
-        _selectedAreaId.value = id
+    fun updateSelectedAreaIds(id: String, text: String) {
+        _selectedAreaId.value = StatusItem(id, text)
+    }
+    fun getSelectedAreaId(): StatusItem {
+        return _selectedAreaId.value ?: StatusItem("0", "")
     }
 
     //POIS ID
