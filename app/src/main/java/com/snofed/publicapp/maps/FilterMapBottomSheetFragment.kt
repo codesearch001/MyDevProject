@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -40,7 +41,11 @@ import io.realm.Realm
 
 
 @AndroidEntryPoint
-class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter.OnItemSelectedListener  {
+class FilterMapBottomSheetFragment : BottomSheetDialogFragment()
+                                    ,PoisTypeAdapter.OnItemSelectedListener
+                                    ,ZonesTypeAdapter.OnItemSelectedListener
+                                    {
+
     private lateinit var sharedViewModel: SharedViewModel
     private var _binding: MapFilterBinding? = null
     private val binding get() = _binding!!
@@ -154,8 +159,8 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
         allPoisType.add(StatusItem(
             id = "0",
             text = "ALL",
-            iconPath = R.drawable.drawer_rounded_corners.toString())
-        )
+            iconPath = ContextCompat.getString(requireContext(), R.drawable.filter_all)
+        ))
 
         allPoisType.addAll(filterPoisType.map { poiType ->
             StatusItem(
@@ -288,13 +293,13 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
             val selectedIds = selectedIdsString.split(",")
                 .filter { it.isNotBlank() }
                 .mapNotNull { it }
-
-            if (selectedIds.isNotEmpty()) {
+            sharedViewModel.updateSelectedZoneIds(selectedIds)
+            /*if (selectedIds.isNotEmpty()) {
                 // Update the shared ViewModel with the new selected IDs
                 sharedViewModel.updateSelectedZoneIds(selectedIds)
             } else {
                 Log.d("SelectedIDs", "No valid IDs selected")
-            }
+            }*/
 
         }
         val layoutManager = GridLayoutManager(requireActivity(),3)
@@ -315,11 +320,24 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment(),PoisTypeAdapter
         }
     }
 
-    override fun onItemsSelected(selectedIds: List<String>) {
+    override fun onItemsSelected(selectedIds: List<String>, type: String) {
         // Handle the selected IDs here, e.g., print them or pass them to another fragment
-        selectedPoisIds = selectedIds
-        // Pass the selected POI IDs to the SharedViewModel
-        sharedViewModel.updateSelectedIds(selectedPoisIds)
+        if(type == "zone"){
+            selectedZoneIds = selectedIds
+            // Pass the selected ZONE IDs to the SharedViewModel
+            sharedViewModel.updateSelectedZoneIds(selectedZoneIds)
+        }
+        else if(type == "pois"){
+            selectedPoisIds = selectedIds
+            // Pass the selected POI IDs to the SharedViewModel
+            sharedViewModel.updateSelectedIds(selectedPoisIds)
+        }
+        else if(type == "trail"){
+            selectedTrailsIds = selectedIds
+            // Pass the selected TRAILS IDs to the SharedViewModel
+            sharedViewModel.updateSelectedTrailsIds(selectedTrailsIds)
+        }
+
         Log.d("SelectedPOIs", "Selected POIs IDs: $selectedPoisIds")
     }
 

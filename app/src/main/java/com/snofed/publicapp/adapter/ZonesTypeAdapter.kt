@@ -13,7 +13,7 @@ import com.snofed.publicapp.databinding.ZonesTypeListBinding
 
 class ZonesTypeAdapter(private val zonesList: List<StatusItem>,private val selectedZoneIds: List<String>,private val onItemClick: (String) -> Unit) : RecyclerView.Adapter<ZonesTypeAdapter.TrailCategoryViewHolder>() {
     //private val selectedIds = mutableListOf<String>()
-    private val selectedZone= selectedZoneIds.toMutableList()
+    private var selectedZone= selectedZoneIds.toMutableList()
     private var onItemSelectedListener: OnItemSelectedListener? = null
     inner class TrailCategoryViewHolder(private val binding: ZonesTypeListBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -61,6 +61,14 @@ class ZonesTypeAdapter(private val zonesList: List<StatusItem>,private val selec
 
         // Handle item click
         holder.itemView.setOnClickListener {
+            if(zoneTypeId == "0"){
+                if(selectedZone.joinToString(",").length > 1) {
+                    selectedZone = emptyList<String>().toMutableList()
+                }
+            }
+            else{
+                selectedZone.remove("0")
+            }
             if (selectedZone.contains(zoneTypeId)) {
                 selectedZone.remove(zoneTypeId)
             } else {
@@ -69,12 +77,15 @@ class ZonesTypeAdapter(private val zonesList: List<StatusItem>,private val selec
 
             val selectedIdsList = selectedZone.toList()  // Get selected IDs as a list
             onItemClick(selectedIdsList.joinToString(",")) // Call the item click callback
-            notifyItemChanged(position)
+            notifyDataSetChanged()
 
             // Notify the listener when the selection changes
-            onItemSelectedListener?.onItemsSelected(selectedZone)
+            onItemSelectedListener?.onItemsSelected(selectedZone, "zone")
         }
     }
 
+    interface OnItemSelectedListener {
+        fun onItemsSelected(selectedIds: List<String>, type: String)
+    }
     override fun getItemCount(): Int = zonesList.size
 }

@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationBarView
 import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.PoisTypeListBinding
+import com.snofed.publicapp.utils.SharedViewModel
 
 /*class PoisTypeAdapter(private val poiList: List<String>,) : RecyclerView.Adapter<PoisTypeAdapter.PoisTypeViewHolder>() {
     private val selectedIds = mutableListOf<Int>() // Store selected IDs
@@ -56,11 +57,13 @@ import com.snofed.publicapp.databinding.PoisTypeListBinding
 
     override fun getItemCount(): Int = poiList.size
 }*/
-
-class PoisTypeAdapter(private val poiList: List<StatusItem>, private val selectedIds: List<String>, private val onItemClick: (String) -> Unit) : RecyclerView.Adapter<PoisTypeAdapter.PoisTypeViewHolder>() {
+// val sharedViewModel: SharedViewModel
+class PoisTypeAdapter(private val poiList: List<StatusItem>, private val selectedIds: List<String>
+                                                            , private val onItemClick: (String) -> Unit)
+                                                            : RecyclerView.Adapter<PoisTypeAdapter.PoisTypeViewHolder>() {
 
     //private val selectedIds = mutableListOf<String>()
-    private val selected= selectedIds.toMutableList()
+    private var selected= selectedIds.toMutableList()
     private var onItemSelectedListener: OnItemSelectedListener? = null
 
     inner class PoisTypeViewHolder(private val binding: PoisTypeListBinding) :
@@ -71,7 +74,7 @@ class PoisTypeAdapter(private val poiList: List<StatusItem>, private val selecte
             Glide.with(binding.imgPoisType.context)
                 .load(iconPath) // Load the image URL/path
                 .placeholder(R.drawable.dinner) // Placeholder while loading
-                .error(R.drawable.dinner) // Error image if loading fails
+                .error(R.drawable.filters) // Error image if loading fails
                 .into(binding.imgPoisType) // Set image in ImageView
 
             // Update background color based on selection
@@ -108,11 +111,22 @@ class PoisTypeAdapter(private val poiList: List<StatusItem>, private val selecte
         val poisType = poiList[position]
         val poisTypeId = poisType.id // Assume each item has a unique 'id'
         val isSelected = selected.contains(poisTypeId) // Use position as the ID
-
+//        Log.e("icon_NEW", "ICON_MAP_POIS_1: $isSelected")
+//        Log.e("icon_NEW", "ICON_MAP_POIS_2{$poisType}--: $poisTypeId")
+//        Log.e("icon_NEW", "ICON_MAP_POIS_3: $position")
         holder.bind(poisType.iconPath!!, isSelected)
+
 
         // Handle item click
         holder.itemView.setOnClickListener {
+            if(poisTypeId == "0"){
+                if(selected.joinToString(",").length > 1) {
+                    selected = emptyList<String>().toMutableList()
+                }
+            }
+            else{
+                selected.remove("0")
+            }
             if (selected.contains(poisTypeId)) {
                 selected.remove(poisTypeId)
             } else {
@@ -121,8 +135,8 @@ class PoisTypeAdapter(private val poiList: List<StatusItem>, private val selecte
 
             val selectedIdsList = selected.toList()  // Get selected IDs as a list
             onItemClick(selectedIdsList.joinToString(",")) // Call the item click callback
-            notifyItemChanged(position)
-            onItemSelectedListener?.onItemsSelected(selected)
+            notifyDataSetChanged()
+            onItemSelectedListener?.onItemsSelected(selected, "pois")
 
             /*// Notify the listener when the selection changes
             onItemSelectedListener?.onItemsSelected(selectedIds)*/
@@ -133,7 +147,7 @@ class PoisTypeAdapter(private val poiList: List<StatusItem>, private val selecte
     override fun getItemCount(): Int = poiList.size
 
     interface OnItemSelectedListener {
-        fun onItemsSelected(selectedIds: List<String>)
+        fun onItemsSelected(selectedIds: List<String>,type:String)
     }
 
     // Public method to retrieve selected IDs
