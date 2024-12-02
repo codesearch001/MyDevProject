@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.snofed.publicapp.R
@@ -23,6 +24,7 @@ import com.snofed.publicapp.databinding.FragmentPurchaseHistroryDeatisBinding
 import com.snofed.publicapp.databinding.FragmentPurchaseOrderDetilsBinding
 import com.snofed.publicapp.purchasehistory.adapter.OrderDetailsAdapter
 import com.snofed.publicapp.purchasehistory.adapter.OrderHistoryAdapter
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.ClientViewModelRealm
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.DateTimeConverter
 import com.snofed.publicapp.utils.NetworkResult
@@ -36,7 +38,9 @@ class PurchaseOrderDetilsFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel by viewModels<AuthViewModel>()
     private lateinit var orderDetailsAdapter: OrderDetailsAdapter
+    private lateinit var vmClientRealm: ClientViewModelRealm
     var ticketOrderID: String = ""
+    var clientId:String = ""
     val dateTimeConverter = DateTimeConverter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -44,6 +48,7 @@ class PurchaseOrderDetilsFragment : Fragment() {
        // return inflater.inflate(R.layout.fragment_purchase_order_detils, container, false)
         _binding = FragmentPurchaseOrderDetilsBinding.inflate(inflater, container, false)
         ticketOrderID = arguments?.getString("ticketOrderID").toString()
+        clientId = arguments?.getString("clientId").toString()
         binding.backBtn.setOnClickListener {
             it.findNavController().popBackStack()
         }
@@ -53,7 +58,8 @@ class PurchaseOrderDetilsFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        vmClientRealm = ViewModelProvider(this).get(ClientViewModelRealm::class.java)
+        val clientNameRef = vmClientRealm.getClientNameById(clientId)
         fetchResponse()
         viewModel.purchaseOrderHistoryDetailsResponseLiveData.observe(viewLifecycleOwner, Observer {
                 binding.progressBar.isVisible = false
@@ -101,7 +107,7 @@ class PurchaseOrderDetilsFragment : Fragment() {
                         orderDetailsAdapter = OrderDetailsAdapter()
                         binding.recyclerView.layoutManager = LinearLayoutManager(requireActivity())
                         binding.recyclerView.adapter = orderDetailsAdapter
-                        orderDetailsAdapter.setFeed(data)
+                        orderDetailsAdapter.setFeed(data, clientNameRef)
 
                         // Handle button toggle for showing/hiding the RecyclerView
                         var isExpanded = false

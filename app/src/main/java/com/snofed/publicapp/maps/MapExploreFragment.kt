@@ -145,11 +145,12 @@ class MapExploreFragment : Fragment(){
     var clientResources : MutableList<Resource> = mutableListOf()
     var clientAreas     : MutableList<Area> = mutableListOf()
 
-    var filterTrailsIds : List<String> = emptyList()
-    var filterPoiIds : Set<String> = emptySet()
-    var filterZoneIds : List<String> = emptyList()
-    var filterAreaIds : List<String> = emptyList()
-    var filterResourceIds : List<String> = emptyList()
+    var selectedAreaId : String = "0"
+
+    var selectedTrailsIds : Set<String> = emptySet()
+    var selectedPoiIds : Set<String> = emptySet()
+    var selectedZoneIds : Set<String> = emptySet()
+    var selectedResourceIds : Set<String> = emptySet()
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -163,11 +164,11 @@ class MapExploreFragment : Fragment(){
         sharedViewModell = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         viewModelPoisType = ViewModelProvider(this).get(PoisTypeViewModelRealm::class.java)
         //Area
-        sharedViewModell.selectedAreaIds.observe(viewLifecycleOwner, Observer { selectedIds ->
+        sharedViewModell.selectedAreaId.observe(viewLifecycleOwner, Observer { selectedId ->
             // Update the UI with the selected IDs
-            Log.d("selectedAreaIds", "Selected1 IDs: $selectedIds")
+            Log.d("selectedAreaId", "Selected1 IDs: $selectedId")
             // Use the selectedIds to update the UI as needed
-            filterAreaIds = selectedIds
+            selectedAreaId = selectedId
         })
 
         //Trails
@@ -175,22 +176,17 @@ class MapExploreFragment : Fragment(){
             // Update the UI with the selected IDs
             Log.d("selectedTrailId", "Selected2 IDs: $selectedIds")
             // Use the selectedIds to update the UI as needed
-            filterTrailsIds = selectedIds
+            selectedTrailsIds = selectedIds.toSet()
         })
 
         // Pass the selected POI IDs to the SharedViewModel
         sharedViewModell.selectedPoisIds.observe(viewLifecycleOwner, Observer { selectedIds ->
             // Update the UI with the selected IDs
-            Log.d("selectedPoisIds", "Selected3 IDs: $selectedIds")
+            //Log.d("selectedPoisIds", "Selected3 IDs: $selectedIds")
             // Use the selectedIds to update the UI as needed
-            filterPoiIds = selectedIds.toSet()
-            val filteredData = clientPois.filter { poi -> filterPoiIds.contains(poi.id) }
-            val gson = Gson()
-            val json = gson.toJson(clientPois)
-            Log.e("payData"  ,"hello  "+ json)
-            Log.e("filterPoiIds_JAGGU", "filterPoiIds NEW :: $clientPois")
-            Log.e("filterPoiIds_JAGGU", "filterPoiIds DATA :: $filteredData")
-            addPoisToMap(clientPois)
+            selectedPoiIds = selectedIds.toSet()
+            val filteredData = clientPois.filter { poi -> selectedPoiIds.contains(poi.poiTypeId) }
+            addPoisToMap(filteredData)
         })
 
 
@@ -199,9 +195,9 @@ class MapExploreFragment : Fragment(){
             // Update the UI with the selected IDs
             Log.d("selectedZoneTypeId", "Selected4 IDs: $selectedIds")
             // Use the selectedIds to update the UI as needed
-            filterZoneIds = selectedIds
-            var filteredData = clientZones.filter { it.id in filterZoneIds }
-            addZonesToMap(clientZones)
+            selectedZoneIds = selectedIds.toSet()
+            val filteredData = clientZones.filter { zone -> selectedZoneIds.contains(zone.zoneTypeId) }
+            addZonesToMap(filteredData)
         })
 
 
@@ -738,7 +734,7 @@ class MapExploreFragment : Fragment(){
         mapboxMap.getStyle { style ->
             // Ensure the icon image is added to the style
             if (style.getSource("poi-icon") == null) {
-                val iconBitmap = BitmapFactory.decodeResource(resources, R.drawable.map_location_icon) // Replace with your drawable resource
+                val iconBitmap = BitmapFactory.decodeResource(resources, R.drawable.petrol_open) // Replace with your drawable resource
                 style.addImage("poi-icon", iconBitmap)
             }
 
@@ -755,7 +751,7 @@ class MapExploreFragment : Fragment(){
                     val options = PointAnnotationOptions()
                         .withPoint(point)
                         .withIconImage("poi-icon") // Use the icon image ID
-                        .withIconSize(0.05) // Adjust icon size if needed
+                        .withIconSize(0.1) // Adjust icon size if needed
 
                    // manager.create(options)
                     ///////////////////////
@@ -766,7 +762,6 @@ class MapExploreFragment : Fragment(){
                             Log.e("TAG_Pois", "Clicked on POI: ${poi.poiTypeId}")
 
                             showCustomPoisDialog(poi)
-                            Toast.makeText(context, "Clicked POI: ${poi.name}", Toast.LENGTH_SHORT).show()
                             true
                         } else {
                             false

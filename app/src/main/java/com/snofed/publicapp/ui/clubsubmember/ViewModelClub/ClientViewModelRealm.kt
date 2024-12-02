@@ -22,6 +22,11 @@ open class ClientViewModelRealm : ViewModel() {
         return realmRepository.getById(Client::class.java, clientId)
     }
 
+    fun getClientNameById(clientId: String): String? {
+        val client = getClientById(clientId)
+        return client?.publicName
+    }
+
     // Retrieve all Clients
     fun getAllClients(): List<Client> {
         return realmRepository.getAll(Client::class.java)

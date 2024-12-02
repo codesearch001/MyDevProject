@@ -14,18 +14,19 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.snofed.publicapp.R
 import com.snofed.publicapp.models.Order
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.ClientViewModelRealm
 import com.snofed.publicapp.utils.DateTimeConverter
 import com.snofed.publicapp.utils.enums.PaymentOrderStatus
 
 
-class OrderHistoryAdapter(private val listener: OnItemClickListener) : RecyclerView.Adapter<OrderHistoryAdapter.ClubViewHolder>(){
+class OrderHistoryAdapter(private val listener: OnItemClickListener, private val vmClientRealm: ClientViewModelRealm) : RecyclerView.Adapter<OrderHistoryAdapter.ClubViewHolder>(){
 
     private var orderHistoryArray: List<Order> = listOf()
     val dateTimeConverter = DateTimeConverter()
 
     // Define the OnItemClickListener interface
     interface OnItemClickListener {
-        fun onItemClick(daum: Order)
+        fun onItemClick(order: Order)
     }
     /*init {
         // Calculate the total price when the adapter is initialized and set it to the provided TextView
@@ -52,7 +53,7 @@ class OrderHistoryAdapter(private val listener: OnItemClickListener) : RecyclerV
     override fun onBindViewHolder(holder: ClubViewHolder, position: Int) {
         val reslult = orderHistoryArray[position]
         
-        //holder.txt_order_title.text =
+        holder.txt_order_title.text = vmClientRealm.getClientNameById(reslult.clientRef)
         dateTimeConverter.convertDateTime(reslult.createdDate)//convert data
         holder.tv_created_date.text =dateTimeConverter.outputFormatterOnlyDate
         holder.txt_total_price.text = reslult.totalPrice.toString()
