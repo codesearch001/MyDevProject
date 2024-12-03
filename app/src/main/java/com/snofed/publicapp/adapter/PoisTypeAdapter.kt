@@ -75,7 +75,7 @@ class PoisTypeAdapter(private val poiList: List<StatusItem>, private val selecte
             // Load the icon into the ImageView
             Glide.with(binding.imgPoisType.context)
                 .load(iconPath) // Load the image URL/path
-                .placeholder(R.drawable.filters) // Placeholder while loading
+                //.placeholder(R.drawable.filters) // Placeholder while loading
                 .error(R.drawable.filters) // Error image if loading fails
                 .into(binding.imgPoisType) // Set image in ImageView
            /* if (iconPath.isBlank()) {
