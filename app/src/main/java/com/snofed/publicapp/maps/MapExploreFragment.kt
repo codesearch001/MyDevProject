@@ -16,7 +16,6 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,6 +30,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -44,13 +44,11 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
-
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.LineString
@@ -62,6 +60,8 @@ import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.Style
 import com.mapbox.maps.extension.style.layers.addLayer
+import com.mapbox.maps.extension.style.layers.addLayerAbove
+import com.mapbox.maps.extension.style.layers.generated.SymbolLayer
 import com.mapbox.maps.extension.style.layers.generated.fillLayer
 import com.mapbox.maps.extension.style.layers.generated.lineLayer
 import com.mapbox.maps.extension.style.layers.getLayer
@@ -140,13 +140,7 @@ class MapExploreFragment : Fragment() {
     private lateinit var viewModelInterval: IntervalViewModelRealm
     private lateinit var mapIntervalAdapter: MapIntervalAdapter
 
-    // var allClientMapInterval : List<StatusItem> = emptyList()
     var allClientMapInterval: MutableList<StatusItem> = mutableListOf()
-
-//    val allTrails: MutableList<Trail> = mutableListOf()
-//    val allPois: MutableList<Poi> = mutableListOf()
-//    val allZones: MutableList<Zone> = mutableListOf()
-//    val allResources: MutableList<Resource> = mutableListOf()
 
     // Client MAP Data
     var clientTrails: MutableList<Trail> = mutableListOf()
@@ -165,6 +159,9 @@ class MapExploreFragment : Fragment() {
     var filteredZones : List<Zone> = emptyList()
     var filteredPois : List<Poi> = emptyList()
     private val dateTimeConverter = DateTimeConverter()
+
+    var isSatelliteViewClicked : Boolean = false
+    var lastTrailLayerId: String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -185,6 +182,7 @@ class MapExploreFragment : Fragment() {
             // Use the selectedIds to update the UI as needed
             selectedAreaId = selectedId.id
 
+            removePois(filteredPois)
             // filter pois again and draw again
             if (selectedAreaId != "0") {
                 if(selectedPoiIds.contains("0"))
@@ -245,7 +243,7 @@ class MapExploreFragment : Fragment() {
             if (selectedAreaId != "0") {
                 filteredPois = filteredPois.filter { poi -> poi.areaId == selectedAreaId }
             }
-
+            removePois(clientPois)
             addPoisToMap(filteredPois)
         })
 
@@ -407,21 +405,29 @@ class MapExploreFragment : Fragment() {
         // Initialize MapView and MapboxMap
         mapView = binding.mapView
         mapboxMap = mapView.mapboxMap
-        // Retrieve the CameraAnimationsPlugin
-        // Retrieve the CameraAnimationsPlugin
-        cameraAnimationsPlugin = mapView.getPlugin(CameraAnimationsPlugin::class.java.toString())
-        mapboxMap.setCamera(
-            CameraOptions.Builder()
-                .center(
-                    Point.fromLngLat(
-                        defaultLong.toDouble(),
-                        defaultLat.toDouble()
-                    )
-                ) // Set desired center
-                .zoom(6.0) // Set desired zoom level
-                .pitch(9.0)
-                .build()
-        )
+
+        mapboxMap.loadStyle(Style.OUTDOORS) {
+            // Callback when the style has been fully loaded
+            Log.d("Mapbox", "Style OUTDOORS loaded successfully.")
+
+            // Initialize Camera options
+            mapboxMap.setCamera(
+                CameraOptions.Builder()
+                    .center(
+                        Point.fromLngLat(
+                            defaultLong.toDouble(),
+                            defaultLat.toDouble()
+                        )
+                    ) // Set desired center
+                    .zoom(6.0) // Set desired zoom level
+                    .pitch(9.0) // Optional: set pitch for a tilted view
+                    .build()
+            )
+
+            // Retrieve the CameraAnimationsPlugin if needed
+            cameraAnimationsPlugin =
+                mapView.getPlugin(CameraAnimationsPlugin::class.java.toString())
+        }
 
         fetchMapTrailsData()
         binding.fab1.setOnClickListener {
@@ -449,7 +455,8 @@ class MapExploreFragment : Fragment() {
 
         binding.fab2.setOnClickListener {
             animateFab()
-
+            isSatelliteViewClicked = !isSatelliteViewClicked
+            SatelliteView()
             //Toast.makeText(requireContext(), "folder click", Toast.LENGTH_SHORT).show()
         }
         binding.fab3.setOnClickListener {
@@ -577,7 +584,7 @@ class MapExploreFragment : Fragment() {
 
 
     //trail data
-    val trails: List<Trail> = listOf() // Replace with actual data
+    //val trails: List<Trail> = listOf() // Replace with actual data
 
     private fun fetchMapTrailsData() {
 
@@ -603,7 +610,7 @@ class MapExploreFragment : Fragment() {
             Log.d("Tag_POIs", "pois size: ${clientPois.size}")
             Log.d("Tag_Resources", "resources size: ${clientResources.size}")
 
-            if (trails != null) {
+            if (clientTrails.size > 0) {
                 addTrailsToMap(clientTrails)
             }
 //            if (clientZones.isNotEmpty()) {
@@ -622,6 +629,7 @@ class MapExploreFragment : Fragment() {
 
     private fun addTrailsToMap(trails: List<Trail>) {
         mapboxMap.getStyle { style ->
+            val lastLayerId = style.styleLayers.lastOrNull()?.id
             trails.forEach { trail ->
                 val coordinates = trail.polyLine?.features?.mapNotNull { feature ->
                     feature.geometry?.coordinates
@@ -661,11 +669,14 @@ class MapExploreFragment : Fragment() {
 
                     // Add line layer
                     if (style.getLayer(layerId) == null) {
-                        style.addLayer(lineLayer(layerId, sourceId) {
+                        style.addLayerAbove(lineLayer(layerId, sourceId) {
                             lineColor(color)
                             lineWidth(6.0)
-                        })
+                        },lastLayerId)
+
                     }
+                    //Update the last added trail layer ID
+                    lastTrailLayerId = layerId
                 }
             }
 
@@ -840,114 +851,164 @@ class MapExploreFragment : Fragment() {
 
     private fun addPoisToMap(pois: List<Poi>) {
         mapboxMap.getStyle { style ->
-            // Ensure the icon image is added to the style
-            if (style.getSource("poi-icon") == null) {
-                val iconBitmap = BitmapFactory.decodeResource(resources, R.drawable.petrol_open) // Replace with your drawable resource
-                style.addImage("poi-icon", iconBitmap)
-            }
 
-            // Initialize PointAnnotationManager if not already initialized
-            initializePointAnnotationManager(style)
+            // Retrieve the last layer ID dynamically
+            val lastLayerId = style.styleLayers.lastOrNull()?.id
 
-            // Check if pointAnnotationManager is initialized
+            val markerCoordinates: List<Feature> = ArrayList()
             pointAnnotationManager?.let { manager ->
-
-                // Remove all existing annotations
+                // Clear existing annotations
                 manager.deleteAll()
 
-
-                // Add annotations for each POI
                 pois.forEach { poi ->
                     val point = Point.fromLngLat(poi.longitude!!, poi.latitude!!)
                     val poisTypeImage = viewModelPoisType.getIconPathByPoiTypeId(poi.poiTypeId!!)
+                    val poisColor = poi.lastPoiStatus?.color ?: "#97D1FF"
 
+                    // Fetch and create custom POI icons asynchronously
+                    if (!poisTypeImage.isNullOrEmpty()) {
+                        val executor = Executors.newSingleThreadExecutor()
+                        val handler = Handler(Looper.getMainLooper())
+                        executor.execute {
+                            try {
+                                val urlBitmap = fetchBitmapFromURL(poisTypeImage)
+                                val markerBase = BitmapFactory.decodeResource(resources, R.drawable.icon_layer)
 
-                    if (style.getSource("poi-icon" + poi.id) == null) {
-                        if (!poisTypeImage.isNullOrEmpty()) {
-                            // Asynchronously fetch the image from URL
-                            val executor = Executors.newSingleThreadExecutor()
-                            val handler = Handler(Looper.getMainLooper())
-                            executor.execute {
-                                try {
-                                    val url = URL(poisTypeImage)
-                                    val connection = url.openConnection() as HttpURLConnection
-                                    connection.doInput = true
-                                    connection.connect()
-                                    val inputStream = connection.inputStream
-                                    val urlBitmap = BitmapFactory.decodeStream(inputStream)
-                                    // Load the marker background (local drawable)
-                                    val markerBase = BitmapFactory.decodeResource(resources, R.drawable.icon_layer)
-
-                                    // Create a 1024x1024 bitmap for the final marker (larger size)
-                                    val finalBitmap = Bitmap.createBitmap(950, 1200, markerBase.config)
-                                    val canvas = Canvas(finalBitmap)
-
-                                    // Draw the base marker icon (scaled up)
-                                    val scaledMarkerBase = Bitmap.createScaledBitmap(markerBase, 950, 1200, true)
-                                    canvas.drawBitmap(scaledMarkerBase, 0f, 0f, null)
-
-                                    // Fill inside the circle (adjusted size)
-                                    val paint = Paint()
-                                    paint.color = Color.parseColor("#97D1FF") // Set your desired fill color
-                                    paint.style = Paint.Style.FILL
-
-                                    // Draw the larger filled circle
-                                    val centerX = 470f
-                                    val centerY = 400f
-                                    val radius = 350f // Increase the circle's radius for visibility
-                                    canvas.drawCircle(centerX, centerY, radius, paint)
-
-                                    // Overlay the URL image inside the larger circle
-                                    val scaledUrlBitmap = Bitmap.createScaledBitmap(urlBitmap, 450, 450, true) // Increase size of overlay
-                                    val overlayLeft = centerX - scaledUrlBitmap.width / 2f
-                                    val overlayTop = centerY - scaledUrlBitmap.height / 2f
-                                    canvas.drawBitmap(scaledUrlBitmap, overlayLeft, overlayTop, null)
-
-
-                                    // Post to main thread to update Mapbox style
-                                    handler.post {
-                                        style.addImage("poi-icon" + poi.id, finalBitmap)
-                                        Log.d("TAG_POI", "Image added for POI: ${poi.id}")
-                                    }
-                                } catch (e: Exception) {
-                                    Log.e("TAG_POI", "Error fetching image: ${e.message}")
+                                val finalBitmap = createCustomPoiBitmap(markerBase, urlBitmap, poisColor)
+                                handler.post {
+                                    style.addImage("poi-icon-${poi.id}", finalBitmap)
                                 }
+                            } catch (e: Exception) {
+                                Log.e("POI Error", "Error fetching image: ${e.message}")
                             }
-                        } else {
-                            // Fallback to default drawable resource if URL is not available
-                            val fallbackBitmap = BitmapFactory.decodeResource(resources, R.drawable.petrol_open)
-                            style.addImage("poi-icon" + poi.id, fallbackBitmap)
-                        }}
-
-                    val options = PointAnnotationOptions()
-                        .withPoint(point)
-                        .withIconImage("poi-icon"+poi.id) // Use the icon image ID
-                        .withIconSize(0.101) // Adjust icon size if needed
-                        .withIconAnchor(IconAnchor.BOTTOM)
-                        .withDraggable(false)
-
-                    // manager.create(options)
-                    ///////////////////////
-                    val annotation = manager.create(options)
-                    // Add click listener for the annotation
-                    manager.addClickListener { clickedAnnotation ->
-
-
-                        if (clickedAnnotation == annotation) {
-                            Log.e("TAG_Pois", "Clicked on POI: ${poi.poiTypeId}")
-
-                            showCustomPoisDialog(poi)
-                            true
-                        } else {
-                            false
                         }
                     }
 
+                    val feature = Feature.fromGeometry(fromLngLat(poi.longitude!!, poi.latitude!!))
+                    feature.addStringProperty("MARKER_ICONS", poi.name)
+                    feature.addStringProperty("POI_ID", poi.id.toString())
+
+                    // Add POI layer
+                    val poiLayerId = "poi-layer-${poi.id}"
+                    val poiSourceId = "poi-source-${poi.id}"
+                    if (style.getSource(poiSourceId) == null) {
+                        style.addSource(geoJsonSource(poiSourceId) {
+                            feature(feature)
+                        })
+                    }
+
+                    if (style.getLayer(poiLayerId) == null) {
+                        val poiLayer = SymbolLayer(poiLayerId, poiSourceId)
+                            .iconImage("poi-icon-${poi.id}")
+                            .iconAllowOverlap(true)
+                            .iconAnchor(IconAnchor.BOTTOM)
+                            .iconSize(0.101)
+
+                        // Add POI layer above the last existing layer dynamically
+                        if (lastLayerId != null) {
+                            style.addLayerAbove(poiLayer, lastLayerId)
+                        } else {
+                            style.addLayer(poiLayer) // If no layers exist, add normally
+                        }
+                    }
+
+                    // Add POI as a PointAnnotation
+                    val options = PointAnnotationOptions()
+                        .withPoint(point)
+                        .withIconImage("poi-icon-${poi.id}")
+                        .withIconSize(0.101)
+                        .withIconAnchor(IconAnchor.BOTTOM)
+
+                    val annotation = manager.create(options)
+                    manager.addClickListener { clickedAnnotation ->
+                        if (clickedAnnotation == annotation) {
+                            showCustomPoisDialog(poi)
+                            true
+                        } else false
+                    }
                 }
             } ?: run {
                 Log.e("MapError", "PointAnnotationManager is not initialized.")
             }
+
+            initializePointAnnotationManager(style)
         }
+    }
+
+    private fun fetchAndAddPoiIcon(style: Style, iconUrl: String, color: String, poiId: String) {
+        val executor = Executors.newSingleThreadExecutor()
+        val handler = Handler(Looper.getMainLooper())
+        executor.execute {
+            try {
+                val url = URL(iconUrl)
+                val connection = url.openConnection() as HttpURLConnection
+                connection.doInput = true
+                connection.connect()
+                val inputStream = connection.inputStream
+                val urlBitmap = BitmapFactory.decodeStream(inputStream)
+
+                // Customize icon (optional, based on `color`)
+                val markerBitmap = customizePoiIcon(urlBitmap, color)
+
+                handler.post {
+                    style.addImage("poi-icon-$poiId", markerBitmap)
+                    Log.d("TAG_POI", "Image added for POI: $poiId")
+                }
+            } catch (e: Exception) {
+                Log.e("TAG_POI", "Error fetching image for POI $poiId: ${e.message}")
+            }
+        }
+    }
+
+    private fun customizePoiIcon(baseIcon: Bitmap, color: String): Bitmap {
+        val resultBitmap = Bitmap.createBitmap(baseIcon.width, baseIcon.height, baseIcon.config)
+        val canvas = Canvas(resultBitmap)
+        val paint = Paint().apply {
+            this.color = Color.parseColor(color)
+            this.style = Paint.Style.FILL
+        }
+        canvas.drawCircle(resultBitmap.width / 2f, resultBitmap.height / 2f, resultBitmap.width / 2f, paint)
+        canvas.drawBitmap(baseIcon, 0f, 0f, null)
+        return resultBitmap
+    }
+
+    private fun addPoiLayer(style: Style, poi: Poi) {
+        val poiLayerId = "poi-layer-${poi.id}"
+        val sourceId = "poi-source-${poi.id}"
+
+        // Add the layer if it doesn't exist
+        if (style.getLayer(poiLayerId) == null) {
+            val poiLayer = SymbolLayer(poiLayerId, sourceId)
+                .iconImage("poi-icon-${poi.id}")
+                .iconAllowOverlap(true)
+
+            style.addLayerAbove(poiLayer, lastTrailLayerId)
+        }
+    }
+
+    private fun fetchBitmapFromURL(urlString: String): Bitmap {
+        val url = URL(urlString)
+        val connection = url.openConnection() as HttpURLConnection
+        connection.doInput = true
+        connection.connect()
+        return BitmapFactory.decodeStream(connection.inputStream)
+    }
+
+    private fun createCustomPoiBitmap(base: Bitmap, overlay: Bitmap, color: String): Bitmap {
+        val finalBitmap = Bitmap.createBitmap(950, 1200, base.config)
+        val canvas = Canvas(finalBitmap)
+        val scaledBase = Bitmap.createScaledBitmap(base, 950, 1200, true)
+        canvas.drawBitmap(scaledBase, 0f, 0f, null)
+
+        val paint = Paint()
+        paint.color = Color.parseColor(color)
+        paint.style = Paint.Style.FILL
+        canvas.drawCircle(470f, 400f, 350f, paint)
+
+        val scaledOverlay = Bitmap.createScaledBitmap(overlay, 450, 450, true)
+        canvas.drawBitmap(scaledOverlay, 470f - 225, 400f - 225, null)
+
+        return finalBitmap
     }
 
     private fun showCustomPoisDialog(poi: Poi) {
@@ -1083,23 +1144,6 @@ class MapExploreFragment : Fragment() {
     }
 
     ////////////////////
-    private fun removeZones(clientZones: MutableList<Zone>) {
-        mapboxMap.getStyle { style ->
-            clientZones.forEach { zone ->
-                val sourceId = "polygon-source-${zone.id}"
-                val layerId = "polygon-layer-${zone.id}"
-
-                if (style.getSource(sourceId) != null) {
-                    style.removeStyleSource(sourceId)
-                }
-
-                if (style.getLayer(layerId) != null) {
-                    style.removeStyleLayer(layerId)
-                }
-            }
-        }
-    }
-
 
     private fun showCustomDialog() {
         // Inflate the custom layout
@@ -1181,5 +1225,86 @@ class MapExploreFragment : Fragment() {
         }
     }
 
+    ////MAP
+
+    fun SatelliteView(){
+        if (isSatelliteViewClicked) {
+            toggleMapStyle(true)
+        } else {
+            toggleMapStyle(false)
+        }
+    }
+
+    fun toggleMapStyle(isSatellite: Boolean) {
+        val styleType = if (isSatellite) Style.SATELLITE else Style.OUTDOORS
+
+        mapboxMap.loadStyle(styleType) { style ->
+            // Remove old layers and sources (if necessary)
+
+            // Remove Trails
+            removeTrails(clientTrails)
+            // Add Trails
+            addTrailsToMap(clientTrails)
+
+            // Remove Pois
+           removePois(filteredPois)
+            // Add POIs
+            addPoisToMap(filteredPois)
+
+            // Remove Zones
+            removeZones(clientZones)
+            // Add Zones
+            addZonesToMap(filteredZones)
+        }
+    }
+
+    private fun removeTrails(clientTrails: MutableList<Trail>) {
+        mapboxMap.getStyle { style ->
+            clientTrails.forEach { trail ->
+                val sourceId = "line-source-${trail.id}"
+                val layerId = "line-layer-${trail.id}"
+
+                style.getLayer(layerId)?.let {
+                    style.removeStyleLayer(it.layerId)
+                }
+                style.getSource(sourceId)?.let {
+                    style.removeStyleSource(it.sourceId)
+                }
+            }
+        }
+    }
+
+    private fun removePois(clientPois: List<Poi>) {
+        mapboxMap.getStyle { style ->
+            clientPois.forEach { poi ->
+                val poiLayerId = "poi-layer-${poi.id}"
+                val poiSourceId = "poi-source-${poi.id}"
+
+                style.getLayer(poiLayerId)?.let {
+                    style.removeStyleLayer(it.layerId)
+                }
+                style.getSource(poiSourceId)?.let {
+                    style.removeStyleSource(it.sourceId)
+                }
+            }
+        }
+    }
+
+    private fun removeZones(clientZones: MutableList<Zone>) {
+        mapboxMap.getStyle { style ->
+            clientZones.forEach { zone ->
+                val sourceId = "polygon-source-${zone.id}"
+                val layerId = "polygon-layer-${zone.id}"
+
+                if (style.getSource(sourceId) != null) {
+                    style.removeStyleSource(sourceId)
+                }
+
+                if (style.getLayer(layerId) != null) {
+                    style.removeStyleLayer(layerId)
+                }
+            }
+        }
+    }
 
 }
