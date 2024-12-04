@@ -373,6 +373,7 @@ class SingleResortReportProblemChooseLocationFragment : Fragment() {
 
     }
 
+
     private fun handleClicks(latitude: Double, longitude: Double) {
         val userReport = UserReport(
             taskId,

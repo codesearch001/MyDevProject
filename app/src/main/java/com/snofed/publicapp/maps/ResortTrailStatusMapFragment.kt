@@ -25,6 +25,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -155,6 +156,11 @@ class ResortTrailStatusMapFragment : Fragment() {
         }
         binding.fab3.setOnClickListener {
             animateFab()
+            val bundle = Bundle()
+           // bundle.putString("clientId", clientId)
+            val destination = R.id.feedBackDefaultCategoryListFragment
+            //val destination = R.id.feedBackFragment
+            findNavController().navigate(destination, bundle)
             //showCustomDialog2()
            // Toast.makeText(requireContext(), "folder click", Toast.LENGTH_SHORT).show()
         }
