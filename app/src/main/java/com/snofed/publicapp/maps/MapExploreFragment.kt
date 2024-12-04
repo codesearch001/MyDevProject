@@ -507,7 +507,7 @@ class MapExploreFragment : Fragment() {
         binding.feedbackBtn.setOnClickListener {
             animateFab()
             val bundle = Bundle()
-            bundle.putString("clientId", clientId)
+           // bundle.putString("clientId", clientId)
             val destination = R.id.feedBackDefaultCategoryListFragment
             //val destination = R.id.feedBackFragment
             findNavController().navigate(destination, bundle)
