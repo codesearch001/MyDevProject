@@ -114,7 +114,7 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment()
             dismiss()
         }
 
-        // Activity
+        // ACTIVITY
         viewModelActivity = ViewModelProvider(this).get(ActivityViewModelRealm::class.java)
         val allActivities = viewModelActivity.getAllActivities()
         //Add All Type in allActivity
@@ -130,7 +130,7 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment()
         }.toMutableList())
 
 
-        // Area
+        // AREA
         viewModelArea = ViewModelProvider(this).get(AreaViewModelRealm::class.java)
         val clientAreas = viewModelArea.getAreasByClientId(clientId!!)
        // allClientAreaNames = allClientAreas.map { it.name!! }
@@ -146,7 +146,7 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment()
         }.toMutableList())
 
 
-        // Poi for Client
+        // POIS
         viewModelPois = ViewModelProvider(this).get(PoisViewModelRealm::class.java)
         val clientPois = viewModelPois.getDistinctPioTypesByClientId(clientId!!)
 
@@ -171,7 +171,7 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment()
         }.toMutableList())
 
 
-        //Task Category
+        //TASK CATEGORY
         viewModelTaskCategory = ViewModelProvider(this).get(TaskCategoryViewModelRealm::class.java)
         val allTaskCategories = viewModelTaskCategory.getAllTaskCategories()
         //Add All Type in allZonesType
@@ -187,7 +187,7 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment()
 
 
 
-        //Zones Type
+        // ZONE TYPES
         viewModelZoneType = ViewModelProvider(this).get(ZoneTypeViewModelRealm::class.java)
         val allZoneTypes = viewModelZoneType.getAllZoneTypes()
         //Add All Type in allZonesType
@@ -201,10 +201,8 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment()
                 text = zoneType.name ?: "No Name")
         }.toMutableList())
 
-        //Zone
-       /* viewModelZoneType = ViewModelProvider(this).get(ZoneTypeViewModelRealm::class.java)
-        val allZonesTypes = viewModelZoneType.getZonesByClientId(clientId!!)*/
 
+        // AREA
         val selectedAreaId = sharedViewModel.getSelectedAreaId()
 
         val areaNamesList = allClientAreas.map { it.text }
@@ -240,7 +238,7 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment()
         val selectedTrailsIds = sharedViewModel.getSelectedTrailsIds()
         val selectedZoneIds = sharedViewModel.getSelectedZoneIds()
 
-        // Set up RecyclerView and Adapter for PoisType
+        // Set up RecyclerView and Adapter for POIS TYPE
         poisTypeAdapter = PoisTypeAdapter(allPoisType,selectedPoisIds) { selectedIdsString ->
             Log.d("poisTypeAdapter", "Comma-separated IDs: $selectedIdsString")
             // Update the shared ViewModel with the new selected IDs
@@ -262,18 +260,19 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment()
 
 
 
-        // Set up RecyclerView and Adapter fro PoisType
+        // Set up RecyclerView and Adapter for TRAILS by Activity
         trailCategoryAdapter = MapTrailCategoryAdapter(allActivity,selectedTrailsIds) { selectedIdsString ->
             Log.d("trailCategoryAdapter", "Comma-separated IDs: $selectedIdsString")
             // Update the shared ViewModel with the new selected IDs
             val selectedIds = selectedIdsString.split(",")
                 .filter { it.isNotBlank() }
                 .mapNotNull { it }
-
+            sharedViewModel.updateSelectedTrailsIds(selectedIds)
             if (selectedIds.isNotEmpty()) {
                 // Update the shared ViewModel with the new selected IDs
                 sharedViewModel.updateSelectedTrailsIds(selectedIds)
             } else {
+                //sharedViewModel.updateSelectedTrailsIds(emptyList())
                 Log.d("SelectedIDs", "No valid IDs selected")
             }
 
@@ -286,7 +285,7 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment()
         binding.rvTrailCategory.adapter = trailCategoryAdapter
 */
 
-        // Set up RecyclerView and Adapter fro PoisType
+        // Set up RecyclerView and Adapter for ZONE TYPES
         zonesTypeAdapter = ZonesTypeAdapter(allZonesType,selectedZoneIds) { selectedIdsString ->
             Log.d("trailCategoryAdapter", "Comma-separated IDs: $selectedIdsString")
             // Update the shared ViewModel with the new selected IDs
@@ -294,12 +293,12 @@ class FilterMapBottomSheetFragment : BottomSheetDialogFragment()
                 .filter { it.isNotBlank() }
                 .mapNotNull { it }
             sharedViewModel.updateSelectedZoneIds(selectedIds)
-            /*if (selectedIds.isNotEmpty()) {
+            if (selectedIds.isNotEmpty()) {
                 // Update the shared ViewModel with the new selected IDs
                 sharedViewModel.updateSelectedZoneIds(selectedIds)
             } else {
                 Log.d("SelectedIDs", "No valid IDs selected")
-            }*/
+            }
 
         }
         val layoutManager = GridLayoutManager(requireActivity(),3)

@@ -86,6 +86,7 @@ class SingleResortReportProblemChooseLocationFragment : Fragment() {
     private var contactInformation: String? = null
     private var taskId = UUID.randomUUID().toString()
     private var noteUDID = UUID.randomUUID().toString()
+    private var clientId : String? = null
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
@@ -101,6 +102,7 @@ class SingleResortReportProblemChooseLocationFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentSingleResortReportProblemChooseLocationBinding.inflate(inflater, container, false)
 
+        clientId = arguments?.getString("clientId").toString()
         description = arguments?.getString("description").toString()
         categoryName = arguments?.getString("categoryName").toString()
         categoryID = arguments?.getString("CATEGORY_ID").toString()
@@ -374,7 +376,7 @@ class SingleResortReportProblemChooseLocationFragment : Fragment() {
     private fun handleClicks(latitude: Double, longitude: Double) {
         val userReport = UserReport(
             taskId,
-            tokenManager.getClientId().toString(),
+            clientId.toString(), // tokenManager.getClientId().toString(),
             categoryID.toString(),
             categoryName.toString(),
             description.toString(),
