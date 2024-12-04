@@ -50,7 +50,6 @@ class SubmembersFragment() : Fragment(),SubMemberListAdapter.OnItemClickListener
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         // Initialize Retrofit ApiService
        /* fetchResponse()
         subMemberViewModel.subClubLiveData.observe(viewLifecycleOwner, Observer {

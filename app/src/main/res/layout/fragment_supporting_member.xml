@@ -93,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="38dp"
-                android:text="Supporting"
+                android:text=""
                 android:textColor="@color/darkblue"
                 android:textSize="22sp"
                 android:textStyle="bold" />
@@ -159,7 +159,7 @@
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Valid to"
+                        android:text="@string/t_Valid_to"
                         android:textColor="@android:color/white"
                         android:textStyle="bold" />
 
@@ -167,7 +167,7 @@
                         android:id="@+id/txt_valid_to"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="31 Dec 2024 at 00:00"
+                        android:text=""
                         android:textColor="@android:color/white" />
 
                     <!-- Divider -->
@@ -181,7 +181,7 @@
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Valid from"
+                        android:text="@string/t_Valid_from"
                         android:textColor="@android:color/white"
                         android:textStyle="bold" />
 
@@ -189,7 +189,7 @@
                         android:id="@+id/txt_valid_from"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="01 Feb 2024 at 00:00"
+                        android:text=""
                         android:textColor="@android:color/white" />
                 </LinearLayout>
 

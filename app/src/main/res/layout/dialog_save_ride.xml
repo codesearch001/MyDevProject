@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:gravity="center"
-                android:text="You finished your ride"
+                android:text="@string/t_you_finished_your_ride"
                 android:textSize="@dimen/_12sdp"
                 android:textStyle="bold" />
 
@@ -50,19 +50,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="You can tell us how it was."
+                android:text="@string/t_you_can_tell_us_how_it_was"
                 android:textSize="@dimen/_8sdp"
                 android:textStyle="normal" />
 
         </LinearLayout>
 
 
+        <!-- Radio Buttons for Public and Private -->
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/editTextComment"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_290sdp"
             android:layout_below="@id/topLL"
-            android:layout_marginTop="6dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="10dp"
             android:background="@drawable/rounded_edittext_lightgray_background"
             android:gravity="top"
             android:hint="@string/leave_your_comment"
@@ -70,8 +73,6 @@
             android:padding="16dp"
             android:textSize="16sp" />
 
-
-        <!-- Radio Buttons for Public and Private -->
         <RadioGroup
             android:id="@+id/radioGroupPrivacy"
             android:layout_width="match_parent"
@@ -83,13 +84,13 @@
                 android:id="@+id/radioButtonPublic"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/_30sdp"
-                android:text="Make it public" />
+                android:text="@string/make_it_public" />
 
             <RadioButton
                 android:id="@+id/radioButtonPrivate"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/_30sdp"
-                android:text="Leave it private" />
+                android:text="@string/make_it_private" />
         </RadioGroup>
 
         <!-- Save Button -->

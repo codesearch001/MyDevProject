@@ -29,6 +29,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class OrderTicketFragment : Fragment() {
+
     private var _binding: FragmentOrderTicketBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: TicketViewModel
@@ -43,11 +44,7 @@ class OrderTicketFragment : Fragment() {
 
     @Inject
     lateinit var tokenManager: TokenManager
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_order_ticket, container, false)
         _binding = FragmentOrderTicketBinding.inflate(inflater, container, false)
@@ -80,14 +77,20 @@ class OrderTicketFragment : Fragment() {
             viewModel.removeTicketByIndex(index) // Remove from ViewModel
             adapter.updateTickets(viewModel.tickets) // Update adapter
 
-            Toast.makeText(requireContext(), "Ticket deleted", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.t_s_ticket_deleted, Toast.LENGTH_SHORT).show()
 
         } else {
 
-            Toast.makeText(requireContext(), "Ticket not found", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(),  R.string.t_s_ticket_not_found, Toast.LENGTH_SHORT).show()
         }
 
         displayTicketPrice()
+
+        // Hide button layout if no tickets remain
+        if (viewModel.tickets.isEmpty()) {
+            binding.buttonLayout.visibility = View.GONE
+            binding.tvSplashText.visibility = View.VISIBLE
+        }
     }
     /*  @SuppressLint("NotifyDataSetChanged")
       private fun deleteTicket(ticket: TicketModel) {
@@ -105,13 +108,23 @@ class OrderTicketFragment : Fragment() {
     @SuppressLint("SuspiciousIndentation")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.backBtn.setOnClickListener {
+            it.findNavController().popBackStack()
+        }
         // Retrieve arguments from the Bundle
         ticketCategory = arguments?.getInt("ticketCategory")
         isMultipleTicket = arguments?.getBoolean("isMultipleTicket")
 
 
         tickets = viewModel.getAllTickets()
-
+        // If tickets are empty, hide the button layout
+        if (tickets.isEmpty()) {
+            binding.buttonLayout.visibility = View.GONE
+            binding.tvSplashText.visibility = View.VISIBLE
+        } else {
+            binding.buttonLayout.visibility = View.VISIBLE
+            displayTicketPrice()
+        }
         ///send order
       val prepareOrder =  OrderDTO(
           null,
@@ -175,9 +188,7 @@ class OrderTicketFragment : Fragment() {
             findNavController().navigate(destination, bundle)
             //it.findNavController().navigate(R.id.newTicketFragment)
         }
-        binding.backBtn.setOnClickListener {
-            it.findNavController().popBackStack()
-        }
+
 
         // Assuming you want to display the last added ticket details
         if (viewModel.tickets.isNotEmpty()) {
@@ -189,7 +200,7 @@ class OrderTicketFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun displayTicketPrice() {
         //binding.txtPayTotalPrice.text = "Total Price: " + ticket.price.toString()
-        binding.txtPayTotalPrice.text = "Total Price: " + viewModel.updatePrice()
+        binding.txtPayTotalPrice.text = resources.getString(R.string.total_price) + viewModel.updatePrice()
     }
 
 

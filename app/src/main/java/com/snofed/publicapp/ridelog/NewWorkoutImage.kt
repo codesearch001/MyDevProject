@@ -17,7 +17,7 @@ open class NewWorkoutImage(
     var syncAction: Int = 0,
     var path: String = "",
     var fileName: String = "",
-    var workoutId: String = ""
+    var workout_id: String = ""
 ) : RealmObject(), Parcelable {
 
     companion object : Parceler<NewWorkoutImage> {

@@ -9,14 +9,14 @@ data class UserReport(
     val id: String,
     val clientId: String,
     val categoryId: String,
-    val name: String,
     val categoryName: String,
     val description: String,
+    val longitude: Double,
+    val latitude: Double,
+    val creatorId: String,
     val creatorFullName: String,
     val status: Int,
     val syncAction: Int,
-    val longitude: Double,
-    val latitude: Double,
     val notes: List<TaskNote> = emptyList(),
 
 )
@@ -25,26 +25,23 @@ data class TaskNote(
     val id: String,
     val text: String,
     val creatorId: String,
-    val taskId: String,
-    val lastUpdateDate: Date,
-    val syncAction: Int,
-    val createdDate: Date,
     val creatorFullName: String,
-    val isDeleted: Boolean,
+    val taskId: String,
+    val syncAction: Int,
     val taskMedia: List<TaskMedia>,
-    val isNavigatorNote: Boolean,
-    val clientId: String
 )
 @Serializable
 data class TaskMedia(
     val id: String,
-    val taskNoteId: String,
     val path: String,
     val tempPath: String,
+    val fileName: String,
     val mediaType: Int,
-    val fileName: String
+    val syncAction: Int,
+    val taskNoteId: String,
 )
 
+/*
 data class TaskHour(
     val id: String,
     val taskId: String,
@@ -53,4 +50,4 @@ data class TaskHour(
     val lastUpdateDate: Date,
     val createdDate: Date,
     val isDeleted: Boolean
-)
+)*/

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     tools:context=".ui.trailsstatus.TrailsStatusFragment">
 
     <RelativeLayout
@@ -15,6 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="165dp"
             android:background="@drawable/feed_bg" />
+
         <LinearLayout
             android:id="@+id/backBtn"
             android:layout_width="wrap_content"
@@ -30,6 +32,7 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/back_btn" />
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/idBannerTxt"
             android:layout_width="match_parent"
@@ -41,7 +44,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Trails Status"
+                android:text="@string/t_trails_status"
                 android:textColor="@color/white"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -75,7 +78,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
-                        android:text="5"
+                        android:text=" "
                         android:textColor="@color/blue_txt_light"
                         android:textSize="@dimen/_8sdp" />
 
@@ -90,14 +93,13 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
-                        android:text="Trails"
+                        android:text="@string/t_trails"
                         android:textColor="@color/blue_txt_light"
                         android:textSize="@dimen/_8sdp" />
 
                 </LinearLayout>
-
-
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/title2"
                 android:layout_width="wrap_content"
@@ -120,7 +122,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
-                        android:text="34.950 m"
+                        android:text=" "
                         android:textColor="@color/blue_txt_light"
                         android:textSize="@dimen/_8sdp" />
 
@@ -135,33 +137,95 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
-                        android:text=" Length "
+                        android:text="@string/t_length"
                         android:textColor="@color/blue_txt_light"
                         android:textSize="@dimen/_8sdp" />
-
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
 
     </RelativeLayout>
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabLayout"
+
+    <!--    <com.google.android.material.tabs.TabLayout-->
+    <!--        android:id="@+id/tabLayout"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_below="@+id/idTopBanner"-->
+    <!--        android:background="?attr/colorOnPrimary"-->
+    <!--        app:tabIndicatorColor="@color/active_txt"-->
+    <!--        app:tabSelectedTextColor="@color/active_txt"-->
+    <!--        app:tabTextAppearance="@style/TabTextStyle"-->
+    <!--        android:visibility="gone"-->
+    <!--        android:elevation="6dp"/>-->
+
+    <!--    <androidx.viewpager2.widget.ViewPager2-->
+    <!--        android:id="@+id/viewPager"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent"-->
+    <!--        android:layout_below="@id/tabLayout" />-->
+
+
+    <!-- Search Layout directly below the banner -->
+    <LinearLayout
+        android:id="@+id/searchLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/idTopBanner"
-        android:background="?attr/colorOnPrimary"
-        app:tabIndicatorColor="@color/active_txt"
-        app:tabSelectedTextColor="@color/active_txt"
-        app:tabTextAppearance="@style/TabTextStyle"
-        android:elevation="6dp"
-        />
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal"
+        android:padding="4dp">
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPager"
+        <EditText
+            android:id="@+id/editTextClubSearch"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_38sdp"
+            android:layout_marginStart="@dimen/_6sdp"
+            android:layout_marginEnd="@dimen/_6sdp"
+            android:background="@drawable/rounded_edittext"
+            android:drawableEnd="@drawable/new_search_icon"
+            android:hint="@string/t_search_trail"
+            android:imeOptions="actionSearch"
+            android:paddingStart="12dp"
+            android:maxLines="1"
+            android:paddingEnd="12dp"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/tabLayout" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/searchLayout"
+        android:layout_marginTop="@dimen/_4sdp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tvSplashText"
+            style="@style/TextRobotoNormal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/marginMedium"
+            android:gravity="center"
+            android:text="@string/txt_no_record_found"
+            android:textColor="@color/black"
+            android:textSize="@dimen/fontMedium"
+            android:visibility="gone" />
+
+    </LinearLayout>
 
 
 </RelativeLayout>

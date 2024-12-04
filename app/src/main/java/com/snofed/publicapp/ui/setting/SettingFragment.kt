@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.findNavController
 import com.google.android.material.tabs.TabLayoutMediator
+import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.TabSettingAdapter
 import com.snofed.publicapp.databinding.FragmentSettingBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,15 +22,15 @@ class SettingFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        //return inflater.inflate(R.layout.fragment_setting, container, false)
         _binding = FragmentSettingBinding.inflate(inflater, container, false)
-        // Initialize the tab layout and ViewPager
         val tabLayout = binding.tabLayout
         val viewPager = binding.viewPager
 
         // Create a list of tabs
-        val tabs = listOf("App Settings", "Profile Settings")
+        val tabs = listOf(
+            resources.getString(R.string.app_settings),
+            resources.getString(R.string.app_profile_settings)
+        )
 
         // Create a ViewPager adapter
         val adapter = TabSettingAdapter(this, tabs)
@@ -39,14 +40,23 @@ class SettingFragment : Fragment() {
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = tabs[position]
         }.attach()
+
+        // Check if a specific tab should be selected
+        val tabToOpen = arguments?.getInt("tabIndex", 0) ?: 0
+        viewPager.currentItem = tabToOpen // Set the initial tab
+
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.backBtn.setOnClickListener {
             it.findNavController().popBackStack()
         }
-
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

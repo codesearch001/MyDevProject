@@ -1,60 +1,203 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">Snofed</string>
+    <string name="app_name">Skotersverige</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
-
-
-    <string-array name="ticket_types">
-        <item>Standard</item>
-        <item>VIP</item>
-        <item>Group</item>
-    </string-array>
-    <string-array name="left_menu_items_redesign">
-        <!--<item>My Track4Outdoors</item>-->
-        <item>Login</item>
-        <item>Clubs</item>
-        <item>Purchase History</item>
-        <item>Events</item>
-        <item>My Memberships</item>
-        <item>Feed</item>
-        <item>Help</item>
-    </string-array>
-
-    <string name="txt_no_account_signup">Don\'t have an account? <font color="#2196F3">Register Now</font></string>
-    <string name="txt_register_header">Create New Account</string>
-    <string name="txt_register_subheader">Please provide all the required information</string>
-    <string name="txt_username">Username</string>
-    <string name="txt_email">Email</string>
-    <string name="txt_password">Password</string>
-    <string name="txt_password_hint">........</string>
-    <string name="txt_sign_up">Sign Up</string>
-    <string name="txt_already_have_account">Already have an account?</string>
-    <string name="txt_login_header">Welcome Back!</string>
-    <string name="txt_login_subheader">Login to access your notes</string>
-    <string name="txt_login">Login</string>
-
-    <string name="open_nav">Open Navigation Drawer</string>
-    <string name="close_nav">Close Navigation Drawer</string>
-
-    <string name="note_title">Title</string>
-    <string name="txt_title_hint">Write your title</string>
-    <string name="txt_description">Description</string>
-    <string name="txt_description_hint">Write your description</string>
-    <string name="txt_submit">Submit</string>
-    <string name="add_note">Add Note</string>
-
-
+    <string name="skotersverige">Skotersverige</string>
+    <!--App Setting key and text-->
+    <string name="mapbox_access_token" translatable="false" tools:ignore="UnusedResources">sk.eyJ1Ijoic3lzdGFpbmFkZXYiLCJhIjoiY2x6ZjUzZW41MTBiZjJpcXplYWR6b3hvMyJ9.NK5-whs-iNzysW9WktKRJg</string>
+    <string name="facebook_app_id" translatable="false">469138440399694</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb469138440399694</string>
+    <string name="txt_no_record_found">No Record Found</string>
+    <string name="txt_no_recent_feed">No recent feed available</string>
+    <string name="no_events_found_for_today">No active events registered</string>
+    <string name="txt_add_ticket_here">Add Tickets Here</string>
+    <string name="choose_preferred_language">Please choose preferred language</string>
+    <string name="sw">Swedish</string>
     <!--On Boarding Screen-->
-    <string name="skip">SKIP</string>
-    <string name="done">DONE</string>
-    <string name="menu">Menu</string>
+    <string name="lbl_skip">SKIP</string>
+    <string name="lbl_done">DONE</string>
+    <string name="time">Time</string>
+    <string name="distance">Distance</string>
+    <string name="feed_duration">Duration</string>
+    <string name="calories">Calories</string>
+    <string name="speed">Speed</string>
+    <string name="avg_pace">Avg. Pace:</string>
+
+    <string name="app_settings">App Setting</string>
+    <string name="app_profile_settings">Profile Setting</string>
+    <string name="app_upload_profile_settings">Upload profile picture</string>
+    <string name="app_choose_profile_picture_settings">Choose profile picture</string>
+    <string name="app_set_first_and_last_name_settings">Set your first name and last name</string>
+    <string name="app_additional_data_settings">ADDITIONAL DATA</string>
+    <string name="app_log_settings">Log</string>
+    <string name="app_age_settings">Age</string>
+    <string name="app_Weight_settings">Weight</string>
+    <string name="app_Gender_settings">Gender</string>
+    <string name="app_change_password_settings">Change password</string>
+    <string name="app_change_password_settings_title">CHANGE PASSWORD</string>
+    <string name="app_privacy_policy_settings">Privacy Policy</string>
+    <string name="app_clear_cache">Clear Cache</string>
+    <string name="app_clear_cache_settings">After clearing cache data will be retrieved again.</string>
+    <string name="app_app_version_settings">App version: </string>
+
+    <!--LogOut-->
+    <string name="confirm_logout">Confirm Logout</string>
+    <string name="Logout_from_skotersverige">Logout from Skotersverige</string>
+    <string name="logged_out_successfully">Logged out successfully</string>
 
     <!--SignUP Home-->
     <string name="t_1">Begin Your\n Journey With Us</string>
     <string name="t_2">Explore the nature, meet new people,\n healthy and fun activities and many more…</string>
-    <string name="home_sign_up">Sign Up</string>
-    <string name="home_dont_have_an_account_yet">Already have an account yet? Log In</string>
+    <string name="btn_sign_up">Sign Up</string>
+    <string name="txt_Already_have_an_account">Already have an account yet? Log In</string>
+
+
+    <!--DRAWER MENU-->
+    <string name="menu">Menu</string>
+    <string name="t_d_setting">Setting</string>
+    <string name="t_d_help">Help</string>
+    <string name="t_logout">Logout</string>
+    <string name="t_logged_out">Logged out successfully</string>
+    <string name="upload_successful">Upload successful</string>
+
+    <!-- FRAGMENTS TITLES -->
+    <string name="title_fragment_dashboard">Dashboard</string>
+    <string name="title_fragment_browse_club">Browse Clubs</string>
+    <string name="title_fragment_twitter">Twitter</string>
+    <string name="title_fragment_feed">Feed</string>
+    <string name="title_fragment_Map">Map</string>
+    <string name="title_fragment_Trails_status">Trails Status</string>
+    <string name="title_fragment_order">Order</string>
+    <string name="title_fragment_purchase_options">Purchase Options</string>
+    <string name="title_search_for_a_membership">Search for a membership</string>
+
+
+    <!-- FRAGMENTS DASHBOARD TEXT -->
+    <string name="t_PRO">PRO</string>
+    <string name="t_BASIC">BASIC</string>
+    <string name="t_UPGRADE">Upgrade</string>
+    <string name="t_number_of_logs">Number of logs</string>
+    <string name="t_total_distance">Total Distance</string>
+    <string name="t_total_time">Total time</string>
+    <string name="t_previous_distance">Previous distance</string>
+    <string name="t_purchase_history">Purchase history</string>
+    <string name="t_memberships">Memberships</string>
+    <string name="t_recent_feed">Recent Feed</string>
+    <string name="t_ride_logs">Ride Logs</string>
+    <string name="t_purchase_Order_details">Order Details</string>
+
+    <!--PURCHASE HISTORY TAB TEXT-->
+    <string name="tab_Orders_History">Orders</string>
+    <string name="tab_Pro_Trails_History">Pro Trails</string>
+    <string name="tab_Order_Created">Created:</string>
+    <string name="tab_Status">Status:</string>
+    <string name="tab_Valid_to">Valid to:</string>
+    <string name="tab_Total_Price">Total Price:</string>
+    <string name="tab_Number_of_Tickets">Number of Tickets:</string>
+    <string name="pro_trails_uppercase">PRO Trails</string>
+
+    <!--PURCHASE OPTION TEXT-->
+    <string name="txt_Buy_single_ticket">Buy single ticket</string>
+    <string name="txt_Buy_multiple_tickets">Buy multiple tickets</string>
+    <string name="txt_Upgrade_to_pro_trails">Upgrade to PRO Trails</string>
+
+    <!--FRAGMENT BROWSE CLUB TEXT-->
+    <string name="t_All">All</string>
+    <string name="t_Favourites">Favourites</string>
+    <string name="t_search_club">Search for a club</string>
+    <string name="t_search_trail">Search for a trail</string>
+    <string name="t_search_event">Search for a events</string>
+
+    <!--FRAGMENT MEMBERSHIP TEXT-->
+    <string name="label_active_memberships">Active</string>
+    <string name="label_expired_memberships">Expired</string>
+    <string name="t_Valid_to">Valid to</string>
+    <string name="t_Valid_from">Valid from</string>
+
+    <string name="logout_from_track4">Logout from Skotersverige?</string>
+    <string name="ok">Ok</string>
+
+    <string name="t_length_of_all_trails">Length of all trails</string>
+    <string name="t_club_action">Action</string>
+    <string name="t_club_gallery">Gallery</string>
+    <string name="t_club_about">About</string>
+    <string name="t_club_sub_members">Submembers</string>
+    <string name="t_become_a_member">Become a member</string>
+
+    <string name="t_trails">Trails</string>
+    <string name="t_length">Length</string>
+
+    <string name="t_tile_view">Tile View</string>
+    <string name="t_list_view">List View</string>
+
+    <string name="t_open">Open</string>
+    <string name="t_opened">Opened</string>
+    <string name="t_close">Close</string>
+
+    <string name="t_total_length">Total Length:</string>
+    <string name="t_last_prepared">Last Prepared</string>
+    <string name="t_last_Status_prepared">Last Prepared:</string>
+    <string name="t_trails_statuss">Status:</string>
+    <string name="t_status">Status</string>
+    <string name="t_km">Km</string>
+    <string name="total_quality">Total Quality:</string>
+    <string name="min_height">Min Height:</string>
+    <string name="max_height">Max Height:</string>
+    <string name="duration">Duration:</string>
+    <string name="difficulty">Difficulty:</string>
+    <string name="lights">Lighting:</string>
+    <string name="trail_short_message">Trail Short Message:</string>
+    <string name="average_rating">Average Rating:</string>
+    <string name="description">Description:</string>
+    <string name="term">*If you need an SMS ticket enter your mobile number (3 kr per SMS)</string>
+    <string name="ticket_created_successfully">Ticket created successfully!</string>
+
+    <!--CLUB TRAILS TEXT -->
+    <string name="t_go_explore">Go Explore</string>
+    <string name="t_trails_status">Trails Status</string>
+    <string name="t_event">Event</string>
+    <string name="t_shops">Shops</string>
+    <string name="t_links_and_doc">Links and Documents</string>
+    <string name="t_social_media">Social Media</string>
+    <string name="t_feedback">FeedBack</string>
+    <string name="t_events">Events</string>
+    <string name="t_links">Links</string>
+
+
+    <!--REGISTER/LOGIN FRAGMENT TEXT -->
+    <string name="title_register_sign_up">Sign Up</string>
+    <string name="title_login_Log_in">Log In</string>
+    <string name="t_social_with_Facebook">Log In with Facebook</string>
+    <string name="t_social_with_Google">Log In with Google</string>
+
+    <!--REGISTER/LOGIN FRAGMENT EDIT TEXT -->
+    <string name="t_login_email">EMAIL</string>
+    <string name="t_login_password">PASSWORD</string>
+    <string name="t_login_enter_your_name">Enter your name</string>"
+    <string name="t_login_enter_your_password">Enter your password</string>"
+    <string name="t_login_forgot_password">Forgot password</string>
+    <string name="t_btn_Log_in">Log In</string>
+    <string name="t_dont_have_an_account">Don’t have an account yet? Sign Up</string>
+    <!--Register-->
+    <string name="t_R_sign_up">Sign Up</string>
+    <string name="t_R_dont_have_an_account_yet">Already have an account yet? Log In</string>
+
+    <!--Common Edit hint text-->
+    <string name="t_h_enter_your_name">Enter your name</string>
+    <string name="t_h_enter_your_email">Enter your email</string>
+    <string name="t_h_enter_your_password">Enter your password</string>
+    <string name="t_h_enter_your_re_new_password">Repeat your new password</string>
+    <string name="password_must_be_8_chars">Password must be at least 8 characters</string>
+    <string name="t_h_enter_your_re_password">Repeat your password</string>
+    <string name="t_h_passwords_do_not_match">Passwords do not match.</string>
+
+    <!--forgot password-->
+    <!--Recover-->
+    <string name="t_h_enter_your_new_password">Enter your new password</string>
+    <string name="t_recover_password">Recover\npassword</string>
+    <string name="send">Send</string>
+    <string name="cancel">Cancel</string>
+
 
     <!--Common title text-->
     <string name="name">NAME</string>
@@ -66,60 +209,54 @@
     <string name="txt_label">Label</string>
 
     <!--Custom toolbar title text-->
-    <string name="t_become_a_member">Become a member</string>
+
     <string name="t_to_memberships">Memberships</string>
     <string name="t_buy_memberships">Buy Memberships</string>
+    <string name="t_my_memberships">My Memberships</string>
 
 
     <!--Button Text-->
+    <string name="new_tickets">New Ticket</string>
     <string name="get_ticket">Get Ticket</string>
     <string name="start">Start</string>
     <string name="end">End</string>
     <string name="pause">Pause</string>
     <string name="resume">Resume</string>
     <string name="Save">Save</string>
-    <string name="remember_me">Remember me</string>-->
+    <string name="remember_me">Remember me</string>
     <string name="please_enter_email_id">Please enter email Id</string>
     <string name="please_enter_valid_email_id">Please enter valid email Id</string>
-    <!--Common Edit hint text-->
-    <string name="t_h_enter_your_name">Enter your name</string>
-    <string name="t_h_enter_your_email">Enter your email</string>
-    <string name="t_h_enter_your_password">Enter your password</string>
-    <string name="password_must_be_6_chars">Password must be at least 6 characters</string>
-    <string name="t_h_enter_your_re_password">Repeat your password</string>
-    <string name="t_h_enter_your_new_password">Enter your new password</string>
-    <string name="t_h_passwords_do_not_match">Passwords do not match</string>
-    <string name="t_h_enter_your_re_new_password">Repeat your new password</string>
+    <string name="please_select_your_date">Please select your date</string>
+    <string name="please_select_your_first_name">Please enter your first name</string>
+    <string name="please_select_your_last_name">Please enter your last name</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="choose_from_gallery">Choose from Gallery</string>
+    <string name="description_t1">DESCRIPTION</string>
+    <string name="make_it_public">Make it public</string>
+    <string name="make_it_private">Make it private</string>
+    <string name="feedback_saved_successfully">Feedback saved successfully</string>
+
+    <string name="event_location">Location:</string>
+    <string name="event_resort_name">Resort name:</string>
+    <string name="trail_used_for_event">Trails used for event:</string>
+    <string name="event_start_date">Start date:</string>
+
     <string name="t_h_enter_your_verify_code">Enter verification code</string>
     <string name="t_new_password">New password</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="failed">Failed</string>
+    <string name="approved">Approved</string>
 
-    <string name="t_h_email">dev@systaina.com</string>
-    <string name="t_h_pass">Admin123!!</string>
+    <!-- <string name="t_h_email">androiddeveloper@websutility.com</string>
+    <string name="t_h_pass">developeR@2023</string>-->
+    <!--<string name="t_h_email">dev@systaina.com</string>
+    <string name="t_h_pass">Admin123!!</string>-->
+
     <string name="t_please_enter_description">Please enter description</string>
     <string name="t_please_enter_first_name">Please enter your first name</string>
     <string name="t_please_enter_last_name">Please enter your last name</string>
     <!-- <string name="t_h_pass">miD@3042</string>-->
-
-
-    <!--Login-->
-    <string name="t_s_Log_In_with_Facebook">Log In with Facebook</string>
-    <string name="t_s_Log_In_with_Google">Log In with Google</string>
-    <string name="t_sign_up">Sign Up</string>
-    <string name="t_btn_Log_in">Log In</string>
-    <string name="t_Log_in">Log In</string>
-    <string name="t_forgot_password">Forgot password</string>
-    <string name="t_dont_have_an_account">Don’t have an account yet? Sign Up</string>
-
-    <!--Register-->
-    <string name="t_R_sign_up">Sign Up</string>
-    <string name="t_R_dont_have_an_account_yet">Already have an account yet? Log In</string>
-
-    <!--Recover-->
-    <string name="t_recover_password">Recover\npassword</string>
-    <string name="send">Send</string>
-    <string name="cancel">Cancel</string>
 
 
     <string name="verification_code">Verification code</string>
@@ -128,49 +265,17 @@
     <string name="reset_password">Reset password</string>
 
 
-    <!--Drawer Menu-->
-    <string name="t_d_setting">Setting</string>
-    <string name="t_d_help">Help</string>
-    <string name="t_logout">Logout</string>
-
-
-    <!--DashBoard-->
-    <string name="t_dashboard">Dashboard</string>
-    <!--  <string name="t_location">Location</string>-->
-    <string name="t_location">New Delhi,India</string>
-    <string name="t_PRO">PRO</string>
-    <string name="t_BASIC">BASIC</string>
-    <string name="t_UPGRADE">UPGRADE</string>
-    <string name="t_number_of_logs">Number of logs</string>
-    <string name="t_total_distance">Total Distance</string>
-    <string name="t_total_time">Total time</string>
-    <string name="t_previous_distance">Previous distance</string>
-    <string name="t_recent_feed">Recent Feed</string>
-    <string name="t_purchase_history">Purchase history</string>
-    <string name="t_memberships">Memberships</string>
-
-    <!--Browse Club-->
-    <string name="t_browse_clubs">Browse Clubs</string>
-    <string name="t_All">All</string>
-    <string name="t_Favourites">Favourites</string>
-    <string name="t_search_club">Search for a club</string>
-
-
-    <!--Club -->
-    <string name="t_go_explore">Go Explore</string>
-    <string name="t_trails_status">Trails Status</string>
-    <string name="t_event">Event</string>
-    <string name="t_shops">Shops</string>
-    <string name="t_links_and_doc">Links and Documents</string>
-    <string name="t_social_media">Social Media</string>
-    <string name="t_feedback">FeedBack</string>
-
     <!--Membership-->
     <string name="membership">MEMBERSHIP</string>
     <string name="buy_memberships">Buy Memberships</string>
+    <string name="buy_membership">Buy Membership</string>
     <string name="Activate_memberships">Activate Memberships</string>
-    <string name="show_benefits">Show benefits (0)</string>
+    <string name="show_benefits">Show benefits</string>
+    <string name="hide_benefits">Hide benefits</string>
+    <string name="member_of">Member of</string>
 
+    <string name="show_tickets">Show tickets</string>
+    <string name="hide_tickets">Hide tickets</string>
     <!--Become a Mem-->
     <string name="first_name">FIRST NAME</string>
     <string name="last_name">LAST NAME</string>
@@ -178,6 +283,7 @@
     <string name="mem_email">EMAIL</string>
     <string name="t_h_enter_your_f_name">Enter your first name</string>
     <string name="t_h_enter_your_l_name">Enter your last name</string>
+    <string name="t_email_hint">example@domain.com</string>
     <string name="t_h_enter_your_mob_no">Mobile phone(e.g. +46 70 111 00 00)</string>
     <string name="t_h_enter_your_e_Mail">Enter your email</string>
     <string name="t_btn_pay_with_swish">Pay with Swish</string>
@@ -186,17 +292,47 @@
     <string name="enter_your_memb">Enter your membership</string>
     <string name="activate">Activate</string>
 
-    <!--Profile Setting-->
+    <string name="ice_on_trail">Ice on trail!</string>
+    <string name="remove_feedback">Remove feedback</string>
+    <string name="approve_feedback">Approve feedback</string>
+    <string name="type_of_report">Type of report</string>
+    <string name="leave_feedback">Leave feedback</string>
+
     <string name="t_s_ticket_types">Ticket types</string>
+    <string name="t_s_create_ticket">Create Ticket</string>
+    <string name="t_s_ticket_deleted">Ticket deleted</string>
+    <string name="t_s_ticket_not_found">Ticket not found</string>
+
+
+    <string name="t_s_save_ride">Save ride</string>
+    <string name="t_you_finished_your_ride">You finished your ride</string>
+    <string name="t_please_enter_a_comment">Please enter a comment</string>
+    <string name="t_select_image_source">Select Image Source</string>
+    <string name="t_you_can_tell_us_how_it_was">You can tell us how it was.</string>
+    <string name="t_no_internet_connection">No internet connection. Please check your network settings.</string>
+    <!--Ticket List -->
+    <string name="ticket_start_date">Start date:</string>
+    <string name="ticket_first">First name:</string>
+    <string name="ticket_last">Last name:</string>
+    <string name="ticket_email">Email:</string>
+    <string name="ticket_price">Price:</string>
+    <string name="total_price">Total price:</string>
+    <string name="link">Link:</string>
+    <string name="max_number_of_attendees">Max number of attendees:</string>
+    <string name="end_date">End date:</string>
+    <string name="sponsor">Sponsor:</string>
+    <string name="ticket_fee">Ticket fee:</string>
+
+    <!--Profile Setting-->
     <string name="t_s_start_date">Start date</string>
     <string name="t_s_first_name">First Name</string>
     <string name="t_s_last_name">Last Name</string>
     <string name="t_s_email">Email</string>
     <string name="t_s_mob_no">Mobile phone</string>
-    <string name="t_s_rem_me">remember_me</string>
+    <string name="t_s_rem_me">remember me</string>
     <string name="t_h_enter_your_fname">Enter your first Name</string>
     <string name="t_h_enter_your_lname">Enter your last Name</string>
-
+    <string name="t_tickets_total_price">Total price:</string>
     <string name="report_problem_confirm_and_send_btn">Confirm &amp; Send</string>
     <string name="report_problem_choose_location_btn">Choose Location</string>
     <string name="trail_info_preparation_datete_not_yet_prepared">Not yet prepared</string>
@@ -219,7 +355,7 @@
         <item>4 km/h</item>
     </string-array>
 
-    <string name="pref_sync_on_wifi_title">Sync on WiFi only</string>
+    <string name="pref_sync_on_wifi_title">Sync on Wi-Fi only</string>
     <string name="pref_sync_on_wifi_summary_on">Sync will be performed over WiFi only.</string>
     <string name="pref_sync_on_wifi_summary_off">Sync both on WiFi and mobile network.</string>
     <string name="pref_units_title">Units</string>
@@ -234,7 +370,7 @@
     <string name="pref_units_dist_imperial">mi</string>
     <string name="pref_units_pace_metric">min/km</string>
     <string name="pref_units_pace_imperial">min/mi</string>
-    <string name="pref_screen_on_wifi_title">Screen always ON during workout</string>
+    <string name="pref_screen_on_wifi_title">Screen always ON during log</string>
     <string name="pref_screen_on_wifi_summary_on">Screen is always on.</string>
     <string name="pref_screen_on_wifi_summary_off">Screen turns off automaticaly.</string>
     <string name="pref_userdata_title">User information</string>
@@ -250,8 +386,29 @@
     <string name="pref_user_lbs_units"> lbs</string>
     <string name="pref_user_age_title">Age</string>
     <string name="pref_user_age_summary">User age</string>
-
+    <string name="btn_visit_our_website">Visit our website</string>
     <string name="pref_privacy_policy">Privacy Policy Info</string>
     <string name="backend_localization">en-US</string>
     <string name="swish_application_not_installed_toast">Swish application is not installed on your device</string>
+
+    <string name="please_select_start_date">Please select a start date.</string>
+    <string name="loacation_feature">Location permission is required to use this feature.</string>
+    <string name="write_here">Write here</string>
+
+    <string name="not_vailable_link_x">X link not available</string>
+    <string name="not_vailable_link_fb">Facebook link not available</string>
+    <string name="not_vailable_link_insta">Instagram link not available</string>
+
+    <string name="visit_x">Visit club X profile</string>
+    <string name="visit_fb">Visit club Facebook profile</string>
+    <string name="visit_insta">Visit club Instagram profile</string>
+
+    <string name="user_not_exist">User Does Not Exist</string>
+    <string name="link_sent_email">Link is sent to your Email address.</string>
+    <string name="email_follow_instruction">Please follow the instructions in the email to access your account.</string>
+
+    <string name="field_not_empty">Field cannot be empty</string>
+    <string name="name_min_length">Name minimum should be of 3 char</string>
+
+
 </resources>

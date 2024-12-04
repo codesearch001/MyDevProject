@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+    </data>
+
+    <!--<LinearLayout
+        android:layout_width="wrap_content"
+        android:padding="@dimen/_2sdp"
+        android:layout_height="wrap_content">
+
+        &lt;!&ndash;<TextView
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginEnd="@dimen/_6sdp"
+            android:background="@drawable/text_outline"
+            android:backgroundTint="@color/maps_btn"
+            android:gravity="center"
+            android:text="All"
+            android:visibility="gone"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_11sdp"
+            android:textStyle="normal" />&ndash;&gt;
+
+        <TextView
+            android:id="@+id/txt_trail_category"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/text_outline"
+            android:gravity="center"
+            android:text=""
+            android:textColor="@color/maps_btn"
+            android:textSize="@dimen/_9sdp"
+            android:textStyle="normal" />
+
+
+    </LinearLayout>-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_2sdp">
+
+        <TextView
+            android:id="@+id/txt_zone_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/text_outline"
+            android:ellipsize="end"
+            android:textAlignment="center"
+            android:maxWidth="@dimen/_150sdp"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/maps_btn"
+            android:textSize="@dimen/_11sdp"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+
+</layout>

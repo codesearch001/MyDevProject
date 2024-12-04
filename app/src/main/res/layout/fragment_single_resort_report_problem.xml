@@ -63,7 +63,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="FeedBack"
+                android:text="@string/t_feedback"
                 android:padding="8dp"
                 android:textColor="@color/white"
                 android:textSize="26sp"
@@ -156,7 +156,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="DESCRIPTION"
+                    android:text="@string/description_t1"
                     android:layout_marginStart="@dimen/_6sdp"
                     android:textSize="@dimen/_9sdp"
                     android:textStyle="bold" />
@@ -168,7 +168,7 @@
                     android:layout_marginTop="@dimen/_6sdp"
                     android:background="@drawable/rounded_edit_text_background"
                     android:gravity="center|top"
-                    android:hint="Write here"
+                    android:hint="@string/write_here"
                     android:padding="@dimen/_6sdp"
                     android:text=""
                     android:textAlignment="textStart"
@@ -263,7 +263,7 @@
                         android:layout_marginTop="6dp"
                         android:background="@drawable/rounded_edit_text_background"
                         android:hint="@string/t_h_enter_your_mob_no"
-                        android:inputType="number"
+                        android:inputType="phone"
                         android:padding="@dimen/_12sdp"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_11sdp" />

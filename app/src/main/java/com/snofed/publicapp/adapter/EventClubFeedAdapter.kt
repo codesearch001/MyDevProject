@@ -6,32 +6,70 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.snofed.publicapp.R
-import com.snofed.publicapp.models.browseSubClub.Event
+import com.snofed.publicapp.models.realmModels.Event
+import com.snofed.publicapp.models.events.EventResponseList
 import com.snofed.publicapp.utils.DateTimeConverter
 
-class EventClubFeedAdapter(private val listener: OnItemClickListener) : RecyclerView.Adapter<EventClubFeedAdapter.ClubViewHolder>() {
-
+class EventClubFeedAdapter(private var eventList: List<Event>,private val listener: OnItemClickListener) : RecyclerView.Adapter<EventClubFeedAdapter.ClubViewHolder>() {
+   // private var eventList: List<Event> = listOf()
     private var feedArray: List<Event> = listOf()
     val dateTimeConverter = DateTimeConverter()
 
     interface OnItemClickListener {
         fun onItemClick(eventId: String)
     }
-
+    init {
+        eventList = feedArray
+    }
     @SuppressLint("NotifyDataSetChanged")
-    fun setEvent(clubs: List<Event>?) {
-        if (clubs != null) {
+    fun setEvent(clubsEvents: List<Event>) {
+       /* if (clubs != null) {
             this.feedArray = clubs
         }
+        //Log.i("test","sizearr "+outerArray.size)
+        notifyDataSetChanged()*/
+
+
+        eventList = clubsEvents
+        //notifyDataSetChanged() // Notify the adapter that the data has changed
+        if (eventList != null) {
+            this.feedArray = eventList
+        }
+        this.eventList = this.feedArray
         //Log.i("test","sizearr "+outerArray.size)
         notifyDataSetChanged()
     }
 
+    //Apply filter
+    fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val filteredResults = FilterResults()
+                val filterPattern = constraint?.toString()?.lowercase()?.trim() ?: ""
+                filteredResults.values = if (filterPattern.isEmpty()) {
+                    feedArray
+                } else {
+                    feedArray.filter {
+//                        it.name.lowercase().contains(filterPattern)
+                        it.name?.lowercase()?.contains(filterPattern) ?: false
+                    }
+                }
+
+                return filteredResults
+            }
+
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                feedArray = results?.values as List<Event>
+                notifyDataSetChanged()
+            }
+        }
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClubViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.event_item_list, parent, false)
         return ClubViewHolder(view)
@@ -41,7 +79,7 @@ class EventClubFeedAdapter(private val listener: OnItemClickListener) : Recycler
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ClubViewHolder, position: Int) {
         val reslult =feedArray[position]
-        dateTimeConverter.convertDateTime(reslult.startDate)//convert data
+        dateTimeConverter.convertDateTime(reslult.startDate!!)//convert data
         val getDate=dateTimeConverter.datePartOnly
         val getDateOfMonth=dateTimeConverter.dateOfMonthPartOnly
         /* val newDate = SpannableString(getDate)
@@ -56,14 +94,20 @@ class EventClubFeedAdapter(private val listener: OnItemClickListener) : Recycler
             holder.textEventLocation.text = reslult.location
         }
         holder.textMaxAttendees.text = reslult.maxAttendees.toString()
-        if (reslult.ticketPrice.equals(0.0)){
-            holder.textTicketPrice.text = "Free Ticket "
-        }else{
-            holder.textTicketPrice.text = reslult.ticketPrice.toString()
+//        if (reslult.ticketPrice!!.equals(0.0)){
+//            holder.textTicketPrice.text = "Free Ticket "
+//        }else{
+//            holder.textTicketPrice.text = reslult.ticketPrice.toString()
+//        }
+        val ticketPrice = reslult.ticketPrice ?: 0.0 // Handle null with a default value
+        holder.textTicketPrice.text = if (ticketPrice == 0.0) {
+            "Free Ticket"
+        } else {
+            String.format("%.2f", ticketPrice) // Format ticket price to 2 decimal places
         }
         holder.eventCardId.setOnClickListener {
             Log.e("click..", "clickClubItem")
-            listener.onItemClick(reslult.id) // Assuming Client has an 'id' property
+            listener.onItemClick(reslult.id!!) // Assuming Client has an 'id' property
         }
     }
 

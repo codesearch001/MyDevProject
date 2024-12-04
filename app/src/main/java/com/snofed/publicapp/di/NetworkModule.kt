@@ -1,6 +1,7 @@
 package com.snofed.publicapp.di
 
 import com.snofed.publicapp.api.AuthInterceptor
+import com.snofed.publicapp.api.ClientAPI
 import com.snofed.publicapp.api.FeedBackUserAPI
 import com.snofed.publicapp.api.MembershipApi
 import com.snofed.publicapp.api.UserAPI
@@ -31,6 +32,14 @@ class NetworkModule {
             .addConverterFactory(GsonConverterFactory.create())
     }
 
+    @Singleton
+    @Provides
+    @Named("ClientApiBaseUrl")
+    fun providesClientRetrofit(): Retrofit.Builder {
+        return Retrofit.Builder().baseUrl(ServiceUtil.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+    }
+
 
     @Singleton
     @Provides
@@ -56,13 +65,21 @@ class NetworkModule {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
-        return OkHttpClient.Builder().addInterceptor(interceptor)
+        return OkHttpClient.Builder()
+            .addInterceptor(interceptor)
+            .addInterceptor(loggingInterceptor)
+            .callTimeout(60, TimeUnit.SECONDS)
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .build()
+    }
+        /*return OkHttpClient.Builder().addInterceptor(interceptor)
             .addInterceptor(loggingInterceptor) // Add logging interceptor
             .connectTimeout(30, TimeUnit.SECONDS) // Set custom timeouts if needed
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
             .build()
-    }
+    }*/
 
 
     @Singleton
@@ -70,6 +87,12 @@ class NetworkModule {
     @Named("UserAPI")
     fun providesUserAPI(@Named("UserApiBaseUrl")retrofitBuilder: Retrofit.Builder, okHttpClient: OkHttpClient): UserAPI {
         return retrofitBuilder.client(okHttpClient).build().create(UserAPI::class.java)
+    }
+    @Singleton
+    @Provides
+    @Named("ClientAPI")
+    fun providesClientAPI(@Named("ClientApiBaseUrl")retrofitBuilder: Retrofit.Builder, okHttpClient: OkHttpClient): ClientAPI {
+        return retrofitBuilder.client(okHttpClient).build().create(ClientAPI::class.java)
     }
 
     @Singleton

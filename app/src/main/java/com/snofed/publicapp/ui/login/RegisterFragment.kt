@@ -109,8 +109,8 @@ class RegisterFragment : Fragment() {
                 false
             }
             // Check if password is less than 6 characters
-            password.length < 6 -> {
-                showToast(getString(R.string.password_must_be_6_chars)) // Password length message
+            password.length < 8 -> {
+                showToast(getString(R.string.password_must_be_8_chars)) // Password length message
                 false
             }
             // Check if repeat password matches password

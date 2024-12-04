@@ -45,8 +45,19 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text=""
+                        android:layout_marginBottom="@dimen/_4sdp"
                         android:textColor="@color/dark_blue"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/_12sdp"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/feedBack_created_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:visibility="gone"
+                        android:textColor="@color/grey_light11"
+                        android:textSize="@dimen/_9sdp"
                         android:textStyle="bold" />
 
                 </LinearLayout>

@@ -5,6 +5,7 @@ plugins {
     id("realm-android")
     id("kotlin-parcelize")
     id("com.google.dagger.hilt.android")
+    id("com.google.gms.google-services") // Add this line
 }
 
 android {
@@ -16,7 +17,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
         multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -64,6 +65,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.play.services.location)
     implementation(libs.play.services.maps)
+    implementation(libs.firebase.auth.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -104,6 +106,7 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:$retrofit_version")
     implementation("com.squareup.retrofit2:converter-gson:$retrofit_version")
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation ("androidx.constraintlayout:constraintlayout:2.1.4")
 
 
     val coroutines_version = "1.6.0"
@@ -130,9 +133,10 @@ dependencies {
     implementation("com.mapbox.mapboxsdk:mapbox-sdk-turf:5.9.0-alpha.1")
 
 
+    implementation ("de.hdodenhof:circleimageview:3.1.0")
 
     implementation ("com.google.android.gms:play-services-location:21.0.1")
-    implementation ("com.google.android.gms:play-services-auth:20.5.0")
+
 
 
     // CameraX core library
@@ -140,6 +144,17 @@ dependencies {
     implementation ("androidx.camera:camera-camera2:1.1.0")
     implementation ("androidx.camera:camera-lifecycle:1.1.0")
     implementation ("androidx.camera:camera-view:1.1.0")
+
+
+//// Google Services
+    implementation ("com.google.firebase:firebase-auth:22.0.0")
+    implementation ("com.google.android.gms:play-services-auth:20.7.0")
+    implementation ("com.google.android.gms:play-services-auth:20.5.0")
+//    implementation("com.google.android.gms:play-services-auth:20.7.0")
+//    implementation ("com.google.firebase:firebase-auth-ktx:23.1.0") // Firebase Authentication
+//    implementation("com.google.firebase:firebase-auth:21.0.1")
+//    //implementation platform ("com.google.firebase:firebase-bom:26.1.0")
+//    implementation("com.google.firebase:firebase-messaging")
 
 
     // Mapbox SDK dependencies

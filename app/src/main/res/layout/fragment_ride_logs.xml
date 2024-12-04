@@ -40,7 +40,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Ride Logs"
+                android:text="@string/t_ride_logs"
                 android:padding="8dp"
                 android:textColor="@color/white"
                 android:textSize="24sp"
@@ -84,7 +84,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/marginMedium"
-            android:text="No Record Found"
+            android:text="@string/txt_no_record_found"
             android:visibility="gone"
             android:gravity="center"
             android:textColor="@color/black"

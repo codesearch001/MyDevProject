@@ -47,24 +47,36 @@
             android:orientation="horizontal">
 
             <LinearLayout
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:padding="6dp">
 
                 <ImageView
+                    android:id="@+id/isfavSubscribed"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:background="@drawable/circle_white_background"
                     android:padding="8dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/hearth_empty" />
+                <ImageView
+                    android:id="@+id/isfavFillSubscribed"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/circle_white_background"
+                    android:padding="8dp"
+                    android:visibility="gone"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/hearth_filled" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
+                android:visibility="gone"
                 android:padding="6dp">
 
                 <ImageView
@@ -88,10 +100,11 @@
 
             <LinearLayout
                 android:id="@+id/subClubTitle"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/_2sdp"
-                android:layout_marginTop="20dp">
+                android:layout_marginTop="@dimen/_8sdp">
 
                 <TextView
                     android:id="@+id/idPublicName"
@@ -99,7 +112,17 @@
                     android:layout_height="wrap_content"
                     android:text=""
                     android:textColor="@color/white"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/_12sdp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtSubOrgName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:visibility="gone"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_9sdp"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -117,7 +140,7 @@
                     android:background="@drawable/rectangle_white_background"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:padding="@dimen/_2sdp">
+                    android:padding="@dimen/_1sdp">
 
                     <TextView
                         android:id="@+id/idTotalTrails"
@@ -140,7 +163,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
-                        android:text="Trails"
+                        android:text="@string/t_trails"
                         android:textColor="@color/blue_txt_light"
                         android:textSize="@dimen/_8sdp" />
 
@@ -162,7 +185,7 @@
                     android:background="@drawable/rectangle_white_background"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:padding="@dimen/_2sdp">
+                    android:padding="@dimen/_1sdp">
 
                     <TextView
                         android:id="@+id/idTotalTrailsLength"
@@ -185,7 +208,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
-                        android:text="Length of all trails"
+                        android:text="@string/t_length_of_all_trails"
                         android:textColor="@color/blue_txt_light"
                         android:textSize="@dimen/_8sdp" />
 
@@ -207,7 +230,7 @@
                     android:background="@drawable/rectangle_white_background"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:padding="@dimen/_2sdp">
+                    android:padding="@dimen/_1sdp">
 
                     <TextView
                         android:id="@+id/idClientRating"
@@ -242,6 +265,22 @@
 
     </RelativeLayout>
 
+<!--    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_marginTop="1dp"
+        android:layout_height="56dp"
+        android:layout_below="@+id/idBrowseClube"
+        android:background="@color/white"
+        app:tabIndicatorColor="@color/active_txt"
+        app:tabSelectedTextColor="@color/active_txt"
+        app:tabTextAppearance="@style/TabTextStyle"
+        app:tabGravity="center"
+        app:tabIndicatorHeight="0dp"
+        app:autoSizeTextType="uniform"
+        app:tabMode="auto"
+        android:elevation="4dp"
+        app:tabRippleColor="@null" />-->
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
@@ -249,7 +288,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/idBrowseClube"
         android:background="?attr/colorOnPrimary"
-        android:elevation="6dp"
+        android:elevation="4dp"
         app:tabMode="fixed"
         app:tabIndicatorAnimationMode="linear"
         app:tabIndicatorFullWidth="true"

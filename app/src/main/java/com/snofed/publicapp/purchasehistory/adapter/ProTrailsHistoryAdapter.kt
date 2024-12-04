@@ -12,13 +12,13 @@ import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.snofed.publicapp.R
-import com.snofed.publicapp.purchasehistory.model.Daum
+import com.snofed.publicapp.models.Order
 import com.snofed.publicapp.utils.DateTimeConverter
 import com.snofed.publicapp.utils.enums.PaymentOrderStatus
 
 class ProTrailsHistoryAdapter: RecyclerView.Adapter<ProTrailsHistoryAdapter.ClubViewHolder>(){
 
-    private var orderHistoryArray: List<Daum> = listOf()
+    private var orderHistoryArray: List<Order> = listOf()
     val dateTimeConverter = DateTimeConverter()
 
     /*init {
@@ -28,7 +28,7 @@ class ProTrailsHistoryAdapter: RecyclerView.Adapter<ProTrailsHistoryAdapter.Club
     }*/
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setFeed(clubs: List<Daum>?) {
+    fun setFeed(clubs: List<Order>?) {
         if (clubs != null) {
             this.orderHistoryArray = clubs
         }

@@ -72,7 +72,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="FeedBack"
+                android:text="@string/t_feedback"
                 android:padding="8dp"
                 android:textColor="@color/white"
                 android:textSize="26sp"
@@ -168,7 +168,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/marginMedium"
-            android:text="No Record Found"
+            android:text="@string/txt_no_record_found"
             android:visibility="gone"
             android:gravity="center"
             android:textColor="@color/black"

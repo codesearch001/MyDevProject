@@ -8,6 +8,7 @@ object AppPreference {
     private var sharedPreferences: SharedPreferences.Editor? = null
     private const val PREFERENCE_NAME = "app-preference"
 
+
     fun savePreference(context: Context?, key: String?, value: String?) {
         if (context != null) {
             sharedPreferences = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE).edit()

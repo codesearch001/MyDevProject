@@ -7,32 +7,70 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.snofed.publicapp.R
 import com.snofed.publicapp.models.browseSubClub.Event
+import com.snofed.publicapp.models.browseSubClub.Trail
 import com.snofed.publicapp.models.events.EventResponseList
 import com.snofed.publicapp.utils.DateTimeConverter
 
 /*class EventFeedAdapter()*/
-class EventFeedAdapter(private val listener: OnItemClickListener) : RecyclerView.Adapter<EventFeedAdapter.ClubViewHolder>() {
-
+class EventFeedAdapter(private var eventList: List<EventResponseList>,private val listener: OnItemClickListener) : RecyclerView.Adapter<EventFeedAdapter.ClubViewHolder>() {
+    //private var outerArray: List<EventResponseList> = listOf()
     private var feedArray: List<EventResponseList> = listOf()
     val dateTimeConverter = DateTimeConverter()
 
     interface OnItemClickListener {
         fun onItemClick(eventId: String)
     }
-
+    init {
+        eventList = feedArray
+    }
     @SuppressLint("NotifyDataSetChanged")
-    fun setEvent(clubs: List<EventResponseList>?) {
-        if (clubs != null) {
-            this.feedArray = clubs
+    fun setEvent(events: List<EventResponseList>) {
+//        if (clubs != null) {
+//            this.feedArray = clubs
+//        }
+//        //Log.i("test","sizearr "+outerArray.size)
+//        notifyDataSetChanged()
+
+        eventList = events
+        //notifyDataSetChanged() // Notify the adapter that the data has changed
+        if (eventList != null) {
+            this.feedArray = eventList
         }
+        this.eventList = this.feedArray
         //Log.i("test","sizearr "+outerArray.size)
         notifyDataSetChanged()
+
+    }
+
+    //Apply filter
+    fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val filteredResults = FilterResults()
+                val filterPattern = constraint?.toString()?.lowercase()?.trim() ?: ""
+                filteredResults.values = if (filterPattern.isEmpty()) {
+                    feedArray
+                } else {
+                    feedArray.filter {
+                        it.name.lowercase().contains(filterPattern)
+                    }
+                }
+
+                return filteredResults
+            }
+
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                feedArray = results?.values as List<EventResponseList>
+                notifyDataSetChanged()
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClubViewHolder {

@@ -1,16 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <group>
         <item
             android:id="@+id/nav_drawer_setting"
             android:icon="@drawable/settings"
             android:title="@string/t_d_setting" />
 
-
         <item
             android:id="@+id/nav_drawer_help"
             android:icon="@drawable/question"
             android:title="@string/t_d_help" />
 
+        <!-- Divider item for visual separation -->
+        <item
+            android:id="@+id/nav_divider"
+            android:icon="@android:color/transparent"
+            android:title=" "
+            android:checkable="false"
+            app:showAsAction="never"
+            android:clickable="false"
+            android:focusable="false" />
+
+        <!-- Larger space before logout -->
+        <item
+            android:id="@+id/nav_large_space"
+            android:icon="@android:color/transparent"
+            android:title=" "
+            android:checkable="false"
+            app:showAsAction="never"
+            android:clickable="false"
+            android:focusable="false" />
+
+        <!-- More space by adding another transparent item -->
+        <item
+            android:id="@+id/nav_extra_space"
+            android:icon="@android:color/transparent"
+            android:title=" "
+            android:checkable="false"
+            app:showAsAction="never"
+            android:clickable="false"
+            android:focusable="false" />
+        <item
+            android:id="@+id/nav_extra_space1"
+            android:icon="@android:color/transparent"
+            android:title=" "
+            android:checkable="false"
+            app:showAsAction="never"
+            android:clickable="false"
+            android:focusable="false" />
+        <item
+            android:id="@+id/nav_extra_space2"
+            android:icon="@android:color/transparent"
+            android:title=" "
+            android:checkable="false"
+            app:showAsAction="never"
+            android:clickable="false"
+            android:focusable="false" />
+        <item
+            android:id="@+id/nav_extra_space3"
+            android:icon="@android:color/transparent"
+            android:title=" "
+            android:checkable="false"
+            app:showAsAction="never"
+            android:clickable="false"
+            android:focusable="false" />
+        <item
+            android:id="@+id/nav_extra_space4"
+            android:icon="@android:color/transparent"
+            android:title=" "
+            android:checkable="false"
+            app:showAsAction="never"
+            android:clickable="false"
+            android:focusable="false" />
+        <item
+            android:id="@+id/nav_extra_space5"
+            android:icon="@android:color/transparent"
+            android:title=" "
+            android:checkable="false"
+            app:showAsAction="never"
+            android:clickable="false"
+            android:focusable="false" />
+        <item
+            android:id="@+id/nav_extra_space6"
+            android:icon="@android:color/transparent"
+            android:title=" "
+            android:checkable="false"
+            app:showAsAction="never"
+            android:clickable="false"
+            android:focusable="false" />
     </group>
+
+    <!-- Logout item at the bottom -->
+    <item
+        android:id="@+id/nav_drawer_logout"
+        android:icon="@drawable/logout"
+        android:title="@string/t_logout"
+        app:showAsAction="never" />
 </menu>

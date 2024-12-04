@@ -94,6 +94,7 @@ class SingleResortReportProblemFragment : Fragment() {
         // Create a Bundle to send data to the next fragment
         val bundle = Bundle().apply {
             putString("description", edtReportProblem) // Add the description to the bundle
+            putString("categoryName", categoryName) // Add the description to the bundle
             putString("CATEGORY_ID", categoryID) // Add the description to the bundle
             putString("CATEGORY_F_NAME", etFirstName) // Add the description to the bundle
             putString("CATEGORY_L_NAME", etLastName) // Add the description to the bundle

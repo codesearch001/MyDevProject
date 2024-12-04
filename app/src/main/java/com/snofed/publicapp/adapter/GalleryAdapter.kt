@@ -24,6 +24,7 @@ import com.snofed.publicapp.models.browseSubClub.BrowseSubClubResponse
 import com.snofed.publicapp.models.browseSubClub.Image
 
 import com.snofed.publicapp.models.browseSubClub.PublicData
+import com.snofed.publicapp.models.realmModels.ClientImage
 import com.snofed.publicapp.models.workoutfeed.Daum
 import com.snofed.publicapp.utils.Constants
 import com.snofed.publicapp.utils.DateTimeConverter
@@ -32,12 +33,12 @@ import com.snofed.publicapp.utils.ServiceUtil
 /*class GalleryAdapter {}*/
 class GalleryAdapter():RecyclerView.Adapter<GalleryAdapter.GridViewHolder>() {
 
-    private var galleryArray: List<Image> = listOf()
+    private var galleryArray: List<ClientImage> = listOf()
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setGallery(clubs: List<Image>?) {
-        if (clubs != null) {
-            this.galleryArray = clubs
+    fun setGallery(clientImage: List<ClientImage>?) {
+        if (clientImage != null) {
+            this.galleryArray = clientImage
         }
         Log.i("test","sizearr "+galleryArray.size)
         notifyDataSetChanged()

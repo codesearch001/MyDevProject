@@ -25,7 +25,7 @@
     <TextView
         android:id="@+id/noRecord"
         android:layout_width="match_parent"
-        android:text="No Record Found"
+        android:text="@string/txt_no_record_found"
         android:gravity="center"
         android:visibility="gone"
         android:textSize="@dimen/_9sdp"

@@ -6,18 +6,29 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.gson.Gson
 import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.BrowseClubListAdapter
 import com.snofed.publicapp.adapter.ClubActionAdapter
 import com.snofed.publicapp.databinding.FragmentActionsBinding
+import com.snofed.publicapp.models.browseSubClub.ClubData
 import com.snofed.publicapp.models.browseclubaction.GridItem
+import com.snofed.publicapp.models.realmModels.Club
+import com.snofed.publicapp.utils.Helper
+import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.OnItemClickListener
+import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.ToastUtils
 import com.snofed.publicapp.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -27,8 +38,12 @@ class ActionsFragment : Fragment(),OnItemClickListener {
     private val binding get() = _binding!!
     @Inject
     lateinit var tokenManager: TokenManager
-
+    private val sharedViewModel by activityViewModels<SharedViewModel>()
     private var clientId: String? = null
+//    var clubData: ClubData? = null
+    var clubData: Club? = null
+    var defaultLocationJson : String? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -41,6 +56,16 @@ class ActionsFragment : Fragment(),OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        sharedViewModel.browseSubClubResponse.observe(viewLifecycleOwner) { response ->
+            clubData = response.data
+            val defaultLocation = mutableMapOf<String, String>()
+            defaultLocation["Latitude"] = clubData!!.startLatitude.toString()
+            defaultLocation["Longitude"] = clubData!!.startLongitude.toString()
+            val gson = Gson()
+            defaultLocationJson = gson.toJson(defaultLocation)
+        }
+
+
         binding.becomeMemberButton.setOnClickListener {
             val bundle = Bundle()
             bundle.putString("clientId", tokenManager.getClientId().toString())
@@ -49,17 +74,24 @@ class ActionsFragment : Fragment(),OnItemClickListener {
         }
 
         binding.goexplore.setOnClickListener {
-            findNavController().navigate(R.id.mapExploreFragment)
+
+            val bundle = Bundle()
+            bundle.putString("clientId", tokenManager.getClientId().toString())
+            bundle.putString("DefaultClubLocation", defaultLocationJson)
+            val destination = R.id.mapExploreFragment
+            findNavController().navigate(destination, bundle)
+            //findNavController().navigate(R.id.mapExploreFragment)
+
         }
 
         fun getItems(): List<GridItem> {
             return listOf(
-            GridItem(1, R.drawable.signs, R.drawable.trailstatus,"Trails Status"),
-            GridItem(2, R.drawable.eventss, R.drawable.events,"Events"),
-            GridItem(3, R.drawable.card, R.drawable.shop,"Shops"),
-            GridItem(4, R.drawable.document, R.drawable.linksanddocuments,"Links and Documents"),
-            GridItem(5, R.drawable.world,  R.drawable.socialmedia, "Social Media"),
-            GridItem(6, R.drawable.information, R.drawable.feedback,"FeedBack"),)
+            GridItem(1, R.drawable.signs, R.drawable.trailstatus,resources.getString(R.string.t_trails_status)),
+            GridItem(2, R.drawable.eventss, R.drawable.events,resources.getString(R.string.t_events)),
+            GridItem(3, R.drawable.card, R.drawable.shop,resources.getString(R.string.t_shops)),
+            GridItem(4, R.drawable.document, R.drawable.linksanddocuments,resources.getString(R.string.t_links_and_doc)),
+            GridItem(5, R.drawable.world,  R.drawable.socialmedia, resources.getString(R.string.t_social_media)),
+            GridItem(6, R.drawable.information, R.drawable.feedback,resources.getString(R.string.t_feedback)),)
         }
 
         binding.recyclerView.layoutManager = GridLayoutManager(context, 2) // 2 columns
@@ -74,8 +106,8 @@ class ActionsFragment : Fragment(),OnItemClickListener {
 
     override fun onItemClick(itemId: Int) {
 
-        ToastUtils.showToast(requireActivity(), "Item clicked with id: ${itemId}")
-        Log.i("Click","Clickbbbbb "+itemId.toString())
+       // ToastUtils.showToast(requireActivity(), "Item clicked with id: ${itemId}")
+       // Log.i("Click","Clickbbbbb "+itemId.toString())
 
         if (itemId==1){
             findNavController().navigate(R.id.trailsStatusFragment)

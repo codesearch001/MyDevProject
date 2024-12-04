@@ -13,6 +13,7 @@ import com.snofed.publicapp.utils.SnofedUtils
 import com.snofed.publicapp.utils.TokenManager
 import io.realm.Realm
 import io.realm.RealmList
+import io.realm.Sort
 import io.realm.kotlin.where
 import org.json.JSONArray
 import org.json.JSONObject
@@ -27,7 +28,7 @@ class WorkoutViewModel : ViewModel() {
         MutableLiveData<List<NewWorkoutPoint>>()
     }*/
     private val _workout = MutableLiveData<NewRideWorkout>()
-    val workout: LiveData<NewRideWorkout> get() = _workout
+   // val workout: LiveData<NewRideWorkout> get() = _workout
 
     init {
         // Initialize or load existing workout data
@@ -57,7 +58,9 @@ class WorkoutViewModel : ViewModel() {
             _workout.value?.let {
                 transactionRealm.insertOrUpdate(it)
             }
+
         }
+        //realm.refresh() // Force update to fetch the latest data
     }
 
     // Add or update workout details
@@ -65,12 +68,6 @@ class WorkoutViewModel : ViewModel() {
         _workout.value = workout
         saveWorkoutToRealm()
     }
-
-    // Add a new workout point
-//    fun addWorkoutPoint(point: NewWorkoutPoint) {
-//        _workout.value?.workoutPoints = listOf(point) as RealmList<NewWorkoutPoint>
-//        saveWorkoutToRealm()
-//    }
 
 
     fun addWorkoutPoint(point: NewWorkoutPoint) {
@@ -86,16 +83,6 @@ class WorkoutViewModel : ViewModel() {
         }
     }
 
-    fun replaceWorkoutPoints(points: List<NewWorkoutPoint>) {
-        realm.executeTransaction { transactionRealm ->
-            val workout = _workout.value
-            workout?.let {
-                it.workoutPoints.clear()
-                it.workoutPoints.addAll(points)
-                transactionRealm.copyToRealmOrUpdate(it)
-            }
-        }
-    }
 
     // Update workout duration and average pace
     fun addWorkoutDurationAndAvgPace(duration: Int, distance: Double, averagePace: Double) {
@@ -138,15 +125,13 @@ class WorkoutViewModel : ViewModel() {
 
         // Create a Gson instance
         val gson = Gson()
-
         // List to hold the WorkoutResponse objects
         val workoutResponseList = mutableListOf<WorkoutResponse>()
 
         try {
             // Fetch the workout from Realm
             val workout = realm.where<NewRideWorkout>().equalTo("id", workoutId).findFirst()
-
-            if (workout != null) {
+             if (workout != null) {
                 // Convert the workout to a Realm-managed object copy
                 val workoutCopy = realm.copyFromRealm(workout)
                 // Convert the workout object to JSON string
@@ -156,6 +141,8 @@ class WorkoutViewModel : ViewModel() {
                 // Add the WorkoutResponse object to the list
                 workoutResponseList.add(workoutResponse)
             }
+
+
         } catch (e: Exception) {
             // Handle the exception
             e.printStackTrace()

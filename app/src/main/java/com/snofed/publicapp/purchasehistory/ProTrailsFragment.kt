@@ -30,10 +30,7 @@ class ProTrailsFragment : Fragment() {
     private lateinit var  proTrailsHistoryAdapter: ProTrailsHistoryAdapter
     @Inject
     lateinit var tokenManager: TokenManager
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_pro_trails, container, false)
         _binding = FragmentProTrailsBinding.inflate(inflater, container, false)
@@ -49,14 +46,15 @@ class ProTrailsFragment : Fragment() {
                 is NetworkResult.Success -> {
                     val data = it.data?.data
                     if (data.isNullOrEmpty()) {
+
                         proTrailsHistoryAdapter = ProTrailsHistoryAdapter()
                         binding.tvSplashText.isVisible = true
                         binding.feedRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
                         binding.feedRecyclerView.adapter = proTrailsHistoryAdapter
                         proTrailsHistoryAdapter.setFeed(data)
+
                     } else {
-                        // Normal case: data is present
-                        Log.i("orderHistoryAdapter", "Data: $data")
+
                         proTrailsHistoryAdapter = ProTrailsHistoryAdapter()
                         binding.tvSplashText.isVisible = false
                         binding.feedRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
@@ -66,8 +64,7 @@ class ProTrailsFragment : Fragment() {
                 }
 
                 is NetworkResult.Error -> {
-                    Toast.makeText(requireActivity(), it.message.toString(), Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(requireActivity(), it.message.toString(), Toast.LENGTH_SHORT).show()
                 }
 
                 is NetworkResult.Loading -> {

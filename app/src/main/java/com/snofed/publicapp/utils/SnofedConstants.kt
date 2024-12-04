@@ -52,7 +52,10 @@ class SnofedConstants {
 
         const val STATUS_AUTO_PAUSED: Int = 93
 
-
+        // LATITUDE AND LONGITUDE
+        const val CENTER_LAT = 62.387500
+        
+        const val CENTER_LONG = 16.325556
         // DATETIME FORMAT
 
         const val DATETIME_FORMAT: String = "yyyy-MM-dd'T'HH:mm:ss"

@@ -1,6 +1,8 @@
 package com.snofed.publicapp.ui.event
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -57,12 +59,27 @@ class ClubEventFragment : Fragment() , EventClubFeedAdapter.OnItemClickListener 
             }
         })
          // Initialize RecyclerView and Adapter
-       feedAdapter = EventClubFeedAdapter(this)
+       feedAdapter = EventClubFeedAdapter(emptyList(),this)
        binding.eventRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
        binding.eventRecyclerView.adapter = feedAdapter
 
 
-       // Observe the SharedViewModel for data updates
+        //Apply search Filter
+        binding.editTextClubSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                feedAdapter.getFilter().filter(s)
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                // Trigger filter on the adapter based on the updated text
+                feedAdapter.getFilter().filter(s)
+
+            }
+        })
+
+        // Observe the SharedViewModel for data updates
        sharedViewModel.browseSubClubResponse.observe(viewLifecycleOwner) { response ->
            val events = response?.data?.events ?: emptyList()
 

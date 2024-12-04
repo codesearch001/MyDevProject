@@ -1,5 +1,6 @@
 package com.snofed.publicapp.ui.dashboardFragment
 
+import RealmRepository
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -21,8 +22,13 @@ import com.snofed.publicapp.adapter.BrowseClubListAdapter
 import com.snofed.publicapp.databinding.FragmentBrowseAllClubBinding
 import com.snofed.publicapp.models.Client
 import com.snofed.publicapp.repository.UserRepository
+import com.snofed.publicapp.ui.User.UserViewModelRealm
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.ActivityViewModelRealm
 import com.snofed.publicapp.ui.login.AuthViewModel
+import com.snofed.publicapp.utils.AppPreference
+import com.snofed.publicapp.utils.ClientPrefrences
 import com.snofed.publicapp.utils.NetworkResult
+import com.snofed.publicapp.utils.SharedPreferenceKeys
 import com.snofed.publicapp.utils.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.GlobalScope
@@ -36,11 +42,12 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
     private val clubViewModel by viewModels<AuthViewModel>()
     private lateinit var clubAdapter: BrowseClubListAdapter
     private val sharedViewModel by activityViewModels<SharedViewModel>()
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+
+    private lateinit var viewModelUserRealm: UserViewModelRealm
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentBrowseAllClubBinding.inflate(inflater, container, false)
+        viewModelUserRealm = ViewModelProvider(this).get(UserViewModelRealm::class.java)
         return binding.root
     }
 
@@ -56,22 +63,35 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
                 is NetworkResult.Success -> {
                     // Log.i("it.data?.clients","it.data?.clients "+it.data?.data?.clients)
                     //val data = it.data?.data?.clients
+
                     sharedViewModel.browseClubResponse.value = it.data
+
+                    val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
+
+                    val userFavClientsRealm =  viewModelUserRealm.getFavClients(userId)
+
+                    val getFavClients: List<String> = userFavClientsRealm
 
                     val filteredClients = it.data?.data?.clients?.filter { client ->
                         client.visibility == 0 //true 1->false
                     }
 
-                    Log.e("filter","filterSize " +filteredClients?.size)
+                    filteredClients?.forEach { client ->
+                        if (getFavClients.contains(client.id)) {
+                            client.isInWishlist = true
+                        }
+                    }
+
+                    Log.e("filter","filterSize " +filteredClients)
 
                     if (filteredClients.isNullOrEmpty()){
-                        clubAdapter = BrowseClubListAdapter(this)
+                        clubAdapter = BrowseClubListAdapter(requireContext(),this, clubViewModel )
                         // Set up the RecyclerView with GridLayoutManager
                         binding.recyclerView.layoutManager = GridLayoutManager(requireActivity(), 2)
                         binding.recyclerView.adapter = clubAdapter
                         clubAdapter.setClubs(filteredClients)
                     }else{
-                        clubAdapter = BrowseClubListAdapter(this)
+                        clubAdapter = BrowseClubListAdapter(requireContext(),this, clubViewModel)
                         // Set up the RecyclerView with GridLayoutManager
                         binding.recyclerView.layoutManager = GridLayoutManager(requireActivity(), 2)
                         binding.recyclerView.adapter = clubAdapter
@@ -102,13 +122,15 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
             }
         })
     }
+
+
     private fun fetchResponse() {
         clubViewModel.clubRequestUser()
     }
 
     override fun onItemClick(clientId: String) {
         binding.editTextClubSearch.text?.clear()
-        Log.i("dddddd","Id " + clientId )
+
         val bundle = Bundle()
         bundle.putString("clientId", clientId)
         val destination = R.id.clubSubMembersFragment
@@ -116,9 +138,24 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
 
     }
 
-    override fun onWishlistClick(clientId: String) {
-        Log.d("TAG_WishList","Wishlist_Item " + clientId )
-       // clubViewModel.toggleWishlistStatus(clientId)
+    override fun onWishlistClick(clientId: String, isWishlisted : Boolean) {
+        Log.d("TAG_WishList","Wishlist_Item " + clientId + " -- " + isWishlisted )
+        val userId = AppPreference.getPreference(context, SharedPreferenceKeys.USER_USER_ID).toString()
+        if (isWishlisted) {
+            viewModelUserRealm.addFavouriteClient(userId,clientId)
+            //ClientPrefrences.removeClientId(requireContext(),clientId)
+
+        } else {
+            viewModelUserRealm.removeFavouriteClient(userId,clientId)
+            //ClientPrefrences.saveClientId(requireContext(),clientId)
+        }
+
+        Log.d("BrowseAllClubFragment","save me as  " + ClientPrefrences.getClientIds(requireContext()) )
+        requestWistlistResonse(clientId)
+
+    }
+
+    private fun requestWistlistResonse(clientId: String) {
 
     }
 }

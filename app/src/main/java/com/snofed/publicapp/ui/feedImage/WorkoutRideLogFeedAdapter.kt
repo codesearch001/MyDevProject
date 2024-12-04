@@ -10,24 +10,39 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.cardview.widget.CardView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.snofed.publicapp.R
+import com.snofed.publicapp.adapter.BrowseClubListAdapter.OnItemClickListener
 import com.snofed.publicapp.models.workoutfeed.Daum
 import com.snofed.publicapp.utils.DateTimeConverter
 import com.snofed.publicapp.utils.Helper
+import java.text.SimpleDateFormat
+import java.util.Locale
 
-class WorkoutRideLogFeedAdapter() : RecyclerView.Adapter<WorkoutRideLogFeedAdapter.ClubViewHolder>() {
+class WorkoutRideLogFeedAdapter(private val listener: OnItemClickListener) : RecyclerView.Adapter<WorkoutRideLogFeedAdapter.ClubViewHolder>() {
 
     private var feedArray: List<Daum> = listOf()
     val dateTimeConverter = DateTimeConverter()
 
+
+    interface OnItemClickListener {
+        fun onItemClick(clientId: String)
+    }
     @SuppressLint("NotifyDataSetChanged")
     fun setFeed(clubs: List<Daum>?) {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()) // Example format
         if (clubs != null) {
-            this.feedArray = clubs
+            this.feedArray = clubs.sortedByDescending {
+                try {
+                    dateFormat.parse(it.startTime)?.time // Sort by timestamp
+                } catch (e: Exception) {
+                    null
+                }
+            }
         }
         //Log.i("test","sizearr "+outerArray.size)
         notifyDataSetChanged()
@@ -45,7 +60,13 @@ class WorkoutRideLogFeedAdapter() : RecyclerView.Adapter<WorkoutRideLogFeedAdapt
         val reslult = feedArray[position]
         holder.feedName.isVisible =false
        // holder.feedLogTime.isVisible =true
-        holder.feedDistance.text = String.format("%.2f", Helper.m2Km(reslult.distance)).toDouble().toString() + " km"
+       /* holder.feedDistance.text = String.format(
+            "%.2f %s",
+            Helper.m2Km(reslult.distance),  // Convert meters to kilometers
+            holder.itemView.context.getString(R.string.t_km) // Get the string resource
+        )*/
+        holder.feedDistance.text = String.format(Locale.US, "%.2f", Helper.m2Km(reslult.distance)).toDouble().toString() + holder.itemView.context.getString(R.string.t_km)
+       // holder.feedDistance.text = String.format("%.2f", Helper.m2Km(reslult.distance)).toDouble().toString() + " km"
         val formattedDateTimeHMS = dateTimeConverter.formatSecondsToHMS(reslult.duration)
         holder.feedDuration.text = formattedDateTimeHMS
         val formattedDateTime = dateTimeConverter.convertDateTime(reslult.startTime)
@@ -58,6 +79,9 @@ class WorkoutRideLogFeedAdapter() : RecyclerView.Adapter<WorkoutRideLogFeedAdapt
             holder.activityType.text = reslult.activity.name
         }
 
+        holder.cardIdLayout.setOnClickListener {
+            listener.onItemClick(reslult.id) // Assuming Client has an 'id' property
+        }
         //println(timePart)
         println(formattedDateTime) // Output: "Jul 24, 2024, 14:30 h"
         println("Parsed LocalDateTime: ${formattedDateTime}")
@@ -82,5 +106,6 @@ class WorkoutRideLogFeedAdapter() : RecyclerView.Adapter<WorkoutRideLogFeedAdapt
         val activityType: TextView = itemView.findViewById(R.id.activityType)
         val imgActivitesIcon: ImageView = itemView.findViewById(R.id.imgActivitesIcon)
         val llFeed: LinearLayout = itemView.findViewById(R.id.llFeed)
+        val cardIdLayout: CardView = itemView.findViewById(R.id.cardIdLayout)
     }
 }

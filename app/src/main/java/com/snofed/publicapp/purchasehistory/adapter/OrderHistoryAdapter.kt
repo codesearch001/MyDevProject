@@ -2,6 +2,7 @@ package com.snofed.publicapp.purchasehistory.adapter
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,20 +10,24 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.RequiresApi
-import androidx.cardview.widget.CardView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.snofed.publicapp.R
-import com.snofed.publicapp.purchasehistory.model.Daum
+import com.snofed.publicapp.models.Order
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.ClientViewModelRealm
 import com.snofed.publicapp.utils.DateTimeConverter
 import com.snofed.publicapp.utils.enums.PaymentOrderStatus
 
 
-class OrderHistoryAdapter() : RecyclerView.Adapter<OrderHistoryAdapter.ClubViewHolder>(){
+class OrderHistoryAdapter(private val listener: OnItemClickListener, private val vmClientRealm: ClientViewModelRealm) : RecyclerView.Adapter<OrderHistoryAdapter.ClubViewHolder>(){
 
-    private var orderHistoryArray: List<Daum> = listOf()
+    private var orderHistoryArray: List<Order> = listOf()
     val dateTimeConverter = DateTimeConverter()
 
+    // Define the OnItemClickListener interface
+    interface OnItemClickListener {
+        fun onItemClick(order: Order)
+    }
     /*init {
         // Calculate the total price when the adapter is initialized and set it to the provided TextView
          totalPrice = calculateTotalPriceOfAllDaum()
@@ -30,7 +35,7 @@ class OrderHistoryAdapter() : RecyclerView.Adapter<OrderHistoryAdapter.ClubViewH
     }*/
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setFeed(clubs: List<Daum>?) {
+    fun setFeed(clubs: List<Order>?) {
         if (clubs != null) {
             this.orderHistoryArray = clubs
         }
@@ -47,8 +52,8 @@ class OrderHistoryAdapter() : RecyclerView.Adapter<OrderHistoryAdapter.ClubViewH
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ClubViewHolder, position: Int) {
         val reslult = orderHistoryArray[position]
-
-        //holder.txt_order_title.text =
+        
+        holder.txt_order_title.text = vmClientRealm.getClientNameById(reslult.clientRef)
         dateTimeConverter.convertDateTime(reslult.createdDate)//convert data
         holder.tv_created_date.text =dateTimeConverter.outputFormatterOnlyDate
         holder.txt_total_price.text = reslult.totalPrice.toString()
@@ -79,6 +84,10 @@ class OrderHistoryAdapter() : RecyclerView.Adapter<OrderHistoryAdapter.ClubViewH
                 holder.status_approved.visibility = View.GONE
             }
         }
+        // Set item click listener
+        holder.itemView.setOnClickListener {
+            listener.onItemClick(reslult) // Call the listener with the clicked item data
+        }
     }
 
     override fun getItemCount(): Int = orderHistoryArray.size
@@ -98,7 +107,6 @@ class OrderHistoryAdapter() : RecyclerView.Adapter<OrderHistoryAdapter.ClubViewH
         val txt_number_of_tickets: TextView = itemView.findViewById(R.id.txt_number_of_tickets)
         val id_valid_to: LinearLayout = itemView.findViewById(R.id.id_valid_to)
         val txt_valid_to: TextView = itemView.findViewById(R.id.txt_valid_to)
-
 
 
     }
