@@ -11,6 +11,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -26,6 +27,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -35,6 +37,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -96,6 +99,7 @@ import com.snofed.publicapp.utils.ServiceUtil
 import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.SnofedConstants
 import com.snofed.publicapp.utils.enums.SyncActionEnum
+import com.snofed.publicapp.utils.enums.VisibilityEnum
 import dagger.hilt.android.AndroidEntryPoint
 import java.net.HttpURLConnection
 import java.net.URL
@@ -122,8 +126,8 @@ class MapExploreFragment : Fragment() {
     private lateinit var rotateBackward: Animation
     private var isOpen = false
     val gson = Gson()
-    var defaultLat: String = ""
-    var defaultLong: String = ""
+    var defaultLat: String = "%.6f".format(Locale.US,SnofedConstants.CENTER_LAT)
+    var defaultLong: String = "%.6f".format(Locale.US,SnofedConstants.CENTER_LONG)
     var clientId: String? = ""
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -156,6 +160,7 @@ class MapExploreFragment : Fragment() {
     var selectedZoneIds: Set<String> = emptySet()
     var selectedResourceIds: Set<String> = emptySet()
 
+    var filteredTrails : List<Trail> = emptyList()
     var filteredZones : List<Zone> = emptyList()
     var filteredPois : List<Poi> = emptyList()
     private val dateTimeConverter = DateTimeConverter()
@@ -167,10 +172,9 @@ class MapExploreFragment : Fragment() {
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_map_explore, container, false)
         _binding = FragmentMapExploreBinding.inflate(inflater, container, false)
-        clearSelectedIds()
         binding.backBtn.setOnClickListener {
             it.findNavController().popBackStack()
-
+            clearSelectedIds()
         }
 
         sharedViewModell = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
@@ -178,11 +182,30 @@ class MapExploreFragment : Fragment() {
         //Area
         sharedViewModell.selectedAreaId.observe(viewLifecycleOwner, Observer { selectedId ->
             // Update the UI with the selected IDs
-            Log.d("selectedAreaId", "Selected1 IDs: ${selectedId.id}")
+            Log.d("selectedId", "SelectedArea IDs: ${selectedId.id}")
             // Use the selectedIds to update the UI as needed
             selectedAreaId = selectedId.id
 
-            removePois(filteredPois)
+            // filter trails and draw again
+            removeTrailsOnMap(clientTrails)
+            if (selectedAreaId != "0") {
+                if(selectedTrailsIds.contains("0"))
+                    filteredTrails = clientTrails.filter { trail -> trail.areaId == selectedAreaId }
+                else
+                    filteredTrails = clientTrails.filter { trail -> trail.areaId == selectedAreaId && selectedTrailsIds.contains(trail.activity?.id)}
+            }
+            else {
+                if(selectedTrailsIds.contains("0"))
+                    filteredTrails = clientTrails
+                else
+                    filteredTrails = clientTrails.filter { trail -> selectedTrailsIds.contains(trail.activity?.id)}
+            }
+            if(selectedTrailsIds.isNotEmpty())
+                addTrailsToMap(filteredTrails)
+
+
+            // filter pois and draw again
+            removePoisOnMap(filteredPois)
             // filter pois again and draw again
             if (selectedAreaId != "0") {
                 if(selectedPoiIds.contains("0"))
@@ -201,7 +224,7 @@ class MapExploreFragment : Fragment() {
 
 
             // filter Zone again and draw again
-            removeZones(clientZones)
+            removeZonesOnMap(clientZones)
             if (selectedAreaId != "0") {
                 if(selectedZoneIds.contains("0"))
                     filteredZones = clientZones.filter { zone -> zone.areaId == selectedAreaId }
@@ -212,28 +235,51 @@ class MapExploreFragment : Fragment() {
                 if(selectedZoneIds.contains("0"))
                     filteredZones = clientZones
                 else
-                    filteredZones = clientZones.filter { zone -> selectedPoiIds.contains(zone.zoneTypeId)}
+                    filteredZones = clientZones.filter { zone -> selectedZoneIds.contains(zone.zoneTypeId)}
             }
 
             addZonesToMap(filteredZones)
         })
 
-        //Trails
+        //TRAILS
         sharedViewModell.selectedTrailId.observe(viewLifecycleOwner, Observer { selectedIds ->
             // Update the UI with the selected IDs
-            Log.d("selectedTrailId", "Selected2 IDs: $selectedIds")
+            Log.d("selectedId", "Selected Activity IDs: $selectedIds")
             // Use the selectedIds to update the UI as needed
             selectedTrailsIds = selectedIds.toSet()
+
+            if(selectedTrailsIds.isNotEmpty())
+                filteredTrails = clientTrails.filter { trail -> selectedTrailsIds.contains(trail.activity?.id) }
+
+            if(selectedTrailsIds.contains("0"))
+                filteredTrails =  clientTrails
+            else if(selectedTrailsIds.isNotEmpty() && !selectedTrailsIds.contains("0"))
+                filteredTrails =  clientTrails.filter { trail -> selectedTrailsIds.contains(trail.activity?.id) }
+
+            //filter with areaId
+            if (selectedAreaId != "0") {
+                filteredTrails = filteredTrails.filter { trail -> trail.areaId == selectedAreaId }
+            }
+
+            removeTrailsOnMap(clientTrails)
+            if(selectedTrailsIds.isNotEmpty())
+                addTrailsToMap(filteredTrails)
+
+            // for overlap issue rerender pois also
+            removePoisOnMap(filteredPois)
+            // Add POIs
+            addPoisToMap(filteredPois)
         })
 
-        // Pass the selected POI IDs to the SharedViewModel
+        //  POI
         sharedViewModell.selectedPoisIds.observe(viewLifecycleOwner, Observer { selectedIds ->
             // Update the UI with the selected IDs
-            Log.d("selectedPoisIds", "Selected3 IDs: $selectedIds")
+            Log.d("selectedId", "Selected POIs IDs: $selectedIds")
             // Use the selectedIds to update the UI as needed
             selectedPoiIds = selectedIds.toSet()
 
             filteredPois = clientPois.filter { poi -> selectedPoiIds.contains(poi.poiTypeId) }
+
             if(selectedPoiIds.contains("0"))
                 filteredPois =  clientPois
             else if(selectedPoiIds.isNotEmpty() && !selectedPoiIds.contains("0"))
@@ -243,14 +289,14 @@ class MapExploreFragment : Fragment() {
             if (selectedAreaId != "0") {
                 filteredPois = filteredPois.filter { poi -> poi.areaId == selectedAreaId }
             }
-            removePois(clientPois)
+            removePoisOnMap(clientPois)
             addPoisToMap(filteredPois)
         })
 
         //Zone
         sharedViewModell.selectedZoneTypeId.observe(viewLifecycleOwner, Observer { selectedIds ->
             // Update the UI with the selected IDs
-            Log.d("selectedZoneTypeId", "Selected4 IDs: $selectedIds")
+            Log.d("selectedId", "Selected Zone IDs: $selectedIds")
             // Use the selectedIds to update the UI as needed
             selectedZoneIds = selectedIds.toSet()
 
@@ -266,7 +312,7 @@ class MapExploreFragment : Fragment() {
                 filteredZones = filteredZones.filter { zone -> zone.areaId == selectedAreaId }
             }
 
-            removeZones(clientZones)
+            removeZonesOnMap(clientZones)
 
             addZonesToMap(filteredZones)
         })
@@ -281,7 +327,8 @@ class MapExploreFragment : Fragment() {
 
     private fun clearSelectedIds() {
         sharedViewModel.updateSelectedIds(emptyList()) // Clear POIs
-        sharedViewModel.updateSelectedTrailsIds(emptyList()) // Clear Zones
+        sharedViewModel.updateSelectedTrailsIds(emptyList()) // Clear Trails
+        //sharedViewModel.updateSelectedTrailsIds(listOf("0")) // Set Default
         sharedViewModel.updateSelectedZoneIds(emptyList()) // Clear Zones
     }
 
@@ -392,15 +439,16 @@ class MapExploreFragment : Fragment() {
         val gson = Gson()
         val data = gson.fromJson(defaultLocationJson, Map::class.java)
 
-        defaultLat = "%.6f".format(
-            Locale.US,
-            data["Latitude"]?.toString()?.toDoubleOrNull() ?: SnofedConstants.CENTER_LAT
-        )
-        defaultLong = "%.6f".format(
-            Locale.US,
-            data["Longitude"]?.toString()?.toDoubleOrNull() ?: SnofedConstants.CENTER_LONG
-        )
-
+       if(!data.isNullOrEmpty()) {
+           defaultLat = "%.6f".format(
+               Locale.US,
+               data["Latitude"]?.toString()?.toDoubleOrNull() ?: SnofedConstants.CENTER_LAT
+           )
+           defaultLong = "%.6f".format(
+               Locale.US,
+               data["Longitude"]?.toString()?.toDoubleOrNull() ?: SnofedConstants.CENTER_LONG
+           )
+       }
 
         // Initialize MapView and MapboxMap
         mapView = binding.mapView
@@ -430,9 +478,6 @@ class MapExploreFragment : Fragment() {
         }
 
         fetchMapTrailsData()
-        binding.fab1.setOnClickListener {
-            //zoomOut()
-        }
 
         fabOpen = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_out)
         fabClose = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
@@ -446,23 +491,28 @@ class MapExploreFragment : Fragment() {
             animateFab()
         }
 
-        binding.fab1.setOnClickListener {
+        binding.currentLocation.setOnClickListener {
             animateFab()
             checkPermissionsAndGps()
 
             //Toast.makeText(requireContext(), "camera click", Toast.LENGTH_SHORT).show()
         }
 
-        binding.fab2.setOnClickListener {
+        binding.satelliteToggle.setOnClickListener {
             animateFab()
             isSatelliteViewClicked = !isSatelliteViewClicked
             SatelliteView()
             //Toast.makeText(requireContext(), "folder click", Toast.LENGTH_SHORT).show()
         }
-        binding.fab3.setOnClickListener {
+        binding.feedbackBtn.setOnClickListener {
             animateFab()
-            showCustomDialog2()
-            //Toast.makeText(requireContext(), "folder click", Toast.LENGTH_SHORT).show()
+            val bundle = Bundle()
+            bundle.putString("clientId", clientId)
+            val destination = R.id.feedBackDefaultCategoryListFragment
+            //val destination = R.id.feedBackFragment
+            findNavController().navigate(destination, bundle)
+            //showCustomDialog2()
+
         }
     }
 
@@ -590,20 +640,17 @@ class MapExploreFragment : Fragment() {
 
         // Observe the SharedViewModel for data updates
         sharedViewModel.browseSubClubResponse.observe(viewLifecycleOwner, Observer { response ->
-//            val trails = response?.data?.trails?.filter { trail ->
-//                trail.visibility?.toInt() == 1 //Assuming visibility is already an integer
-//            }
-//            val zones = response?.data?.zones ?: emptyList()
-//            val pois = response?.data?.pois ?: emptyList()
-//            val areas = response?.data?.areas ?: emptyList()
-
 
             clientTrails = (response?.data?.trails ?: emptyList()).toMutableList()
             clientZones = (response?.data?.zones ?: emptyList()).toMutableList()
             clientPois = (response?.data?.pois ?: emptyList()).toMutableList()
             clientResources = (response?.data?.resources ?: emptyList()).toMutableList()
 
-            clientTrails = clientTrails.filter { it.visibility == 1 }.toMutableList()
+            clientTrails = clientTrails.filter { it.visibility == VisibilityEnum.PUBLIC.getValue() }.toMutableList()
+            clientPois = clientPois.filter { it.poiVisibility == VisibilityEnum.PUBLIC.getValue() }.toMutableList()
+            // Check zone for always show on map option
+            //clientZones = clientZones.filter { it.visibility == VisibilityEnum.PUBLIC.getValue() }.toMutableList()
+            clientResources = clientResources.filter { it.isActive == true && it.isPublic == true }.toMutableList()
 
             Log.d("Tag_Trails", "trails size: ${clientTrails?.size}")
             Log.d("Tag_Zones", "zones size: ${clientZones.size}")
@@ -612,16 +659,9 @@ class MapExploreFragment : Fragment() {
 
             if (clientTrails.size > 0) {
                 addTrailsToMap(clientTrails)
+                sharedViewModel.updateSelectedTrailsIds(listOf("0"))
+                //filteredTrails = clientTrails
             }
-//            if (clientZones.isNotEmpty()) {
-//                addZonesToMap(clientZones)
-//            }
-//            if (clientPois.isNotEmpty()) {
-//                addPoisToMap(clientPois)
-//            }
-//            if (areas.isNotEmpty()) {
-//                addAreasToMap(areas)
-//            }
         })
     }
 
@@ -705,111 +745,6 @@ class MapExploreFragment : Fragment() {
     }
 
     ///////////////////////
-    /*private fun addTrailsToMap(trails: List<Trail>) {
-        mapboxMap.getStyle { style ->
-
-            trails.forEach { trail ->
-                val polyline = trail.polyLine
-                val coordinates = polyline.features.flatMap { feature ->
-                    feature.geometry.coordinates
-                }
-
-                Log.d("coordinates", "coordinates size: ${coordinates}")
-                if (coordinates.isNotEmpty()) {
-                    hasCoordinates = true
-                    coordinates.forEach { coord ->
-                        Log.d("coordinates", "coordinates size: ${LatLng(coord[1], coord[0])}")
-                        boundsBuilder.include(LatLng(coord[1], coord[0]))
-                    }
-
-
-                    // Create LineString from coordinates
-                    val lineString = LineString.fromLngLats(
-                        coordinates.map { coord ->
-                            Point.fromLngLat(coord[0], coord[1])
-                        }
-
-                    )
-                    Log.d("lineString", "lineString size: ${lineString}")
-                    // Create Feature from LineString
-                    val feature = Feature.fromGeometry(lineString)
-                    val featureCollection = FeatureCollection.fromFeatures(listOf(feature))
-                    //Extract properties from the first feature
-                    val properties = trail.polyLine.features[0].properties
-
-                    *//*  // Use GeoJsonSource.Builder to create the source
-                      val lineSource = geoJsonSource("line-source-${trail.id}") {
-                          featureCollection(featureCollection)
-                      }*//*
-                    // Define source and layer IDs
-                    val sourceId = "line-source-${trail.id}"
-                    val layerId = "line-layer-${trail.id}"
-
-                    // Add source if it doesn't exist
-                    if (style.getSource(sourceId) == null) {
-                        style.addSource(geoJsonSource(sourceId) {
-                            featureCollection(featureCollection)
-                        })
-                    }
-
-                    // Add layer if it doesn't exist
-                    if (style.getLayer(layerId) == null) {
-                        style.addLayer(lineLayer(layerId, sourceId) {
-                            lineColor(properties.color) // Customize color
-                            lineWidth(6.0)
-                        })
-                    }
-                    // Update the bounds with each trail's coordinates
-                    coordinates.forEach { coord ->
-                        boundsBuilder.include(LatLng(coord[1], coord[0])) // Note: LatLng requires (latitude, longitude)
-                    }
-                }
-            }
-            if (hasCoordinates) {
-                // Use the plugin to animate the camera to fit all trails
-                val latLngBounds = boundsBuilder.build()
-                // Compute the center manually
-                minLng = minOf(minLng, defaultLong.toDouble())
-                minLat = minOf(minLat, defaultLat.toDouble())
-                maxLng = maxOf(maxLng, defaultLong.toDouble())
-                maxLat = maxOf(maxLat, defaultLat.toDouble())
-                //val southwest = latLngBounds.southwest
-                //val northeast = latLngBounds.northeast
-                val centerLng = (minLng + maxLng) / 2
-                val centerLat = (minLat + maxLat) / 2
-                val centerPoint = Point.fromLngLat(centerLng, centerLat)
-                val padding = EdgeInsets(50.0, 50.0, 50.0, 50.0) // Adjust as needed
-
-                //val centerLatLng = LatLng(centerLat, centerLng)
-                //  val centerPoint = Point.fromLngLat(centerLatLng.longitude, centerLatLng.latitude)
-                val cameraAnimationsPlugin = mapView.camera
-                cameraAnimationsPlugin?.easeTo(CameraOptions.Builder()
-                    .center(centerPoint)
-                    //.padding(padding)
-                    .zoom(8.00)
-                    .build(),
-                    MapAnimationOptions.Builder()
-                        .duration(2000) // Duration in milliseconds (e.g., 3 seconds)
-                        .build())
-
-            } else {
-                Toast.makeText(requireContext(), "No coordinates available to adjust camera bounds.", Toast.LENGTH_SHORT).show()
-                Log.e("MapError", "No coordinates available to adjust camera bounds.")
-            }
-
-            //cameraAnimationsPlugin!!.easeTo(cameraOptions, animationOptions) // Smooth animation to the bounds
-        }
-    }*/
-
-    /*fun calculateZoomLevel(minLng: Double, maxLng: Double, minLat: Double, maxLat: Double, mapView: MapView): Double {
-        // You can implement custom logic here, or use a basic approximation
-        val lngDiff = maxLng - minLng
-        val latDiff = maxLat - minLat
-        val mapSize = max(lngDiff, latDiff)
-
-        // Basic calculation for zoom level (you may need to adjust this scaling factor)
-        return 14.0 - (mapSize * 5)
-    }*/
 
     private fun addAreasToMap(areas: List<Area>) {
         mapboxMap.getStyle { style ->
@@ -863,7 +798,19 @@ class MapExploreFragment : Fragment() {
                 pois.forEach { poi ->
                     val point = Point.fromLngLat(poi.longitude!!, poi.latitude!!)
                     val poisTypeImage = viewModelPoisType.getIconPathByPoiTypeId(poi.poiTypeId!!)
-                    val poisColor = poi.lastPoiStatus?.color ?: "#97D1FF"
+                    //val poisColor = poi.lastPoiStatus?.color ?: "#97D1FF"
+
+                    val poiStatusOpenOrCloseColor = poi.poiStatusHistories
+                        ?.sortedByDescending { it.statusDate } // Sort by status date in descending order
+                        ?.firstOrNull { it.poiTypeStatus != null } // Get the first non-null PoiTypeStatus
+                        ?.poiTypeStatus?.color
+
+                    var poiStatusColor = when (poiStatusOpenOrCloseColor) {
+                        "#00FF00" -> "#97D1FF" // If green, return a specific blue color
+                        "#FF0000" -> "#FFA5C9" // If red, return a specific pink color
+                        null -> "#CDD8E1"      // If null, default to grey
+                        else -> poiStatusOpenOrCloseColor // Otherwise, keep the original color
+                    }
 
                     // Fetch and create custom POI icons asynchronously
                     if (!poisTypeImage.isNullOrEmpty()) {
@@ -872,9 +819,14 @@ class MapExploreFragment : Fragment() {
                         executor.execute {
                             try {
                                 val urlBitmap = fetchBitmapFromURL(poisTypeImage)
-                                val markerBase = BitmapFactory.decodeResource(resources, R.drawable.icon_layer)
+                                val markerBase = when (poiStatusOpenOrCloseColor) {
+                                    "#00FF00" -> BitmapFactory.decodeResource(resources, R.drawable.location_blue)
+                                    "#FF0000" -> BitmapFactory.decodeResource(resources, R.drawable.location_red)
+                                    null -> BitmapFactory.decodeResource(resources, R.drawable.location_grey)
+                                    else -> BitmapFactory.decodeResource(resources, R.drawable.location_blue)
+                                }
 
-                                val finalBitmap = createCustomPoiBitmap(markerBase, urlBitmap, poisColor)
+                                val finalBitmap = createCustomPoiBitmap(markerBase, urlBitmap, poiStatusColor)
                                 handler.post {
                                     style.addImage("poi-icon-${poi.id}", finalBitmap)
                                 }
@@ -918,6 +870,7 @@ class MapExploreFragment : Fragment() {
                         .withIconImage("poi-icon-${poi.id}")
                         .withIconSize(0.101)
                         .withIconAnchor(IconAnchor.BOTTOM)
+                        .withDraggable(false)
 
                     val annotation = manager.create(options)
                     manager.addClickListener { clickedAnnotation ->
@@ -1010,7 +963,7 @@ class MapExploreFragment : Fragment() {
 
         return finalBitmap
     }
-
+  
     private fun showCustomPoisDialog(poi: Poi) {
         val bottomSheetDialog =
             BottomSheetDialog(requireContext(), R.style.RoundedBottomSheetDialog)
@@ -1023,22 +976,24 @@ class MapExploreFragment : Fragment() {
             bottomSheetDialog.dismiss()
         }
         val lastPoiTypeStatusName = poi.poiStatusHistories
-            ?.reversed()                      // Reverse the list to start from the last element
-            ?.firstOrNull { it.poiTypeStatus != null } // Get the first non-null PoiTypeStatus
-            ?.poiTypeStatus?.name             // Get the 'name' from the PoiTypeStatus
+            ?.sortedByDescending { it.statusDate } // Create a new list sorted by 'statusDate' in descending order
+            ?.firstOrNull { it.poiTypeStatus != null } // Get the first non-null 'PoiTypeStatus'
+            ?.poiTypeStatus?.name // Get the 'name' from 'PoiTypeStatus
 
 
-        val statusDates = poi.poiStatusHistories?.map { it.statusDate }
+        val statusDates = poi.poiStatusHistories
+                            ?.sortedByDescending { it.statusDate }
+                            ?.map { it.statusDate}
 
-        val statusDatesText = statusDates?.joinToString(separator = "\n") { it.toString() }
+        val statusDatesText = statusDates
+                            ?.map { dateTimeConverter.ConvertToDateTime(it!!) }
+                            ?.joinToString(separator = "\n") { it.toString() }
 
         bottomSheetViewBinding.txtPoisStatusHostory.text = statusDatesText
 
-        dateTimeConverter.convertDateTime(poi.lastUpdateDate!!)//convert data
-        val lastPoiTypeStatusDate = dateTimeConverter.dateandtimePart
         bottomSheetViewBinding?.idTxtPoisName?.text = poi.name
         bottomSheetViewBinding?.idTxtStatusOpen?.text = lastPoiTypeStatusName
-        bottomSheetViewBinding?.idTxtDateTime?.text = lastPoiTypeStatusDate
+        bottomSheetViewBinding?.idTxtDateTime?.text = dateTimeConverter.ConvertToDateTime((poi.lastUpdateDate!!))
         bottomSheetViewBinding?.idTxtDescription?.text = poi.description
         //bottomSheetViewBinding?.txtPoisStatusHostory?.text =
         val poiTypeIcon = viewModelPoisType.getIconPathByPoiTypeId(poi.poiTypeId!!)
@@ -1206,21 +1161,21 @@ class MapExploreFragment : Fragment() {
     private fun animateFab() {
         if (isOpen) {
             binding.fab.startAnimation(rotateForward)
-            binding.fab1.startAnimation(fabClose)
-            binding.fab2.startAnimation(fabClose)
-            binding.fab3.startAnimation(fabClose)
-            binding.fab1.isClickable = false
-            binding.fab2.isClickable = false
-            binding.fab3.isClickable = false
+            binding.currentLocation.startAnimation(fabClose)
+            binding.satelliteToggle.startAnimation(fabClose)
+            binding.feedbackBtn.startAnimation(fabClose)
+            binding.currentLocation.isClickable = false
+            binding.satelliteToggle.isClickable = false
+            binding.feedbackBtn.isClickable = false
             isOpen = false
         } else {
             binding.fab.startAnimation(rotateBackward)
-            binding.fab1.startAnimation(fabOpen)
-            binding.fab2.startAnimation(fabOpen)
-            binding.fab3.startAnimation(fabOpen)
-            binding.fab1.isClickable = true
-            binding.fab2.isClickable = true
-            binding.fab3.isClickable = true
+            binding.currentLocation.startAnimation(fabOpen)
+            binding.satelliteToggle.startAnimation(fabOpen)
+            binding.feedbackBtn.startAnimation(fabOpen)
+            binding.currentLocation.isClickable = true
+            binding.satelliteToggle.isClickable = true
+            binding.feedbackBtn.isClickable = true
             isOpen = true
         }
     }
@@ -1242,23 +1197,25 @@ class MapExploreFragment : Fragment() {
             // Remove old layers and sources (if necessary)
 
             // Remove Trails
-            removeTrails(clientTrails)
+            removeTrailsOnMap(clientTrails)
             // Add Trails
-            addTrailsToMap(clientTrails)
+
+            if(selectedTrailsIds.isNotEmpty())
+                addTrailsToMap(filteredTrails)
 
             // Remove Pois
-           removePois(filteredPois)
+            removePoisOnMap(filteredPois)
             // Add POIs
             addPoisToMap(filteredPois)
 
             // Remove Zones
-            removeZones(clientZones)
+            removeZonesOnMap(clientZones)
             // Add Zones
             addZonesToMap(filteredZones)
         }
     }
 
-    private fun removeTrails(clientTrails: MutableList<Trail>) {
+    private fun removeTrailsOnMap(clientTrails: MutableList<Trail>) {
         mapboxMap.getStyle { style ->
             clientTrails.forEach { trail ->
                 val sourceId = "line-source-${trail.id}"
@@ -1274,7 +1231,7 @@ class MapExploreFragment : Fragment() {
         }
     }
 
-    private fun removePois(clientPois: List<Poi>) {
+    private fun removePoisOnMap(clientPois: List<Poi>) {
         mapboxMap.getStyle { style ->
             clientPois.forEach { poi ->
                 val poiLayerId = "poi-layer-${poi.id}"
@@ -1290,7 +1247,7 @@ class MapExploreFragment : Fragment() {
         }
     }
 
-    private fun removeZones(clientZones: MutableList<Zone>) {
+    private fun removeZonesOnMap(clientZones: MutableList<Zone>) {
         mapboxMap.getStyle { style ->
             clientZones.forEach { zone ->
                 val sourceId = "polygon-source-${zone.id}"
@@ -1305,6 +1262,11 @@ class MapExploreFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        clearSelectedIds()
     }
 
 }

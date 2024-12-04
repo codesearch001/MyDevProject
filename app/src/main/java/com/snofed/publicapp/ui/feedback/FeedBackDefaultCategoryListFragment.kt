@@ -27,10 +27,13 @@ class FeedBackDefaultCategoryListFragment : Fragment(), FeedBackAdapter.OnItemCl
     private val binding get() = _binding!!
     private val viewModel by viewModels<AuthViewModel>()
     private lateinit var feedAdapter: FeedBackAdapter
+    private var clientId : String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_feed_back_default_category_list, container, false)
+        clientId = arguments?.getString("clientId")?.toString()
+
         _binding = FragmentFeedBackDefaultCategoryListBinding.inflate(inflater, container, false)
         return binding.root
     }
