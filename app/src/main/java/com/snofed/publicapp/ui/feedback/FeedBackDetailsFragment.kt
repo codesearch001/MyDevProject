@@ -117,7 +117,7 @@ class FeedBackDetailsFragment : Fragment() {
         val annotationManager = binding.mapView.annotations.createPointAnnotationManager()
 
         // Define the custom icon for the marker
-        val icon = BitmapFactory.decodeResource(resources, R.drawable.location_feedback) // Your custom icon
+        val icon = BitmapFactory.decodeResource(resources, R.drawable.location) // Your custom icon
 
         // Create a point annotation with the custom icon
         val pointAnnotationOptions = point?.let {

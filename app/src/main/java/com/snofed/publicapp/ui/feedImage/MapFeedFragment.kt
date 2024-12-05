@@ -114,12 +114,15 @@ class MapFeedFragment : Fragment(){
         mapboxMap = mapView.mapboxMap
 
         // Load Map Style
-        mapView.mapboxMap.loadStyle(Style.OUTDOORS)
-        mapboxMap.setCamera(
-            CameraOptions.Builder()
-                .center(fromLngLat(SnofedConstants.CENTER_LONG, SnofedConstants.CENTER_LAT)) // Set desired center
-                .zoom(9.0) // Set desired zoom level
-                .build())
+        mapboxMap.loadStyle(Style.OUTDOORS){ style ->
+
+            mapboxMap.setCamera(
+                CameraOptions.Builder()
+                    .center(fromLngLat(SnofedConstants.CENTER_LONG, SnofedConstants.CENTER_LAT)) // Set desired center
+                    .zoom(9.0) // Set desired zoom level
+                    .build())
+        }
+
 
         fetchResponse()
         feedWorkoutViewModel.feedWorkoutLiveData.observe(viewLifecycleOwner, Observer { it ->
@@ -298,7 +301,7 @@ class MapFeedFragment : Fragment(){
 
 
     private fun drawRoute(workoutPoints: List<Point>) {
-        mapView.mapboxMap.getStyle { style ->
+        mapboxMap.getStyle { style ->
             // Create a LineString from the workout points
             val lineString = LineString.fromLngLats(workoutPoints)
 
@@ -349,8 +352,8 @@ class MapFeedFragment : Fragment(){
             style.addLayer(
                 lineLayer(layerId, "route-source") {
                     lineColor(Color.DKGRAY)
-                    lineWidth(3.0) // Set the width of the route
-                    lineDasharray(listOf(3.0, 1.0)) // Create a dashed line pattern
+                    lineWidth(2.5) // Set the width of the route
+                    lineDasharray(listOf(2.5, 0.6)) // Create a dashed line pattern
                 }
             )
 
@@ -517,12 +520,13 @@ class MapFeedFragment : Fragment(){
     override fun onDestroyView() {
         super.onDestroyView()
         // Clean up binding to avoid memory leaks
+        mapView.onDestroy()
         _binding = null
     }
 
     override fun onDetach() {
         super.onDetach()
-        mapView.onStart()
+        mapView.onDestroy()
     }
 
 
