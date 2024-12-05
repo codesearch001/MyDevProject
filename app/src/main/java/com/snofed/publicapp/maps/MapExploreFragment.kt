@@ -59,6 +59,7 @@ import com.mapbox.geojson.Point
 import com.mapbox.geojson.Point.fromLngLat
 import com.mapbox.geojson.Polygon
 import com.mapbox.maps.CameraOptions
+import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.Style
@@ -506,12 +507,11 @@ class MapExploreFragment : Fragment() {
         }
         binding.feedbackBtn.setOnClickListener {
             animateFab()
-            val bundle = Bundle()
-           // bundle.putString("clientId", clientId)
-            val destination = R.id.feedBackDefaultCategoryListFragment
+            //val bundle = Bundle()
+            //val destination = R.id.feedBackDefaultCategoryListFragment
             //val destination = R.id.feedBackFragment
-            findNavController().navigate(destination, bundle)
-            //showCustomDialog2()
+            //findNavController().navigate(destination, bundle)
+            showCustomDialog2()
 
         }
     }
@@ -670,6 +670,8 @@ class MapExploreFragment : Fragment() {
     private fun addTrailsToMap(trails: List<Trail>) {
         mapboxMap.getStyle { style ->
             val lastLayerId = style.styleLayers.lastOrNull()?.id
+            val allCoordinates = mutableListOf<Point>()
+
             trails.forEach { trail ->
                 val coordinates = trail.polyLine?.features?.mapNotNull { feature ->
                     feature.geometry?.coordinates
@@ -681,6 +683,7 @@ class MapExploreFragment : Fragment() {
                     // Include bounds
                     coordinates[0]?.forEach { coord ->
                         boundsBuilder.include(LatLng(coord[1], coord[0]))
+                        allCoordinates.add(Point.fromLngLat(coord[0], coord[1]))
                     }
 
                     // Create LineString and Feature
@@ -721,8 +724,17 @@ class MapExploreFragment : Fragment() {
             }
 
             // Adjust camera bounds if coordinates exist
-            if (hasCoordinates) {
-                val latLngBounds = boundsBuilder.build()
+            if (allCoordinates.isNotEmpty()) {
+                val cameraOptions = mapboxMap.cameraForCoordinates(
+                    allCoordinates,
+                    EdgeInsets(100.0, 100.0, 100.0, 100.0) // Padding around the edges
+                )
+                mapView.camera.easeTo(
+                    cameraOptions,
+                    MapAnimationOptions.Builder().duration(2000).build()
+                )
+                
+               /* val latLngBounds = boundsBuilder.build()
                 //val centerPoint = latLngBounds.center
                 val centerPoint =
                     Point.fromLngLat(latLngBounds.center.longitude, latLngBounds.center.latitude)
@@ -732,13 +744,13 @@ class MapExploreFragment : Fragment() {
                         .zoom(8.0)
                         .build(),
                     MapAnimationOptions.Builder().duration(2000).build()
-                )
+                )*/
             } else {
-                Toast.makeText(
+                /*Toast.makeText(
                     requireContext(),
-                    "No coordinates available to adjust camera bounds.",
+                    "No trails available for these selections.",
                     Toast.LENGTH_SHORT
-                ).show()
+                ).show()*/
                 Log.e("MapError", "No coordinates available to adjust camera bounds.")
             }
         }
