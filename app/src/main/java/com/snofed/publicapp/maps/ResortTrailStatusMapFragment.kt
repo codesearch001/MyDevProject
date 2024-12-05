@@ -92,6 +92,10 @@ class ResortTrailStatusMapFragment : Fragment() {
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
 
+    private var polyLineDataSatelliteView: PolyLine? = null
+    private var polyLinesResponseSatelliteView: DataPolyResponse? = null
+    var isSatelliteViewClicked : Boolean = false
+
     private val pageType: PageType? by lazy {
         arguments?.getParcelable<PageType>("pageType") // Retrieve pageType
     }
@@ -140,21 +144,21 @@ class ResortTrailStatusMapFragment : Fragment() {
             animateFab()
         }
 
-        binding.fab1.setOnClickListener {
+        binding.currentLocationTrailStatus.setOnClickListener {
             animateFab()
             checkPermissionsAndGps()
 
             //Toast.makeText(requireContext(), "camera click", Toast.LENGTH_SHORT).show()
         }
 
-        binding.fab2.setOnClickListener {
+        binding.satelliteViewToggle.setOnClickListener {
             animateFab()
-
-            //switchMapStyle()
+            isSatelliteViewClicked = !isSatelliteViewClicked
+            SatelliteView()
 
             //Toast.makeText(requireContext(), "folder click", Toast.LENGTH_SHORT).show()
         }
-        binding.fab3.setOnClickListener {
+        binding.feedbackTrailStatus.setOnClickListener {
             animateFab()
             val bundle = Bundle()
            // bundle.putString("clientId", clientId)
@@ -209,6 +213,7 @@ class ResortTrailStatusMapFragment : Fragment() {
                         if (response != null) {
 
                             val trailResponse = response.data?.data
+                            polyLinesResponseSatelliteView = response.data?.data
                             Log.d("TAG_TRAIL_RESPONSE", "TAG_TRAIL_RESPONSE $trailResponse.")
                             trailResponse?.let {
                                 drawPolyline(style, it)
@@ -231,9 +236,10 @@ class ResortTrailStatusMapFragment : Fragment() {
                         binding.trailsNameMap.text = response.data.name
                         if (response != null) {
                             val polylineData = response.data.polyLine
+                            polyLineDataSatelliteView = response.data.polyLine
                             Log.d("P3333", "Print Details trails Id ${response.data.id}")
                             Log.d("P2222", "Adding GeoJsonSource and LineLayer${polylineData.features.size}")
-                            getDrawPolyline(polylineData)
+                            getDrawPolyline(style, polylineData)
                         } else {
                             // Handle the null case
                             Toast.makeText(requireContext(), response.toString(), Toast.LENGTH_SHORT).show()
@@ -389,21 +395,21 @@ class ResortTrailStatusMapFragment : Fragment() {
     private fun animateFab() {
         if (isOpen) {
             binding.fab.startAnimation(rotateForward)
-            binding.fab1.startAnimation(fabClose)
-            binding.fab2.startAnimation(fabClose)
-            binding.fab3.startAnimation(fabClose)
-            binding.fab1.isClickable = false
-            binding.fab2.isClickable = false
-            binding.fab3.isClickable = false
+            binding.currentLocationTrailStatus.startAnimation(fabClose)
+            binding.satelliteViewToggle.startAnimation(fabClose)
+            binding.feedbackTrailStatus.startAnimation(fabClose)
+            binding.currentLocationTrailStatus.isClickable = false
+            binding.satelliteViewToggle.isClickable = false
+            binding.feedbackTrailStatus.isClickable = false
             isOpen = false
         } else {
             binding.fab.startAnimation(rotateBackward)
-            binding.fab1.startAnimation(fabOpen)
-            binding.fab2.startAnimation(fabOpen)
-            binding.fab3.startAnimation(fabOpen)
-            binding.fab1.isClickable = true
-            binding.fab2.isClickable = true
-            binding.fab3.isClickable = true
+            binding.currentLocationTrailStatus.startAnimation(fabOpen)
+            binding.satelliteViewToggle.startAnimation(fabOpen)
+            binding.feedbackTrailStatus.startAnimation(fabOpen)
+            binding.currentLocationTrailStatus.isClickable = true
+            binding.satelliteViewToggle.isClickable = true
+            binding.feedbackTrailStatus.isClickable = true
             isOpen = true
         }
     }
@@ -471,147 +477,87 @@ class ResortTrailStatusMapFragment : Fragment() {
         viewModelTrails.trailsDrawPolyLinesByIDRequestUser(specificTrailId!!)
     }
 
-    private fun getDrawPolyline(polylineData: PolyLine) {
+    private fun getDrawPolyline(style: Style, polylineData: PolyLine) {
+        val feature = polylineData.features.firstOrNull()
+        val coordinates = feature?.geometry?.coordinates
 
-        var minLng = Double.MAX_VALUE
-        var minLat = Double.MAX_VALUE
-        var maxLng = Double.MIN_VALUE
-        var maxLat = Double.MIN_VALUE
+        if (coordinates.isNullOrEmpty()) {
+            Log.e("MapError", "No coordinates available in polyline data.")
+            Toast.makeText(
+                requireContext(),
+                "No coordinates available to draw the polyline.",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
 
-        print("polylineData " + polylineData)
-        mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS) { style ->
-            // Get the feature and its coordinates
-            val feature = polylineData.features.firstOrNull() ?: return@loadStyle
-            val coordinates = feature.geometry.coordinates
-            Log.e("TAG_TRAIL MAP", "HHHHH" + coordinates)
-            if (coordinates.isEmpty()) {
-                Log.e("MapboxError", "No coordinates found.")
-                return@loadStyle
-            }
+        // Convert coordinates to Points
+        val points = coordinates.map { coordinatePair ->
+            fromLngLat(coordinatePair[0], coordinatePair[1])
+        }
 
-            coordinates.forEach {
-                val lng = it[0]
-                val lat = it[1]
-                if (lng < minLng) minLng = lng
-                if (lat < minLat) minLat = lat
-                if (lng > maxLng) maxLng = lng
-                if (lat > maxLat) maxLat = lat
-            }
+        // Create LineString from Points
+        val lineString = LineString.fromLngLats(points)
 
-            // Convert coordinates to Points
-            val points = coordinates.map { coordinatePair ->
-                fromLngLat(coordinatePair[0], coordinatePair[1])
-            }
-
-            // Create LineString from Points
-            val lineString = LineString.fromLngLats(points)
-
-            // Add a GeoJsonSource
-            val geoJsonSource = geoJsonSource("line-source") {
+        // Add a GeoJsonSource
+        val geoJsonSourceId = "line-source"
+        if (style.getSource(geoJsonSourceId) == null) {
+            style.addSource(geoJsonSource(geoJsonSourceId) {
                 geometry(lineString)
-            }
-            style.addSource(geoJsonSource)
+            })
+        }
 
-            // Add a LineLayer
-            val lineLayer = lineLayer("line-layer", "line-source") {
-                lineColor(feature.properties.color ?: "#ff0000") // Default to red if no color specified
+        // Add a LineLayer
+        val lineLayerId = "line-layer"
+        if (style.getLayer(lineLayerId) == null) {
+            style.addLayer(lineLayer(lineLayerId, geoJsonSourceId) {
+                lineColor(feature.properties.color ?: "#ff0000") // Default color: red
                 lineWidth(5.0)
+            })
+        }
+
+        // Calculate bounds using LatLngBounds.Builder
+        val boundsBuilder = LatLngBounds.Builder()
+        points.forEach { point ->
+            boundsBuilder.include(LatLng(point.latitude(), point.longitude()))
+        }
+        val latLngBounds = boundsBuilder.build()
+
+        // Animate camera to fit the bounds
+        val cameraOptions = mapboxMap.cameraForCoordinates(
+            points,
+            EdgeInsets(100.0, 50.0, 100.0, 50.0) // Padding: top, left, bottom, right
+        )
+
+        val animationOptions = MapAnimationOptions.Builder()
+            .duration(1500) // Duration in milliseconds
+            .build()
+
+        mapView.camera.easeTo(cameraOptions, animationOptions)
+    }
+
+
+    // MAP Toggle
+
+    fun SatelliteView(){
+        if (isSatelliteViewClicked) {
+            toggleMapStyle(true)
+        } else {
+            toggleMapStyle(false)
+        }
+    }
+
+    fun toggleMapStyle(isSatellite: Boolean) {
+        val styleType = if (isSatellite) Style.SATELLITE else Style.OUTDOORS
+
+        mapboxMap.loadStyle(styleType) { style ->
+            // Remove old layers and sources (if necessary)
+            if (polyLineDataSatelliteView != null) {
+                    getDrawPolyline(style, polyLineDataSatelliteView!!)
             }
-            style.addLayer(lineLayer)
 
-            // Calculate the bounding box of the LineString
-            val boundsBuilder = LatLngBounds.Builder()
-            points.forEach { point ->
-                boundsBuilder.include(LatLng(point.latitude(), point.longitude()))
-            }
-
-            // Build bounds from your boundsBuilder
-            val latLngBounds = boundsBuilder.build()
-
-                // Check if bounds are valid
-            if (latLngBounds.southwest != null && latLngBounds.northeast != null) {
-                // Extract southwest and northeast points
-
-                val boundsCoordinates = listOf(
-                    Point.fromLngLat(minLng, minLat),
-                    Point.fromLngLat(maxLng, maxLat)
-                )
-
-                // Calculate camera options to fit the bounding box
-                val cameraOptions = mapboxMap.cameraForCoordinates(
-                    boundsCoordinates,
-                    EdgeInsets(100.0, 50.0, 100.0, 50.0) // Padding: top, left, bottom, right
-                )
-
-                // Configure animation options
-                val animationOptions = MapAnimationOptions.Builder()
-                    .duration(3000) // Duration in milliseconds
-                    .build()
-
-                // Animate camera to fit bounds
-                mapView.camera.easeTo(cameraOptions, animationOptions)
-
-
-
-
-            /*// Add a GeoJsonSource to the map using the builder pattern
-            style.addSource(
-                geoJsonSource("line-source") {
-                    geoJsonSource(lineString.toString())
-                }
-            )
-
-            // Add a LineLayer to visualize the polyline
-            style.addLayer(
-                LineLayer("line-layer", "line-source").apply {
-                    lineColor("#ff0000")  // Set the line color
-                    lineWidth(5.0)        // Set the line width
-                }
-            )*/
-
-                // Zoom to a specific coordinate (e.g., the first point of the polyline)
-                // val targetPoint = lineCoordinates.first() // or choose any other coordinate
-                /* val position = CameraPosition.Builder()
-                .target(LatLng(centerLat, centerLng)) // Center of your bounding box
-                .zoom(zoomLevel) // Adjust zoom level as needed
-                .build()*/
-
-                // mapboxMap.moveCamera(CameraUpdateFactory.newCameraPosition(position))
-
-                // Calculate the bounding box of the LineString
-
-                /*if (hasCoordinates) {
-                    // Use the plugin to animate the camera to fit all trails
-                    val latLngBounds = boundsBuilder.build()
-                    // Compute the center manually
-                    val southwest = latLngBounds.southwest
-                    val northeast = latLngBounds.northeast
-                    val centerLat = (southwest.latitude + northeast.latitude) / 2
-                    val centerLng = (southwest.longitude + northeast.longitude) / 2
-                    //val centerLatLng = LatLng(centerLat, centerLng)
-                    //  val centerPoint = Point.fromLngLat(centerLatLng.longitude, centerLatLng.latitude)
-                    val cameraAnimationsPlugin = mapView.camera
-                    cameraAnimationsPlugin.easeTo(
-                        CameraOptions.Builder()
-                            .center(fromLngLat(centerLng, centerLat)) // Note: Longitude, Latitude
-                            .zoom(9.0)
-                            .padding(
-                                EdgeInsets(10.0, 10.0, 10.0, 10.0)) // Optional: add padding to the edges// Adjust zoom level as needed
-                            .build(),
-                        MapAnimationOptions.Builder()
-                            .duration(3000) // Duration in milliseconds (e.g., 3 seconds)
-                            .build()
-                    )
-
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "No coordinates available to adjust camera bounds.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    Log.e("MapError", "No coordinates available to adjust camera bounds.")
-                }*/
-
+            if(polyLinesResponseSatelliteView != null){
+                drawPolyline(style, polyLinesResponseSatelliteView!!)
             }
         }
     }
