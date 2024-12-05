@@ -403,8 +403,6 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
         val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
 
         val userDTO = viewModelUserRealm.getUserDTOById(userId)
-        val userSettings = viewModelUserRealm.getFavClients(userId)
-        userDTO?.favouriteClients = userSettings
 
         if(EditType.FIRSTNAME == field){
             userDTO!!.firstName = newValue
@@ -432,8 +430,8 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
             viewModelUserRealm.updateUser(userId, userDTO!!)
         }
 
+        //Get latest data from realm
         var sendUserDTO = viewModelUserRealm.getUserDTOById(userId)
-
         
         // Call the API to save to Server
         authViewModel.updateUser(sendUserDTO!!.toUser());
