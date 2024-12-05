@@ -350,7 +350,7 @@ class SingleResortReportProblemChooseLocationFragment : Fragment() {
             .addOnSuccessListener { location ->
                 if (location != null) {
                     moveCameraToLocation(location)
-                    logAndToastLocation(location)
+                    //logAndToastLocation(location)
                 } else {
                     Log.e("MapView", "Location is null.")
                 }
@@ -410,7 +410,7 @@ class SingleResortReportProblemChooseLocationFragment : Fragment() {
         mapView = binding.mapView
         mapView.getMapboxMap().loadStyleUri(Style.MAPBOX_STREETS) { style ->
 
-            val originalBitmap = BitmapFactory.decodeResource(resources, R.drawable.red_marker)
+            val originalBitmap = BitmapFactory.decodeResource(resources, R.drawable.location)
             val scaledBitmap = Bitmap.createScaledBitmap(originalBitmap, 100, 130, false)
             style.addImage("YOUR_ICON_BITMAP", scaledBitmap)
 
