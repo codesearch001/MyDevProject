@@ -12,13 +12,18 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.gson.Gson
 import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.TabClubsSubMemAdapter
 import com.snofed.publicapp.databinding.FragmentClubSubMembersBinding
 import com.snofed.publicapp.dto.SubscribeDTO
 import com.snofed.publicapp.models.realmModels.ParentOrganisation
+import com.snofed.publicapp.ui.User.UserViewModelRealm
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.ClientViewModelRealm
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.ClubViewModelRealm
 //import com.snofed.publicapp.models.browseSubClub.ParentOrganisation
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.AppPreference
@@ -40,32 +45,47 @@ class ClubSubMembersFragment : Fragment() {
     private val clubViewModel by viewModels<AuthViewModel>()
     private val sharedViewModel by activityViewModels<SharedViewModel>()
 
+    var vmClubRealm = ClubViewModelRealm()
     var clientId: String = ""
     var description: String = ""
     private val hideSubMebTab = true
     var isParentMember: ParentOrganisation? = null
     var isSubMember : Boolean? = false
     var isSubsricedClub : Boolean = false
-    //var tabs = listOf<String>()
+    var tabs = listOf<String>()
     @Inject lateinit var tokenManager: TokenManager
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentClubSubMembersBinding.inflate(inflater, container, false)
+        // Retrieve data from arguments
+        clientId = arguments?.getString("clientId").toString()
+        clubViewModel.mutableData.clientId.set(clientId)
+        tokenManager.saveClientId(clientId)
+
+        vmClubRealm = ViewModelProvider(requireActivity()).get(ClubViewModelRealm::class.java)
+       val hideSubMebTab = vmClubRealm.hasSubOrganisations(clientId)
+        val gson = Gson()
+        val json = gson.toJson(hideSubMebTab)
+        Log.e("payData"  ,"json  "+ json)
+
+        Log.i("PraveenALL" , "ALL " + hideSubMebTab)
+
         // Initialize the tab layout and ViewPager
         val tabLayout = binding.tabLayout
         val viewPager = binding.viewPager
 
+
         // Create a list of tabs
-       val tabs = listOf(resources.getString(R.string.t_club_action), resources.getString(R.string.t_club_gallery), resources.getString(R.string.t_club_about), resources.getString(R.string.t_club_sub_members))
+       //val tabs = listOf(resources.getString(R.string.t_club_action), resources.getString(R.string.t_club_gallery), resources.getString(R.string.t_club_about), resources.getString(R.string.t_club_sub_members))
 
 
-        /*if (hideSubMebTab){
+        if (!hideSubMebTab){
             // Create a list of tabs
              tabs = listOf(resources.getString(R.string.t_club_action), resources.getString(R.string.t_club_gallery), resources.getString(R.string.t_club_about))
         }else{
             // Create a list of tabs
              tabs = listOf(resources.getString(R.string.t_club_action), resources.getString(R.string.t_club_gallery), resources.getString(R.string.t_club_about), resources.getString(R.string.t_club_sub_members))
-        }*/
+        }
 
 
         // Create a ViewPager adapter
@@ -77,10 +97,7 @@ class ClubSubMembersFragment : Fragment() {
             tab.text = tabs[position]
         }.attach()
 
-        // Retrieve data from arguments
-        clientId = arguments?.getString("clientId").toString()
-        clubViewModel.mutableData.clientId.set(clientId)
-        tokenManager.saveClientId(clientId)
+
         return binding.root
 
     }
