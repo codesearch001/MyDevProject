@@ -171,7 +171,11 @@ class HomeFragment : Fragment() {
                      }.toString()*/
                     Log.d("TAG_Home_Fragment", "MSG${latestWorkout?.distance}")
                     // Filter data for the last 7 days
-                    val filteredData = filterAndSortLast7Days(data)
+                    //val filteredData = filterAndSortLast7Days(data)
+
+                    var filteredData = filterAndSort(data) ?: emptyList()
+                    filteredData = if (filteredData.isNotEmpty()) filteredData.take(5) else emptyList()
+
 
                     if (filteredData.isNullOrEmpty()) {
                         binding.txtNoRecentFeed.isVisible = true
@@ -200,19 +204,19 @@ class HomeFragment : Fragment() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun filterAndSortLast7Days(data: List<Daum>?): List<Daum> {
+    fun filterAndSort(data: List<Daum>?): List<Daum> {
         val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
         val now = LocalDateTime.now()
-        val sevenDaysAgo = now.minusDays(lastDaysData)
 
+        //val sevenDaysAgo = now.minusDays(lastDaysData)
         // Filter data for the last 7 days
-        val filteredData = data?.filter { workout ->
+       /* val filteredData = data?.filter { workout ->
             val startDate = LocalDateTime.parse(workout.startTime, formatter)
             startDate.isAfter(sevenDaysAgo)
-        } ?: emptyList()
+        } ?: emptyList()*/
 
         // Sort filtered data by date in descending order
-        return filteredData.sortedByDescending { workout ->
+        return data!!.sortedByDescending { workout ->
             LocalDateTime.parse(workout.startTime, formatter)
         }
     }

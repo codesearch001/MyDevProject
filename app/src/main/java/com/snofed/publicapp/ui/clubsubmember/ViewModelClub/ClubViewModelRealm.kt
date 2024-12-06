@@ -47,6 +47,13 @@ open class ClubViewModelRealm : ViewModel() {
         realmRepository.deleteAll(Club::class.java)
     }
 
+    fun hasParentOrganisation(clientId: String): Boolean {
+        return getClubById(clientId)?.parentOrganisation != null
+    }
+
+    fun hasSubOrganisations(clientId: String): Boolean {
+        return getClubById(clientId)?.subOrganisations?.isNotEmpty() ?: false
+    }
     // Check if a Club exists by ID
     fun doesClubExist(clubId: String): Boolean {
         return getClubById(clubId) != null
@@ -63,5 +70,7 @@ open class ClubViewModelRealm : ViewModel() {
     fun countAllClubs(): Long {
         return realmRepository.count(Club::class.java)
     }
+
+
 
 }
