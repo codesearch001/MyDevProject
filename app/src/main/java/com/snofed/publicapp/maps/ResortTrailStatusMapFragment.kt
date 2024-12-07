@@ -58,6 +58,7 @@ import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.FragmentResortTrailStatusMapBinding
 import com.snofed.publicapp.models.DataPolyResponse
 import com.snofed.publicapp.models.PolyLine
+import com.snofed.publicapp.models.Trail
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.Constants
 import com.snofed.publicapp.utils.SharedViewModel
@@ -92,7 +93,8 @@ class ResortTrailStatusMapFragment : Fragment() {
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
 
-    private var polyLineDataSatelliteView: PolyLine? = null
+    private var trail: Trail? = null
+
     private var polyLinesResponseSatelliteView: DataPolyResponse? = null
     var isSatelliteViewClicked : Boolean = false
 
@@ -213,6 +215,7 @@ class ResortTrailStatusMapFragment : Fragment() {
                         if (response != null) {
 
                             val trailResponse = response.data?.data
+                            val trail = response.data?.data
                             polyLinesResponseSatelliteView = response.data?.data
                             Log.d("TAG_TRAIL_RESPONSE", "TAG_TRAIL_RESPONSE $trailResponse.")
                             trailResponse?.let {
@@ -236,10 +239,10 @@ class ResortTrailStatusMapFragment : Fragment() {
                         binding.trailsNameMap.text = response.data.name
                         if (response != null) {
                             val polylineData = response.data.polyLine
-                            polyLineDataSatelliteView = response.data.polyLine
+                            trail = response.data
                             Log.d("P3333", "Print Details trails Id ${response.data.id}")
                             Log.d("P2222", "Adding GeoJsonSource and LineLayer${polylineData.features.size}")
-                            getDrawPolyline(style, polylineData)
+                            getDrawPolyline(style, trail!!)
                         } else {
                             // Handle the null case
                             Toast.makeText(requireContext(), response.toString(), Toast.LENGTH_SHORT).show()
@@ -477,8 +480,8 @@ class ResortTrailStatusMapFragment : Fragment() {
         viewModelTrails.trailsDrawPolyLinesByIDRequestUser(specificTrailId!!)
     }
 
-    private fun getDrawPolyline(style: Style, polylineData: PolyLine) {
-        val feature = polylineData.features.firstOrNull()
+    private fun getDrawPolyline(style: Style, trail: Trail) {
+        val feature = trail.polyLine.features.firstOrNull()
         val coordinates = feature?.geometry?.coordinates
 
         if (coordinates.isNullOrEmpty()) {
@@ -511,7 +514,7 @@ class ResortTrailStatusMapFragment : Fragment() {
         val lineLayerId = "line-layer"
         if (style.getLayer(lineLayerId) == null) {
             style.addLayer(lineLayer(lineLayerId, geoJsonSourceId) {
-                lineColor(feature.properties.color ?: "#ff0000") // Default color: red
+                lineColor(trail.ownTrailMapColor ?: feature.properties.color ?: "#ff0000") // Default color: red
                 lineWidth(5.0)
             })
         }
@@ -552,8 +555,8 @@ class ResortTrailStatusMapFragment : Fragment() {
 
         mapboxMap.loadStyle(styleType) { style ->
             // Remove old layers and sources (if necessary)
-            if (polyLineDataSatelliteView != null) {
-                    getDrawPolyline(style, polyLineDataSatelliteView!!)
+            if (trail != null) {
+                    getDrawPolyline(style, trail!!)
             }
 
             if(polyLinesResponseSatelliteView != null){
