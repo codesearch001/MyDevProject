@@ -1,5 +1,6 @@
 package com.snofed.publicapp.maps
 
+import StatusItem
 import android.Manifest
 import android.provider.Settings
 import android.content.Context
@@ -24,8 +25,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -55,16 +58,19 @@ import com.mapbox.maps.plugin.animation.easeTo
 import com.mapbox.maps.plugin.locationcomponent.LocationComponentPlugin
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.snofed.publicapp.R
+import com.snofed.publicapp.adapter.MapIntervalAdapter
 import com.snofed.publicapp.databinding.FragmentResortTrailStatusMapBinding
 import com.snofed.publicapp.models.DataPolyResponse
 import com.snofed.publicapp.models.PolyLine
 import com.snofed.publicapp.models.Trail
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.IntervalViewModelRealm
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.Constants
 import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.SnofedConstants
 import com.snofed.publicapp.utils.TokenManager
 import com.snofed.publicapp.utils.enums.PageType
+import com.snofed.publicapp.utils.enums.SyncActionEnum
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.System.setProperties
 import javax.inject.Inject
@@ -76,6 +82,8 @@ class ResortTrailStatusMapFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModelTrails by viewModels<AuthViewModel>()
     private val sharedViewModel by activityViewModels<SharedViewModel>()
+    private lateinit var vmIntervalRelam: IntervalViewModelRealm
+
     private lateinit var mapView: MapView
     private lateinit var mapboxMap: MapboxMap
     val boundsBuilder = LatLngBounds.Builder()
@@ -108,6 +116,8 @@ class ResortTrailStatusMapFragment : Fragment() {
     @Inject
     lateinit var tokenManager: TokenManager
 
+    var allClientMapInterval: MutableList<StatusItem> = mutableListOf()
+    private lateinit var mapIntervalAdapter: MapIntervalAdapter
     private var currentStyleIndex = 0
     private val styles = listOf(
         Style.MAPBOX_STREETS,
@@ -134,7 +144,27 @@ class ResortTrailStatusMapFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        vmIntervalRelam = ViewModelProvider(requireActivity()).get(IntervalViewModelRealm::class.java)
+        var allIntervals = vmIntervalRelam.getAllIntervals()
+        allIntervals = allIntervals.filter { it.syncAction != SyncActionEnum.DELETED.getValue() }
+        allClientMapInterval = allIntervals.map { interval ->
+            StatusItem(
+                id = interval.id!!,
+                text = interval.name ?: "No Name",
+                color = interval.color ?: "#FFFFFF" // Default color
 
+            )
+        }.toMutableList()
+
+        allClientMapInterval.add(
+            StatusItem(
+                id = "0",
+                text = resources.getString(R.string.t_close),
+                color = "#eb4034"
+            )
+        )
+
+        Log.d("vmIntervalRelam_Praveen", "vmIntervalRelam $allClientMapInterval")
 
         fabOpen = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_out)
         fabClose = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
@@ -172,6 +202,8 @@ class ResortTrailStatusMapFragment : Fragment() {
         }
         val trails = tokenManager.getTrailsId().toString()
         Log.d("P1111", "Adding GeoJsonSource and LineLayer$trails")
+
+
 
         // Initialize MapView and MapboxMap
         mapView = binding.mapView
@@ -257,6 +289,32 @@ class ResortTrailStatusMapFragment : Fragment() {
             }
         }
 
+        binding.intervalsButton.setOnClickListener {
+
+
+            // Show or hide the CardView with animation
+            val cardView = binding.intervalCardView
+            if (cardView.visibility == View.GONE || cardView.visibility == View.INVISIBLE) {
+                cardView.visibility = View.VISIBLE
+                cardView.alpha = 0f
+                cardView.animate()
+                    .alpha(1f)
+                    .setDuration(300)
+                    .start()
+            } else {
+                cardView.animate()
+                    .alpha(0f)
+                    .setDuration(300)
+                    .withEndAction {
+                        cardView.visibility = View.GONE
+                    }
+                    .start()
+            }
+        }
+        //Map Interval type
+        mapIntervalAdapter = MapIntervalAdapter(allClientMapInterval)
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.adapter = mapIntervalAdapter
     }
 
     private fun setupLocationRequest() {

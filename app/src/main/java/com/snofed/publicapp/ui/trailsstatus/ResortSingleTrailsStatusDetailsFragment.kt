@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,9 +26,11 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.google.gson.Gson
 import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.EventClubFeedAdapter
 import com.snofed.publicapp.databinding.FragmentResortSingleTrailsStatusDetailsBinding
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.IntervalViewModelRealm
 import com.snofed.publicapp.ui.event.EventTrailsFeedAdapter
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.DateTimeConverter
@@ -36,6 +39,7 @@ import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.TokenManager
 import com.snofed.publicapp.utils.enums.PageType
+import com.snofed.publicapp.utils.enums.SyncActionEnum
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -46,6 +50,8 @@ class ResortSingleTrailsStatusDetailsFragment : Fragment(),EventTrailsFeedAdapte
     private val binding get() = _binding!!
     private val trailsDetailsViewModel by viewModels<AuthViewModel>()
     private val sharedViewModel by activityViewModels<SharedViewModel>()
+
+    //var vmIntervalRelam = IntervalViewModelRealm
 
     private var trailId: String = ""
     private var textForLighting: String = ""
@@ -66,6 +72,12 @@ class ResortSingleTrailsStatusDetailsFragment : Fragment(),EventTrailsFeedAdapte
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+
+        //val gson = Gson()
+        //val json = gson.toJson(intervals)
+        //Log.e("intervals_Praveen"  ,"intervals  "+ json)
 
         trailId = arguments?.getString("trailId").toString()
         Log.d("ResortSingleTrails", "trailId $trailId")
