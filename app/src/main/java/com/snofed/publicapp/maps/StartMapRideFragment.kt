@@ -162,7 +162,7 @@ class StartMapRideFragment : Fragment(),WorkoutMediaReader.OnImageUriReceivedLis
     private var workoutImgTemp: MutableList<String> = mutableListOf()
 
     private lateinit var viewModelUserRealm: UserViewModelRealm
-
+    private var lastClickTime = 0L
 
     @Inject
     lateinit var tokenManager: TokenManager
@@ -477,8 +477,12 @@ class StartMapRideFragment : Fragment(),WorkoutMediaReader.OnImageUriReceivedLis
                 // Handle saving the ride here
 
                 //val magedata  = workoutImgTemp
+                // Check the time of the last click and prevent rapid clicks
+                if (System.currentTimeMillis() - lastClickTime > 500) {
+                    lastClickTime = System.currentTimeMillis()
+                    saveRide(comment, isPublicRide)
+                }
 
-                saveRide(comment, isPublicRide)
 
                 // Dismiss the dialog
                 dialog.dismiss()

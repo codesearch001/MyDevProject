@@ -130,7 +130,7 @@ class MapExploreFragment : Fragment() {
     var defaultLat: String = "%.6f".format(Locale.US,SnofedConstants.CENTER_LAT)
     var defaultLong: String = "%.6f".format(Locale.US,SnofedConstants.CENTER_LONG)
     var clientId: String? = ""
-
+    private var lastClickTime = 0L
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
@@ -486,7 +486,11 @@ class MapExploreFragment : Fragment() {
         rotateBackward = AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_backward)
 
         binding.mapByFilter.setOnClickListener {
-            showBottomMapFilter()
+            // Check the time of the last click and prevent rapid clicks
+            if (System.currentTimeMillis() - lastClickTime > 500) { // 500ms debounce time
+                lastClickTime = System.currentTimeMillis()
+                showBottomMapFilter()
+            }
         }
         binding.fab.setOnClickListener {
             animateFab()
@@ -517,7 +521,8 @@ class MapExploreFragment : Fragment() {
     }
 
     private fun showBottomMapFilter() {
-
+       /* // Avoid disabling the button unintentionally
+        binding.mapByFilter.isEnabled = true*/
         // Show the BottomSheetFragment
         val bottomSheet = FilterMapBottomSheetFragment()
         val bundle = Bundle().apply {
