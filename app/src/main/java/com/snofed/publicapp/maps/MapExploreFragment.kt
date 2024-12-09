@@ -1,6 +1,5 @@
 package com.snofed.publicapp.maps
 
-import StatusItem
 import android.Manifest
 import android.content.Context
 import android.content.Intent
@@ -68,6 +67,7 @@ import com.mapbox.maps.extension.style.layers.addLayerAbove
 import com.mapbox.maps.extension.style.layers.generated.SymbolLayer
 import com.mapbox.maps.extension.style.layers.generated.fillLayer
 import com.mapbox.maps.extension.style.layers.generated.lineLayer
+import com.mapbox.maps.extension.style.layers.generated.symbolLayer
 import com.mapbox.maps.extension.style.layers.getLayer
 import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
 import com.mapbox.maps.extension.style.sources.addSource
@@ -88,6 +88,7 @@ import com.snofed.publicapp.adapter.MapIntervalAdapter
 import com.snofed.publicapp.databinding.BottomSheetApartmentsBinding
 import com.snofed.publicapp.databinding.FragmentMapExploreBinding
 import com.snofed.publicapp.databinding.MapFilterDetailsBinding
+import com.snofed.publicapp.models.interval.StatusItem
 import com.snofed.publicapp.models.realmModels.Area
 import com.snofed.publicapp.models.realmModels.Poi
 import com.snofed.publicapp.models.realmModels.Resource
@@ -331,6 +332,7 @@ class MapExploreFragment : Fragment() {
         sharedViewModel.updateSelectedTrailsIds(emptyList()) // Clear Trails
         //sharedViewModel.updateSelectedTrailsIds(listOf("0")) // Set Default
         sharedViewModel.updateSelectedZoneIds(emptyList()) // Clear Zones
+        sharedViewModel.updateSelectedAreaIds("0","")
     }
 
 
@@ -722,6 +724,34 @@ class MapExploreFragment : Fragment() {
                             lineWidth(6.0)
                         },lastLayerId)
 
+                    }
+
+                    // Add starting point POI
+                    val startingPoint = coordinates[0]?.firstOrNull()
+                    if (startingPoint != null) {
+                        val poiSourceId = "start-poi-source-${trail.id}"
+                        val poiLayerId = "start-poi-layer-${trail.id}"
+
+                        val poiFeature = Feature.fromGeometry(
+                            Point.fromLngLat(startingPoint[0], startingPoint[1])
+                        )
+                        val poiFeatureCollection =
+                            FeatureCollection.fromFeatures(listOf(poiFeature))
+
+                        if (style.getSource(poiSourceId) == null) {
+                            style.addSource(geoJsonSource(poiSourceId) {
+                                featureCollection(poiFeatureCollection)
+                            })
+                        }
+                        val poiIconBitmap = BitmapFactory.decodeResource(resources, R.drawable.start_pin)
+                        style.addImage("start-poi-icon", poiIconBitmap)
+
+                        if (style.getLayer(poiLayerId) == null) {
+                            style.addLayerAbove(symbolLayer(poiLayerId, poiSourceId) {
+                                iconImage("start-poi-icon") // Use an icon from your sprite or custom one
+                                iconSize(1.0)
+                            }, layerId)
+                        }
                     }
                     //Update the last added trail layer ID
                     lastTrailLayerId = layerId
@@ -1235,6 +1265,7 @@ class MapExploreFragment : Fragment() {
     private fun removeTrailsOnMap(clientTrails: MutableList<Trail>) {
         mapboxMap.getStyle { style ->
             clientTrails.forEach { trail ->
+                // Remove Trails from MAP
                 val sourceId = "line-source-${trail.id}"
                 val layerId = "line-layer-${trail.id}"
 
@@ -1244,6 +1275,12 @@ class MapExploreFragment : Fragment() {
                 style.getSource(sourceId)?.let {
                     style.removeStyleSource(it.sourceId)
                 }
+
+                val poiLayerId = "start-poi-layer-${trail.id}"
+                val poiSourceId = "start-poi-source-${trail.id}"
+
+                style.getLayer(poiLayerId)?.let { style.removeStyleLayer(it.layerId) }
+                style.getSource(poiSourceId)?.let { style.removeStyleSource(it.sourceId) }
             }
         }
     }
