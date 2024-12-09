@@ -18,11 +18,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.EventClubFeedAdapter
-import com.snofed.publicapp.models.browseSubClub.Event
+import com.snofed.publicapp.models.realmModels.Event
 import com.snofed.publicapp.utils.DateTimeConverter
 
-class EventTrailsFeedAdapter(private val listener: OnItemClickListener) :
-    RecyclerView.Adapter<EventTrailsFeedAdapter.ClubViewHolder>() {
+class EventTrailsFeedAdapter(private val listener: OnItemClickListener) : RecyclerView.Adapter<EventTrailsFeedAdapter.ClubViewHolder>() {
 
     private var feedArray: List<Event> = listOf()
     val dateTimeConverter = DateTimeConverter()
@@ -53,7 +52,7 @@ class EventTrailsFeedAdapter(private val listener: OnItemClickListener) :
 
         holder.textEventTrailsName.text = reslult.name
 
-        val formattedDateTime = dateTimeConverter.convertDateTime(reslult.startDate)
+        val formattedDateTime = dateTimeConverter.convertDateTime(reslult.startDate!!)
 
         holder.textEventDate.text = dateTimeConverter.datePart +"," + dateTimeConverter.timePart
 
@@ -71,7 +70,7 @@ class EventTrailsFeedAdapter(private val listener: OnItemClickListener) :
 
         holder.eventCardId.setOnClickListener {
             Log.e("click..", "clickClubItem")
-            listener.onItemClick(reslult.id) // Assuming Client has an 'id' property
+            listener.onItemClick(reslult.id!!) // Assuming Client has an 'id' property
         }
     }
 

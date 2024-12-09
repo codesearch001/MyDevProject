@@ -38,7 +38,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="Purchase Options"
+                android:text="@string/title_fragment_purchase_options"
                 android:textColor="@color/white"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -87,7 +87,7 @@
                         android:id="@+id/trade_in_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Buy Single Ticket"
+                        android:text="@string/txt_Buy_single_ticket"
                         android:textColor="@color/dark_blue"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -141,7 +141,7 @@
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Buy Multiple Tickets"
+                        android:text="@string/txt_Buy_multiple_tickets"
                         android:textColor="@color/dark_blue"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -194,7 +194,7 @@
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Upgrade To PRO Trails"
+                        android:text="@string/txt_Upgrade_to_pro_trails"
                         android:textColor="@color/dark_blue"
                         android:textSize="14sp"
                         android:textStyle="bold" />

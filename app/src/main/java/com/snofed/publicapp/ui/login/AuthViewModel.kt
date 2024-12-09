@@ -3,17 +3,24 @@ package com.snofed.publicapp.ui.login
 
 import android.text.TextUtils
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.snofed.publicapp.api.ResponseObject
 import com.snofed.publicapp.db.WorkoutResponse
+import com.snofed.publicapp.dto.SubscribeDTO
+import com.snofed.publicapp.dto.UserDTO
 import com.snofed.publicapp.membership.model.ActiveMembership
 import com.snofed.publicapp.membership.model.MembershipDetails
 import com.snofed.publicapp.membership.model.BuyMembership
 import com.snofed.publicapp.models.NewClubData
+import com.snofed.publicapp.models.Order
 import com.snofed.publicapp.models.RideApiResponse
+import com.snofed.publicapp.models.Ticket
 import com.snofed.publicapp.models.TrailGraphData
 import com.snofed.publicapp.models.TrailPolyLinesResponse
 import com.snofed.publicapp.models.TrailsDetilsResponse
+import com.snofed.publicapp.models.User
 import com.snofed.publicapp.models.UserRecoverRequest
 import com.snofed.publicapp.models.UserRegRequest
 import com.snofed.publicapp.models.UserReport
@@ -23,12 +30,18 @@ import com.snofed.publicapp.models.browseSubClub.BrowseSubClubResponse
 import com.snofed.publicapp.models.events.EventDetailsResponse
 import com.snofed.publicapp.models.events.EventResponse
 import com.snofed.publicapp.models.membership.Membership
+import com.snofed.publicapp.models.realmModels.Club
+import com.snofed.publicapp.models.realmModels.SystemDataHolder
+import com.snofed.publicapp.models.realmModels.Trail
+import com.snofed.publicapp.models.realmModels.UserRealm
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
+import com.snofed.publicapp.purchasehistory.model.TicketOrderDetails
 import com.snofed.publicapp.purchasehistory.model.TicketPurchaseHistory
 import com.snofed.publicapp.repository.MembershipRepository
 import com.snofed.publicapp.repository.UserFeedBackRepository
 import com.snofed.publicapp.repository.UserRepository
+import com.snofed.publicapp.response.SubscribeResponse
 import com.snofed.publicapp.ui.feedback.FeedApiResponse
 import com.snofed.publicapp.ui.feedback.adapter.FeedBackDetails
 import com.snofed.publicapp.ui.feedback.model.FeedBackCategories
@@ -37,34 +50,40 @@ import com.snofed.publicapp.ui.order.model.TicketTypeData
 import com.snofed.publicapp.ui.order.ticketing.OrderDTO
 import com.snofed.publicapp.ui.order.ticketing.OrderResponseDTO
 import com.snofed.publicapp.ui.order.ticketing.SwishResponseDTO
+import com.snofed.publicapp.ui.setting.UploadResponse
+import com.snofed.publicapp.ui.setting.UploadWorkoutResponse
 import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.MutableData
 import com.snofed.publicapp.utils.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import okhttp3.RequestBody
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(private val userRepository: UserRepository,
                                         private val feedBackRepository: UserFeedBackRepository,
-                                        private val membershipRepository: MembershipRepository
-
-) :
-    ViewModel() {
+                                        private val membershipRepository: MembershipRepository) : ViewModel() {
 
     var mutableData = MutableData()
 
 
-    val userResponseLiveData: LiveData<NetworkResult<UserResponse>>
+    val userResponseLiveData: LiveData<NetworkResult<ResponseObject<UserRealm>>>
         get() = userRepository.userResponseLiveData
+
+    val userPasswordRecoveryLiveData: LiveData<NetworkResult<ResponseObject<String>>>
+        get() = userRepository.userPasswordRecoveryLiveData
+
 
     val userWorkoutRideLiveData: LiveData<NetworkResult<RideApiResponse>>
         get() = userRepository.userWorkoutRideLiveData
 
+
    val userFeedBackResponseLiveData: LiveData<NetworkResult<FeedApiResponse>>
         get() = feedBackRepository.userFeedBackResponseLiveData
 
- val feedBackTaskCategoriesLiveData: LiveData<NetworkResult<FeedBackTaskCategories>>
+  val feedBackTaskCategoriesLiveData: LiveData<NetworkResult<FeedBackTaskCategories>>
         get() = feedBackRepository.feedBackTaskCategoriesLiveData
 
     val membershipResponseLiveData: LiveData<NetworkResult<BuyMembership>>
@@ -79,6 +98,9 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
 
    val purchaseOrderHistoryMembershipResponseLiveData: LiveData<NetworkResult<TicketPurchaseHistory>>
         get() = membershipRepository.purchaseOrderHistoryMembershipResponseLiveData
+
+ val purchaseOrderHistoryDetailsResponseLiveData: LiveData<NetworkResult<TicketOrderDetails>>
+        get() = membershipRepository.purchaseOrderHistoryDetailsResponseLiveData
 
    val getTicketTypeResponseLiveData: LiveData<NetworkResult<TicketTypeData>>
         get() = membershipRepository.getTicketTypeResponseLiveData
@@ -95,13 +117,19 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
     val feedBackTaskDetailsLiveData: LiveData<NetworkResult<FeedBackDetails>>
         get() = feedBackRepository.feedBackTaskDetailsLiveData
 
-    val clubLiveData: LiveData<NetworkResult<NewClubData>>
+    val clubLiveData: LiveData<NetworkResult<ResponseObject<SystemDataHolder>>>
         get() = userRepository.clubLiveData
+
+    val uploadResult: LiveData<NetworkResult<UploadResponse>>
+        get() = userRepository.uploadResult
+
+    val uploadWorkoutResult: LiveData<NetworkResult<UploadWorkoutResponse>>
+        get() = userRepository.uploadWorkoutResult
 
     val userDashBoardLiveData: LiveData<NetworkResult<FeedListResponse>>
         get() = userRepository.userDashBoardLiveData
 
-    val subClubLiveData: LiveData<NetworkResult<BrowseSubClubResponse>>
+    val subClubLiveData: LiveData<NetworkResult<ResponseObject<Club>>>
         get() = userRepository.subClubLiveData
 
     val eventLiveData: LiveData<NetworkResult<EventResponse>>
@@ -117,7 +145,7 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
     val feedLiveData: LiveData<NetworkResult<FeedListResponse>>
         get() = userRepository.feedLiveData
 
-    val trailsDetailsLiveData: LiveData<NetworkResult<TrailsDetilsResponse>>
+    val trailsDetailsLiveData: LiveData<NetworkResult<ResponseObject<Trail>>>
         get() = userRepository.trailsDetailsLiveData
 
     val trailsDrawPolyLinesByIDLiveData: LiveData<NetworkResult<TrailPolyLinesResponse>>
@@ -125,6 +153,13 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
 
     val trailsDetailsGraphData: LiveData<NetworkResult<TrailGraphData>>
         get() = userRepository.eventDetailsGraphLiveData
+
+    //Fav Club
+    val clubFavLiveData: LiveData<NetworkResult<BrowseSubClubResponse>>
+        get() = userRepository.clubFavLiveData
+
+    val subscribeResponseLiveData: LiveData<NetworkResult<SubscribeResponse>>
+        get() = userRepository.subscribeResponseLiveData
 
 
     fun registerUser(userRequest: UserRegRequest) {
@@ -136,6 +171,12 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
     fun loginUser(userRequest: UserRequest) {
         viewModelScope.launch {
             userRepository.loginUser(userRequest)
+        }
+    }
+
+    fun updateUser(user: User) {
+        viewModelScope.launch {
+            userRepository.updateUser(user)
         }
     }
 
@@ -193,6 +234,12 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
             membershipRepository.getPurchaseOrderHistory(userId)
         }
     }
+
+    fun getOrderById(userId: String) {
+        viewModelScope.launch {
+            membershipRepository.getOrderById(userId)
+        }
+    }
     fun getTicketType(userId: String) {
         viewModelScope.launch {
             membershipRepository.getTicketType(userId)
@@ -227,7 +274,19 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
 
     fun clubRequestUser() {
         viewModelScope.launch {
-            userRepository.getClub()
+            userRepository.getAllClub()
+        }
+    }
+    fun subscribeClubService(subscribeDTO: SubscribeDTO) {
+        viewModelScope.launch {
+            userRepository.subscribeClub(subscribeDTO)
+            // _uploadResult.postValue(result)
+        }
+    }
+    fun unsubscribeClubService(subscribeDTO: SubscribeDTO) {
+        viewModelScope.launch {
+            userRepository.unsubscribeClub(subscribeDTO)
+            // _uploadResult.postValue(result)
         }
     }
 
@@ -238,9 +297,22 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
         }
     }
 
+    fun uploadProfileImage(userId: String, file: File) {
+        viewModelScope.launch {
+            userRepository.uploadProfileImage(userId, file)
+           // _uploadResult.postValue(result)
+        }
+    }
+    fun uploadWorkOutIdImage(workOutId: String, file: List<File>) {
+        viewModelScope.launch {
+            userRepository.uploadWorkOutIdImage(workOutId, file)
+           // _uploadResult.postValue(result)
+        }
+    }
+
     fun subClubRequestUser(clientId: String) {
         viewModelScope.launch {
-            userRepository.getSubClub(clientId)
+            userRepository.getClubDetails(clientId)
         }
     }
 
@@ -373,5 +445,11 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
             result = Pair(false, "Email is invalid")
         }
         return result
+    }
+
+    fun getFavClubResponse(favClientId: String) {
+        viewModelScope.launch {
+            userRepository.getClubById(favClientId)
+        }
     }
 }

@@ -27,19 +27,27 @@ import com.snofed.publicapp.utils.NetworkResult
 import dagger.hilt.android.AndroidEntryPoint
 import android.text.Spannable
 import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.mapbox.maps.extension.style.expressions.dsl.generated.e
 import com.snofed.publicapp.R
+import com.snofed.publicapp.models.events.Trail
 import com.snofed.publicapp.utils.Constants
 import com.snofed.publicapp.utils.ServiceUtil
+import com.snofed.publicapp.utils.SharedViewModel
 
 @AndroidEntryPoint
 class SingleEventDetailsFragment : Fragment() {
 
     private var _binding: FragmentSingleEventDetailsBinding? = null
     private val binding get() = _binding!!
+
     private val eventDetailsViewModel by viewModels<AuthViewModel>()
+
     var eventId: String = ""
+
     val dateTimeConverter = DateTimeConverter()
 
     override fun onCreateView(
@@ -57,6 +65,7 @@ class SingleEventDetailsFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         // Handle back press
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -76,12 +85,7 @@ class SingleEventDetailsFragment : Fragment() {
         binding.backBtn.setOnClickListener {
             it.findNavController().popBackStack()
         }
-        binding.btnBuyEventTicket.setOnClickListener {
-            it.findNavController().navigate(R.id.purchaseOptionsFragment)
-            //it.findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
-            /*val intent = Intent(requireActivity(), HomeDashBoardActivity::class.java)
-            startActivity(intent)*/
-        }
+
 
         fetchResponse()
         eventDetailsViewModel.eventDetailsLiveData.observe(viewLifecycleOwner, Observer {
@@ -101,6 +105,7 @@ class SingleEventDetailsFragment : Fragment() {
                         binding.eventLayout.isVisible = true
                         binding.txtIdNoRecordFound.isVisible = false
 
+                       // binding.eventResortName.text = it.data.data.resortName
                         dateTimeConverter.convertDateTime(it.data.data.startDate)//convert data
                         val getDate=dateTimeConverter.datePartOnly
                         val getMonthOnly=dateTimeConverter.dateOfMonthPartOnly
@@ -108,7 +113,23 @@ class SingleEventDetailsFragment : Fragment() {
                         binding.textMonth.text = getMonthOnly
                         binding.txtEventBannerDate.text = getMonthOnly + " Event"
                         binding.txtEventName.text = it.data.data.name
+                        val clientId = it.data.data.clientId
 
+                        binding.btnBuyEventTicket.setOnClickListener {
+                            val bundle = Bundle()
+                            bundle.putBoolean("IS_FROM_EVENT_DETAILS",true)
+                            bundle.putString("eventId",eventId)
+                            bundle.putString("clientId",clientId)
+                            findNavController().navigate(R.id.purchaseOptionsFragment,bundle)
+                        }
+
+
+                        getClientById(it.data.data.clientId).toString()
+
+                        val trailNames = getTrailNames(it.data.data.trails).joinToString(separator = "\n")
+                        binding.txtTrail.text = trailNames
+
+                       // binding.txtTrail.text = listTrails.toString()
                         if (it.data.data.coverImagePath == null) {
                             Glide.with(binding.imgEventBannerImagePath).load(R.drawable.event_banner_details)
                                 .into(binding.imgEventBannerImagePath)
@@ -183,10 +204,46 @@ class SingleEventDetailsFragment : Fragment() {
 
             }
         })
+
+        /////////////////////////////////
+
+
+        eventDetailsViewModel.subClubLiveData.observe(viewLifecycleOwner, Observer {
+            when (it) {
+                is NetworkResult.Success -> {
+
+                    Log.d("SingleEventDetails", "SingleEventDetails... " + it.data?.data)
+
+                    binding.eventResortName.text = it.data?.data?.publicName.toString()
+
+                }
+
+                is NetworkResult.Error -> {
+                    Toast.makeText(requireActivity(), it.message.toString(), Toast.LENGTH_SHORT).show()
+                }
+
+                is NetworkResult.Loading -> {
+                    // binding.progressBar.isVisible = true
+                }
+
+            }
+        })
     }
 
     private fun fetchResponse() {
         eventDetailsViewModel.eventDetailsRequestUser(eventId)
     }
+
+    private fun getClientById(clientId: String) {
+        eventDetailsViewModel.subClubRequestUser(clientId)
+
+    }
+    private fun getTrailNames(trails: List<Trail>): List<String> {
+        return trails.map { trail ->
+            trail.name
+        }
+    }
+
+
 }
 

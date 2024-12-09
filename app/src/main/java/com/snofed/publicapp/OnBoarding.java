@@ -10,14 +10,10 @@ import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
-
 import com.snofed.publicapp.utils.TokenManager;
-
-import javax.inject.Inject;
 
 
 public class OnBoarding extends AppCompatActivity {
@@ -29,7 +25,7 @@ public class OnBoarding extends AppCompatActivity {
     TextView[] dots;
     Button letsGetStarted, next_btn, done_btn,skip_btn;
     Animation animation;
-    int currentPos;
+    int currentPos = 0;
     private int dotsCount;
   //  SharePreferenceProvider pref;
 
@@ -64,8 +60,8 @@ public class OnBoarding extends AppCompatActivity {
 
 
     public void Skip(View view) {
-        tokenManager.getUserId();
-        startActivity(new Intent(this, HomeDashBoardActivity.class));
+        //tokenManager.getUserId();
+        startActivity(new Intent(this, MainActivity.class));
         finishAffinity();
     }
     public void DONE(View view) {
@@ -86,7 +82,7 @@ public class OnBoarding extends AppCompatActivity {
 
         for (int i = 0; i < dots.length; i++) {
             dots[i] = new TextView(this);
-            dots[i].setText(Html.fromHtml("&#8226;"));
+            dots[i].setText(Html.fromHtml("&#8226;", Html.FROM_HTML_MODE_LEGACY));
             dots[i].setTextSize(50);
             dots[i].setTextColor(getResources().getColor(R.color.white));
             dotsLayout.addView(dots[i]);

@@ -45,7 +45,7 @@ class BuyMembershipAdapter(private val listener: OnItemClickListener) : Recycler
         return ClubViewHolder(view)
     }
 
-    @SuppressLint("DefaultLocale", "SetTextI18n")
+    @SuppressLint("DefaultLocale", "SetTextI18n", "StringFormatInvalid")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ClubViewHolder, position: Int) {
         val reslult = feedArray[position]
@@ -62,13 +62,15 @@ class BuyMembershipAdapter(private val listener: OnItemClickListener) : Recycler
 
         // Set the initial text and icon for the "Show benefits" button
         if (reslult.benefits.isNotEmpty()) {
-            holder.btn_Buy_Memberships.text = "Show benefits (${reslult.benefits.size})"
+            //holder.btn_Buy_Memberships.text = "Show benefits (${reslult.benefits.size})"
+            holder.btn_Buy_Memberships.text = holder.itemView.context.getString(R.string.show_benefits) + " (" + reslult.benefits.size + ")"
+
             holder.btn_Buy_Memberships.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.custom_drawable, 0)
             holder.btn_Buy_Memberships.isClickable = true
             holder.btn_Buy_Memberships.isEnabled = true
         } else {
             // holder.btn_Buy_Memberships.text = "No benefits available"
-            holder.btn_Buy_Memberships.text = "Show benefits (${reslult.benefits.size})"
+            holder.btn_Buy_Memberships.text = holder.itemView.context.getString(R.string.show_benefits) + " (" + reslult.benefits.size + ")"
             holder.btn_Buy_Memberships.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0) // No icon
             holder.btn_Buy_Memberships.isClickable = false
             holder.btn_Buy_Memberships.isEnabled = false
@@ -88,13 +90,13 @@ class BuyMembershipAdapter(private val listener: OnItemClickListener) : Recycler
             if (benefitsVisible) {
                 // Hide the benefits
                 holder.benefitsRecyclerView.visibility = View.GONE
-                holder.btn_Buy_Memberships.text = "Show benefits (${reslult.benefits.count()})"
+                holder.btn_Buy_Memberships.text = holder.itemView.context.getString(R.string.show_benefits) + " (" + reslult.benefits.count() + ")"
                 holder.btn_Buy_Memberships.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.custom_drawable, 0)
                 // Optionally, hide the benefits RecyclerView or details here
             } else {
                 // Show the benefits
                 holder.benefitsRecyclerView.visibility = View.VISIBLE
-                holder.btn_Buy_Memberships.text = "Hide benefits (${reslult.benefits.count()})"
+                holder.btn_Buy_Memberships.text = holder.itemView.context.getString(R.string.hide_benefits) + " (" + reslult.benefits.count() + ")"
                 holder.btn_Buy_Memberships.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.custom_up_drawable, 0)
                 // Optionally, show the benefits RecyclerView or details here
             }

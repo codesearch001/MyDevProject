@@ -1,8 +1,5 @@
 package com.snofed.publicapp.ui.dashboardFragment
 
-import android.annotation.SuppressLint
-import android.content.Intent
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -10,37 +7,34 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.snofed.publicapp.HomeDashBoardActivity
-import com.snofed.publicapp.HomeNewActivity
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.RecentFeedAdpater
 import com.snofed.publicapp.databinding.FragmentHomeBinding
-import com.snofed.publicapp.models.browseSubClub.BrowseSubClubResponse
 import com.snofed.publicapp.models.workoutfeed.Daum
-import com.snofed.publicapp.ui.feedImage.WorkoutRideLogFeedAdapter
+import com.snofed.publicapp.ui.User.UserViewModelRealm
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.AppPreference
 import com.snofed.publicapp.utils.DateTimeConverter
 import com.snofed.publicapp.utils.DrawerController
 import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.NetworkResult
+import com.snofed.publicapp.utils.ServiceUtil
 import com.snofed.publicapp.utils.SharedPreferenceKeys
 import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.TokenManager
+import com.snofed.publicapp.viewModel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -48,65 +42,102 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
-
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+
     private val clubViewModel by viewModels<AuthViewModel>()
     private val sharedViewModel by activityViewModels<SharedViewModel>()
-    val dateTimeConverter = DateTimeConverter()
+
     private lateinit var recentFeedAdpater: RecentFeedAdpater
-    private var lastDaysData: Long = 7
+    val dateTimeConverter = DateTimeConverter()
+    //private var lastDaysData: Long = 7
+    private var lastDaysData: Long = 1000
+
+    //private lateinit var viewModelUserRealm: UserViewModelRealm
+    private lateinit var userViewModel: UserViewModel
+
     @Inject
     lateinit var tokenManager: TokenManager
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-
+        userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
         //for using status bar space
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            requireActivity().window.setFlags(
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-            );
+
+            requireActivity().window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
-        // adapter = NoteAdapter(::onNoteClicked)
+
         binding.humburger.setOnClickListener {
             (activity as? DrawerController)?.openDrawer()
         }
+
         return binding.root
-        // val view = binding.root
-        //  return view
     }
-
-
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+        // Retrieve the saved image URL
+        //val savedImageUrl = AppPreference.getPreference(context, SharedPreferenceKeys.PREFS_PROFILE_FILE)
+
+        val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
+        //val realmRepository = RealmRepository()
+        //val userViewModelRealm = UserViewModelRealm(realmRepository)
+        //Log.e("TAG_Home_Fragment","userId "+userId)
+
         // Get ViewModel instance
+        binding.nameTextView.text = userViewModel.fetchById(userId)?.fullName
+        // Retrieve the saved image URL
+        val savedImageUrl = ServiceUtil.BASE_URL_IMAGE + userViewModel.getPublicUserSettingValue(userId,"Image")
 
+        savedImageUrl?.let {
+            // Load the image using Glide with circle crop transformation
+            Glide.with(this) // `fragment` provides the necessary context here
+                .load(savedImageUrl)
+                .placeholder(R.drawable.user_profile) // Optional: placeholder image while loading
+                .error(R.drawable.user_profile) // Optional: error image if loading fails
+                .transform(CircleCrop()) // Circle crop transformation to make the image circular
+                .into(binding.profileImageView) // Set the ImageView
+        }
 
-        binding.nameTextView.text = tokenManager.getUser()
         binding.btnPurchase.setOnClickListener {
             findNavController().navigate(R.id.purchaseHistoryFragment2)
-            //startActivity(Intent(requireActivity(), HomeNewActivity::class.java))
-
         }
 
         binding.btnMembership.setOnClickListener {
             findNavController().navigate(R.id.membershipFragment)
-            //startActivity(Intent(requireActivity(), HomeNewActivity::class.java))
-
         }
 
         binding.startBtn.setOnClickListener {
             findNavController().navigate(R.id.startMapRideFragment)
-
         }
+
         binding.txtNoOfLog.setOnClickListener {
             findNavController().navigate(R.id.rideLogsFragment)
+        }
 
+        binding.profileImageView.setOnClickListener {
+            val bundle = Bundle().apply {
+                putInt("tabIndex", 1) // 1 opens the second tab
+            }
+            findNavController().navigate(R.id.settingFragment,bundle)
+        }
+        binding.nameTextView.setOnClickListener {
+            val bundle = Bundle().apply {
+                putInt("tabIndex", 1) // 1 opens the second tab
+            }
+            findNavController().navigate(R.id.settingFragment,bundle)
+        }
+
+        binding.txtUpgradeMembershipType.setOnClickListener {
+            val bundle = Bundle().apply {
+                //putInt("tabIndex", 1) // 1 opens the second tab
+            }
+            findNavController().navigate(R.id.purchaseOptionsFragment,bundle)
         }
 
         fetchResponse()
@@ -117,47 +148,44 @@ class HomeFragment : Fragment() {
                     sharedViewModel.feedListResponse.value = it.data
 
                     val data = it.data?.data
-
-
                     binding.txtIdNoOfLog.text = (data?.size ?: 0).toString()
-
-
-
                     binding.txtIdTotalDistance.text = String.format("%.2f",
                         Helper.m2Km(data?.sumOf {
                             it.distance
-
                         })) + " km"
 
                     val totalSeconds = data?.sumOf { it.duration } ?: 0
                     binding.txtIdTotalTime.text = dateTimeConverter.formatSecondsToHMS(totalSeconds)
-
                     val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
                     // Parse and find the latest workout
                     val latestWorkout = data?.maxByOrNull { workout ->
                         LocalDateTime.parse(workout.startTime, formatter)
                     }
-
                     latestWorkout?.let {
                         it.distance
                     }
                     //binding.txtIdPreviousDistance.text = String.format("%.2f",latestWorkout?.distance)+"m"
-                    binding.txtIdPreviousDistance.text = String.format("%.2f",
-                        Helper.m2Km(
-                            latestWorkout?.distance)) + " km"
+                    binding.txtIdPreviousDistance.text = String.format("%.2f", Helper.m2Km(latestWorkout?.distance)) + " km"
 
                     /* binding.txtIdTotalTime.text = data?.sumOf {
                          it.duration
                      }.toString()*/
                     Log.d("TAG_Home_Fragment", "MSG${latestWorkout?.distance}")
                     // Filter data for the last 7 days
-                    val filteredData = filterAndSortLast7Days(data)
+                    //val filteredData = filterAndSortLast7Days(data)
+
+                    var filteredData = filterAndSort(data) ?: emptyList()
+                    filteredData = if (filteredData.isNotEmpty()) filteredData.take(5) else emptyList()
+
+
                     if (filteredData.isNullOrEmpty()) {
+                        binding.txtNoRecentFeed.isVisible = true
                         recentFeedAdpater = RecentFeedAdpater()
                         binding.feedRecyclerView.layoutManager = LinearLayoutManager(requireActivity(),LinearLayoutManager.HORIZONTAL, false)
                         binding.feedRecyclerView.adapter = recentFeedAdpater
                         recentFeedAdpater.setFeed(filteredData)
                     }else{
+                        binding.txtNoRecentFeed.isVisible = false
                         recentFeedAdpater = RecentFeedAdpater()
                         binding.feedRecyclerView.layoutManager = LinearLayoutManager(requireActivity(),LinearLayoutManager.HORIZONTAL, false)
                         binding.feedRecyclerView.adapter = recentFeedAdpater
@@ -177,19 +205,19 @@ class HomeFragment : Fragment() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun filterAndSortLast7Days(data: List<Daum>?): List<Daum> {
+    fun filterAndSort(data: List<Daum>?): List<Daum> {
         val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
         val now = LocalDateTime.now()
-        val sevenDaysAgo = now.minusDays(lastDaysData)
 
+        //val sevenDaysAgo = now.minusDays(lastDaysData)
         // Filter data for the last 7 days
-        val filteredData = data?.filter { workout ->
+       /* val filteredData = data?.filter { workout ->
             val startDate = LocalDateTime.parse(workout.startTime, formatter)
             startDate.isAfter(sevenDaysAgo)
-        } ?: emptyList()
+        } ?: emptyList()*/
 
         // Sort filtered data by date in descending order
-        return filteredData.sortedByDescending { workout ->
+        return data!!.sortedByDescending { workout ->
             LocalDateTime.parse(workout.startTime, formatter)
         }
     }
@@ -204,5 +232,4 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }

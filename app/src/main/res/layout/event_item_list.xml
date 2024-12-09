@@ -54,7 +54,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="25"
+                            android:text=""
                             android:textColor="@color/white"
                             android:textSize="@dimen/_24sdp" />
                         <!-- Vertical TextView (overlaid on top) -->
@@ -62,7 +62,7 @@
                             android:id="@+id/textDateOfMonth"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="JAN"
+                            android:text=""
                             android:textColor="@color/white"
                             android:textSize="@dimen/_12sdp" />
                     </LinearLayout>
@@ -94,7 +94,7 @@
                         android:id="@+id/textEventName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Movie Name"
+                        android:text=""
                         android:textColor="#000"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -114,7 +114,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Max nmbr of attendees:"
+                            android:text="@string/max_number_of_attendees"
                             android:textColor="@color/active_txt"
                             android:textSize="14sp" />
 
@@ -135,7 +135,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Ticket fee:"
+                            android:text="@string/ticket_fee"
                             android:textColor="@color/active_txt"
                             android:textSize="14sp" />
 

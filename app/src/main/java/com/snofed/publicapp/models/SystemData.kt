@@ -1,5 +1,6 @@
 package com.snofed.publicapp.models
 
+
 data class SystemData(
     val activities: List<Activity>,
     val banners: List<Banner>,

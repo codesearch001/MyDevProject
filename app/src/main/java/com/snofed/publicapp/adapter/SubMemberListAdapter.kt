@@ -15,8 +15,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.BrowseClubListAdapter.OnItemClickListener
 import com.snofed.publicapp.models.Client
-import com.snofed.publicapp.models.browseSubClub.ParentOrganisation
-import com.snofed.publicapp.models.browseSubClub.SubOrganisation
+import com.snofed.publicapp.models.realmModels.ParentOrganisation
+import com.snofed.publicapp.models.realmModels.SubOrganisation
 import com.snofed.publicapp.utils.Constants
 import com.snofed.publicapp.utils.ServiceUtil
 
@@ -52,7 +52,7 @@ class SubMemberListAdapter(private val listener: OnItemClickListener):  Recycler
         val reslult = outerArray[position]
         //holder.clientRating.text = reslult.clientRating.toString()
         //holder.totalRatings.text = "(" + reslult.totalRatings.toString() + ")"
-        holder.tvName.text = reslult.publicName
+        holder.tvName.text = reslult.publicName.trimStart().trimEnd()
         holder.tvLable.text = reslult.county
         Log.e("reslult.publicName ..", "reslult.publicName" + reslult.publicName)
         holder.cardIdLayout.setOnClickListener {

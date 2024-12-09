@@ -10,6 +10,8 @@ import com.snofed.publicapp.utils.Constants.CLUB_TRAILS_ID
 import com.snofed.publicapp.utils.Constants.PREFS_TOKEN_FILE
 import com.snofed.publicapp.utils.Constants.RECORDING_WORKOUT_ID
 import com.snofed.publicapp.utils.Constants.USER_FIRST_NAME
+import com.snofed.publicapp.utils.Constants.USER_FULL_NAME
+import com.snofed.publicapp.utils.Constants.USER_LAST_NAME
 import com.snofed.publicapp.utils.Constants.USER_TOKEN
 import com.snofed.publicapp.utils.Constants.USER_USER_ID
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -30,12 +32,20 @@ class TokenManager @Inject constructor(@ApplicationContext context: Context) {
 
     fun saveUser(userFirstName: String) {
         val editor = prefs.edit()
-        editor.putString(USER_FIRST_NAME, userFirstName)
+        editor.putString(USER_FULL_NAME, userFirstName)
         editor.apply()
     }
 
-    fun getUser(): String? {
+    fun getFirstName(): String? {
         return prefs.getString(USER_FIRST_NAME, null)
+    }
+
+    fun getLastName(): String? {
+        return prefs.getString(USER_LAST_NAME, null)
+    }
+
+    fun getFullName(): String? {
+        return prefs.getString(USER_FULL_NAME, null)
     }
 
     fun saveUserId(saveUserId: String) {
@@ -97,5 +107,15 @@ class TokenManager @Inject constructor(@ApplicationContext context: Context) {
 
     fun getWorkoutUdId(): String? {
         return prefs.getString(RECORDING_WORKOUT_ID, null)
+    }
+
+    // Method to clear session data
+    fun clearSession() {
+        val editor = prefs.edit()
+        editor.remove("token") // Remove the client ID
+        editor.remove("clientId") // Remove the user ID
+        editor.remove("id") // Remove the user ID
+        // Remove any other tokens or data you store
+        editor.apply() // Save the changes
     }
 }

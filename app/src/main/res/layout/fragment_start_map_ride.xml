@@ -17,6 +17,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
         <ImageView
             android:id="@+id/backBtn"
             android:layout_width="wrap_content"
@@ -32,10 +33,10 @@
             android:layout_gravity="center"
             android:layout_marginStart="56dp"
             android:layout_marginEnd="56dp"
-            android:text="Log"
-            android:textStyle="bold"
+            android:text="@string/app_log_settings"
             android:textColor="@android:color/white"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <!-- ImageView in Toolbar -->
         <!-- Replace with your icon -->
@@ -44,9 +45,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:visibility="invisible"
             android:layout_marginEnd="16dp"
-            android:src="@drawable/ride_camera_map" />
+            android:src="@drawable/ride_camera_map"
+            android:visibility="invisible" />
     </androidx.appcompat.widget.Toolbar>
 
     <!-- LinearLayout containing MapView -->
@@ -72,62 +73,64 @@
         android:id="@+id/bottomLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:background="@color/white"
+        android:orientation="vertical"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="@dimen/_68sdp"
+            android:layout_marginBottom="12dp"
+            android:elevation="0dp"
             app:cardBackgroundColor="@color/card_background"
             app:cardCornerRadius="8dp"
-            android:elevation="0dp"
             app:cardElevation="0dp"
-            app:cardUseCompatPadding="false"
             app:cardPreventCornerOverlap="false"
-            android:layout_marginBottom="12dp">
+            app:cardUseCompatPadding="false">
             <!-- Information TextViews -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:orientation="horizontal"
-                android:gravity="center"
+                android:layout_height="match_parent"
                 android:layout_margin="@dimen/_14sdp"
-                android:layout_height="match_parent">
+                android:gravity="center"
+                android:orientation="horizontal">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:layout_gravity="center"
                     android:layout_weight="0.5"
+                    android:orientation="vertical"
                     android:padding="@dimen/_6sdp">
 
                     <TextView
                         android:id="@+id/timeTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text=""
-                        android:textSize="@dimen/_11sdp"
-                        android:textStyle="bold"
                         android:layout_gravity="start"
-                        android:textColor="@color/active_txt" />
+                        android:text=""
+                        android:textColor="@color/active_txt"
+                        android:textSize="@dimen/_11sdp"
+                        android:textStyle="bold" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Time"
                         android:layout_gravity="start"
-                        android:textSize="@dimen/_11sdp"
-                        android:textColor="@android:color/black" />
+                        android:text="@string/time"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/_11sdp" />
 
 
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center"
                     android:layout_weight="0.5"
+                    android:gravity="center"
+                    android:orientation="vertical"
                     android:padding="@dimen/_6sdp">
 
 
@@ -136,24 +139,26 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text=""
+                        android:textColor="@color/active_txt"
                         android:textSize="@dimen/_11sdp"
-                        android:textStyle="bold"
-                        android:textColor="@color/active_txt" />
+                        android:textStyle="bold" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Distance"
-                        android:textSize="@dimen/_11sdp"
-                        android:textColor="@android:color/black" />
+                        android:text="@string/distance"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/_11sdp" />
 
 
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center"
                     android:layout_weight="0.5"
+                    android:gravity="center"
+                    android:orientation="vertical"
                     android:padding="@dimen/_6sdp">
 
 
@@ -161,19 +166,20 @@
                         android:id="@+id/speedTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text=""
-                        android:textSize="@dimen/_11sdp"
-                        android:textStyle="bold"
                         android:layout_gravity="end"
-                        android:textColor="@color/active_txt" />
+                        android:text=""
+                        android:textColor="@color/active_txt"
+                        android:textSize="@dimen/_11sdp"
+                        android:textStyle="bold" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Speed"
                         android:layout_gravity="end"
+                        android:text="@string/speed"
 
-                        android:textSize="@dimen/_11sdp"
-                        android:textColor="@android:color/black" />
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/_11sdp" />
 
 
                 </LinearLayout>
@@ -187,18 +193,18 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/bStart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/blue_bg_color"
+                android:elevation="0dp"
                 android:text="@string/start"
                 android:textAllCaps="false"
-                android:elevation="0dp"
-                android:textColor="@android:color/white"
-                android:background="@drawable/blue_bg_color"/>
+                android:textColor="@android:color/white" />
 
             <LinearLayout
                 android:id="@+id/bConatiner"
@@ -231,13 +237,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:layout_weight="1.1"
+                    android:background="@drawable/blue_bg_color"
                     android:gravity="center"
                     android:paddingTop="1dp"
                     android:paddingBottom="1dp"
-                    android:textColor="@android:color/white"
-                    android:background="@drawable/blue_bg_color"
                     android:text="@string/pause"
                     android:textAllCaps="false"
+                    android:textColor="@android:color/white"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -247,16 +253,16 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:layout_weight="1.1"
+                    android:background="@drawable/blue_bg_color"
                     android:gravity="center"
                     android:paddingTop="1dp"
                     android:paddingBottom="1dp"
-                    android:visibility="gone"
-                    android:textColor="@android:color/white"
-                    android:background="@drawable/blue_bg_color"
                     android:text="@string/resume"
                     android:textAllCaps="false"
+                    android:textColor="@android:color/white"
                     android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

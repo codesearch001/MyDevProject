@@ -3,7 +3,7 @@ package com.snofed.publicapp
 import android.app.Application
 import com.facebook.FacebookSdk
 import com.facebook.appevents.AppEventsLogger
-
+import com.google.firebase.FirebaseApp
 
 
 import dagger.hilt.android.HiltAndroidApp
@@ -17,7 +17,8 @@ class SnofedApplication : Application() {
     private var config: RealmConfiguration? = null
     override fun onCreate() {
         super.onCreate()
-
+        // Initialize Firebase
+        FirebaseApp.initializeApp(this)
         // Initialize the Facebook SDK
         FacebookSdk.sdkInitialize(applicationContext)
         AppEventsLogger.activateApp(this)
@@ -25,10 +26,10 @@ class SnofedApplication : Application() {
 
         Realm.init(this)
          config = RealmConfiguration.Builder().name("snofed.realm")
-            .deleteRealmIfMigrationNeeded()
             .schemaVersion(0)
+            .compactOnLaunch()
             .allowWritesOnUiThread(true)
-            .allowWritesOnUiThread(true).build()
+            .build()
 
         config.let { Realm.setDefaultConfiguration(it) }
        // Realm.setDefaultConfiguration(config)

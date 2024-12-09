@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.FragmentTrailsStatusTileViewBinding
-import com.snofed.publicapp.models.browseSubClub.Trail
+import com.snofed.publicapp.models.realmModels.Trail
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.enums.PageType
@@ -46,6 +46,8 @@ class TrailsStatusTileViewFragment : Fragment() {
         }, { clickedTrail ->
             // Handle map click
             showTrailMap(clickedTrail)
+        }, { upgradeClick->
+            upgradeProTrails(upgradeClick)
         }, pageType)
 
 
@@ -77,6 +79,15 @@ class TrailsStatusTileViewFragment : Fragment() {
                 trailsAdapter.updateTrails(trail) // Update the adapter with new data
             }
         }
+    }
+
+    private fun upgradeProTrails(upgradeClick: Trail) {
+        val bundle = Bundle().apply {
+            putString("trailId", upgradeClick.id)
+            putParcelable("pageType", pageType) // Use putParcelable
+        }
+        val destination = R.id.newTicketFragment
+        findNavController().navigate(destination, bundle)
     }
 
     private fun showTrailMap(clickedTrail: Trail) {

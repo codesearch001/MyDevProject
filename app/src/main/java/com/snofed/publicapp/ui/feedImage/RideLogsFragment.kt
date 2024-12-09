@@ -22,9 +22,11 @@ import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import androidx.navigation.fragment.findNavController
 
 @AndroidEntryPoint
-class RideLogsFragment : Fragment() {
+class RideLogsFragment : Fragment(),WorkoutRideLogFeedAdapter.OnItemClickListener {
+
     private var _binding: FragmentRideLogsBinding? = null
     private val binding get() = _binding!!
     private val feedViewModel by viewModels<AuthViewModel>()
@@ -59,14 +61,14 @@ class RideLogsFragment : Fragment() {
                             }
                         }
 
-                        feedAdapter = WorkoutRideLogFeedAdapter()
+                        feedAdapter = WorkoutRideLogFeedAdapter(this)
                         binding.feedRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
                         binding.feedRecyclerView.adapter = feedAdapter
                         feedAdapter.setFeed(data)
                     } else {
                         // Normal case: data is present
                         binding.tvSplashText.isVisible = false
-                        feedAdapter = WorkoutRideLogFeedAdapter()
+                        feedAdapter = WorkoutRideLogFeedAdapter(this)
                         binding.feedRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
                         binding.feedRecyclerView.adapter = feedAdapter
                         feedAdapter.setFeed(data)
@@ -85,7 +87,12 @@ class RideLogsFragment : Fragment() {
 
     private fun fetchResponse() {
         feedViewModel.userDashBoardRequestUser(tokenManager.getUserId().toString())
-        //feedViewModel.userDashBoardRequestUser("38bf9f83-c07e-4ac1-9910-96a9a5f2977d")
     }
 
+    override fun onItemClick(clientId: String) {
+        val bundle = Bundle()
+        bundle.putString("feedId", clientId)
+        val destination = R.id.mapFeedFragment
+        findNavController().navigate(destination, bundle)
+    }
 }

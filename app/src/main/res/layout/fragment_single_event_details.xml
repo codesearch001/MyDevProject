@@ -128,7 +128,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Location:"
+                            android:text="@string/event_location"
                             android:textColor="@color/active_txt"
                             android:textSize="14sp" />
 
@@ -193,16 +193,17 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Resort name:"
+                        android:text="@string/event_resort_name"
                         android:textStyle="bold"
                         android:textColor="@color/active_txt"
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/event_resort_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
-                        android:text="N/A"
+                        android:text=""
                         android:textSize="12sp" />
 
                 </LinearLayout>
@@ -225,27 +226,24 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Trails used for event:"
+                    android:text="@string/trail_used_for_event"
                     android:textColor="@color/active_txt"
                     android:textStyle="bold"
                     android:textSize="14sp" />
 
 
-                <androidx.recyclerview.widget.RecyclerView
+                <!--<androidx.recyclerview.widget.RecyclerView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-              <!--  <TextView
+                    android:layout_height="wrap_content"/>-->
+                <TextView
                     android:id="@+id/txtTrail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="4dp"
                     android:layout_marginTop="2dp"
                     android:textColor="@color/active_txt"
-                    android:text="2,5 km Bruksvallarna
-                \n2 km Tannaskroket
-                \n3 km Funasdalen Sjosling  and barflackar
-                \n4,5 an Tanndalen\n4 motion-sparet 8 km"
-                    android:textSize="12sp" />-->
+                    android:text="2,5 km Bruksvallarn"
+                    android:textSize="12sp" />
 
             </LinearLayout>
 
@@ -270,7 +268,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Start date:"
+                        android:text="@string/event_start_date"
                         android:textStyle="bold"
                         android:textColor="@color/active_txt"
                         android:textSize="14sp" />
@@ -296,7 +294,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="End date:"
+                        android:text="@string/end_date"
                         android:textStyle="bold"
                         android:textColor="@color/active_txt"
                         android:textSize="14sp" />
@@ -319,11 +317,11 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textStyle="bold"
-                        android:text="Max number of attendees:"
+                        android:text="@string/max_number_of_attendees"
                         android:textColor="@color/active_txt"
                         android:textSize="14sp" />
 
@@ -349,7 +347,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Price:"
+                        android:text="@string/ticket_price"
                         android:textStyle="bold"
                         android:textColor="@color/active_txt"
                         android:textSize="14sp" />
@@ -375,7 +373,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Link:"
+                        android:text="@string/link"
                         android:textStyle="bold"
                         android:textColor="@color/active_txt"
                         android:textSize="14sp" />
@@ -401,7 +399,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Sponsor:"
+                        android:text="@string/sponsor"
                         android:textStyle="bold"
                         android:textColor="@color/active_txt"
                         android:textSize="14sp" />

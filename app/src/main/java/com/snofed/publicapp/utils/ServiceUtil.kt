@@ -1,23 +1,61 @@
 package com.snofed.publicapp.utils
 
 object ServiceUtil {
-    const val TAG = "SNOFED_TAG"
+
+   /* const val BASE_URL = "http://161.97.121.63:5000/api/"
+
+    const val BASE_URL_IMAGE = "http://161.97.121.63:5000"
+
+    const val FEED_BACK_BASE_URL = "http://161.97.121.63:5005/api/"
+
+    const val MEMBERSHIP_BASE_URL = "http://161.97.121.63:5006/api/"
+
+    //FOR MEMBERSHIP IMAGE
+    const val BASE_URL_MEMB_IMAGE = "http://161.97.121.63:5006"*/
 
 
-    //api/clients/{id}
+    const val BASE_URL = "http://135.181.65.93:5000/api/"
+
+    const val BASE_URL_IMAGE = "http://135.181.65.93:5000"
+
+    const val FEED_BACK_BASE_URL = "http://135.181.65.93:5005/api/"
+
+    const val MEMBERSHIP_BASE_URL = "http://135.181.65.93:5006/api/"
+
+    //FOR MEMBERSHIP IMAGE
+    const val BASE_URL_MEMB_IMAGE = "http://135.181.65.93:5006"
+
 
     //FOR REGISTER
     const val REGISTER = "account/register-public-user"
+
     //FOR LOGIN
     const val LOGIN = "account/public-app/sign-in"
+
+    //USER_SETTINGS
+    const val USER_SETTINGS = "public-app/sync/user/settings"
+
     //FOR FORGOT PASSWORD
     const val RECOVER_PASSWORD = "account/mobile-apps/forgot-password"
+
+    //USER_PROFILE_IMAGE
+    const val USER_PROFILE_IMAGE = "public-app/upload/profile-image/{userId}"
+
+    //UPLOAD_WORKOUT_IMAGES
+    const val UPLOAD_WORKOUT_IMAGES = "public-app/workouts/upload-images"
+
     //GET_USER_WORKOUTS
     const val GET_USER_WORKOUTS = "public-app/workouts/for-user/{id}"
-    //BROWSE_CLUB_LIST
+
+    /*//BROWSE_CLUB_LIST
     const val BROWSE_CLUB_LIST = "public-app/sync/system-data?HasProTrails=false"
 
-    const val BROWSE_CLUB_DETAILS = "public-app/sync/client?"
+    const val BROWSE_CLUB_DETAILS = "public-app/sync/client?"*/
+
+    //BROWSE_CLUB_LIST
+    const val BROWSE_CLUB_LIST = "public-app/sync/system-data"
+
+    const val CLUB_DETAILS = "public-app/sync/client?"
 
     const val GET_ALL_FEEDS = "public-app/workouts/feed?"
 
@@ -33,9 +71,15 @@ object ServiceUtil {
 
     const val CLUB_TRAILS_CHART = "trails/get-graph-data/{id}"
 
+    const val CLUB_FAV_ITEMS = "public-app/sync/client?"
+
     const val CLUB_WORKOUT_RIDE = "public-app/workouts"
 
-    const val UPLOAD_WORKOUT_IMAGES = "public-app/workouts/upload-images"
+    const val SUBSCRIBE_TO_CLUB = "public-app/subscribe"
+
+    const val UNSUBSCRIBE_FROM_CLUB = "public-app/unsubscribe"
+
+
 
     /*** TASKING SERVICE FOR FEEDBACK ***/
     const val SYNC_PUBLIC_TASK_CATEGORIES = "tasking-service/task-categories/public-task-categories"
@@ -48,9 +92,12 @@ object ServiceUtil {
 
     /**********************HISTORY********************/
     const val TICKET_PURCHASE_ORDER_HISTORY = "ticket-order/history/{userRef}"
+
     const val TICKET_PURCHASE_ORDER_HISTORY_PRO_TRAILS = "/api/tickets/pro-trails/{userId}"
 
     const val GET_TICKET_TYPE = "ticket-type/client/{clientId}"
+
+    const val GET_ORDER_BY_ID = "ticket-order/get-order/{orderId}";
 
     /**********************Payment Gateway API********************/
 
@@ -60,10 +107,15 @@ object ServiceUtil {
 
     /**********************MEMBERSHIP********************/
     const val GET_MEMBERSHIP = "membership?"
+
+    //const val GET_ACTIVE_MEMBERSHIP = "membership/active/{userId}"
+    const val GET_ACTIVE_MEMBERSHIP = "membership/history/v2/{userId}"    
+
+    //api/membership/history/v2/{userId}
     //const val GET_ALL_MEMBERSHIP = "membership"
-    const val GET_ACTIVE_MEMBERSHIP = "membership/active/{userRef}"
+    //const val GET_ACTIVE_MEMBERSHIP = "membership/active/{userRef}"
+
     const val GET_BENIFET_MEMBERSHIP = "membership/{id}"
-    const val GET_PURCHASABLE_MEMBERSHIPS = "membership/active/{userRef}"
     const val ACTIVATE_MEMBERSHIP_WITH_CODE = "membership/activate/{userRef}/{activationCode}"
 
 }

@@ -1,26 +1,34 @@
 package com.snofed.publicapp.ui.login
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import com.facebook.CallbackManager
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
+import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.snofed.publicapp.HomeDashBoardActivity
 import com.snofed.publicapp.R
+import com.snofed.publicapp.api.ResponseObject
 import com.snofed.publicapp.databinding.FragmentLoginBinding
-import com.snofed.publicapp.models.UserRecoverRequest
 import com.snofed.publicapp.models.UserRequest
 import com.snofed.publicapp.models.UserResponse
-import com.snofed.publicapp.utils.Helper
+import com.snofed.publicapp.models.realmModels.UserRealm
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.TokenManager
 import com.snofed.publicapp.utils.isEmailValid
@@ -32,29 +40,30 @@ class LoginFragment : Fragment() {
 
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
-
     private val authViewModel by activityViewModels<AuthViewModel>()
+
+    private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
-    private val RC_SIGN_IN = 9001
+    private val RC_SIGN_IN = 1001
     private lateinit var callbackManager: CallbackManager
+
     // Define a nullable property for the observer
-    private var loginObserver: Observer<NetworkResult<UserResponse>>? = null
+    private var loginObserver: Observer<NetworkResult<ResponseObject<UserRealm>>>? = null
 
     @Inject
     lateinit var tokenManager: TokenManager
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // Initialize Firebase Auth
+        auth = FirebaseAuth.getInstance()
         init()
+        setUpGoogleLogin()
         //bindObservers() // Move observer binding here to ensure it's ready to listen
 
         binding.txtSignUp.setOnClickListener {
@@ -62,9 +71,69 @@ class LoginFragment : Fragment() {
             it.findNavController().navigate(R.id.registerFragment)
         }
 
+        binding.googleSignInButton.setOnClickListener {
+            signIn()
+
+        }
+
         binding.forgotText.setOnClickListener {
             it.findNavController().navigate(R.id.recoverFragment)
         }
+    }
+
+    private fun signIn() {
+        val signInIntent = googleSignInClient.signInIntent
+        startActivityForResult(signInIntent, RC_SIGN_IN)
+    }
+    // Handle sign-in result
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == RC_SIGN_IN) {
+            val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
+            handleSignInResult(task)
+        }
+    }
+
+    // Handle the Google Sign-In result
+    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+        try {
+            val account = completedTask.getResult(ApiException::class.java)
+            if (account != null) {
+                firebaseAuthWithGoogle(account.idToken!!)
+            }
+        } catch (e: ApiException) {
+            Log.w("GoogleSignIn", "signInResult:failed code=" + e.statusCode)
+        }
+    }
+
+    // Authenticate with Firebase using the Google ID token
+    private fun firebaseAuthWithGoogle(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(requireActivity()) { task ->
+                if (task.isSuccessful) {
+                    // Sign-in successful
+                    val user = auth.currentUser
+                    Log.d("FirebaseAuth", "signInWithCredential:success. User: ${user?.displayName}")
+                } else {
+                    // Sign-in failed
+                    Log.w("FirebaseAuth", "signInWithCredential:failure", task.exception)
+                }
+            }
+    }
+    private fun setUpGoogleLogin() {
+
+
+        // Configure Google Sign-In
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            //.requestIdToken(getString()) // Web client ID from Firebase
+            .requestEmail()
+            .build()
+
+        googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
+
     }
 
     private fun init() {
@@ -93,8 +162,8 @@ class LoginFragment : Fragment() {
                 showToast(getString(R.string.t_h_enter_your_password)) // Empty password message
                 false
             }
-            password.length < 6 -> {
-                showToast(getString(R.string.password_must_be_6_chars)) // Password length message
+            password.length < 8 -> {
+                showToast(getString(R.string.password_must_be_8_chars)) // Password length message
                 false
             }
             else -> true // Validation passed
@@ -126,12 +195,12 @@ class LoginFragment : Fragment() {
         )
     }
     // Method to create the observer
-    private fun createLoginObserver(): Observer<NetworkResult<UserResponse>> {
+    private fun createLoginObserver(): Observer<NetworkResult<ResponseObject<UserRealm>>> {
         return Observer { response ->
             binding.progressBar.isVisible = false
             when (response) {
                 is NetworkResult.Success -> {
-                    Toast.makeText(requireActivity(), response.data?.success.toString(), Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(requireActivity(), response.data?.message.toString(), Toast.LENGTH_SHORT).show()
                     val intent = Intent(requireActivity(), HomeDashBoardActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)

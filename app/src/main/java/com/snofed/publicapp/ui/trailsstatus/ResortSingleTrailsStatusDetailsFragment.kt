@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,9 +26,12 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.google.gson.Gson
 import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.EventClubFeedAdapter
 import com.snofed.publicapp.databinding.FragmentResortSingleTrailsStatusDetailsBinding
+import com.snofed.publicapp.models.realmModels.Trail
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.IntervalViewModelRealm
 import com.snofed.publicapp.ui.event.EventTrailsFeedAdapter
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.DateTimeConverter
@@ -36,6 +40,7 @@ import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.TokenManager
 import com.snofed.publicapp.utils.enums.PageType
+import com.snofed.publicapp.utils.enums.SyncActionEnum
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -46,6 +51,8 @@ class ResortSingleTrailsStatusDetailsFragment : Fragment(),EventTrailsFeedAdapte
     private val binding get() = _binding!!
     private val trailsDetailsViewModel by viewModels<AuthViewModel>()
     private val sharedViewModel by activityViewModels<SharedViewModel>()
+
+    //var vmIntervalRelam = IntervalViewModelRealm
 
     private var trailId: String = ""
     private var textForLighting: String = ""
@@ -67,6 +74,12 @@ class ResortSingleTrailsStatusDetailsFragment : Fragment(),EventTrailsFeedAdapte
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+
+        //val gson = Gson()
+        //val json = gson.toJson(intervals)
+        //Log.e("intervals_Praveen"  ,"intervals  "+ json)
+
         trailId = arguments?.getString("trailId").toString()
         Log.d("ResortSingleTrails", "trailId $trailId")
         tokenManager.saveTrailsId(trailId)
@@ -80,6 +93,10 @@ class ResortSingleTrailsStatusDetailsFragment : Fragment(),EventTrailsFeedAdapte
 
         binding.backBtn.setOnClickListener {
             it.findNavController().popBackStack()
+        }
+
+        binding.feedback.setOnClickListener {
+            it.findNavController().navigate(R.id.feedBackDefaultCategoryListFragment)
         }
         /*  binding.eventCardId.setOnClickListener {
               it.findNavController().navigate(R.id.singleEventDetailsFragment)
@@ -127,19 +144,22 @@ class ResortSingleTrailsStatusDetailsFragment : Fragment(),EventTrailsFeedAdapte
             when (it) {
                 is NetworkResult.Success -> {
                     sharedViewModel.TrailsDetilsResponse.value = it.data
+
+                    var trail: Trail = it.data?.data!!
                     //binding.progressBar.isVisible = false
                     // Assuming `data` is an instance of the `Data` class and `nameTranslates` is a property of `data`
-                    val name = when {
+                   /* val name = when {
                         it.data?.data?.nameTranslates?.en != null -> it.data.data.nameTranslates.en
                         it.data?.data?.nameTranslates?.sv != null -> it.data.data.nameTranslates.sv
                         it.data?.data?.nameTranslates?.de != null -> it.data.data.nameTranslates.de
                         it.data?.data?.nameTranslates?.no != null -> it.data.data.nameTranslates.no
                         else -> "N/A"
-                    }
+                    }*/
 
-                    binding.trailsName.text = name.toString()
+                    binding.trailsName.text = trail.name
                     //binding.idTxtLength.text = it.data?.data?.length.toString() + "m"
-                    binding.idTxtLength.text = Helper.m2Km(it.data?.data?.length?.toDouble()).toString() + " km"
+                    binding.idTxtLength.text = Helper.m2Km(it.data?.data?.length?.toDouble()).toString() + resources.getString(R.string.t_km)
+
                     dateTimeConverter.convertDateTime(it.data?.data?.lastPreparedDate!!)//convert data
                     val getDate = dateTimeConverter.dateandtimePart
 
@@ -151,12 +171,12 @@ class ResortSingleTrailsStatusDetailsFragment : Fragment(),EventTrailsFeedAdapte
                    // binding.idTxtDateTime.text = getDate
                     binding.idtxtRating.text = it.data.data.averageRating.toString()
                    binding.idRating.rating = it.data?.data?.averageRating!!.toFloat()
-                    binding.tvReviewCount.text = "(" + it.data.data.trailRatings.count().toString() + ")"
-                   // binding.tvReviewCount.text = "(" + it.data.data.averageRating.toString() + ")"
+                   binding.tvReviewCount.text = "(" + it.data.data.trailRatings?.count().toString() + ")"
+                   binding.tvReviewCount.text = "(" + it.data.data.averageRating.toString() + ")"
                     if (it.data.data.trailQuality == null) {
                         binding.idTxttrailQuality.text = "N/A"
                     } else {
-                        binding.idTxttrailQuality.text = it.data.data.trailQuality
+                        binding.idTxttrailQuality.text = trail.trailQuality?.name
                     }
                     binding.idtxtMinHeight.text = String.format("%.2f m", it.data.data.minAlt)
                     binding.idTxtMaxHeight.text = String.format("%.2f m", it.data.data.maxAlt)
@@ -165,11 +185,11 @@ class ResortSingleTrailsStatusDetailsFragment : Fragment(),EventTrailsFeedAdapte
                         binding.idtxtDifficulty.text = "N/A"
                        // binding.idtxtDifficulty.setTextColor(Color.parseColor(Color.BLACK.toString()))
                     } else {
-                        binding.idtxtDifficulty.text = it.data.data.difficulty.name
-                        binding.idtxtDifficulty.setTextColor(Color.parseColor( it.data.data.difficulty.color))
+                        binding.idtxtDifficulty.text = trail.difficulty?.name
+                        binding.idtxtDifficulty.setTextColor(Color.parseColor( trail.difficulty?.color))
                     }
 
-                    binding.idTxtShortMsg.text = it.data.data.shortMessage.takeIf { it.isNotEmpty() } ?: "N/A"
+                    binding.idTxtShortMsg.text = it.data.data.shortMessage.takeIf { it!!.isNotEmpty() } ?: "N/A"
                     binding.idTxtAvgRating.text = "(" + it.data.data.averageRating.toString() + ")"
                     if (it.data.data.description.isNullOrEmpty()) {
                         binding.idTxtDescription.text = "N/A"
@@ -195,13 +215,13 @@ class ResortSingleTrailsStatusDetailsFragment : Fragment(),EventTrailsFeedAdapte
                         textForLighting = resources.getString(R.string.no)
                     }
 
-                    if (it.data.data.timespanLightsOn != ""){
+                    if (it.data.data.timespanLightsOn != "" && it.data.data.hasLights){
                         textForLighting = textForLighting + " , " +it.data.data.timespanLightsOn
                     }
                     binding.idtxtLighting.text = textForLighting
 
 
-                    if (it.data.data.status.toInt() == 1) {
+                    if (it.data.data.status?.toInt() == 1) {
                         binding.idTxtStatusOpen.isVisible = true
                         binding.idTxtStatusClose.isVisible = false
                     } else {

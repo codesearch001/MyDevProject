@@ -4,12 +4,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/slides_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/bg">
 
+    <!-- TextView for the text -->
+    <TextView
+        android:id="@+id/slider_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_20sdp"
+        android:text=""
+        android:textSize="@dimen/_14sdp"
+        android:textColor="@android:color/white"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:padding="@dimen/_10sdp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/slider_image" />
+
+    <!-- ImageView for the image -->
     <ImageView
         android:id="@+id/slider_image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_45sdp"
+        android:layout_marginStart="@dimen/_45sdp"
+        android:layout_marginBottom="@dimen/_58sdp"
+        android:scaleType="fitCenter"
+        android:background="@drawable/rounded_corners"
+        app:layout_constraintTop_toBottomOf="@id/slider_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

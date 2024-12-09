@@ -1,17 +1,27 @@
 package com.snofed.publicapp.models.browseSubClub
 
+import com.snofed.publicapp.models.realmModels.Club
+
 /*
 class BrowseSubClubResponse {
 }*/
+/*data class BrowseSubClubResponse(
+    val success: Boolean,
+    val message: Any?,
+    val data: ClubData,
+    val statusCode: Long,
+    val totalItems: Long,
+)*/
+
 data class BrowseSubClubResponse(
     val success: Boolean,
     val message: Any?,
-    val data: Data,
+    val data: Club,
     val statusCode: Long,
     val totalItems: Long,
 )
 
-data class Data(
+data class ClubData(
     val publicName: Any?,
     val country: Any?,
     val logoPath: Any?,
@@ -386,6 +396,7 @@ data class PublicData(
     val coverImagePath: String,
     val images: List<Image>,
     val links: List<Link>,
+    val socialMediaLinks: SocialMediaLinks,
     val id: String,
     val syncAction: Long,
 )
@@ -401,6 +412,12 @@ data class Link(
     val id: String,
     val linkName: String,
     val link: String,
+)
+
+data class SocialMediaLinks(
+    val twitterLink: String,
+    val instagramLink: String,
+    val facebookLink: String,
 )
 data class ParentOrganisation(
     val id: String,

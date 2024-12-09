@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".maps.ResortTrailStatusMapFragment">
 
 <RelativeLayout
@@ -70,5 +71,93 @@
             android:layout_height="match_parent" />
     </LinearLayout>
 </RelativeLayout>
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true">
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:backgroundTint="@color/start_btn"
+            android:src="@drawable/fab_map_icon" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/current_location_trail_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="@dimen/_60sdp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/fab_bg"
+            android:src="@drawable/target"
+            android:visibility="invisible" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/satellite_view_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="65dp"
+            android:layout_marginBottom="@dimen/_50sdp"
+            android:backgroundTint="@color/fab_bg"
+            android:src="@drawable/globe"
+            android:visibility="invisible" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/feedback_trail_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="@dimen/_65sdp"
+            android:backgroundTint="@color/fab_bg"
+            android:src="@drawable/message_type"
+            android:visibility="invisible" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="@dimen/_28sdp">
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/intervalCardView"
+            android:layout_width="wrap_content"
+            app:cardCornerRadius="@dimen/_6sdp"
+            android:layout_marginBottom="@dimen/_8sdp"
+            app:cardElevation="@dimen/_2sdp"
+            android:visibility="gone"
+            android:layout_height="wrap_content">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="16dp"/>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/intervalsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_22sdp"
+            android:layout_marginBottom="@dimen/_38sdp"
+            android:background="@drawable/interval_button_background"
+            android:padding="@dimen/_4sdp"
+            android:text="Intervals"
+            android:textAllCaps="false"
+            android:textColor="@color/holo_blue_light"
+            android:textSize="@dimen/_12sdp"
+            android:textStyle="normal" />
+    </LinearLayout>
 </RelativeLayout>

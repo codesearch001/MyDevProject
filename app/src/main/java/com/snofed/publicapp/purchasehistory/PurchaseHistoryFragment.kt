@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.findNavController
 import com.google.android.material.tabs.TabLayoutMediator
+import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.TabPurchaseHistoryAdapter
 import com.snofed.publicapp.databinding.FragmentPurchaseHistoryBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,7 +30,7 @@ class PurchaseHistoryFragment : Fragment() {
         val viewPager = binding.viewPager
 
         // Create a list of tabs
-        val tabs = listOf("Orders", "Pro Trails")
+        val tabs = listOf(resources.getString(R.string.tab_Orders_History), resources.getString(R.string.tab_Pro_Trails_History))
 
         // Create a ViewPager adapter
         val adapter = TabPurchaseHistoryAdapter(this, tabs)

@@ -43,6 +43,8 @@ class DateTimeConverter {
     @RequiresApi(Build.VERSION_CODES.O)
     private val outputTimeFormatter = DateTimeFormatter.ofPattern("HH:mm 'h'")
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
 
     //"HH:mm:ss"
     fun formatSecondsToHMS(seconds: Long): String {
@@ -56,6 +58,17 @@ class DateTimeConverter {
     fun calculateSpeedFromPace(pace: Double): Double {
         // Calculate speed as distance per time unit (e.g., miles per hour)
         return 60.0 / pace
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun ConvertToDateTime(inputDateTimeString: String): String {
+        // Parse input string into LocalDateTime
+        if(inputDateTimeString.isEmpty())
+            return "NA"
+
+        val dateTime = LocalDateTime.parse(inputDateTimeString, inputFormatter)
+        // Format date part
+        return dateTime.format(formatter)
     }
 
     //"dd/MM/yyyy hh:mm a"

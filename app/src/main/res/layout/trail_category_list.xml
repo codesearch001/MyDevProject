@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_2sdp">
+
+        <TextView
+            android:id="@+id/txt_trail_category"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_38sdp"
+            android:layout_weight="1"
+            android:background="@drawable/text_outline"
+            android:ellipsize="end"
+            android:textAlignment="center"
+            android:maxWidth="@dimen/_150sdp"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/maps_btn"
+            android:textSize="@dimen/_11sdp"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+
+
+</layout>

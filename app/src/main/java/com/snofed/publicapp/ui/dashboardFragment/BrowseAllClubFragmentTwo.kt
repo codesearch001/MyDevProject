@@ -37,7 +37,7 @@ class BrowseAllClubFragmentTwo : Fragment(),BrowseClubListAdapter.OnItemClickLis
     }
 
     private fun setupRecyclerView() {
-        clubAdapter = BrowseClubListAdapter(this)
+        //clubAdapter = BrowseClubListAdapter(rquireContext(),this)
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.recyclerView.adapter = clubAdapter
     }
@@ -63,7 +63,7 @@ class BrowseAllClubFragmentTwo : Fragment(),BrowseClubListAdapter.OnItemClickLis
         TODO("Not yet implemented")
     }
 
-    override fun onWishlistClick(clientId: String) {
+    override fun onWishlistClick(clientId: String, isWishlisted: Boolean) {
         TODO("Not yet implemented")
     }
 }

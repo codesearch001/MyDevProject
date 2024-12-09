@@ -1,6 +1,8 @@
 package com.snofed.publicapp.ui.event
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,9 +18,14 @@ import com.snofed.publicapp.adapter.EventClubFeedAdapter
 import com.snofed.publicapp.adapter.EventFeedAdapter
 import com.snofed.publicapp.databinding.FragmentClubEventBinding
 import com.snofed.publicapp.databinding.FragmentEventBinding
+import com.snofed.publicapp.models.events.EventResponseList
+import com.snofed.publicapp.models.realmModels.Event
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @AndroidEntryPoint
 class ClubEventFragment : Fragment() , EventClubFeedAdapter.OnItemClickListener {
@@ -57,18 +64,37 @@ class ClubEventFragment : Fragment() , EventClubFeedAdapter.OnItemClickListener 
             }
         })
          // Initialize RecyclerView and Adapter
-       feedAdapter = EventClubFeedAdapter(this)
+       feedAdapter = EventClubFeedAdapter(emptyList(),this)
        binding.eventRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
        binding.eventRecyclerView.adapter = feedAdapter
 
 
-       // Observe the SharedViewModel for data updates
+        //Apply search Filter
+        binding.editTextClubSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                feedAdapter.getFilter().filter(s)
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                // Trigger filter on the adapter based on the updated text
+                feedAdapter.getFilter().filter(s)
+
+            }
+        })
+
+        // Observe the SharedViewModel for data updates
        sharedViewModel.browseSubClubResponse.observe(viewLifecycleOwner) { response ->
            val events = response?.data?.events ?: emptyList()
 
-           Log.d("Tag_Events", "EventsSize: ${events.size}")
+           val activeEvents = filterActiveEvents(events?: emptyList()).sortedBy {
+               it.startDate
+           }
 
-           if (events.isEmpty()) {
+           Log.d("Tag_Events", "EventsSize: ${activeEvents.size}")
+
+           if (activeEvents.isEmpty()) {
 
                // Show the "Data Not data" message and hide RecyclerView
                binding.tvSplashText.visibility = View.VISIBLE
@@ -79,10 +105,20 @@ class ClubEventFragment : Fragment() , EventClubFeedAdapter.OnItemClickListener 
                // Hide the "No data" message and show RecyclerView
                binding.tvSplashText.visibility = View.GONE
                binding.eventRecyclerView.visibility = View.VISIBLE
-               feedAdapter.setEvent(events)
+               feedAdapter.setEvent(activeEvents)
            }
        }
    }
+
+    fun filterActiveEvents(events: List<Event>): List<Event> {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val currentDate = Date()
+
+        return events.filter { event ->
+            val eventEndDate = dateFormat.parse(event.endDate!!)
+            eventEndDate?.after(currentDate) == true
+        }
+    }
 
     override fun onItemClick(eventId: String) {
         //Log.i("Club","Id " + clientId )

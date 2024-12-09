@@ -1,6 +1,7 @@
 package com.snofed.publicapp.adapter
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -9,25 +10,42 @@ import android.widget.Filter
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.google.gson.Gson
 import com.snofed.publicapp.R
-import com.snofed.publicapp.models.Client
+import com.snofed.publicapp.dto.SubscribeDTO
+import com.snofed.publicapp.models.User
+import com.snofed.publicapp.models.realmModels.Client
+import com.snofed.publicapp.models.realmModels.UserRealm
+import com.snofed.publicapp.ui.User.UserViewModelRealm
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.AreaViewModelRealm
+import com.snofed.publicapp.ui.login.AuthViewModel
+import com.snofed.publicapp.utils.AppPreference
 import com.snofed.publicapp.utils.Constants
 import com.snofed.publicapp.utils.ServiceUtil
+import com.snofed.publicapp.utils.SharedPreferenceKeys
+import com.snofed.publicapp.utils.SnofedConstants
+import com.snofed.publicapp.utils.SnofedUtils
+import io.realm.RealmList
 
 
-class BrowseClubListAdapter(private val listener: OnItemClickListener) : RecyclerView.Adapter<BrowseClubListAdapter.ClubViewHolder>() {
+class BrowseClubListAdapter(private val context: Context,
+                            private val listener: OnItemClickListener,
+                            private val clubViewModel: AuthViewModel)
+    : RecyclerView.Adapter<BrowseClubListAdapter.ClubViewHolder>() {
 
     //private var clubs: List<NewClubData> = listOf()
     private var outerArray: List<Client> = listOf()
     private var filteredClubs: List<Client> = listOf()
-    private val wishlistItems: MutableSet<String> = mutableSetOf()
+    //private val wishlistItems: MutableSet<String> = mutableSetOf()
 
     interface OnItemClickListener {
         fun onItemClick(clientId: String)
-        fun onWishlistClick(clientId: String) // Callback for wishlist icon clicks
+        fun onWishlistClick(clientId: String, favRefferal : Boolean) // Callback for wishlist icon clicks
     }
     init {
         filteredClubs = outerArray
@@ -74,10 +92,11 @@ class BrowseClubListAdapter(private val listener: OnItemClickListener) : Recycle
 
     override fun onBindViewHolder(holder: ClubViewHolder, position: Int) {
         //val reslult=holder.bind(outerArray[position])
+        var isWishlisted : Boolean = false;
         val reslult = filteredClubs[position]
         holder.clientRating.text = reslult.clientRating.toString()
         holder.totalRatings.text = "(" + reslult.totalRatings.toString() + ")"
-        holder.tvName.text = reslult.publicName
+        holder.tvName.text = reslult.publicName.trimEnd().trimStart()
         holder.tvLable.text = reslult.county
 
         holder.cardIdLayout.setOnClickListener {
@@ -85,24 +104,41 @@ class BrowseClubListAdapter(private val listener: OnItemClickListener) : Recycle
             listener.onItemClick(reslult.id) // Assuming Client has an 'id' property
         }
         // Set wishlist icon based on the wishlist state
-        if (wishlistItems.contains(reslult.id)) {
+
+        if (reslult.isInWishlist == true) {
             holder.imgIdWishlist.setImageResource(R.drawable.hearth_filled)
+            isWishlisted = true
         } else {
             holder.imgIdWishlist.setImageResource(R.drawable.hearth_empty)
+            isWishlisted = false
         }
-       /* holder.imgIdWishlist.setOnClickListener {
-            listener.onWishlistClick(reslult.id)
-        }*/
+
         // Handle wishlist icon click
         holder.imgIdWishlist.setOnClickListener {
             val clientId = reslult.id
-            if (wishlistItems.contains(clientId)) {
-                wishlistItems.remove(clientId)
+            isWishlisted = !isWishlisted // Toggle the referral state
+            if (isWishlisted) {
+                holder.imgIdWishlist.setImageResource(R.drawable.hearth_filled)
+                val userId = AppPreference.getPreference(context, SharedPreferenceKeys.USER_USER_ID).toString()
+                val subscribeDTO : SubscribeDTO = SubscribeDTO(
+                    clientId = clientId,
+                    publicUserId = userId,
+                    subscribeDate = SnofedUtils.getDateNow(SnofedConstants.DATETIME_SERVER_FORMAT)
+                )
+                // call subscribe api
+                clubViewModel.subscribeClubService(subscribeDTO)
             } else {
-                wishlistItems.add(clientId)
+                holder.imgIdWishlist.setImageResource(R.drawable.hearth_empty)
+                val userId = AppPreference.getPreference(context, SharedPreferenceKeys.USER_USER_ID).toString()
+                val subscribeDTO : SubscribeDTO = SubscribeDTO(
+                    clientId = clientId,
+                    publicUserId = userId,
+                    subscribeDate = SnofedUtils.getDateNow(SnofedConstants.DATETIME_SERVER_FORMAT)
+                )
+                // call unsubscribe api
+               clubViewModel.unsubscribeClubService(subscribeDTO)
             }
-            notifyItemChanged(position) // Notify that the item at this position has changed
-            listener.onWishlistClick(clientId) // Notify the listener
+            listener.onWishlistClick(clientId,isWishlisted) // Notify the listener of the change
         }
 
         if (reslult.coverImagePath == null) {
@@ -113,7 +149,7 @@ class BrowseClubListAdapter(private val listener: OnItemClickListener) : Recycle
             Glide.with(holder.backgroundImage)
                 .load(ServiceUtil.BASE_URL_IMAGE + reslult.coverImagePath).diskCacheStrategy(
                 DiskCacheStrategy.ALL
-            ).fitCenter()
+            ).fitCenter().error(R.drawable.resort_card_bg)
                 .into(holder.backgroundImage)
         }
     }

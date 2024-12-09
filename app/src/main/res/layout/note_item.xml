@@ -6,6 +6,7 @@
     android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cardIdLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/_11sdp"
@@ -136,7 +137,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Distance"
+                        android:text="@string/distance"
                         android:textColor="@color/active_txt"
                         android:textSize="@dimen/_9sdp"
                         android:textStyle="normal" />
@@ -166,7 +167,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Duration"
+                            android:text="@string/feed_duration"
                             android:gravity="end"
                             android:textColor="@color/active_txt"
                             android:textSize="@dimen/_9sdp"

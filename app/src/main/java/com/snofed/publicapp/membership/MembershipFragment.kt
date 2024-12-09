@@ -32,7 +32,7 @@ class MembershipFragment : Fragment() {
         val viewPager = binding.viewPager
 
         // Create a list of tabs
-        val tabs = listOf("Active", "Expired")
+        val tabs = listOf(resources.getString(R.string.label_active_memberships), resources.getString(R.string.label_expired_memberships))
 
         // Create a ViewPager adapter
         val adapter = TabMembershipAdapter(this, tabs)

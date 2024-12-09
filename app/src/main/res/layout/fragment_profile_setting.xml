@@ -20,12 +20,13 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:textAllCaps="true"
-                android:text="Upload profile picture"
+                android:text="@string/app_upload_profile_settings"
                 android:textSize="13sp"
                 android:textColor="@color/blue_txt_light"
                 android:textStyle="bold" />
 
             <LinearLayout
+                android:id="@+id/selectProfileImage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
@@ -36,6 +37,7 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:scaleType="centerCrop"
+                    android:elevation="@dimen/_2sdp"
                     android:src="@drawable/user_profile" />
 
                 <LinearLayout
@@ -54,10 +56,10 @@
 
                      <TextView
                          android:id="@+id/nameTextView"
-                         android:layout_width="wrap_content"
+                         android:layout_width="0dp"
                          android:layout_height="wrap_content"
                          android:layout_weight="1"
-                         android:text="Choose profile picture"
+                         android:text="@string/app_choose_profile_picture_settings"
                          android:textColor="@color/blue_txt_light"
                          android:textSize="12sp"/>
 
@@ -82,13 +84,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:text="Set your first name and last name"
+                android:text="@string/app_set_first_and_last_name_settings"
                 android:textAllCaps="true"
                 android:textColor="@color/blue_txt_light"
                 android:textSize="13sp"
                 android:textStyle="bold" />
 
-            <EditText
+            <TextView
                 android:id="@+id/txtFirstName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -96,9 +98,17 @@
                 android:hint="@string/t_h_enter_your_fname"
                 android:inputType="textEmailAddress"
                 android:text="Jone"
+                android:clickable="true"
+                android:focusable="true"
                 android:textSize="16sp" />
 
-            <EditText
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_margin="8dp"
+                android:background="@color/divider_color" />
+
+            <TextView
                 android:id="@+id/txtLastName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -106,13 +116,15 @@
                 android:hint="@string/t_h_enter_your_lname"
                 android:inputType="textEmailAddress"
                 android:text="Smith"
+                android:clickable="true"
+                android:focusable="true"
                 android:textSize="16sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:text="additional data"
+                android:text="@string/app_additional_data_settings"
                 android:textAllCaps="true"
                 android:textColor="@color/black"
                 android:textSize="13sp"
@@ -129,19 +141,21 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
-                    android:text="Age"
+                    android:text="@string/app_age_settings"
                     android:textColor="@color/blue_txt_light"
                     android:textSize="14sp" />
 
                 <TextView
+                    android:id="@+id/txt_user_age"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="35"
+                    android:text=""
                     android:layout_marginEnd="24dp"
                     android:textColor="@color/blue_txt_light"
                     android:textSize="14sp" />
 
                 <ImageView
+                    android:id="@+id/txt_user_age_arrow"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_gravity="center"
@@ -168,20 +182,22 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
-                    android:text="Weight"
+                    android:text="@string/app_Weight_settings"
                     android:textColor="@color/blue_txt_light"
                     android:textSize="14sp" />
 
                 <TextView
+                    android:id="@+id/txt_user_weight"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="100 kg"
+                    android:text=""
                     android:layout_marginEnd="24dp"
                     android:gravity="center"
                     android:textColor="@color/blue_txt_light"
                     android:textSize="14sp" />
 
                 <ImageView
+                    android:id="@+id/txt_user_weight_arrow"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_gravity="center"
@@ -207,20 +223,22 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
-                    android:text="Gender"
+                    android:text="@string/app_Gender_settings"
                     android:textColor="@color/blue_txt_light"
                     android:textSize="14sp" />
 
                 <TextView
+                    android:id="@+id/txt_user_gender"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Male"
+                    android:text=""
                     android:layout_marginEnd="24dp"
                     android:gravity="center"
                     android:textColor="@color/blue_txt_light"
                     android:textSize="14sp" />
 
                 <ImageView
+                    android:id="@+id/txt_user_gender_arrow"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_gravity="center"
@@ -239,7 +257,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:text="Log"
+                android:text="@string/app_log_settings"
                 android:textSize="13sp"
                 android:textAllCaps="true"
                 android:textColor="@color/black"
@@ -253,17 +271,19 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.1"
-                    android:text="Screen always on during workout"
+                    android:text="@string/pref_screen_on_wifi_title"
                     android:textColor="@color/gray"
                     android:textSize="14sp" />
 
 
                 <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchScreenOn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:elevation="@dimen/_1sdp"
                     android:thumb="@drawable/thumb"
                     app:track="@drawable/track"/>
 
@@ -288,16 +308,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
-                    android:text="Auto pause speed"
+                    android:text="@string/pref_autopause_speed_title"
                     android:textColor="@color/blue_txt_light"
                     android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="(null) km/h"
+                    android:text=""
                     android:layout_marginEnd="24dp"
                     android:gravity="center"
+                    android:id="@+id/switchAutoSpeedTxt"
                     android:textColor="@color/blue_txt_light"
                     android:textSize="14sp" />
 
@@ -305,6 +326,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_gravity="center"
+                    android:id="@+id/switchAutoSpeedArrow"
                     android:src="@drawable/right" />
 
 
@@ -327,15 +349,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.1"
-                    android:text="Sync on Wi-Fi only"
+                    android:text="@string/pref_sync_on_wifi_title"
                     android:textColor="@color/gray"
                     android:textSize="14sp" />
 
 
                 <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchWifi"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:thumb="@drawable/thumb"
+                    android:elevation="@dimen/_1sdp"
                     app:track="@drawable/track">
 
                 </androidx.appcompat.widget.SwitchCompat>
@@ -353,13 +377,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:text="Change password"
+                android:text="@string/app_change_password_settings"
                 android:textSize="13sp"
                 android:textAllCaps="true"
                 android:textColor="@color/black"
                 android:textStyle="bold" />
 
             <LinearLayout
+                android:id="@+id/change_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -370,7 +395,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
-                    android:text="Change password"
+                    android:text="@string/app_change_password_settings"
                     android:textColor="@color/blue_txt_light"
                     android:textSize="14sp" />
 

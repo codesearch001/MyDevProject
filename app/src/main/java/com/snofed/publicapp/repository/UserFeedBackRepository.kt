@@ -66,8 +66,8 @@ class UserFeedBackRepository @Inject constructor(@Named("FeedBackUserAPI")privat
 
 
         } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-            _feedBackTaskCategoriesLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+            _feedBackTaskCategoriesLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _feedBackTaskCategoriesLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
@@ -83,8 +83,8 @@ class UserFeedBackRepository @Inject constructor(@Named("FeedBackUserAPI")privat
             _feedBackTaskByCategoriesIDLiveData.postValue(NetworkResult.Success(response.body()!!))
 
         } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-            _feedBackTaskByCategoriesIDLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+            _feedBackTaskByCategoriesIDLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _feedBackTaskByCategoriesIDLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
@@ -99,9 +99,10 @@ class UserFeedBackRepository @Inject constructor(@Named("FeedBackUserAPI")privat
             Log.e("jsonResponseData", "subClubResponse " + response.body())
             _feedBackTaskDetailsLiveData.postValue(NetworkResult.Success(response.body()!!))
 
+
         } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-            _feedBackTaskDetailsLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+            _feedBackTaskDetailsLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
         } else {
             _feedBackTaskDetailsLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
@@ -115,14 +116,14 @@ class UserFeedBackRepository @Inject constructor(@Named("FeedBackUserAPI")privat
             Log.e("FeedResponse", "FeedResponse " + response.body())
 
         } else if (response.errorBody() != null) {
+            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
             try {
-//                val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
-               // val errorMessage = errorObj.optString("message", "Unknown Error")
-                _userFeedBackResponseLiveData.postValue(NetworkResult.Error(response.body()?.message.toString()))
-                Log.e("FeedResponse", "FeedResponse " + response.body()?.message)
+
+                _userFeedBackResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+
             } catch (e: JSONException) {
-                _userFeedBackResponseLiveData.postValue(NetworkResult.Error("Error parsing error response"))
-                Log.e("handleResponse3", "JSON parsing error", e)
+                _userFeedBackResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+
             }
         } else {
             _userFeedBackResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))

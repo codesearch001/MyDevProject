@@ -27,7 +27,9 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
+import com.mapbox.geojson.Point.fromLngLat
 import com.mapbox.maps.CameraOptions
+import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.Style
@@ -40,6 +42,9 @@ import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.maps.extension.style.sources.getSource
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.camera
+import com.mapbox.maps.plugin.animation.easeTo
+import com.mapbox.maps.plugin.locationcomponent.LocationComponentPlugin
+import com.mapbox.maps.plugin.locationcomponent.location
 import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.FragmentMapFeedBinding
 import com.snofed.publicapp.models.workoutfeed.WorkoutPointResponse
@@ -49,6 +54,7 @@ import com.snofed.publicapp.utils.DrawerController
 import com.snofed.publicapp.utils.Helper
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.SharedViewModel
+import com.snofed.publicapp.utils.SnofedConstants
 import com.snofed.publicapp.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.ParseException
@@ -77,9 +83,12 @@ class MapFeedFragment : Fragment(){
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMapFeedBinding.inflate(inflater, container, false)
 
-        binding.humburger.setOnClickListener {
-            (activity as? DrawerController)?.openDrawer()
+        binding.backBtn.setOnClickListener {
+            it.findNavController().popBackStack()
         }
+      /*  binding.humburger.setOnClickListener {
+            (activity as? DrawerController)?.openDrawer()
+        }*/
         // Retrieve data from arguments
         // Ensure that the arguments and initialization are valid
         publicUserId = arguments?.getString("feedId") ?: ""
@@ -105,7 +114,14 @@ class MapFeedFragment : Fragment(){
         mapboxMap = mapView.mapboxMap
 
         // Load Map Style
-        mapView.mapboxMap.loadStyle(Style.OUTDOORS)
+        mapboxMap.loadStyle(Style.OUTDOORS){ style ->
+
+            mapboxMap.setCamera(
+                CameraOptions.Builder()
+                    .center(fromLngLat(SnofedConstants.CENTER_LONG, SnofedConstants.CENTER_LAT)) // Set desired center
+                    .zoom(9.0) // Set desired zoom level
+                    .build())
+        }
 
 
         fetchResponse()
@@ -125,27 +141,38 @@ class MapFeedFragment : Fragment(){
                     binding.txtIdStartTime.text = formattedDateTimeHMS
 
                     binding.txtIdWorkoutType.text = data?.activity?.name ?: "N/A"
+                    // Convert distance from meters to kilometers and format with two decimal places
+                    val distanceInKm = (data?.distance ?: 0.0) / 1000
+                    binding.txtIdDistance.text = String.format(Locale.US, "%.2f km", distanceInKm)
 
-                    binding.txtIdDistance.text = String.format("%.2f", (data?.distance?.div(1000))).toDouble().toString() + "km"
+
+                   // binding.txtIdDistance.text = String.format("%.2f", (data?.distance?.div(1000))).toDouble().toString() + "km"
+
+
 
                     binding.txtCaloriesId.text = data?.calories.toString() ?: "N/A"
 
-                    binding.txtIdAveragePace.text = String.format("%.2f", data?.averagePace).toDouble().toString() + " min/km"
+                    // Format average pace with two decimal places and append "min/km"
+                    binding.txtIdAveragePace.text = String.format(Locale.US, "%.2f min/km", data?.averagePace ?: 0.0)
+
+
+                   // binding.txtIdAveragePace.text = String.format("%.2f", data?.averagePace).toDouble().toString() + " min/km"
 
                     //binding.feedSpeed.text = dateTimeConverter.calculateSpeedFromPace(String.format("%.2f",data.averagePace).toDouble()).toString() + " km/h"
 
                     val averageSpeed = calculateAverage(data.workoutPoints)
-                    // Assuming `data.averagePace` is a number you want to format
-                    val formattedPace = String.format("%.2f", data.averagePace)
+                    // Format the average pace with a period as the decimal separator
+                    val formattedPace = String.format(Locale.US, "%.2f", data.averagePace)
 
-                    // Convert the formatted string to Double for calculation
+                    // Parse as Double safely after formatting with Locale.US
                     val paceAsDouble = formattedPace.toDouble()
 
+
                     // Calculate speed and format the result
-                    val speed = dateTimeConverter.calculateSpeedFromPace(paceAsDouble)
+                    //val speed = dateTimeConverter.calculateSpeedFromPace(paceAsDouble)
 
                     // Set the text with the speed formatted to two decimal places and "km/h"
-                    binding.feedSpeed.text = String.format("%.2f", averageSpeed) + " km/h"
+                    binding.feedSpeed.text = String.format(Locale.US,"%.2f", averageSpeed) + " km/h"
 
 
                     if (data.activity.iconPath == "") {
@@ -274,7 +301,7 @@ class MapFeedFragment : Fragment(){
 
 
     private fun drawRoute(workoutPoints: List<Point>) {
-        mapView.mapboxMap.getStyle { style ->
+        mapboxMap.getStyle { style ->
             // Create a LineString from the workout points
             val lineString = LineString.fromLngLats(workoutPoints)
 
@@ -324,9 +351,9 @@ class MapFeedFragment : Fragment(){
 
             style.addLayer(
                 lineLayer(layerId, "route-source") {
-                    lineColor(Color.RED)
-                    lineWidth(2.0) // Set the width of the route
-                    lineDasharray(listOf(3.0, 3.0)) // Create a dashed line pattern
+                    lineColor(Color.DKGRAY)
+                    lineWidth(2.5) // Set the width of the route
+                    lineDasharray(listOf(2.5, 0.6)) // Create a dashed line pattern
                 }
             )
 
@@ -370,30 +397,50 @@ class MapFeedFragment : Fragment(){
 
             // Calculate the bounding box to include the start and end points
             if (workoutPoints.isNotEmpty()) {
-                val startPoint = workoutPoints.first()
-                val endPoint = workoutPoints.last()
-
                 val boundsBuilder = LatLngBounds.Builder()
-                boundsBuilder.include(startPoint.toLatLng())
-                boundsBuilder.include(endPoint.toLatLng())
+                workoutPoints.forEach { point ->
+                    boundsBuilder.include(point.toLatLng())
+                }
                 val bounds = boundsBuilder.build()
 
-                // Add margin to the bounding box
-                val marginRatio = 1.0 // Adjust this ratio to fit your margin needs
-                val expandedBounds = expandBounds(bounds, marginRatio)
-                // Access the CameraAnimationsPlugin
-                val cameraAnimationsPlugin = mapView.camera
-                cameraAnimationsPlugin.easeTo(
-                    CameraOptions.Builder()
-                        .center(expandedBounds.center.toPoint()) // Center the camera on the expanded bounding box center
-                        .zoom(calculateZoomLevel(expandedBounds)) // Set zoom level to fit the expanded bounding box
-                        .build(),
-                    MapAnimationOptions.Builder()
-                        .startDelay(500)
-                        .duration(800) // Duration in milliseconds (e.g., 3 seconds)
-                        .build()
+                val cameraOptions = mapboxMap.cameraForCoordinates(
+                    bounds.toPointList(),
+                    EdgeInsets(75.0, 50.0, 675.0, 50.0) // Padding: top, left, bottom, right
                 )
+
+                val animationOptions = MapAnimationOptions.Builder()
+                    .duration(2000) // Duration in milliseconds
+                    .build()
+                mapboxMap.easeTo(cameraOptions, animationOptions)
+                enableLocationComponent()
             }
+        }
+    }
+    fun LatLngBounds.toPointList(): List<Point> {
+        return listOf(
+            Point.fromLngLat(this.southwest.longitude, this.northeast.latitude), // Top-left corner
+            Point.fromLngLat(this.northeast.longitude, this.northeast.latitude), // Top-right corner
+            Point.fromLngLat(this.northeast.longitude, this.southwest.latitude), // Bottom-right corner
+            Point.fromLngLat(this.southwest.longitude, this.southwest.latitude)  // Bottom-left corner
+        )
+    }
+
+    private fun calculateBoundingBox(points: List<Point>): LatLngBounds {
+        val boundsBuilder = LatLngBounds.Builder()
+        points.forEach { boundsBuilder.include(it.toLatLng()) }
+        return boundsBuilder.build()
+    }
+
+
+    private fun enableLocationComponent() {
+        // Get the location component
+        val locationComponent: LocationComponentPlugin = mapView.location
+
+        // Activate the location component
+        locationComponent.updateSettings {
+            enabled = true
+            pulsingEnabled = true // Pulsing effect around the current location
+            pulsingColor = Color.BLUE // Customize pulsing color if needed
         }
     }
 
@@ -434,15 +481,19 @@ class MapFeedFragment : Fragment(){
         // Calculate the zoom level based on bounding box dimensions
         // This is a simplified example; you may need a more complex calculation based on your needs
         return when {
-            width > 0.1 || height > 0.1 -> 18.0 // Zoom out a bit for large areas
-            width > 0.05 || height > 0.05 -> 18.0 // Zoom out further for medium areas
-            else -> 21.0 // Zoom in the closest for small areas
+            width > 0.1 || height > 0.5 -> 16.0 // Zoom out a bit for large areas
+            width > 0.01 || height > 0.01 -> 16.0 // Zoom out further for medium areas
+            else -> 18.0 // Zoom in the closest for small areas
         }
     }
     // Extension function to convert Point to LatLng
     private fun Point.toLatLng(): LatLng {
         return LatLng(latitude(), longitude())
+
+
     }
+
+
 
     private fun fetchResponse() {
         feedWorkoutViewModel.feedWorkoutRequestUser(tokenManager.getPublicUserId().toString())
@@ -469,12 +520,13 @@ class MapFeedFragment : Fragment(){
     override fun onDestroyView() {
         super.onDestroyView()
         // Clean up binding to avoid memory leaks
+        mapView.onDestroy()
         _binding = null
     }
 
     override fun onDetach() {
         super.onDetach()
-        mapView.onStart()
+        mapView.onDestroy()
     }
 
 

@@ -37,10 +37,7 @@ class ActiveFragment : Fragment(), ActiveMembershipAdapter.OnItemClickListener {
     @Inject
     lateinit var tokenManager: TokenManager
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         _binding = FragmentActvieBinding.inflate(inflater, container, false)
         return binding.root
@@ -49,9 +46,7 @@ class ActiveFragment : Fragment(), ActiveMembershipAdapter.OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        /*binding.cardid.setOnClickListener {
-            it.findNavController().navigate(R.id.supportingMemberFragment)
-        }*/
+
         fetchResponse()
         viewModel.activeMembershipResponseLiveData.observe(viewLifecycleOwner, Observer {
             binding.progressBar.isVisible = false
@@ -72,34 +67,31 @@ class ActiveFragment : Fragment(), ActiveMembershipAdapter.OnItemClickListener {
                         binding.feedRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
                         binding.feedRecyclerView.adapter = activeMembershipAdapter
                         activeMembershipAdapter.setFeed(data)
-
                     }
-
                 }
-
                 is NetworkResult.Error -> {
                     Toast.makeText(requireActivity(), it.message.toString(), Toast.LENGTH_SHORT).show()
                 }
-
                 is NetworkResult.Loading -> {
                     binding.progressBar.isVisible = true
                 }
             }
         })
     }
-
     private fun fetchResponse() {
         viewModel.getActiveMembership(tokenManager.getUserId().toString())
     }
 
-    //override fun onItemClick(id: String, benefits: List<BenefitResponse>) {
+    //override fun onItemClick(id: String, benefits: List<BenefitResponse>)
     override fun onItemClick(id: String) {
         val bundle = Bundle()
-        // Put the id in the bundle
         bundle.putString("id", id)
         val destination = R.id.supportingMemberFragment
         view?.findNavController()?.navigate(destination, bundle)
     }
 
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
