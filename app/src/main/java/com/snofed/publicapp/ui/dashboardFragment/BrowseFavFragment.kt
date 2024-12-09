@@ -1,6 +1,5 @@
 package com.snofed.publicapp.ui.dashboardFragment
 
-import RealmRepository
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
@@ -15,6 +14,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.gson.Gson
 import com.snofed.publicapp.R
@@ -36,7 +36,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class BrowseFavFragment : Fragment() {//ClubFavAdapter.OnItemClickListener
+class BrowseFavFragment : Fragment(), ClubFavAdapter.OnItemClickListener{
     private var _binding: FragmentBrowseFavBinding? = null
     private val binding get() = _binding!!
 
@@ -71,8 +71,6 @@ class BrowseFavFragment : Fragment() {//ClubFavAdapter.OnItemClickListener
                     Log.d("BrowseClubResponse", json)
                     val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
 
-//                    val realmRepository = RealmRepository()
-//                    val userViewModelRealm = UserViewModelRealm(realmRepository)
                     val userRealm = viewModelUserRealm.getUserById(userId!!)
                     val getFavClients: List<String> = userRealm?.favouriteClients ?: emptyList()
 
@@ -97,7 +95,7 @@ class BrowseFavFragment : Fragment() {//ClubFavAdapter.OnItemClickListener
 
                     Log.e("ClubResponses", "AllClubs $favClubResponses")
                     // Initialize the adapter once
-                    clubAdapter = ClubFavAdapter()
+                    clubAdapter = ClubFavAdapter(requireContext(),this,clubViewModel)
                     binding.recyclerView.layoutManager = GridLayoutManager(requireActivity(), 2)
                     binding.recyclerView.adapter = clubAdapter
                     binding.recyclerView.isVisible = true
@@ -120,77 +118,15 @@ class BrowseFavFragment : Fragment() {//ClubFavAdapter.OnItemClickListener
                 }
             }
         }
-        //favClubResponses = allClubResponses.filter { it.data.clients in getFavClients } as MutableList<NewClubData>
-        // favClubResponses = allClubResponses.filter { it.data.clients.any { client -> client in getFavClients } } as MutableList<NewClubData>
-
-
-        // Mutable list to hold all responses
-        //   val favClubResponses = mutableListOf<ClubFavResponseType>() // Replace `ClubFavResponseType` with the actual type
-
-        for (favClientId in clientIdList) {
-            /*fetchResponse(favClientId)
-            viewFavClubModel.clubFavLiveData.observe(viewLifecycleOwner, Observer { clubFavResponse ->
-                when (clubFavResponse) {
-                    is NetworkResult.Success -> {
-
-                        clubFavResponse.data?.let { data ->
-                            // Add the response to the list
-                            favClubResponses.add(data)
-
-
-                            // Update the adapter data
-                            clubAdapter.setClubs(favClubResponses)
-
-                            //clubAdapter.notifyDataSetChanged()
-                        }
-                        Log.e("PraveenMSG", "Praveen $favClubResponses")
-                    }
-                    is NetworkResult.Error -> {
-                        Toast.makeText(requireActivity(), clubFavResponse.message.toString(), Toast.LENGTH_SHORT).show()
-                    }
-                    is NetworkResult.Loading -> {
-                        // Handle loading state if necessary
-                    }
-                }
-            })
-            Log.e("idList", "praveenFAV111 $favClientId")*/
-        }
-
-
-
-
-       /* for (favClientId in clientIdList) {
-            fetchResponse(favClientId)
-            viewFavClubModel.clubFavLiveData.observe(viewLifecycleOwner, Observer {clubFavResponse->
-                when (clubFavResponse) {
-                    is NetworkResult.Success -> {
-
-                        clubFavResponse.data?.let { data ->
-                            favClubResponses.add(data) // Store the response in the list
-                        }
-
-                        clubAdapter = ClubFavAdapter(this)
-                        // Set up the RecyclerView with GridLayoutManager
-                        binding.recyclerView.layoutManager = GridLayoutManager(requireActivity(), 2)
-                        binding.recyclerView.adapter = clubAdapter
-                        binding.recyclerView.isVisible = true
-                        clubAdapter.setClubs(clubFavResponse?.data!!)
-                        clubAdapter.notifyDataSetChanged()
-
-                        Log.e("PraveenMSG" ,"Praveen" + clubFavResponse?.data!!)
-
-                    }
-                    is NetworkResult.Error -> {
-                        Toast.makeText(requireActivity(), clubFavResponse.message.toString(), Toast.LENGTH_SHORT).show()
-                    }
-                    is NetworkResult.Loading -> {
-
-                    }
-                }
-            })
-            Log.e("idList" ,"praveenFAV111" + favClientId)
-        }*/
     }
+
+    override fun onItemClick(clientId: String) {
+        val bundle = Bundle()
+        bundle.putString("clientId", clientId)
+        val destination = R.id.clubSubMembersFragment
+        findNavController().navigate(destination, bundle)
+    }
+
     private fun fetchResponse() {
         clubViewModel.clubRequestUser()
     }

@@ -1,6 +1,7 @@
 package com.snofed.publicapp.adapter
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,13 +14,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.snofed.publicapp.R
+import com.snofed.publicapp.adapter.BrowseClubListAdapter.OnItemClickListener
 import com.snofed.publicapp.models.realmModels.Client
 import com.snofed.publicapp.models.Data
 import com.snofed.publicapp.models.NewClubData
 import com.snofed.publicapp.models.browseSubClub.BrowseSubClubResponse
+import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.ServiceUtil
 
-class ClubFavAdapter() : RecyclerView.Adapter<ClubFavAdapter.ClubViewHolder>() {
+class ClubFavAdapter(private val context: Context,
+                     private val listener: OnItemClickListener,
+                     private val clubViewModel: AuthViewModel
+)
+    : RecyclerView.Adapter<ClubFavAdapter.ClubViewHolder>() {
     //val listener: OnItemClickListener
     //private var clubs: List<NewClubData> = listOf()
     private val clubs = mutableListOf<Client>()
@@ -27,10 +34,10 @@ class ClubFavAdapter() : RecyclerView.Adapter<ClubFavAdapter.ClubViewHolder>() {
     private var filteredClubs: List<BrowseSubClubResponse> = listOf()
     private val wishlistItems: MutableSet<String> = mutableSetOf()
 
-    /*interface OnItemClickListener {
+    interface OnItemClickListener {
         fun onItemClick(clientId: String)
-        fun onWishlistClick(clientId: String) // Callback for wishlist icon clicks
-    }*/
+        //fun onWishlistClick(clientId: String) // Callback for wishlist icon clicks
+    }
 //    init {
 //        filteredClubs = outerArray
 //    }
@@ -85,18 +92,18 @@ class ClubFavAdapter() : RecyclerView.Adapter<ClubFavAdapter.ClubViewHolder>() {
 
     override fun onBindViewHolder(holder: ClubViewHolder, position: Int) {
         //val reslult=holder.bind(outerArray[position])
-        val reslult = clubs[position]
-        holder.clientRating.text = reslult.clientRating
-        holder.totalRatings.text = "(" + reslult.totalRatings.toString() + ")"
-        holder.tvName.text = reslult.publicName.toString()
-        holder.tvLable.text = reslult.country.toString()
+        val club = clubs[position]
+        holder.clientRating.text = club.clientRating
+        holder.totalRatings.text = "(" + club.totalRatings.toString() + ")"
+        holder.tvName.text = club.publicName.toString()
+        holder.tvLable.text = club.country.toString()
 
-        /*holder.cardIdLayout.setOnClickListener {
+        holder.cardIdLayout.setOnClickListener {
             Log.e("click..", "clickClubItem")
-            listener.onItemClick(reslult.data.id) // Assuming Client has an 'id' property
-        }*/
+            listener.onItemClick(club.id) // Assuming Client has an 'id' property
+        }
         // Set wishlist icon based on the wishlist state
-        if (wishlistItems.contains(reslult.id)) {
+        if (wishlistItems.contains(club.id)) {
             holder.imgIdWishlist.setImageResource(R.drawable.hearth_filled)
         } else {
             holder.imgIdWishlist.setImageResource(R.drawable.hearth_filled)
@@ -106,7 +113,7 @@ class ClubFavAdapter() : RecyclerView.Adapter<ClubFavAdapter.ClubViewHolder>() {
          }*/
         // Handle wishlist icon click
         holder.imgIdWishlist.setOnClickListener {
-            val clientId = reslult.id
+            val clientId = club.id
             if (wishlistItems.contains(clientId)) {
                 wishlistItems.remove(clientId)
             } else {
@@ -116,13 +123,13 @@ class ClubFavAdapter() : RecyclerView.Adapter<ClubFavAdapter.ClubViewHolder>() {
             //listener.onWishlistClick(clientId) // Notify the listener
         }
 
-        if (reslult.logoPath == null) {
+        if (club.logoPath == null) {
             Glide.with(holder.backgroundImage).load(R.drawable.resort_card_bg)
                 .into(holder.backgroundImage)
             //Glide.with(holder.background_image).load(Constants.BASE_URL_IMAGE).into(holder.background_image)
         } else {
             Glide.with(holder.backgroundImage)
-                .load(ServiceUtil.BASE_URL_IMAGE + reslult.logoPath).diskCacheStrategy(
+                .load(ServiceUtil.BASE_URL_IMAGE + club.logoPath).diskCacheStrategy(
                     DiskCacheStrategy.ALL
                 ).fitCenter()
                 .into(holder.backgroundImage)

@@ -12,9 +12,11 @@ import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.snofed.publicapp.R
+import com.snofed.publicapp.api.ResponseObject
 import com.snofed.publicapp.databinding.FragmentRegisterBinding
 import com.snofed.publicapp.models.UserRegRequest
 import com.snofed.publicapp.models.UserResponse
+import com.snofed.publicapp.models.realmModels.UserRealm
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,7 +30,7 @@ class RegisterFragment : Fragment() {
 
     private val authViewModel by activityViewModels<AuthViewModel>()
     // Define a nullable property for the observer
-    private var loginObserver: Observer<NetworkResult<UserResponse>>? = null
+    private var loginObserver: Observer<NetworkResult<ResponseObject<UserRealm>>>? = null
 
     @Inject
     lateinit var tokenManager: TokenManager
@@ -138,13 +140,15 @@ class RegisterFragment : Fragment() {
 
 
     // Method to create the observer
-    private fun createSignUpObserver(): Observer<NetworkResult<UserResponse>> {
+    private fun createSignUpObserver(): Observer<NetworkResult<ResponseObject<UserRealm>>> {
         return Observer { response ->
             binding.progressBar.isVisible = false
             when (response) {
                 is NetworkResult.Success -> {
 
-                    Toast.makeText(requireActivity(), response.data!!.message, Toast.LENGTH_SHORT).show()
+                    var user: UserRealm? = response.data?.let { it.data!! }
+
+                    Toast.makeText(requireActivity(), response.message, Toast.LENGTH_SHORT).show()
                     findNavController().navigate(R.id.loginFragment)
                     // Remove the observer after handling the result
                     authViewModel.userResponseLiveData.removeObserver(loginObserver!!)

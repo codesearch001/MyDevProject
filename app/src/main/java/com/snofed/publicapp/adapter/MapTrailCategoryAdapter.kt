@@ -1,6 +1,5 @@
 package com.snofed.publicapp.adapter
 
-import StatusItem
 import android.graphics.Color
 import android.net.Uri
 import android.util.Log
@@ -11,9 +10,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.PoisTypeAdapter.OnItemSelectedListener
 import com.snofed.publicapp.databinding.TrailCategoryListBinding
+import com.snofed.publicapp.models.interval.StatusItem
 
 
-class MapTrailCategoryAdapter(private val trailList: List<StatusItem>,private val selectedZoneIds: List<String>,private val onItemClick: (String) -> Unit) : RecyclerView.Adapter<MapTrailCategoryAdapter.TrailCategoryViewHolder>() {
+class MapTrailCategoryAdapter(private val trailList: List<StatusItem>,
+                              private val selectedZoneIds: List<String>,
+                              private val onItemClick: (String) -> Unit)
+    : RecyclerView.Adapter<MapTrailCategoryAdapter.TrailCategoryViewHolder>() {
+
    // private val selectedIds = mutableListOf<String>()
     private var selectedZone= selectedZoneIds.toMutableList()
     private var onItemSelectedListener: OnItemSelectedListener? = null

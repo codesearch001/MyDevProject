@@ -1,6 +1,5 @@
 package com.snofed.publicapp.adapter
 
-import StatusItem
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.ItemStatusBinding
+import com.snofed.publicapp.models.interval.StatusItem
 
 /*
 class MapIntervalAdapter {

@@ -1,6 +1,5 @@
 package com.snofed.publicapp.ui.dashboardFragment
 
-import RealmRepository
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap

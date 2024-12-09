@@ -1,12 +1,11 @@
 package com.snofed.publicapp.ui.User
 
-import RealmRepository
 import androidx.lifecycle.ViewModel
 import com.snofed.publicapp.dto.PublicUserSettingsDTO
 import com.snofed.publicapp.dto.UserDTO
-import com.snofed.publicapp.dto.toRealm
 import com.snofed.publicapp.models.realmModels.PublicUserSettingsRealm
 import com.snofed.publicapp.models.realmModels.UserRealm
+import com.snofed.publicapp.repository.RealmRepository
 import io.realm.Realm
 import io.realm.RealmList
 

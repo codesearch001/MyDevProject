@@ -52,7 +52,12 @@ open class Trail : RealmObject() {
     var trailQuality: TrailQuality? = null
     var difficulty: Difficulty? = null
     var images: RealmList<TrailImage>? = null
+    var trailRatings: RealmList<TrailRating>? = null
+    var trailParts: RealmList<TrailPart>? = null
+    var intervals: RealmList<Interval>? = null
     var averageRating: Double? = null
+    var willBePreparedIn: String? = null
+    var lastPreparedTrailColor: String? = null
     var startLatitude: Double? = null
     var startLongitude: Double? = null
     var intervalType: Int? = null

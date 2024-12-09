@@ -1,8 +1,8 @@
 package com.snofed.publicapp.ui.clubsubmember.ViewModelClub
 
-import RealmRepository
 import androidx.lifecycle.ViewModel
 import com.snofed.publicapp.models.realmModels.TaskCategories
+import com.snofed.publicapp.repository.RealmRepository
 import io.realm.Realm
 
 open class TaskCategoryViewModelRealm : ViewModel() {

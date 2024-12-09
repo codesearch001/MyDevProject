@@ -34,6 +34,7 @@ import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.SnofedConstants
 import com.snofed.publicapp.utils.SnofedUtils
 import com.snofed.publicapp.utils.TokenManager
+import com.snofed.publicapp.viewModel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -44,6 +45,7 @@ class ClubSubMembersFragment : Fragment() {
     private val binding get() = _binding!!
     private val clubViewModel by viewModels<AuthViewModel>()
     private val sharedViewModel by activityViewModels<SharedViewModel>()
+    private lateinit var userViewModel: UserViewModel
 
     var vmClubRealm = ClubViewModelRealm()
     var clientId: String = ""
@@ -61,7 +63,7 @@ class ClubSubMembersFragment : Fragment() {
         clientId = arguments?.getString("clientId").toString()
         clubViewModel.mutableData.clientId.set(clientId)
         tokenManager.saveClientId(clientId)
-
+        userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
         vmClubRealm = ViewModelProvider(requireActivity()).get(ClubViewModelRealm::class.java)
        val hideSubMebTab = vmClubRealm.hasSubOrganisations(clientId)
         val gson = Gson()
@@ -138,8 +140,9 @@ class ClubSubMembersFragment : Fragment() {
 
                     // Subscride to Club
                     binding.isfavSubscribed.setOnClickListener{
+                        isSubsricedClub = !isSubsricedClub
                         val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
-                        val subscribeDTO : SubscribeDTO = SubscribeDTO(
+                        val subscribeDTO = SubscribeDTO(
                             clientId = clientId,
                             publicUserId = userId,
                             subscribeDate = SnofedUtils.getDateNow(SnofedConstants.DATETIME_SERVER_FORMAT)
@@ -149,13 +152,15 @@ class ClubSubMembersFragment : Fragment() {
                         clubViewModel.subscribeClubService(subscribeDTO)
                         binding.isfavSubscribed.isVisible = false
                         binding.isfavFillSubscribed.isVisible = true
-                        isSubsricedClub == !isSubsricedClub
+
 
                         // add fav clients in UserRealm
+                        userViewModel.addFavouriteClient(userId,clientId)
 
                     }
                     // UnSubscribe to Club
                     binding.isfavFillSubscribed.setOnClickListener{
+                        isSubsricedClub = !isSubsricedClub
                         val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
                         val subscribeDTO : SubscribeDTO = SubscribeDTO(
                             clientId = clientId,
@@ -166,13 +171,10 @@ class ClubSubMembersFragment : Fragment() {
                         clubViewModel.unsubscribeClubService(subscribeDTO)
                         binding.isfavSubscribed.isVisible = true
                         binding.isfavFillSubscribed.isVisible = false
-                        isSubsricedClub == !isSubsricedClub
-
-                        // Remove fav clients from UserRealm
-
+                        userViewModel.removeFavouriteClient(userId,clientId)
                     }
 
-                    if (isSubsricedClub == true){
+                    if (isSubsricedClub){
 
                         binding.isfavFillSubscribed.isVisible = true
                         binding.isfavSubscribed.isVisible = false
