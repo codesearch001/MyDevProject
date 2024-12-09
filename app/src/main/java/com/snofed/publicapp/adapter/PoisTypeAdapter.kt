@@ -1,6 +1,5 @@
 package com.snofed.publicapp.adapter
 
-import StatusItem
 import android.graphics.Color
 import android.net.Uri
 import android.util.Log
@@ -14,6 +13,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationBarView
 import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.PoisTypeListBinding
+import com.snofed.publicapp.models.interval.StatusItem
 import com.snofed.publicapp.utils.SharedViewModel
 
 /*class PoisTypeAdapter(private val poiList: List<String>,) : RecyclerView.Adapter<PoisTypeAdapter.PoisTypeViewHolder>() {
@@ -60,7 +60,7 @@ import com.snofed.publicapp.utils.SharedViewModel
 }*/
 // val sharedViewModel: SharedViewModel
 class PoisTypeAdapter(private val poiList: List<StatusItem>, private val selectedIds: List<String>
-                                                            , private val onItemClick: (String) -> Unit)
+                      , private val onItemClick: (String) -> Unit)
                                                             : RecyclerView.Adapter<PoisTypeAdapter.PoisTypeViewHolder>() {
 
     //private val selectedIds = mutableListOf<String>()

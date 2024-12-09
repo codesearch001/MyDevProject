@@ -1,7 +1,5 @@
 package com.snofed.publicapp.maps
 
-import RealmRepository
-import StatusItem
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -24,6 +22,7 @@ import com.snofed.publicapp.adapter.PoisTypeAdapter
 import com.snofed.publicapp.adapter.ZonesTypeAdapter
 import com.snofed.publicapp.databinding.FragmentMapExploreBinding
 import com.snofed.publicapp.databinding.MapFilterBinding
+import com.snofed.publicapp.models.interval.StatusItem
 import com.snofed.publicapp.models.realmModels.Poi
 import com.snofed.publicapp.models.realmModels.Resource
 import com.snofed.publicapp.models.realmModels.Trail

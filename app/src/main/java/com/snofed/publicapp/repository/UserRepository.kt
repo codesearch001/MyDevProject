@@ -1,6 +1,5 @@
 package com.snofed.publicapp.repository
 
-import RealmRepository
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -32,7 +31,7 @@ import com.snofed.publicapp.models.events.EventResponse
 import com.snofed.publicapp.models.realmModels.Club
 import com.snofed.publicapp.models.realmModels.PublicUserSettingsRealm
 import com.snofed.publicapp.models.realmModels.SystemDataHolder
-import com.snofed.publicapp.models.toRealm
+import com.snofed.publicapp.models.realmModels.Trail
 import com.snofed.publicapp.models.userData
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
@@ -52,6 +51,7 @@ import com.snofed.publicapp.utils.AppPreference
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.SharedPreferenceKeys
 import com.snofed.publicapp.utils.TokenManager
+import com.snofed.publicapp.viewModel.UserViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.realm.Realm
 import io.realm.RealmList
@@ -71,7 +71,8 @@ import javax.inject.Named
 class UserRepository @Inject constructor(
                         @Named("UserAPI") private val userAPI: UserAPI?,
                         @Named("ClientAPI") private val clientAPI: ClientAPI?,
-                        @ApplicationContext private val context: Context) {
+                        @ApplicationContext private val context: Context
+                        ) {
     private val acceptLanguage =""
 
 
@@ -134,17 +135,21 @@ class UserRepository @Inject constructor(
     val feedLiveData: LiveData<NetworkResult<FeedListResponse>>
         get() = _feedLiveData
 
-    private val _userResponseLiveData = MutableLiveData<NetworkResult<UserResponse>>()
-    val userResponseLiveData: LiveData<NetworkResult<UserResponse>>
+    private val _userResponseLiveData = MutableLiveData<NetworkResult<ResponseObject<UserRealm>>>()
+    val userResponseLiveData: LiveData<NetworkResult<ResponseObject<UserRealm>>>
         get() = _userResponseLiveData
+
+    private val _userPasswordRecoveryLiveData = MutableLiveData<NetworkResult<ResponseObject<String>>>()
+    val userPasswordRecoveryLiveData: LiveData<NetworkResult<ResponseObject<String>>>
+        get() = _userPasswordRecoveryLiveData
 
 
     private val _userWorkoutRideLiveData = MutableLiveData<NetworkResult<RideApiResponse>>()
     val userWorkoutRideLiveData: LiveData<NetworkResult<RideApiResponse>>
         get() = _userWorkoutRideLiveData
 
-    private val _trailsDetailsLiveData = MutableLiveData<NetworkResult<TrailsDetilsResponse>>()
-    val trailsDetailsLiveData: LiveData<NetworkResult<TrailsDetilsResponse>>
+    private val _trailsDetailsLiveData = MutableLiveData<NetworkResult<ResponseObject<Trail>>>()
+    val trailsDetailsLiveData: LiveData<NetworkResult<ResponseObject<Trail>>>
         get() = _trailsDetailsLiveData
 
     private val _trailsDrawPolyLinesByIDLiveData =
@@ -173,15 +178,9 @@ class UserRepository @Inject constructor(
 
     suspend fun updateUser(user: User) {
         _userResponseLiveData.postValue(NetworkResult.Loading())
-        var gson = Gson()
-        var json = gson.toJson(user)
-        Log.e("TAG_UserRepository", "updateUser: $json")
         val response = userAPI!!.settings(acceptLanguage, user)
-        //val jsonResponse = gson.toJson(response)
 
-// Log the JSON response
-        //Log.d("API Response", jsonResponse)
-        handleResponseTemp(response)
+        handleResponseSettings(response)
     }
     suspend fun getUserById(userId: String) {
         TODO()
@@ -459,7 +458,7 @@ class UserRepository @Inject constructor(
     }
 
     suspend fun getTrails(trailsId: String) {
-        _eventDetailsLiveData.postValue(NetworkResult.Loading())
+        _trailsDetailsLiveData.postValue(NetworkResult.Loading())
         val response = userAPI!!.trailsDetails(acceptLanguage, trailsId)
         Log.e("response", "subClubResponse " + response)
         if (response.isSuccessful && response.body() != null) {
@@ -559,177 +558,91 @@ class UserRepository @Inject constructor(
 //    }
 
 
-    private fun handleResponse(response: Response<UserResponse>) {
+    private fun handleResponse(response: Response<ResponseObject<UserRealm>>) {
         if (response.isSuccessful && response.body() != null) {
             _userResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
 
+            val userRealm: UserRealm? = response.body()?.let { it.data }
+
+            tokenManager.saveToken(userRealm?.token!!)
+            tokenManager.saveUser(userRealm.fullName!!)
+            tokenManager.saveUserId(userRealm.id)
+
             Log.e("loginResponse", "loginResponse " + response.body())
-            tokenManager.saveToken(response.body()!!.data.token)
             Log.e("token", "token " + response.body()!!.data.token)
-            tokenManager.saveUser(response.body()!!.data.fullName)
-            Log.e("firstName", "firstName " + response.body()!!.data.fullName)
-            tokenManager.saveUserId(response.body()!!.data.id)
             Log.e("UserId", "UserId " + response.body()!!.data.id)
+            Log.e("firstName", "firstName " + response.body()!!.data.fullName)
 
-
-           val gson = Gson()
+            val gson = Gson()
             val jsonString = gson.toJson(response.body()!!.data)
             val userResponse = Gson().fromJson(jsonString, userData::class.java)
-            Log.e("JAGGU_RESP", "JAGGU_START " + response.body()!!.data)
-            // Convert response data to UserRealm
-            val userResponseData = response.body()!!.data
-            val userRealm = UserRealm().apply {
-                id = userResponseData.id
-                email = userResponseData.email
-                firstName = userResponseData.firstName
-                lastName = userResponseData.lastName
-                fullName = userResponseData.fullName
-                username = userResponseData.username
-                phone = userResponseData.phone.toString()
-                cellphone = userResponseData.cellphone.toString()
-                isConfirmed = userResponseData.isConfirmed
-                isDeleted = userResponseData.isDeleted
-                password = userResponseData.password.toString()
-                roleName = userResponseData.roleName.toString()
-                clientName = userResponseData.clientName.toString()
-                clientId = userResponseData.clientId.toString()
-                token = userResponseData.token
-                userGroupId = userResponseData.userGroupId
-                gender = userResponseData.gender
-                weight = userResponseData.weight
-                age = userResponseData.age
-                isSubscribed = userResponseData.isSubscribed
-                favouriteClients = RealmList(*userResponseData.favouriteClients?.toTypedArray() ?: arrayOf())
-                publicUserSettings = RealmList(*userResponseData.publicUserSettings?.map { setting ->
-                    PublicUserSettingsRealm().apply {
-                        key = setting.key
-                        value = setting.value
-                    }
-                }?.toTypedArray() ?: arrayOf())
-            }
+            Log.e("USER_RESP", "LOGIN $jsonString")
 
             // Save UserRealm in Realm
             // Use the generic RealmRepository to save the UserRealm object
-           // val realmRepository = RealmRepository()
-            val userViewModelRealm = UserViewModelRealm()
-            //realmRepository.insertOrUpdate(userRealm)
-            userViewModelRealm.addOrUpdateUser(userRealm)
-            // Print saved data
-            //val savedUser = realmRepository.getById(UserRealm::class.java, userRealm.id)
-            //val getUser = userViewModelRealm.getUserById(userRealm.id)
+            val userViewModel = UserViewModel()
+            userRealm.let {
+                userViewModel.saveOrUpdate(userRealm)
+            }
 
-            //val userDTO = userViewModelRealm.getUserById(userRealm.id)
-            //val jsonUser = Gson().toJson(userDTO)
-
-            //Log.e("SavedUserNew", "Saved User Data: $jsonUser")
-
-            // Log the publicUserSettings if available
-//            getUser?.publicUserSettings?.forEach {
-//                Log.e("PublicUserSettings", "Key: ${it.key}, Value: ${it.value}")
-//            }
-
-
-            AppPreference.savePreference(context, SharedPreferenceKeys.USER_TOKEN, response.body()!!.data.token)
-            AppPreference.savePreference(context, SharedPreferenceKeys.USER_USER_ID, response.body()!!.data.id)
-            AppPreference.savePreference(context, SharedPreferenceKeys.USER_FIRST_NAME, response.body()!!.data.firstName)
-            AppPreference.savePreference(context, SharedPreferenceKeys.USER_LAST_NAME, response.body()!!.data.lastName)
-            AppPreference.savePreference(context, SharedPreferenceKeys.USER_USER_AGE, response.body()!!.data.age.toString())
-            AppPreference.savePreference(context, SharedPreferenceKeys.USER_USER_WEIGHT, response.body()!!.data.weight.toString())
-            AppPreference.savePreference(context, SharedPreferenceKeys.USER_GENDER_TYPE, response.body()!!.data.gender.toString())
-           // AppPreference.savePreference(context, SharedPreferenceKeys.USER_GENDER_TYPE, response.body()!!.data.clientLogo.toString())
+            AppPreference.savePreference(
+                context,
+                SharedPreferenceKeys.USER_TOKEN,
+                response.body()!!.data.token
+            )
+            AppPreference.savePreference(
+                context,
+                SharedPreferenceKeys.USER_USER_ID,
+                response.body()!!.data.id
+            )
+            AppPreference.savePreference(
+                context,
+                SharedPreferenceKeys.USER_FIRST_NAME,
+                response.body()!!.data.firstName
+            )
+            AppPreference.savePreference(
+                context,
+                SharedPreferenceKeys.USER_LAST_NAME,
+                response.body()!!.data.lastName
+            )
+            AppPreference.savePreference(
+                context,
+                SharedPreferenceKeys.USER_USER_AGE,
+                response.body()!!.data.age.toString()
+            )
+            AppPreference.savePreference(
+                context,
+                SharedPreferenceKeys.USER_USER_WEIGHT,
+                response.body()!!.data.weight.toString()
+            )
+            AppPreference.savePreference(
+                context,
+                SharedPreferenceKeys.USER_GENDER_TYPE,
+                response.body()!!.data.gender.toString()
+            )
+            // AppPreference.savePreference(context, SharedPreferenceKeys.USER_GENDER_TYPE, response.body()!!.data.clientLogo.toString())
             AppPreference.savePreference(context, SharedPreferenceKeys.IS_USER_LOGGED_IN, "true")
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
-            _userResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("message", "One or more validation errors occurred.")))
-
-           // _userResponseLiveData.postValue(NetworkResult.Error(response.body()?.message))
+            _userResponseLiveData.postValue(
+                NetworkResult.Error(
+                    errorObj.optString(
+                        "message",
+                        "One or more validation errors occurred."
+                    )
+                )
+            )
+            // _userResponseLiveData.postValue(NetworkResult.Error(response.body()?.message))
         } else {
             _userResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
         }
     }
 
 
-    private fun handleResponseTemp(response: Response<UserResponse>) {
+    private fun handleResponseSettings(response: Response<ResponseObject<UserRealm>>) {
         if (response.isSuccessful && response.body() != null) {
             _userResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
-
-            Log.e("loginResponse", "loginResponse " + response.body())
-            //tokenManager.saveToken(response.body()!!.data.token)
-            //Log.e("token", "token " + response.body()!!.data.token)
-            //tokenManager.saveUser(response.body()!!.data.fullName)
-            //Log.e("firstName", "firstName " + response.body()!!.data.fullName)
-            //tokenManager.saveUserId(response.body()!!.data.id)
-            //Log.e("UserId", "UserId " + response.body()!!.data.id)
-
-
-            val gson = Gson()
-            val jsonString = gson.toJson(response.body()!!.data)
-            val userResponse = Gson().fromJson(jsonString, userData::class.java)
-
-            Log.e("JAGGU_RESP", "JAGGU_RESP " + response.body()!!.data)
-
-            // Convert response data to UserRealm
-            val userResponseData = response.body()!!.data
-            val userRealm = UserRealm().apply {
-                id = userResponseData.id
-                email = userResponseData.email
-                firstName = userResponseData.firstName
-                lastName = userResponseData.lastName
-                fullName = userResponseData.fullName
-                username = userResponseData.username
-                phone = userResponseData.phone.toString()
-                cellphone = userResponseData.cellphone.toString()
-                isConfirmed = userResponseData.isConfirmed
-                isDeleted = userResponseData.isDeleted
-                password = userResponseData.password.toString()
-                roleName = userResponseData.roleName.toString()
-                clientName = userResponseData.clientName.toString()
-                clientId = userResponseData.clientId.toString()
-                token = userResponseData.token
-                userGroupId = userResponseData.userGroupId
-                gender = userResponseData.gender
-                weight = userResponseData.weight
-                age = userResponseData.age
-                isSubscribed = userResponseData.isSubscribed
-                favouriteClients = RealmList(*userResponseData.favouriteClients?.toTypedArray() ?: arrayOf())
-                publicUserSettings = RealmList(*userResponseData.publicUserSettings?.map { setting ->
-                    PublicUserSettingsRealm().apply {
-                        key = setting.key
-                        value = setting.value
-                    }
-                }?.toTypedArray() ?: arrayOf())
-            }
-
-            // Save UserRealm in Realm
-            // Use the generic RealmRepository to save the UserRealm object
-           // val realmRepository = RealmRepository()
-            val userViewModelRealm = UserViewModelRealm()
-            //realmRepository.insertOrUpdate(userRealm)
-            userViewModelRealm.addOrUpdateUser(userRealm)
-            // Print saved data
-            //val savedUser = realmRepository.getById(UserRealm::class.java, userRealm.id)
-            //val getUser = userViewModelRealm.getUserById(userRealm.id)
-
-            //val userDTO = userViewModelRealm.getUserById(userRealm.id)
-            //val jsonUser = Gson().toJson(userDTO)
-
-            //Log.e("SavedUserNew", "Saved User Data: $jsonUser")
-
-            // Log the publicUserSettings if available
-//            getUser?.publicUserSettings?.forEach {
-//                Log.e("PublicUserSettings", "Key: ${it.key}, Value: ${it.value}")
-//            }
-
-
-            AppPreference.savePreference(context, SharedPreferenceKeys.USER_TOKEN, response.body()!!.data.token)
-            AppPreference.savePreference(context, SharedPreferenceKeys.USER_USER_ID, response.body()!!.data.id)
-            AppPreference.savePreference(context, SharedPreferenceKeys.USER_FIRST_NAME, response.body()!!.data.firstName)
-            AppPreference.savePreference(context, SharedPreferenceKeys.USER_LAST_NAME, response.body()!!.data.lastName)
-            AppPreference.savePreference(context, SharedPreferenceKeys.USER_USER_AGE, response.body()!!.data.age.toString())
-            AppPreference.savePreference(context, SharedPreferenceKeys.USER_USER_WEIGHT, response.body()!!.data.weight.toString())
-            AppPreference.savePreference(context, SharedPreferenceKeys.USER_GENDER_TYPE, response.body()!!.data.gender.toString())
-            // AppPreference.savePreference(context, SharedPreferenceKeys.USER_GENDER_TYPE, response.body()!!.data.clientLogo.toString())
-            AppPreference.savePreference(context, SharedPreferenceKeys.IS_USER_LOGGED_IN, "true")
+            Log.e("SETTINGS", "settingResponse " + response.message())
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
             _userResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("message", "One or more validation errors occurred.")))
@@ -740,10 +653,13 @@ class UserRepository @Inject constructor(
         }
     }
 
-    private fun handleResponse2(response: Response<UserResponse>) {
+    private fun handleResponse2(response: Response<ResponseObject<String>>) {
         if (response.isSuccessful && response.body() != null) {
-            _userResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
-            Log.e("loginResponse", "loginResponse " + response.body())
+            _userPasswordRecoveryLiveData.postValue(NetworkResult.Success(response.body()!!))
+
+            var result : String = response.body()?.data!!
+
+            Log.e("loginResponse", "loginResponse " + result)
 
         } else if (response.errorBody() != null) {
             val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())

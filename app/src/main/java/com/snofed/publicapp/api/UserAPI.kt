@@ -17,6 +17,8 @@ import com.snofed.publicapp.models.events.EventDetailsResponse
 import com.snofed.publicapp.models.events.EventResponse
 import com.snofed.publicapp.models.realmModels.Club
 import com.snofed.publicapp.models.realmModels.SystemDataHolder
+import com.snofed.publicapp.models.realmModels.Trail
+import com.snofed.publicapp.models.realmModels.UserRealm
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
 import com.snofed.publicapp.ui.setting.UploadResponse
@@ -56,19 +58,19 @@ interface UserAPI {
 
     //REGISTER
     @POST(REGISTER)
-    suspend fun register(@Header("Accept-Language") acceptLanguage: String, @Body userRequest: UserRegRequest) : Response<UserResponse>
+    suspend fun register(@Header("Accept-Language") acceptLanguage: String, @Body userRequest: UserRegRequest) : Response<ResponseObject<UserRealm>>
 
     //LOGIN
     @POST(LOGIN)
-    suspend fun signIn( @Body userRequest: UserRequest) : Response<UserResponse>
+    suspend fun signIn( @Body userRequest: UserRequest) : Response<ResponseObject<UserRealm>>
 
     //SETTINGS
     @POST(USER_SETTINGS)
-    suspend fun settings(@Header("Accept-Language") acceptLanguage: String?, @Body user: User): Response<UserResponse>
+    suspend fun settings(@Header("Accept-Language") acceptLanguage: String?, @Body user: User): Response<ResponseObject<UserRealm>>
 
     //RECOVER_PASSWORD
     @POST(RECOVER_PASSWORD)
-    suspend fun recoverPassword(@Header("Accept-Language") acceptLanguage: String, @Body userRequest: UserRecoverRequest) : Response<UserResponse>
+    suspend fun recoverPassword(@Header("Accept-Language") acceptLanguage: String, @Body userRequest: UserRecoverRequest) : Response<ResponseObject<String>>
 
 
     //CLUB_WORKOUT_RIDE
@@ -132,7 +134,7 @@ interface UserAPI {
     //CLUB_TRAILS_DETAILS
     @GET(CLUB_TRAILS_DETAILS)
     suspend fun trailsDetails(@Header("Accept-Language") acceptLanguage: String,
-                              @Path("id") id: String) : Response<TrailsDetilsResponse>
+                              @Path("id") id: String) : Response<ResponseObject<Trail>>
 
     //CLUB_TRAILS_DRAW_POLYLINES
     @GET(CLUB_TRAILS_DRAW_POLYLINES)

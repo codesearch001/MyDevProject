@@ -1,6 +1,5 @@
 package com.snofed.publicapp.ui.dashboardFragment
 
-import RealmRepository
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -35,6 +34,7 @@ import com.snofed.publicapp.utils.ServiceUtil
 import com.snofed.publicapp.utils.SharedPreferenceKeys
 import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.TokenManager
+import com.snofed.publicapp.viewModel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -53,14 +53,15 @@ class HomeFragment : Fragment() {
     //private var lastDaysData: Long = 7
     private var lastDaysData: Long = 1000
 
-    private lateinit var viewModelUserRealm: UserViewModelRealm
+    //private lateinit var viewModelUserRealm: UserViewModelRealm
+    private lateinit var userViewModel: UserViewModel
 
     @Inject
     lateinit var tokenManager: TokenManager
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        viewModelUserRealm = ViewModelProvider(this).get(UserViewModelRealm::class.java)
+        userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
         //for using status bar space
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 
@@ -89,9 +90,9 @@ class HomeFragment : Fragment() {
         //Log.e("TAG_Home_Fragment","userId "+userId)
 
         // Get ViewModel instance
-        binding.nameTextView.text = viewModelUserRealm.getUserById(userId)?.fullName
+        binding.nameTextView.text = userViewModel.fetchById(userId)?.fullName
         // Retrieve the saved image URL
-        val savedImageUrl = ServiceUtil.BASE_URL_IMAGE + viewModelUserRealm.getPublicUserSettingValue(userId,"Image")
+        val savedImageUrl = ServiceUtil.BASE_URL_IMAGE + userViewModel.getPublicUserSettingValue(userId,"Image")
 
         savedImageUrl?.let {
             // Load the image using Glide with circle crop transformation

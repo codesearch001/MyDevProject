@@ -24,9 +24,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.snofed.publicapp.HomeDashBoardActivity
 import com.snofed.publicapp.R
+import com.snofed.publicapp.api.ResponseObject
 import com.snofed.publicapp.databinding.FragmentLoginBinding
 import com.snofed.publicapp.models.UserRequest
 import com.snofed.publicapp.models.UserResponse
+import com.snofed.publicapp.models.realmModels.UserRealm
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.TokenManager
 import com.snofed.publicapp.utils.isEmailValid
@@ -46,7 +48,7 @@ class LoginFragment : Fragment() {
     private lateinit var callbackManager: CallbackManager
 
     // Define a nullable property for the observer
-    private var loginObserver: Observer<NetworkResult<UserResponse>>? = null
+    private var loginObserver: Observer<NetworkResult<ResponseObject<UserRealm>>>? = null
 
     @Inject
     lateinit var tokenManager: TokenManager
@@ -193,7 +195,7 @@ class LoginFragment : Fragment() {
         )
     }
     // Method to create the observer
-    private fun createLoginObserver(): Observer<NetworkResult<UserResponse>> {
+    private fun createLoginObserver(): Observer<NetworkResult<ResponseObject<UserRealm>>> {
         return Observer { response ->
             binding.progressBar.isVisible = false
             when (response) {

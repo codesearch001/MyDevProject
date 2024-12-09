@@ -1,9 +1,9 @@
 package com.snofed.publicapp.ui.clubsubmember.ViewModelClub
 
-import RealmRepository
 import androidx.lifecycle.ViewModel
 import com.snofed.publicapp.models.realmModels.Area
 import com.snofed.publicapp.models.realmModels.ZoneType
+import com.snofed.publicapp.repository.RealmRepository
 import io.realm.Case
 import io.realm.Realm
 

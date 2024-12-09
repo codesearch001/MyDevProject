@@ -32,6 +32,8 @@ import com.snofed.publicapp.models.events.EventResponse
 import com.snofed.publicapp.models.membership.Membership
 import com.snofed.publicapp.models.realmModels.Club
 import com.snofed.publicapp.models.realmModels.SystemDataHolder
+import com.snofed.publicapp.models.realmModels.Trail
+import com.snofed.publicapp.models.realmModels.UserRealm
 import com.snofed.publicapp.models.workoutfeed.FeedListResponse
 import com.snofed.publicapp.models.workoutfeed.WorkoutActivites
 import com.snofed.publicapp.purchasehistory.model.TicketOrderDetails
@@ -67,8 +69,11 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
     var mutableData = MutableData()
 
 
-    val userResponseLiveData: LiveData<NetworkResult<UserResponse>>
+    val userResponseLiveData: LiveData<NetworkResult<ResponseObject<UserRealm>>>
         get() = userRepository.userResponseLiveData
+
+    val userPasswordRecoveryLiveData: LiveData<NetworkResult<ResponseObject<String>>>
+        get() = userRepository.userPasswordRecoveryLiveData
 
 
     val userWorkoutRideLiveData: LiveData<NetworkResult<RideApiResponse>>
@@ -140,7 +145,7 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
     val feedLiveData: LiveData<NetworkResult<FeedListResponse>>
         get() = userRepository.feedLiveData
 
-    val trailsDetailsLiveData: LiveData<NetworkResult<TrailsDetilsResponse>>
+    val trailsDetailsLiveData: LiveData<NetworkResult<ResponseObject<Trail>>>
         get() = userRepository.trailsDetailsLiveData
 
     val trailsDrawPolyLinesByIDLiveData: LiveData<NetworkResult<TrailPolyLinesResponse>>
@@ -173,7 +178,6 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
         viewModelScope.launch {
             userRepository.updateUser(user)
         }
-
     }
 
     //RECOVER_PASSWORD

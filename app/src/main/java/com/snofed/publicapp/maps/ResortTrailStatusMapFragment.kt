@@ -1,6 +1,5 @@
 package com.snofed.publicapp.maps
 
-import StatusItem
 import android.Manifest
 import android.provider.Settings
 import android.content.Context
@@ -62,7 +61,9 @@ import com.snofed.publicapp.adapter.MapIntervalAdapter
 import com.snofed.publicapp.databinding.FragmentResortTrailStatusMapBinding
 import com.snofed.publicapp.models.DataPolyResponse
 import com.snofed.publicapp.models.PolyLine
-import com.snofed.publicapp.models.Trail
+//import com.snofed.publicapp.models.Trail
+import com.snofed.publicapp.models.interval.StatusItem
+import com.snofed.publicapp.models.realmModels.Trail
 import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.IntervalViewModelRealm
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.Constants
@@ -71,6 +72,7 @@ import com.snofed.publicapp.utils.SnofedConstants
 import com.snofed.publicapp.utils.TokenManager
 import com.snofed.publicapp.utils.enums.PageType
 import com.snofed.publicapp.utils.enums.SyncActionEnum
+import com.snofed.publicapp.viewModel.TrailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.System.setProperties
 import javax.inject.Inject
@@ -100,10 +102,9 @@ class ResortTrailStatusMapFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
+    private lateinit var trailViewModel: TrailViewModel
 
-    private var trail: Trail? = null
-
-    private var polyLinesResponseSatelliteView: DataPolyResponse? = null
+    private var trail : Trail? = null
     var isSatelliteViewClicked : Boolean = false
 
     private val pageType: PageType? by lazy {
@@ -130,6 +131,7 @@ class ResortTrailStatusMapFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_resort_trail_status_map, container, false)
+
         _binding = FragmentResortTrailStatusMapBinding.inflate(inflater, container, false)
         binding.backBtn.setOnClickListener {
             it.findNavController().popBackStack()
@@ -143,6 +145,7 @@ class ResortTrailStatusMapFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
 
         vmIntervalRelam = ViewModelProvider(requireActivity()).get(IntervalViewModelRealm::class.java)
         var allIntervals = vmIntervalRelam.getAllIntervals()
@@ -241,19 +244,23 @@ class ResortTrailStatusMapFragment : Fragment() {
 //                            .build())
                     // Observe the SharedViewModel for data updates
                     fetchResponse()
-                    viewModelTrails.trailsDrawPolyLinesByIDLiveData.observe(viewLifecycleOwner, Observer { response ->
+
+                    viewModelTrails.trailsDetailsLiveData.observe(viewLifecycleOwner, Observer { response ->
                         // binding.trailsNameMap.text = response.data.name
-                        Log.d("TAG_TRAILS_STAUS", "trailsDrawPolyLinesByIDLiveData ${response.data?.data?.features}")
                         if (response != null) {
 
-                            val trailResponse = response.data?.data
-                            val trail = response.data?.data
-                            polyLinesResponseSatelliteView = response.data?.data
-                            Log.d("TAG_TRAIL_RESPONSE", "TAG_TRAIL_RESPONSE $trailResponse.")
-                            trailResponse?.let {
-                                drawPolyline(style, it)
-                            }
+//                            trailViewModel = ViewModelProvider(requireActivity()).get(TrailViewModel::class.java)
+//                            var getTrail = trailViewModel.fetchByIdAsJson(specificTrailId!!)
+//                            Log.d("TRAIL_STATUS", "Trail Status Map Fragment $getTrail")
 
+                            val trailResponse = response.data?.data
+                            trail = response.data?.data
+
+                            trailResponse?.let {
+                                //drawPolyline(style, it)
+                                getDrawPolyline(style, trail!!)
+                            }
+                            
                         } else {
                             // Handle the null case
                             Toast.makeText(requireContext(), response.toString(), Toast.LENGTH_SHORT).show()
@@ -269,11 +276,12 @@ class ResortTrailStatusMapFragment : Fragment() {
                     // Observe the SharedViewModel for data updates
                     sharedViewModel.TrailsDetilsResponse.observe(viewLifecycleOwner, Observer { response ->
                         binding.trailsNameMap.text = response.data.name
+
                         if (response != null) {
                             val polylineData = response.data.polyLine
                             trail = response.data
                             Log.d("P3333", "Print Details trails Id ${response.data.id}")
-                            Log.d("P2222", "Adding GeoJsonSource and LineLayer${polylineData.features.size}")
+                            Log.d("P2222", "Adding GeoJsonSource and LineLayer${polylineData?.features?.size}")
                             getDrawPolyline(style, trail!!)
                         } else {
                             // Handle the null case
@@ -506,7 +514,7 @@ class ResortTrailStatusMapFragment : Fragment() {
 
             if (style.getLayer(layerId) == null) {
                 style.addLayer(lineLayer(layerId, sourceId) {
-                    lineColor(Color.parseColor(feature.properties.color))
+                    lineColor(Color.parseColor(trail?.lastPreparedTrailColor ?: feature.properties.color?: "#ff0000"))
                     lineWidth(5.0)
                 })
             }
@@ -535,11 +543,11 @@ class ResortTrailStatusMapFragment : Fragment() {
     }
 
     private fun fetchResponse() {
-        viewModelTrails.trailsDrawPolyLinesByIDRequestUser(specificTrailId!!)
+        viewModelTrails.trailsDetailsRequestUser(specificTrailId!!)
     }
 
     private fun getDrawPolyline(style: Style, trail: Trail) {
-        val feature = trail.polyLine.features.firstOrNull()
+        val feature = trail.polyLine?.features?.firstOrNull()
         val coordinates = feature?.geometry?.coordinates
 
         if (coordinates.isNullOrEmpty()) {
@@ -572,7 +580,7 @@ class ResortTrailStatusMapFragment : Fragment() {
         val lineLayerId = "line-layer"
         if (style.getLayer(lineLayerId) == null) {
             style.addLayer(lineLayer(lineLayerId, geoJsonSourceId) {
-                lineColor(trail.ownTrailMapColor ?: feature.properties.color ?: "#ff0000") // Default color: red
+                lineColor(trail.lastPreparedTrailColor ?: feature.properties?.color ?: "#ff0000") // Default color: red
                 lineWidth(5.0)
             })
         }
@@ -617,9 +625,9 @@ class ResortTrailStatusMapFragment : Fragment() {
                     getDrawPolyline(style, trail!!)
             }
 
-            if(polyLinesResponseSatelliteView != null){
+            /*if(polyLinesResponseSatelliteView != null){
                 drawPolyline(style, polyLinesResponseSatelliteView!!)
-            }
+            }*/
         }
     }
 

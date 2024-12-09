@@ -1,7 +1,5 @@
 package com.snofed.publicapp.ui.setting
 
-
-import RealmRepository
 import android.content.DialogInterface
 import android.net.Uri
 import android.os.Bundle
@@ -24,10 +22,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.google.gson.Gson
 import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.FragmentProfileSettingBinding
 import com.snofed.publicapp.dto.PublicUserSettingsDTO
+import com.snofed.publicapp.dto.UserDTO
+import com.snofed.publicapp.dto.toRealm
+import com.snofed.publicapp.models.realmModels.UserRealm
 import com.snofed.publicapp.models.toUser
+import com.snofed.publicapp.models.userData
+import com.snofed.publicapp.repository.RealmRepository
 import com.snofed.publicapp.ui.User.UserViewModelRealm
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.AppPreference
@@ -38,6 +42,7 @@ import com.snofed.publicapp.utils.SharedPreferenceKeys
 import com.snofed.publicapp.utils.SnofedUtils.Companion.getAgeFromBirthYear
 import com.snofed.publicapp.utils.SnofedUtils.Companion.getBirthYearFromAge
 import com.snofed.publicapp.utils.SnofedUtils.Companion.getYearFromDate
+import com.snofed.publicapp.viewModel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 
@@ -50,7 +55,8 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
     private val viewModel by viewModels<AuthViewModel>()
     private lateinit var mediaReader: MediaReader
 
-    private lateinit var viewModelUserRealm: UserViewModelRealm
+    private lateinit var userViewModel: UserViewModel
+
     // String arrays
     var autoPauseSpeedsArray: Array<String> = emptyArray()
     var unitsArray: Array<String> = emptyArray()
@@ -87,9 +93,13 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
         super.onViewCreated(view, savedInstanceState)
 
         val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
-        viewModelUserRealm = ViewModelProvider(requireActivity()).get(UserViewModelRealm::class.java)
+
+        userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
+
+        var user: UserRealm = userViewModel.fetchById(userId)!!
+
         // Retrieve the saved image URL
-        val savedImageUrl = ServiceUtil.BASE_URL_IMAGE + viewModelUserRealm.getPublicUserSettingValue(userId,"Image")
+        val savedImageUrl = ServiceUtil.BASE_URL_IMAGE + userViewModel.getPublicUserSettingValue(userId,"Image")
         //Log.e("IMAGE","IMAGE"+savedImageUrl)
         savedImageUrl?.let {
             // Use Glide to set the image URL to the ImageView
@@ -97,17 +107,17 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
         }
         fillStringArrays()
 
-        var userGender = if (viewModelUserRealm.getUserById(userId)?.gender.toString().equals("1", ignoreCase = true))  gendersArray[1] else gendersArray[0]
-        var userweight = viewModelUserRealm.getUserById(userId)?.weight.toString()
-        var userAge = viewModelUserRealm.getUserById(userId)?.age.toString()
+        var userGender = if (user?.gender.toString().equals("1", ignoreCase = true))  gendersArray[1] else gendersArray[0]
+        var userweight = user?.weight.toString()
+        var userAge = user?.age.toString()
 
-        binding.txtFirstName.text =  viewModelUserRealm.getUserById(userId)?.firstName
-        binding.txtLastName.text = viewModelUserRealm.getUserById(userId)?.lastName
+        binding.txtFirstName.text =  user?.firstName
+        binding.txtLastName.text = user?.lastName
         binding.txtUserAge.text = if(userAge.isNullOrEmpty()) "0" else getAgeFromBirthYear(userAge.toInt()).toString()
         binding.txtUserWeight.text =  if(userweight.isNullOrEmpty()) "0" else "$userweight Kg"
         binding.txtUserGender.text = userGender
 
-        Log.e("GENDER","GENDER_GET_REALM "+ viewModelUserRealm.getUserById(userId)?.gender.toString())
+        Log.e("GENDER","GENDER_GET_REALM "+ user?.gender.toString())
 
         binding.txtFirstName.setOnClickListener {
             showEditablePopup( EditType.FIRSTNAME, "", binding.txtFirstName.text.toString()) { newValue ->
@@ -138,9 +148,9 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
             }
         }
 
-        val switchScreen = viewModelUserRealm.getPublicUserSettingValue(userId,"ScreenAlwaysOn")
-        val switchWifiNew = viewModelUserRealm.getPublicUserSettingValue(userId,"SyncOnWifi")
-        val switchAutoSpeedTxt = viewModelUserRealm.getPublicUserSettingValue(userId,"AutoPauseSpeed")
+        val switchScreen = userViewModel.getPublicUserSettingValue(userId,"ScreenAlwaysOn")
+        val switchWifiNew = userViewModel.getPublicUserSettingValue(userId,"SyncOnWifi")
+        val switchAutoSpeedTxt = userViewModel.getPublicUserSettingValue(userId,"AutoPauseSpeed")
         //val finalAutoSpeedTxt = if(switchAutoSpeedTxt.isNullOrEmpty()) "0" else if(switchAutoSpeedTxt == "0") "2" else "4"
 
         Log.e("AUTOSPEED","switch auto speed "+switchAutoSpeedTxt)
@@ -154,13 +164,10 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
 
         binding.switchWifi.setOnCheckedChangeListener { _, isChecked ->
 
-//            val realmRepository = RealmRepository()
-//            val userViewModelRealm = UserViewModelRealm(realmRepository)
-
             // Update settings before saving
-            viewModelUserRealm.updatePublicUserSetting(userId, PublicUserSettingsDTO("SyncOnWifi", isChecked.toString()))
+            userViewModel.updatePublicUserSetting(userId, PublicUserSettingsDTO("SyncOnWifi", isChecked.toString()))
 
-            val userDTO = viewModelUserRealm.getUserDTOById(userId)
+            val userDTO = userViewModel.getUserDTOById(userId)
 
             authViewModel.updateUser(userDTO!!.toUser())
         }
@@ -168,13 +175,10 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
 
         binding.switchScreenOn.setOnCheckedChangeListener { _, isChecked ->
 
-//            val realmRepository = RealmRepository()
-//            val userViewModelRealm = UserViewModelRealm(realmRepository)
-
             // Update settings before saving
-            viewModelUserRealm.updatePublicUserSetting(userId, PublicUserSettingsDTO("ScreenAlwaysOn", isChecked.toString()))
+            userViewModel.updatePublicUserSetting(userId, PublicUserSettingsDTO("ScreenAlwaysOn", isChecked.toString()))
 
-            var userDTO = viewModelUserRealm.getUserDTOById(userId)
+            var userDTO = userViewModel.getUserDTOById(userId)
 
             authViewModel.updateUser(userDTO!!.toUser())
         }
@@ -402,7 +406,7 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
     private fun saveToRealmAndServer(newValue: String, field: EditType) {
         val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
 
-        val userDTO = viewModelUserRealm.getUserDTOById(userId)
+        val userDTO = userViewModel.getUserDTOById(userId)
 
         if(EditType.FIRSTNAME == field){
             userDTO!!.firstName = newValue
@@ -422,22 +426,23 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
         }
         else if(EditType.AUTOPAUSESPEED == field){
             //val updateValue = if (newValue.equals("2 km/h", ignoreCase = true)) 0 else 1
-            viewModelUserRealm.updatePublicUserSetting(userId, PublicUserSettingsDTO("AutoPauseSpeed", newValue.toString()))
+            userViewModel.updatePublicUserSetting(userId, PublicUserSettingsDTO("AutoPauseSpeed", newValue.toString()))
         }
 
         //Update the UserRealm
         if(EditType.AUTOPAUSESPEED != field) {
-            viewModelUserRealm.updateUser(userId, userDTO!!)
+            //userViewModel.updateUser(userId, userDTO!!)
+            userViewModel.saveOrUpdate(userDTO!!.toRealm())
         }
 
         //Get latest data from realm
-        var sendUserDTO = viewModelUserRealm.getUserDTOById(userId)
-        
-        // Call the API to save to Server
+        val sendUserDTO = userViewModel.getUserDTOById(userId)
+
+       // Call the API to save to Server
         authViewModel.updateUser(sendUserDTO!!.toUser());
     }
 
-    fun SaveUserPublicSettings(type: EditType, value: String,realmRepository: RealmRepository,userViewModelRealm: UserViewModelRealm){
+    fun SaveUserPublicSettings(type: EditType, value: String, realmRepository: RealmRepository, userViewModelRealm: UserViewModelRealm){
         val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
         val realm = realmRepository.getRealmInstance() // Get a Realm instance from your repository
         realm.executeTransaction { transactionRealm ->
@@ -493,7 +498,7 @@ class ProfileSettingFragment : Fragment(), MediaReader.OnImageUriReceivedListene
 //                    val userViewModelRealm = UserViewModelRealm(realmRepository)
 
                     // Update image uri to publicUserSettings in UserRealm
-                    viewModelUserRealm.updatePublicUserSetting(userId, PublicUserSettingsDTO("Image", imageResponseUri))
+                    userViewModel.updatePublicUserSetting(userId, PublicUserSettingsDTO("Image", imageResponseUri))
 
                     //Commented, no need to bind the image
                     //mediaReader.setImageView(binding.profileImageView,imageUrl)

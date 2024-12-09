@@ -1,6 +1,5 @@
 package com.snofed.publicapp.adapter
 
-import StatusItem
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

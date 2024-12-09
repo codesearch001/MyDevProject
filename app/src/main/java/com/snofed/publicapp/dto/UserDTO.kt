@@ -4,31 +4,60 @@ import com.snofed.publicapp.models.realmModels.PublicUserSettingsRealm
 import com.snofed.publicapp.models.realmModels.UserRealm
 import io.realm.RealmList
 
-open class UserDTO(
-    val id: String,
-    val email: String,
+data class UserDTO(
+    var id: String,
+    var email: String,
     var firstName: String,
     var lastName: String,
-    var fullName: String,
-    val username: String,
-    val phone: String,
-    val cellphone: String,
-    val isConfirmed: Boolean,
-    val isDeleted: Boolean? = null,
-    val password: String? = null,
-    val roleName: String? = null,
-    val clientName: String? = null,
-    val clientId: String? = null,
-    val token: String? = null,
-    val userGroupId: String? = null,
-    var gender: Int? = null,
-    var weight: Int? = null,
-    var age: Int? = null,
-    var isSubscribed: Boolean? = null,
-    var publicUserSettings: List<PublicUserSettingsDTO>? = null,
-    var favouriteClients: List<String>? = null
+    var fullName: String?,
+    var username: String,
+    var phone: String?,
+    var cellphone: String?,
+    var isConfirmed: Boolean,
+    var isDeleted: Boolean?,
+    var password: String?,
+    var roleName: String?,
+    var clientName: String?,
+    var clientId: String?,
+    var token: String?,
+    var userGroupId: String?,
+    var gender: Int?,
+    var weight: Int?,
+    var age: Int?,
+    var isSubscribed: Boolean?,
+    var favouriteClients: List<String>?,
+    var publicUserSettings: List<PublicUserSettingsDTO>?
 )
 
+// Extension function for UserRealm to UserDTO
+fun UserRealm.toDTO(): UserDTO {
+    return UserDTO(
+        id = this.id,
+        email = this.email,
+        firstName = this.firstName,
+        lastName = this.lastName,
+        fullName = this.fullName,
+        username = this.username,
+        phone = this.phone,
+        cellphone = this.cellphone,
+        isConfirmed = this.isConfirmed,
+        isDeleted = this.isDeleted,
+        password = this.password,
+        roleName = this.roleName,
+        clientName = this.clientName,
+        clientId = this.clientId,
+        token = this.token,
+        userGroupId = this.userGroupId,
+        gender = this.gender,
+        weight = this.weight,
+        age = this.age,
+        isSubscribed = this.isSubscribed,
+        favouriteClients = this.favouriteClients?.toList(),
+        publicUserSettings = this.publicUserSettings?.map { it.toDTO() }
+    )
+}
+
+// Extension function for UserDTO to UserRealm
 fun UserDTO.toRealm(): UserRealm {
     return UserRealm().apply {
         id = this@toRealm.id
@@ -52,7 +81,9 @@ fun UserDTO.toRealm(): UserRealm {
         age = this@toRealm.age
         isSubscribed = this@toRealm.isSubscribed
         favouriteClients = this@toRealm.favouriteClients?.let { RealmList<String>().apply { addAll(it) } }
-        publicUserSettings = this@toRealm.publicUserSettings?.let { RealmList<PublicUserSettingsRealm>().apply { addAll(it.map { dto -> dto.toRealm() }) } }
+        publicUserSettings = this@toRealm.publicUserSettings?.let {
+            RealmList<PublicUserSettingsRealm>().apply { addAll(it.map { dto -> dto.toRealm() }) }
+        }
     }
 }
 

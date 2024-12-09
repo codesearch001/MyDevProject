@@ -1,6 +1,5 @@
 package com.snofed.publicapp.adapter
 
-import RealmRepository
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
@@ -34,7 +33,10 @@ import com.snofed.publicapp.utils.SnofedUtils
 import io.realm.RealmList
 
 
-class BrowseClubListAdapter(private val context: Context, private val listener: OnItemClickListener, private val clubViewModel: AuthViewModel) : RecyclerView.Adapter<BrowseClubListAdapter.ClubViewHolder>() {
+class BrowseClubListAdapter(private val context: Context,
+                            private val listener: OnItemClickListener,
+                            private val clubViewModel: AuthViewModel)
+    : RecyclerView.Adapter<BrowseClubListAdapter.ClubViewHolder>() {
 
     //private var clubs: List<NewClubData> = listOf()
     private var outerArray: List<Client> = listOf()

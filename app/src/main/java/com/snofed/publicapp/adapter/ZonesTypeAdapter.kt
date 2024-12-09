@@ -1,6 +1,5 @@
 package com.snofed.publicapp.adapter
 
-import StatusItem
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,9 +8,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.PoisTypeAdapter.OnItemSelectedListener
 import com.snofed.publicapp.databinding.ZonesTypeListBinding
+import com.snofed.publicapp.models.interval.StatusItem
 
 
-class ZonesTypeAdapter(private val zonesList: List<StatusItem>,private val selectedZoneIds: List<String>,private val onItemClick: (String) -> Unit) : RecyclerView.Adapter<ZonesTypeAdapter.TrailCategoryViewHolder>() {
+class ZonesTypeAdapter(private val zonesList: List<StatusItem>,
+                       private val selectedZoneIds: List<String>,
+                       private val onItemClick: (String) -> Unit)
+    : RecyclerView.Adapter<ZonesTypeAdapter.TrailCategoryViewHolder>() {
+
     //private val selectedIds = mutableListOf<String>()
     private var selectedZone= selectedZoneIds.toMutableList()
     private var onItemSelectedListener: OnItemSelectedListener? = null
