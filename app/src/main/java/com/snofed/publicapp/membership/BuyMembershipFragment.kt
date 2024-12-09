@@ -51,9 +51,9 @@ class BuyMembershipFragment : Fragment(),BuyMembershipAdapter.OnItemClickListene
             binding.progressBar.isVisible = false
             when (it) {
                 is NetworkResult.Success -> {
-                    val data = it.data?.data
+                    var data = it.data?.data
 
-
+                    data = data?.filter { it.isActive }
                     if (data.isNullOrEmpty()) {
                         buyMembershipAdapter = BuyMembershipAdapter(this)
                         binding.tvSplashText.isVisible = true

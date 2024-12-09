@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Filter
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -13,17 +12,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.snofed.publicapp.R
-import com.snofed.publicapp.adapter.BrowseClubListAdapter.OnItemClickListener
-import com.snofed.publicapp.models.Client
-import com.snofed.publicapp.models.realmModels.ParentOrganisation
 import com.snofed.publicapp.models.realmModels.SubOrganisation
-import com.snofed.publicapp.utils.Constants
 import com.snofed.publicapp.utils.ServiceUtil
 
 class SubMemberListAdapter(private val listener: OnItemClickListener):  RecyclerView.Adapter<SubMemberListAdapter.ClubViewHolder>() {
 
     //private var clubs: List<NewClubData> = listOf()
     private var outerArray: List<SubOrganisation> = listOf()
+    private var favouriteClients: List<String> = listOf()
 
 
     interface OnItemClickListener {
@@ -34,8 +30,9 @@ class SubMemberListAdapter(private val listener: OnItemClickListener):  Recycler
 
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setSubMemClubs(clubs: List<SubOrganisation>) {
+    fun setSubMemClubs(clubs: List<SubOrganisation>, favClients: List<String>) {
         this.outerArray = clubs
+        this.favouriteClients = favClients
         //Log.i("test","sizearr "+outerArray.size)
         notifyDataSetChanged()
     }
@@ -49,23 +46,30 @@ class SubMemberListAdapter(private val listener: OnItemClickListener):  Recycler
 
     override fun onBindViewHolder(holder: ClubViewHolder, position: Int) {
        // val reslult=holder.bind(outerArray[position])
-        val reslult = outerArray[position]
+        val subClub = outerArray[position]
         //holder.clientRating.text = reslult.clientRating.toString()
         //holder.totalRatings.text = "(" + reslult.totalRatings.toString() + ")"
-        holder.tvName.text = reslult.publicName.trimStart().trimEnd()
-        holder.tvLable.text = reslult.county
-        Log.e("reslult.publicName ..", "reslult.publicName" + reslult.publicName)
+        holder.tvName.text = subClub.publicName.trimStart().trimEnd()
+        holder.tvLable.text = subClub.county
+        Log.e("reslult.publicName ..", "reslult.publicName" + subClub.publicName)
+
+        if (subClub.id in favouriteClients) {
+            holder.imgIdWishlist.setImageResource(R.drawable.hearth_filled)
+        } else {
+            holder.imgIdWishlist.setImageResource(R.drawable.hearth_empty)
+        }
+
         holder.cardIdLayout.setOnClickListener {
             Log.e("click..", "clickClubItem")
-            listener.onItemClick(reslult.id) // Assuming Client has an 'id' property
+            listener.onItemClick(subClub.id) // Assuming Client has an 'id' property
         }
-        if (reslult.logoPath == null) {
+        if (subClub.logoPath == null) {
             Glide.with(holder.backgroundImage).load(R.drawable.resort_card_bg)
                 .into(holder.backgroundImage)
             //Glide.with(holder.background_image).load(Constants.BASE_URL_IMAGE).into(holder.background_image)
         } else {
             Glide.with(holder.backgroundImage)
-                .load(ServiceUtil.BASE_URL_IMAGE + reslult.logoPath).diskCacheStrategy(
+                .load(ServiceUtil.BASE_URL_IMAGE + subClub.logoPath).diskCacheStrategy(
                     DiskCacheStrategy.ALL
                 ).fitCenter()
                 .into(holder.backgroundImage)

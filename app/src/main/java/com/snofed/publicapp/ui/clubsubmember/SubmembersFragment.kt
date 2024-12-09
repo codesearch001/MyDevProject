@@ -13,6 +13,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.snofed.publicapp.R
@@ -23,9 +24,12 @@ import com.snofed.publicapp.databinding.FragmentBrowseClubBinding
 import com.snofed.publicapp.databinding.FragmentClubSubMembersBinding
 import com.snofed.publicapp.databinding.FragmentSubmembersBinding
 import com.snofed.publicapp.ui.login.AuthViewModel
+import com.snofed.publicapp.utils.AppPreference
 import com.snofed.publicapp.utils.NetworkResult
+import com.snofed.publicapp.utils.SharedPreferenceKeys
 import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.TokenManager
+import com.snofed.publicapp.viewModel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -36,7 +40,7 @@ class SubmembersFragment() : Fragment(),SubMemberListAdapter.OnItemClickListener
     private val binding get() = _binding!!
     private val subMemberViewModel by viewModels<AuthViewModel>()
     private val sharedViewModel by activityViewModels<SharedViewModel>()
-
+    private  lateinit var userViewModel: UserViewModel
     private lateinit var clubAdapter: SubMemberListAdapter
     @Inject lateinit var tokenManager: TokenManager
 
@@ -44,51 +48,13 @@ class SubmembersFragment() : Fragment(),SubMemberListAdapter.OnItemClickListener
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_submembers, container, false)
         _binding = FragmentSubmembersBinding.inflate(inflater, container, false)
+        userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialize Retrofit ApiService
-       /* fetchResponse()
-        subMemberViewModel.subClubLiveData.observe(viewLifecycleOwner, Observer {
-            binding.progressBar.isVisible = false
-            when (it) {
-                is NetworkResult.Success -> {
-
-                    Log.i("PraveenGallery22222" , "gggggg222 " +it.data?.data?.subOrganisations?.size)
-
-                    val data = it.data?.data?.subOrganisations
-                        // Handle the "data not found" case
-                        if (data.isNullOrEmpty()){
-
-                            clubAdapter = SubMemberListAdapter(this)
-                            // Set up the RecyclerView with GridLayoutManager
-                            binding.recyclerView.layoutManager = GridLayoutManager(requireActivity(), 2)
-                            binding.recyclerView.adapter = clubAdapter
-                            clubAdapter.setSubMemClubs(emptyList())
-
-                        }else{
-                            clubAdapter = SubMemberListAdapter(this)
-                            // Set up the RecyclerView with GridLayoutManager
-                            binding.recyclerView.layoutManager = GridLayoutManager(requireActivity(), 2)
-                            binding.recyclerView.adapter = clubAdapter
-                            clubAdapter.setSubMemClubs(data)
-                        }
-
-                }
-
-                is NetworkResult.Error -> {
-                    Toast.makeText(requireActivity(), it.message.toString(), Toast.LENGTH_SHORT).show()
-                }
-
-                is NetworkResult.Loading -> {
-                    binding.progressBar.isVisible = true
-                }
-
-            }
-        })*/
 
         // Initialize RecyclerView and Adapter
         clubAdapter = SubMemberListAdapter(this)
@@ -99,6 +65,10 @@ class SubmembersFragment() : Fragment(),SubMemberListAdapter.OnItemClickListener
         // Observe the SharedViewModel for data updates
         sharedViewModel.browseSubClubResponse.observe(viewLifecycleOwner) { response ->
             val subOrganisations = response?.data?.subOrganisations ?: emptyList()
+            val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
+
+            val getFavClients =  userViewModel.getFavouriteClients(userId)
+
 
             Log.d("Tag_SubMember", "SubMembersSize: ${subOrganisations.size}")
 
@@ -113,7 +83,7 @@ class SubmembersFragment() : Fragment(),SubMemberListAdapter.OnItemClickListener
                 // Hide the "No data" message and show RecyclerView
                 binding.tvSplashText.visibility = View.GONE
                 binding.recyclerView.visibility = View.VISIBLE
-                clubAdapter.setSubMemClubs(subOrganisations)
+                clubAdapter.setSubMemClubs(subOrganisations, getFavClients)
             }
         }
 
