@@ -28,12 +28,15 @@ import dagger.hilt.android.AndroidEntryPoint
 import android.text.Spannable
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.mapbox.maps.extension.style.expressions.dsl.generated.e
 import com.snofed.publicapp.R
 import com.snofed.publicapp.models.events.Trail
+import com.snofed.publicapp.models.realmModels.Client
+import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.ClientViewModelRealm
 import com.snofed.publicapp.utils.Constants
 import com.snofed.publicapp.utils.ServiceUtil
 import com.snofed.publicapp.utils.SharedViewModel
@@ -46,6 +49,8 @@ class SingleEventDetailsFragment : Fragment() {
 
     private val eventDetailsViewModel by viewModels<AuthViewModel>()
 
+    private lateinit var clientViewModelRealm: ClientViewModelRealm
+
     var eventId: String = ""
 
     val dateTimeConverter = DateTimeConverter()
@@ -57,6 +62,8 @@ class SingleEventDetailsFragment : Fragment() {
         // Inflate the layout for this fragment
         //  return inflater.inflate(R.layout.fragment_single_event_details, container, false)
         _binding = FragmentSingleEventDetailsBinding.inflate(inflater, container, false)
+
+        clientViewModelRealm = ViewModelProvider(this).get(ClientViewModelRealm::class.java)
         // Retrieve data from arguments
         eventId = arguments?.getString("eventId").toString()
         return binding.root
@@ -123,8 +130,16 @@ class SingleEventDetailsFragment : Fragment() {
                             findNavController().navigate(R.id.purchaseOptionsFragment,bundle)
                         }
 
+                        //getClientById(it.data.data.clientId).toString()
 
-                        getClientById(it.data.data.clientId).toString()
+                        var client :Client? = clientViewModelRealm.getClientById(it.data.data.clientId)
+                        if (client == null) {
+                            getClientById(it.data.data.clientId)
+                        }
+                        else{
+                            binding.eventResortName.text = client?.publicName
+                        }
+
 
                         val trailNames = getTrailNames(it.data.data.trails).joinToString(separator = "\n")
                         binding.txtTrail.text = trailNames

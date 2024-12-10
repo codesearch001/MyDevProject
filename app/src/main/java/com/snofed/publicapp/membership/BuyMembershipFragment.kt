@@ -55,15 +55,16 @@ class BuyMembershipFragment : Fragment(),BuyMembershipAdapter.OnItemClickListene
                 is NetworkResult.Success -> {
                     var data = it.data?.data
 
-                    if(isAdmin){
-                        data = data?.filter { it.isAdminMembership }
+                    if(clientId == ""){
+                        if(isAdmin)
+                            data = data?.filter { it.isAdminMembership }
                     }
                     else{
                         data = data?.filter { !it.isAdminMembership }
                     }
 
                     //Uncomment to see only active membership
-                    //data = data?.filter { it.isActive }
+                    data = data?.filter { it.isActive }
 
                     if (data.isNullOrEmpty()) {
                         buyMembershipAdapter = BuyMembershipAdapter(this)
