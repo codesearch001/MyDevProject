@@ -134,10 +134,10 @@ class HomeFragment : Fragment() {
         }
 
         binding.txtUpgradeMembershipType.setOnClickListener {
-            val bundle = Bundle().apply {
-                //putInt("tabIndex", 1) // 1 opens the second tab
-            }
-            findNavController().navigate(R.id.purchaseOptionsFragment,bundle)
+            val bundle = Bundle()
+            bundle.putBoolean("isAdmin", true)
+            val destination = R.id.buyMembershipFragment
+            findNavController().navigate(destination, bundle)
         }
 
         fetchResponse()

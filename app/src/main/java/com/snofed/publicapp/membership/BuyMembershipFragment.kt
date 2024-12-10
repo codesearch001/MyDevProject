@@ -33,12 +33,14 @@ class BuyMembershipFragment : Fragment(),BuyMembershipAdapter.OnItemClickListene
     private val sharedViewModel by activityViewModels<SharedViewModel>()
     private lateinit var buyMembershipAdapter: BuyMembershipAdapter
     private var clientId: String = ""
+    private var isAdmin :Boolean = false
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-       // return inflater.inflate(R.layout.fragment_buy_membership, container, false)
+        // return inflater.inflate(R.layout.fragment_buy_membership, container, false)
         _binding = FragmentBuyMembershipBinding.inflate(inflater, container, false)
-         clientId = arguments?.getString("clientId") ?: ""
-         Log.i("BuyMembershipFragment" , "clientId " + clientId)
+        clientId = arguments?.getString("clientId") ?: ""
+        isAdmin = arguments?.getBoolean("isAdmin") ?: false
+        Log.i("BuyMembershipFragment", "clientId " + clientId)
         return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -53,7 +55,16 @@ class BuyMembershipFragment : Fragment(),BuyMembershipAdapter.OnItemClickListene
                 is NetworkResult.Success -> {
                     var data = it.data?.data
 
-                    data = data?.filter { it.isActive }
+                    if(isAdmin){
+                        data = data?.filter { it.isAdminMembership }
+                    }
+                    else{
+                        data = data?.filter { !it.isAdminMembership }
+                    }
+
+                    //Uncomment to see only active membership
+                    //data = data?.filter { it.isActive }
+
                     if (data.isNullOrEmpty()) {
                         buyMembershipAdapter = BuyMembershipAdapter(this)
                         binding.tvSplashText.isVisible = true
