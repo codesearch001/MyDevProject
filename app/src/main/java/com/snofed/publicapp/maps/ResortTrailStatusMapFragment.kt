@@ -146,7 +146,7 @@ class ResortTrailStatusMapFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
+        // Bind Intervals
         vmIntervalRelam = ViewModelProvider(requireActivity()).get(IntervalViewModelRealm::class.java)
         var allIntervals = vmIntervalRelam.getAllIntervals()
         allIntervals = allIntervals.filter { it.syncAction != SyncActionEnum.DELETED.getValue() }
@@ -203,8 +203,8 @@ class ResortTrailStatusMapFragment : Fragment() {
             //showCustomDialog2()
            // Toast.makeText(requireContext(), "folder click", Toast.LENGTH_SHORT).show()
         }
-        val trails = tokenManager.getTrailsId().toString()
-        Log.d("P1111", "Adding GeoJsonSource and LineLayer$trails")
+        //val trails = tokenManager.getTrailsId().toString()
+        //Log.d("P1111", "Adding GeoJsonSource and LineLayer$trails")
 
 
 
@@ -224,38 +224,17 @@ class ResortTrailStatusMapFragment : Fragment() {
                 // Handle MAP page type
                 Log.d("MAP_TAG", "MAP")
                 mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS) { style ->
-                    // Set the camera options to adjust zoom level
-//                      mapView.mapboxMap.setCamera(
-//                       CameraOptions.Builder()
-//                           .zoom(8.0) // Set the desired zoom level here
-//                           .center(fromLngLat(defaultLong, defaultLat))
-//                           //.center(mapView.mapboxMap.cameraState.center) // Center the camera on the current location
-//                           .build(),
-//
-//                   )
-//                    val cameraAnimationsPlugin = mapView.camera
-//                    cameraAnimationsPlugin?.easeTo(CameraOptions.Builder()
-//                       // .center(fromLngLat(defaultLong, defaultLat))
-//                        //.padding(padding)
-//                        .zoom(8.00)
-//                        .build(),
-//                        MapAnimationOptions.Builder()
-//                            .duration(3000) // Duration in milliseconds (e.g., 3 seconds)
-//                            .build())
+
                     // Observe the SharedViewModel for data updates
                     fetchResponse()
 
                     viewModelTrails.trailsDetailsLiveData.observe(viewLifecycleOwner, Observer { response ->
-                        // binding.trailsNameMap.text = response.data.name
-                        if (response != null) {
 
-//                            trailViewModel = ViewModelProvider(requireActivity()).get(TrailViewModel::class.java)
-//                            var getTrail = trailViewModel.fetchByIdAsJson(specificTrailId!!)
-//                            Log.d("TRAIL_STATUS", "Trail Status Map Fragment $getTrail")
+                        if (response != null) {
 
                             val trailResponse = response.data?.data
                             trail = response.data?.data
-
+                            binding.trailsNameMap.text = trail?.name
                             trailResponse?.let {
                                 //drawPolyline(style, it)
                                 getDrawPolyline(style, trail!!)
@@ -271,7 +250,7 @@ class ResortTrailStatusMapFragment : Fragment() {
             }
             PageType.DETAIL -> {
                 // Handle DETAIL page type
-                Log.d("DETAIL", "DETAIL")
+                Log.d("MAP_TAG", "DETAIL")
                 mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS) { style ->
                     // Observe the SharedViewModel for data updates
                     sharedViewModel.TrailsDetilsResponse.observe(viewLifecycleOwner, Observer { response ->

@@ -28,6 +28,8 @@ data class BuyMembershipResponse(
     val id: String,
     val createdDate: String,
     val syncAction: Long,
+    val isAdminMembership: Boolean,
+    val isProMembership: Boolean,
 )
 
 data class NameTranslates(
