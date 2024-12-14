@@ -224,8 +224,19 @@ class ClubSubMembersFragment : Fragment() {
     }
 
     private fun fetchResponse() {
-        clubViewModel.subClubRequestUser(tokenManager.getClientId().toString())
-       // clubViewModel.subClubRequestUser(clubViewModel.mutableData.clientId.get().toString())
+        val currentData = clubViewModel.subClubLiveData.value
+        if (currentData is NetworkResult.Success && currentData.data != null) {
+            // LiveData already holds valid data
+            Log.d("LiveData", "Data already exists, skipping API call.")
+        } else {
+            // No valid data, make the API request
+            try {
+                clubViewModel.subClubRequestUser(tokenManager.getClientId().toString())
+            }
+            catch (e: Exception) {
+                Log.e("Exception", e.toString())
+            }
+        }
     }
 
     override fun onDestroyView() {

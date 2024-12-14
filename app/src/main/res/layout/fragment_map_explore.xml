@@ -179,11 +179,11 @@
                 android:layout_height="@dimen/_22sdp"
                 android:layout_marginBottom="@dimen/_38sdp"
                 android:background="@drawable/interval_button_background"
-                android:padding="@dimen/_4sdp"
+                android:padding="@dimen/_1sdp"
                 android:text="Intervals"
                 android:textAllCaps="false"
                 android:textColor="@color/holo_blue_light"
-                android:textSize="@dimen/_12sdp"
+                android:textSize="@dimen/_11sdp"
                 android:textStyle="normal" />
         </LinearLayout>
 

@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 
 class DateTimeConverter {
     // Property to hold the formatted time part
@@ -91,5 +92,18 @@ class DateTimeConverter {
         timePart = dateTime.format(outputTimeFormatter)
         // Combine formatted date and time parts
         return "$datePart, $timePart"
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun isValidDate(dateString: String?): Boolean {
+        if (dateString.isNullOrEmpty()) return false
+
+        return try {
+            val dateTime = LocalDateTime.parse(dateString, inputFormatter)
+
+            dateTime.year > 1900
+        } catch (e: Exception) {
+            false
+        }
     }
 }
