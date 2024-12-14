@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.snofed.publicapp.R
@@ -28,7 +29,7 @@ import java.util.Date
 import java.util.Locale
 
 @AndroidEntryPoint
-class ClubEventFragment : Fragment() , EventClubFeedAdapter.OnItemClickListener {
+class ClubEventFragment : Fragment(), EventClubFeedAdapter.OnItemClickListener {
     private var _binding: FragmentClubEventBinding? = null
     private val binding get() = _binding!!
 
@@ -48,25 +49,9 @@ class ClubEventFragment : Fragment() , EventClubFeedAdapter.OnItemClickListener 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // Handle back press
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                // Check if there's any fragment in the back stack
-                if (requireFragmentManager().backStackEntryCount > 0) {
-                    // Pop the fragment from the back stack
-                    requireFragmentManager().popBackStack()
-                } else {
-                    // If no fragments in the back stack, you can exit the activity or perform another action
-                    // For example, exit the app:
-                    requireActivity().finish()
-                    // Or handle navigation to a specific fragment or screen
-                    // findNavController().navigate(R.id.someOtherFragment)
-                }
-            }
-        })
-         // Initialize RecyclerView and Adapter
-       feedAdapter = EventClubFeedAdapter(emptyList(),this)
-       binding.eventRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
-       binding.eventRecyclerView.adapter = feedAdapter
+        binding.backBtn.setOnClickListener {
+            it.findNavController().popBackStack()
+        }
 
 
         //Apply search Filter
@@ -85,30 +70,35 @@ class ClubEventFragment : Fragment() , EventClubFeedAdapter.OnItemClickListener 
         })
 
         // Observe the SharedViewModel for data updates
-       sharedViewModel.browseSubClubResponse.observe(viewLifecycleOwner) { response ->
-           val events = response?.data?.events ?: emptyList()
+        sharedViewModel.browseSubClubResponse.observe(viewLifecycleOwner) { response ->
+            val events = response?.data?.events ?: emptyList()
 
-           val activeEvents = filterActiveEvents(events?: emptyList()).sortedBy {
-               it.startDate
-           }
+            val activeEvents = filterActiveEvents(events ?: emptyList()).sortedBy {
+                it.startDate
+            }
 
-           Log.d("Tag_Events", "EventsSize: ${activeEvents.size}")
+            // Initialize RecyclerView and Adapter
+            feedAdapter = EventClubFeedAdapter(emptyList(), this)
+            binding.eventRecyclerView.layoutManager = LinearLayoutManager(requireActivity())
+            binding.eventRecyclerView.adapter = feedAdapter
 
-           if (activeEvents.isEmpty()) {
+            Log.d("Tag_Events", "EventsSize: ${activeEvents.size}")
 
-               // Show the "Data Not data" message and hide RecyclerView
-               binding.tvSplashText.visibility = View.VISIBLE
-               binding.eventRecyclerView.visibility = View.GONE
+            if (activeEvents.isEmpty()) {
 
-           } else {
+                // Show the "Data Not data" message and hide RecyclerView
+                binding.tvSplashText.visibility = View.VISIBLE
+                binding.eventRecyclerView.visibility = View.GONE
 
-               // Hide the "No data" message and show RecyclerView
-               binding.tvSplashText.visibility = View.GONE
-               binding.eventRecyclerView.visibility = View.VISIBLE
-               feedAdapter.setEvent(activeEvents)
-           }
-       }
-   }
+            } else {
+
+                // Hide the "No data" message and show RecyclerView
+                binding.tvSplashText.visibility = View.GONE
+                binding.eventRecyclerView.visibility = View.VISIBLE
+                feedAdapter.setEvent(activeEvents)
+            }
+        }
+    }
 
     fun filterActiveEvents(events: List<Event>): List<Event> {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())

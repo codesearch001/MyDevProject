@@ -63,9 +63,7 @@ class EventFragment : Fragment(),EventFeedAdapter.OnItemClickListener {
             }
         })
 
-//        binding.backBtn.setOnClickListener {
-//            it.findNavController().popBackStack()
-//        }
+
 
         fetchResponse()
         eventViewModel.eventLiveData.observe(viewLifecycleOwner, Observer { it ->
