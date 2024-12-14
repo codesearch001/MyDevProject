@@ -58,54 +58,69 @@ class UserFeedBackRepository @Inject constructor(@Named("FeedBackUserAPI")privat
 
     suspend fun getFeedBackTaskCategories() {
         _feedBackTaskCategoriesLiveData.postValue(NetworkResult.Loading())
-        val response = feedBackUserAPI!!.getTaskCategories(acceptLanguage)
-        Log.e("response", "subClubResponse " + response)
-        if (response.isSuccessful && response.body() != null) {
-            Log.e("jsonResponseData", "subClubResponse " + response.body())
-            _feedBackTaskCategoriesLiveData.postValue(NetworkResult.Success(response.body()!!))
+        try {
+            val response = feedBackUserAPI!!.getTaskCategories(acceptLanguage)
+            Log.e("response", "subClubResponse " + response)
+            if (response.isSuccessful && response.body() != null) {
+                Log.e("jsonResponseData", "subClubResponse " + response.body())
+                _feedBackTaskCategoriesLiveData.postValue(NetworkResult.Success(response.body()!!))
 
 
-        } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
-            _feedBackTaskCategoriesLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
-        } else {
-            _feedBackTaskCategoriesLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            } else if (response.errorBody() != null) {
+                val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+                _feedBackTaskCategoriesLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+            } else {
+                _feedBackTaskCategoriesLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            }
+        }
+        catch (e:Exception){
+            _feedBackTaskCategoriesLiveData.postValue(NetworkResult.Error(e.localizedMessage ?: "Unknown error"))
         }
     }
 
 
     suspend fun getTaskByCategoriesID(categoriesID: String) {
         _feedBackTaskByCategoriesIDLiveData.postValue(NetworkResult.Loading())
-        val response = feedBackUserAPI!!.getTaskByCategoriesID(acceptLanguage,categoriesID)
-        Log.e("response", "subClubResponse " + response)
-        if (response.isSuccessful && response.body() != null) {
-            Log.e("jsonResponseData", "subClubResponse " + response.body())
-            _feedBackTaskByCategoriesIDLiveData.postValue(NetworkResult.Success(response.body()!!))
+        try {
+            val response = feedBackUserAPI!!.getTaskByCategoriesID(acceptLanguage,categoriesID)
+            Log.e("response", "subClubResponse " + response)
+            if (response.isSuccessful && response.body() != null) {
+                Log.e("jsonResponseData", "subClubResponse " + response.body())
+                _feedBackTaskByCategoriesIDLiveData.postValue(NetworkResult.Success(response.body()!!))
 
-        } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
-            _feedBackTaskByCategoriesIDLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
-        } else {
-            _feedBackTaskByCategoriesIDLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            } else if (response.errorBody() != null) {
+                val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+                _feedBackTaskByCategoriesIDLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+            } else {
+                _feedBackTaskByCategoriesIDLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            }
+        }
+        catch (e:Exception){
+            _feedBackTaskByCategoriesIDLiveData.postValue(NetworkResult.Error(e.localizedMessage ?: "Unknown error"))
         }
     }
 
 
  suspend fun getTaskDetails(feedBackID: String) {
         _feedBackTaskDetailsLiveData.postValue(NetworkResult.Loading())
-        val response = feedBackUserAPI!!.getTaskDetails(acceptLanguage,feedBackID)
-        Log.e("response", "subClubResponse " + response)
-        if (response.isSuccessful && response.body() != null) {
-            Log.e("jsonResponseData", "subClubResponse " + response.body())
-            _feedBackTaskDetailsLiveData.postValue(NetworkResult.Success(response.body()!!))
+         try {
+             val response = feedBackUserAPI!!.getTaskDetails(acceptLanguage,feedBackID)
+             Log.e("response", "subClubResponse " + response)
+             if (response.isSuccessful && response.body() != null) {
+                 Log.e("jsonResponseData", "subClubResponse " + response.body())
+                 _feedBackTaskDetailsLiveData.postValue(NetworkResult.Success(response.body()!!))
 
 
-        } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
-            _feedBackTaskDetailsLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
-        } else {
-            _feedBackTaskDetailsLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
-        }
+             } else if (response.errorBody() != null) {
+                 val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+                 _feedBackTaskDetailsLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+             } else {
+                 _feedBackTaskDetailsLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+             }
+         }
+         catch (e:Exception){
+             _feedBackTaskDetailsLiveData.postValue(NetworkResult.Error(e.localizedMessage ?: "Unknown error"))
+         }
     }
 
 

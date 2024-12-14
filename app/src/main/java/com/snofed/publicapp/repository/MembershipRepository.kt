@@ -63,18 +63,23 @@ class MembershipRepository @Inject constructor(@Named("MembershipApi") private v
 
     suspend fun getMembership(clientId: String) {
         _membershipResponseLiveData.postValue(NetworkResult.Loading())
-        val response = membershipApi!!.getMembership(acceptLanguage, clientId)
-        Log.e("response", "subClubResponse " + response)
-        if (response.isSuccessful && response.body() != null) {
-            Log.e("jsonResponseData", "subClubResponse " + response.body())
-            _membershipResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
-            //_subClubLiveData_gallery_l.postValue(response.body())
+        try {
+            val response = membershipApi!!.getMembership(acceptLanguage, clientId)
+            Log.e("response", "subClubResponse " + response)
+            if (response.isSuccessful && response.body() != null) {
+                Log.e("jsonResponseData", "subClubResponse " + response.body())
+                _membershipResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+                //_subClubLiveData_gallery_l.postValue(response.body())
 
-        } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
-            _membershipResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
-        } else {
-            _membershipResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            } else if (response.errorBody() != null) {
+                val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+                _membershipResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+            } else {
+                _membershipResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            }
+        }
+        catch (e:Exception){
+            _membershipResponseLiveData.postValue(NetworkResult.Error(e.localizedMessage ?: "Unknown error"))
         }
     }
 
@@ -97,121 +102,156 @@ class MembershipRepository @Inject constructor(@Named("MembershipApi") private v
 
     suspend fun getActiveMembership(userId: String) {
         _activeMembershipResponseLiveData.postValue(NetworkResult.Loading())
-        val response = membershipApi!!.getActiveMembership(acceptLanguage, userId)
-        Log.e("response", "subClubResponse " + response)
-        if (response.isSuccessful && response.body() != null) {
-            Log.e("jsonResponseData", "subClubResponse " + response.body())
-            _activeMembershipResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
-            //_subClubLiveData_gallery_l.postValue(response.body())
+        try {
+            val response = membershipApi!!.getActiveMembership(acceptLanguage, userId)
+            Log.e("response", "subClubResponse " + response)
+            if (response.isSuccessful && response.body() != null) {
+                Log.e("jsonResponseData", "subClubResponse " + response.body())
+                _activeMembershipResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+                //_subClubLiveData_gallery_l.postValue(response.body())
 
-        } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
-            _activeMembershipResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
-        } else {
-            _activeMembershipResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            } else if (response.errorBody() != null) {
+                val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+                _activeMembershipResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+            } else {
+                _activeMembershipResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            }
+        }
+        catch (e:Exception){
+            _activeMembershipResponseLiveData.postValue(NetworkResult.Error(e.localizedMessage ?: "Unknown error"))
         }
     }
 
     suspend fun getBenfitsMembership(userId: String) {
         _activeMembershipDetailsResponseLiveData.postValue(NetworkResult.Loading())
-        val response = membershipApi!!.getBenfitsMembership(acceptLanguage, userId)
-        Log.e("response", "subClubResponse " + response)
-        if (response.isSuccessful && response.body() != null) {
-            Log.e("jsonResponseData", "subClubResponse " + response.body())
-            _activeMembershipDetailsResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
-            //_subClubLiveData_gallery_l.postValue(response.body())
+        try {
+            val response = membershipApi!!.getBenfitsMembership(acceptLanguage, userId)
+            Log.e("response", "subClubResponse " + response)
+            if (response.isSuccessful && response.body() != null) {
+                Log.e("jsonResponseData", "subClubResponse " + response.body())
+                _activeMembershipDetailsResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+                //_subClubLiveData_gallery_l.postValue(response.body())
 
-        } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
-            _activeMembershipDetailsResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
-        } else {
-            _activeMembershipDetailsResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            } else if (response.errorBody() != null) {
+                val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+                _activeMembershipDetailsResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+            } else {
+                _activeMembershipDetailsResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            }
+        }
+        catch (e:Exception){
+            _activeMembershipDetailsResponseLiveData.postValue(NetworkResult.Error(e.localizedMessage ?: "Unknown error"))
         }
     }
 
 
     suspend fun getPurchaseOrderHistory(userId: String) {
         _purchaseOrderHistoryMembershipResponseLiveData.postValue(NetworkResult.Loading())
-        val response = membershipApi!!.getPurchaseOrderHistory(acceptLanguage, userId)
-        Log.e("response", "subClubResponse " + response)
-        if (response.isSuccessful && response.body() != null) {
-            Log.e("jsonResponseData", "subClubResponse " + response.body())
-            _purchaseOrderHistoryMembershipResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
-            //_subClubLiveData_gallery_l.postValue(response.body())
+        try {
+            val response = membershipApi!!.getPurchaseOrderHistory(acceptLanguage, userId)
+            Log.e("response", "subClubResponse " + response)
+            if (response.isSuccessful && response.body() != null) {
+                Log.e("jsonResponseData", "subClubResponse " + response.body())
+                _purchaseOrderHistoryMembershipResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+                //_subClubLiveData_gallery_l.postValue(response.body())
 
-        } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
-            _purchaseOrderHistoryMembershipResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
-        } else {
-            _purchaseOrderHistoryMembershipResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            } else if (response.errorBody() != null) {
+                val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+                _purchaseOrderHistoryMembershipResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+            } else {
+                _purchaseOrderHistoryMembershipResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            }
+        }
+        catch (e:Exception){
+            _purchaseOrderHistoryMembershipResponseLiveData.postValue(NetworkResult.Error(e.localizedMessage ?: "Unknown error"))
         }
     }
 
     suspend fun getOrderById(userId: String) {
         _purchaseOrderHistoryDetailsResponseLiveData.postValue(NetworkResult.Loading())
-        val response = membershipApi!!.getOrderById(acceptLanguage, userId)
-        Log.e("response", "response " + response)
-        if (response.isSuccessful && response.body() != null) {
-            Log.e("response", "response " + response.body())
-            _purchaseOrderHistoryDetailsResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
-            //_subClubLiveData_gallery_l.postValue(response.body())
+        try {
+            val response = membershipApi!!.getOrderById(acceptLanguage, userId)
+            Log.e("response", "response " + response)
+            if (response.isSuccessful && response.body() != null) {
+                Log.e("response", "response " + response.body())
+                _purchaseOrderHistoryDetailsResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+                //_subClubLiveData_gallery_l.postValue(response.body())
 
-        } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
-            _purchaseOrderHistoryDetailsResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
-        } else {
-            _purchaseOrderHistoryDetailsResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            } else if (response.errorBody() != null) {
+                val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+                _purchaseOrderHistoryDetailsResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+            } else {
+                _purchaseOrderHistoryDetailsResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            }
+        }
+        catch (e:Exception){
+            _purchaseOrderHistoryDetailsResponseLiveData.postValue(NetworkResult.Error(e.localizedMessage ?: "Unknown error"))
         }
     }
 
     suspend fun getTicketType(userId: String) {
         _getTicketTypeResponseLiveData.postValue(NetworkResult.Loading())
-        val response = membershipApi!!.getTicketType(acceptLanguage, userId)
-       // Log.e("response", "subClubResponse " + response)
-        if (response.isSuccessful && response.body() != null) {
-            //Log.e("jsonResponseData", "subClubResponse " + response.body())
-            _getTicketTypeResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
-            //_subClubLiveData_gallery_l.postValue(response.body())
+        try {
+            val response = membershipApi!!.getTicketType(acceptLanguage, userId)
+            // Log.e("response", "subClubResponse " + response)
+            if (response.isSuccessful && response.body() != null) {
+                //Log.e("jsonResponseData", "subClubResponse " + response.body())
+                _getTicketTypeResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+                //_subClubLiveData_gallery_l.postValue(response.body())
 
-        } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
-            _getTicketTypeResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
-        } else {
-            _getTicketTypeResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            } else if (response.errorBody() != null) {
+                val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+                _getTicketTypeResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+            } else {
+                _getTicketTypeResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            }
+        }
+        catch (e:Exception){
+            _getTicketTypeResponseLiveData.postValue(NetworkResult.Error(e.localizedMessage ?: "Unknown error"))
         }
     }
 
  suspend fun getSendOrderDirect(orderDTO: OrderDTO) {
         _getSendOrderDirectResponseLiveData.postValue(NetworkResult.Loading())
-        val response = membershipApi!!.getSendOrderDirect(acceptLanguage, orderDTO)
-       // Log.e("response", "subClubResponse " + response)
-        if (response.isSuccessful && response.body() != null) {
-            Log.e("jsonResponseData", "subClubResponse " + response.body())
-            _getSendOrderDirectResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
-            //_subClubLiveData_gallery_l.postValue(response.body())
+         try {
+             val response = membershipApi!!.getSendOrderDirect(acceptLanguage, orderDTO)
+             // Log.e("response", "subClubResponse " + response)
+             if (response.isSuccessful && response.body() != null) {
+                 Log.e("jsonResponseData", "subClubResponse " + response.body())
+                 _getSendOrderDirectResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+                 //_subClubLiveData_gallery_l.postValue(response.body())
 
-        } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
-            _getSendOrderDirectResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
-        } else {
-            _getSendOrderDirectResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
-        }
+             } else if (response.errorBody() != null) {
+                 val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+                 _getSendOrderDirectResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+             } else {
+                 _getSendOrderDirectResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+             }
+         }
+         catch (e:Exception){
+             _getSendOrderDirectResponseLiveData.postValue(NetworkResult.Error(e.localizedMessage ?: "Unknown error"))
+         }
     }
 
  suspend fun getSendOrderSwish(orderDTO: OrderDTO) {
         _getSendOrderSwishResponseLiveData.postValue(NetworkResult.Loading())
-        val response = membershipApi!!.getSendOrderSwish(acceptLanguage, orderDTO)
-        Log.e("response", "subClubResponse " + response)
-        if (response.isSuccessful && response.body() != null) {
-            Log.e("jsonResponseData", "subClubResponse " + response.body())
-            _getSendOrderSwishResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
-            //_subClubLiveData_gallery_l.postValue(response.body())
+        try {
+            val response = membershipApi!!.getSendOrderSwish(acceptLanguage, orderDTO)
+            Log.e("response", "subClubResponse " + response)
+            if (response.isSuccessful && response.body() != null) {
+                Log.e("jsonResponseData", "subClubResponse " + response.body())
+                _getSendOrderSwishResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+                //_subClubLiveData_gallery_l.postValue(response.body())
 
-        } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
-            _getSendOrderSwishResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
-        } else {
-            _getSendOrderSwishResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            } else if (response.errorBody() != null) {
+                val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+                _getSendOrderSwishResponseLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+            } else {
+                _getSendOrderSwishResponseLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            }
+        }
+        catch (e:Exception){
+            _getSendOrderSwishResponseLiveData.postValue(NetworkResult.Error(e.localizedMessage ?: "Unknown error"))
         }
     }
 

@@ -251,24 +251,29 @@ class UserRepository @Inject constructor(
 
     suspend fun getUserDasBoard(userId: String) {
         _userDashBoardLiveData.postValue(NetworkResult.Loading())
-        val response = userAPI!!.userDashBoard(acceptLanguage,userId)
-        Log.e("response", "clubResponse " + response)
-        if (response.isSuccessful && response.body() != null) {
+        try {
+            val response = userAPI!!.userDashBoard(acceptLanguage,userId)
+            Log.e("response", "clubResponse " + response)
+            if (response.isSuccessful && response.body() != null) {
 
-            // Save to Room database
-            //roomRepository.saveClients(response.body()!!)
-            // clientDatabase.clientDao().insertClient(response.body()!!.data.clients)
-            Log.e("jsonResponseData", "clubResponse " + response.body())
-            _userDashBoardLiveData.postValue(NetworkResult.Success(response.body()!!))
+                // Save to Room database
+                //roomRepository.saveClients(response.body()!!)
+                // clientDatabase.clientDao().insertClient(response.body()!!.data.clients)
+                Log.e("jsonResponseData", "clubResponse " + response.body())
+                _userDashBoardLiveData.postValue(NetworkResult.Success(response.body()!!))
 
-        } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+            } else if (response.errorBody() != null) {
+                val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
 
-            _userDashBoardLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+                _userDashBoardLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
 
-        } else {
+            } else {
 
-           _userDashBoardLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+                _userDashBoardLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            }
+        }
+        catch (e: Exception){
+            _userDashBoardLiveData.postValue(NetworkResult.Error(e.localizedMessage ?: "Unknown error"))
         }
     }
 
@@ -345,23 +350,28 @@ class UserRepository @Inject constructor(
 
     suspend fun getAllClub() {
         _clubLiveData.postValue(NetworkResult.Loading())
-        val response = userAPI!!.allClubs()
-        Log.e("response", "clubResponse " + response)
-        if (response.isSuccessful && response.body() != null) {
-            // Save to Room database
-            //roomRepository.saveClients(response.body()!!)
-            // clientDatabase.clientDao().insertClient(response.body()!!.data.clients)
-            Log.e("jsonResponseData", "clubResponse " + response.body())
-            _clubLiveData.postValue(NetworkResult.Success(response.body()!!))
-            //Save to realm
-            val userResponseData = response.body()!!.data
-            saveSytemDataToRealm(userResponseData)
+        try {
+            val response = userAPI!!.allClubs()
+            Log.e("response", "clubResponse " + response)
+            if (response.isSuccessful && response.body() != null) {
+                // Save to Room database
+                //roomRepository.saveClients(response.body()!!)
+                // clientDatabase.clientDao().insertClient(response.body()!!.data.clients)
+                Log.e("jsonResponseData", "clubResponse " + response.body())
+                _clubLiveData.postValue(NetworkResult.Success(response.body()!!))
+                //Save to realm
+                val userResponseData = response.body()!!.data
+                saveSytemDataToRealm(userResponseData)
 
-        } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
-            _clubLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
-        } else {
-            _clubLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            } else if (response.errorBody() != null) {
+                val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+                _clubLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+            } else {
+                _clubLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            }
+        }
+        catch (e: Exception){
+            _clubLiveData.postValue(NetworkResult.Error(e.localizedMessage ?: "Unknown error"))
         }
     }
     fun saveSytemDataToRealm(systemDataRealm: SystemDataHolder) {
@@ -399,21 +409,26 @@ class UserRepository @Inject constructor(
     }
     suspend fun getClubDetails(clientId: String) {
         _subClubLiveData.postValue(NetworkResult.Loading())
-//        val response = userAPI!!.subClub(acceptLanguage, clientId, false)
-        val response = userAPI!!.getClub(clientId, false)
-        Log.e("response", "subClubResponse " + response)
-        if (response.isSuccessful && response.body() != null) {
-            Log.e("jsonResponseData", "subClubResponse " + response.body())
-            _subClubLiveData.postValue(NetworkResult.Success(response.body()!!))
-            //_subClubLiveData_gallery_l.postValue(response.body())
-            val clubDeatilsResponseData = response.body()!!.data
-            saveClubToRealm(clubDeatilsResponseData)
-        } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
-            _subClubLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
-        } else {
-            _subClubLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+        try {
+            val response = userAPI!!.getClub(clientId, false)
+            Log.e("response", "subClubResponse " + response)
+            if (response.isSuccessful && response.body() != null) {
+                Log.e("jsonResponseData", "subClubResponse " + response.body())
+                _subClubLiveData.postValue(NetworkResult.Success(response.body()!!))
+                //_subClubLiveData_gallery_l.postValue(response.body())
+                val clubDeatilsResponseData = response.body()!!.data
+                saveClubToRealm(clubDeatilsResponseData)
+            } else if (response.errorBody() != null) {
+                val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+                _subClubLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+            } else {
+                _subClubLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            }
         }
+        catch (e: Exception) {
+            _subClubLiveData.postValue(NetworkResult.Error(e.localizedMessage ?: "Unknown error"))
+        }
+
     }
 
     fun saveClubToRealm(clubResponseData: Club) {
@@ -425,120 +440,155 @@ class UserRepository @Inject constructor(
 
     suspend fun getEvent() {
         _eventLiveData.postValue(NetworkResult.Loading())
-        val response = userAPI!!.event(acceptLanguage)
-        Log.e("response", "subClubResponse " + response)
-        if (response.isSuccessful && response.body() != null) {
-            Log.e("jsonResponseData", "subClubResponse " + response.body())
-            _eventLiveData.postValue(NetworkResult.Success(response.body()!!))
-            //_subClubLiveData_gallery_l.postValue(response.body())
+        try {
+            val response = userAPI!!.event(acceptLanguage)
+            Log.e("response", "subClubResponse " + response)
+            if (response.isSuccessful && response.body() != null) {
+                Log.e("jsonResponseData", "subClubResponse " + response.body())
+                _eventLiveData.postValue(NetworkResult.Success(response.body()!!))
+                //_subClubLiveData_gallery_l.postValue(response.body())
 
-        } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
-            _eventLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
-        } else {
-            _eventLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            } else if (response.errorBody() != null) {
+                val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+                _eventLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+            } else {
+                _eventLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            }
+        }
+        catch (e: Exception){
+            _eventLiveData.postValue(NetworkResult.Error(e.localizedMessage ?: "Unknown error"))
         }
     }
 
     suspend fun getEventDetails(eventId: String) {
         _eventDetailsLiveData.postValue(NetworkResult.Loading())
-        val response = userAPI!!.eventDetails(acceptLanguage, eventId)
-        Log.e("response", "subClubResponse " + response)
-        if (response.isSuccessful && response.body() != null) {
-            Log.e("jsonResponseData", "subClubResponse " + response.body())
-            _eventDetailsLiveData.postValue(NetworkResult.Success(response.body()!!))
-            //_subClubLiveData_gallery_l.postValue(response.body())
+        try {
+            val response = userAPI!!.eventDetails(acceptLanguage, eventId)
+            Log.e("response", "subClubResponse " + response)
+            if (response.isSuccessful && response.body() != null) {
+                Log.e("jsonResponseData", "subClubResponse " + response.body())
+                _eventDetailsLiveData.postValue(NetworkResult.Success(response.body()!!))
+                //_subClubLiveData_gallery_l.postValue(response.body())
 
-        } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
-            _eventDetailsLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
-        } else {
-            _eventDetailsLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            } else if (response.errorBody() != null) {
+                val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+                _eventDetailsLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+            } else {
+                _eventDetailsLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            }
+        }
+        catch (e: Exception){
+            _eventDetailsLiveData.postValue(NetworkResult.Error(e.localizedMessage ?: "Unknown error"))
         }
     }
 
     suspend fun getTrails(trailsId: String) {
         _trailsDetailsLiveData.postValue(NetworkResult.Loading())
-        val response = userAPI!!.trailsDetails(acceptLanguage, trailsId)
-        Log.e("response", "subClubResponse " + response)
-        if (response.isSuccessful && response.body() != null) {
-            Log.e("jsonResponseData", "subClubResponse " + response.body())
-            _trailsDetailsLiveData.postValue(NetworkResult.Success(response.body()!!))
-            //_subClubLiveData_gallery_l.postValue(response.body())
+        try {
+            val response = userAPI!!.trailsDetails(acceptLanguage, trailsId)
+            Log.e("response", "subClubResponse " + response)
+            if (response.isSuccessful && response.body() != null) {
+                Log.e("jsonResponseData", "subClubResponse " + response.body())
+                _trailsDetailsLiveData.postValue(NetworkResult.Success(response.body()!!))
+                //_subClubLiveData_gallery_l.postValue(response.body())
 
-        } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
-            _trailsDetailsLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
-        } else {
-            _trailsDetailsLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            } else if (response.errorBody() != null) {
+                val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+                _trailsDetailsLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+            } else {
+                _trailsDetailsLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            }
+        }
+        catch (e: Exception){
+            _trailsDetailsLiveData.postValue(NetworkResult.Error(e.localizedMessage ?: "Unknown error"))
         }
     }
 
     suspend fun getTrailsDrawPolyLinesByID(trailsId: String) {
         _trailsDrawPolyLinesByIDLiveData.postValue(NetworkResult.Loading())
-        val response = userAPI!!.trailsDrawPolyLinesByID(acceptLanguage, trailsId)
-        Log.e("response", "subClubResponse " + response)
-        if (response.isSuccessful && response.body() != null) {
-            Log.e("jsonResponseData", "subClubResponse " + response.body())
-            _trailsDrawPolyLinesByIDLiveData.postValue(NetworkResult.Success(response.body()!!))
-            //_subClubLiveData_gallery_l.postValue(response.body())
+        try {
+            val response = userAPI!!.trailsDrawPolyLinesByID(acceptLanguage, trailsId)
+            Log.e("response", "subClubResponse " + response)
+            if (response.isSuccessful && response.body() != null) {
+                Log.e("jsonResponseData", "subClubResponse " + response.body())
+                _trailsDrawPolyLinesByIDLiveData.postValue(NetworkResult.Success(response.body()!!))
+                //_subClubLiveData_gallery_l.postValue(response.body())
 
-        } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
-            _trailsDrawPolyLinesByIDLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
-        } else {
-            _trailsDrawPolyLinesByIDLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            } else if (response.errorBody() != null) {
+                val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+                _trailsDrawPolyLinesByIDLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+            } else {
+                _trailsDrawPolyLinesByIDLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            }
+        }
+        catch (e: Exception){
+            _trailsDrawPolyLinesByIDLiveData.postValue(NetworkResult.Error(e.localizedMessage ?: "Unknown error"))
         }
     }
 
 
     suspend fun getGraphRequest(trailsId: String) {
         _trailsDetailsGraphData.postValue(NetworkResult.Loading())
-        val response = userAPI!!.trailsGraphDetails(acceptLanguage, trailsId)
-        Log.e("response", "subClubResponse " + response)
-        if (response.isSuccessful && response.body() != null) {
-            Log.e("jsonResponseData", "subClubResponse " + response.body())
-            _trailsDetailsGraphData.postValue(NetworkResult.Success(response.body()!!))
-            //_subClubLiveData_gallery_l.postValue(response.body())
+        try {
+            val response = userAPI!!.trailsGraphDetails(acceptLanguage, trailsId)
+            Log.e("response", "subClubResponse " + response)
+            if (response.isSuccessful && response.body() != null) {
+                Log.e("jsonResponseData", "subClubResponse " + response.body())
+                _trailsDetailsGraphData.postValue(NetworkResult.Success(response.body()!!))
+                //_subClubLiveData_gallery_l.postValue(response.body())
 
-        } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
-            _trailsDetailsGraphData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
-        } else {
-            _trailsDetailsGraphData.postValue(NetworkResult.Error("Something Went Wrong"))
+            } else if (response.errorBody() != null) {
+                val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+                _trailsDetailsGraphData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+            } else {
+                _trailsDetailsGraphData.postValue(NetworkResult.Error("Something Went Wrong"))
+            }
+        }
+        catch (e: Exception){
+            _trailsDetailsGraphData.postValue(NetworkResult.Error(e.localizedMessage ?: "Unknown error"))
         }
     }
 
     suspend fun getFeedWorkout(workoutId: String) {
         _feedWorkoutLiveData.postValue(NetworkResult.Loading())
-        val response = userAPI!!.workout(acceptLanguage, workoutId)
-        Log.e("response", "subClubResponse " + response)
-        if (response.isSuccessful && response.body() != null) {
-            Log.e("jsonResponseData", "subClubResponse " + response.body())
-            _feedWorkoutLiveData.postValue(NetworkResult.Success(response.body()!!))
-            //_subClubLiveData_gallery_l.postValue(response.body())
+        try {
+            val response = userAPI!!.workout(acceptLanguage, workoutId)
+            Log.e("response", "subClubResponse " + response)
+            if (response.isSuccessful && response.body() != null) {
+                Log.e("jsonResponseData", "subClubResponse " + response.body())
+                _feedWorkoutLiveData.postValue(NetworkResult.Success(response.body()!!))
+                //_subClubLiveData_gallery_l.postValue(response.body())
 
-        } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
-            _feedWorkoutLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
-        } else {
-            _feedWorkoutLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            } else if (response.errorBody() != null) {
+                val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+                _feedWorkoutLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+            } else {
+                _feedWorkoutLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            }
+        }
+        catch (e: Exception){
+            _feedWorkoutLiveData.postValue(NetworkResult.Error(e.localizedMessage ?: "Unknown error"))
         }
     }
 
     suspend fun getFeedClub() {
         _feedLiveData.postValue(NetworkResult.Loading())
-        val response = userAPI!!.feed(acceptLanguage, 150)
-        Log.e("response", "subClubResponse " + response)
-        if (response.isSuccessful && response.body() != null) {
-            Log.e("jsonResponseData", "subClubResponse " + response.body())
-            _feedLiveData.postValue(NetworkResult.Success(response.body()!!))
-        } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+        try {
+            val response = userAPI!!.feed(acceptLanguage, 150)
+            Log.e("response", "subClubResponse " + response)
+            if (response.isSuccessful && response.body() != null) {
+                Log.e("jsonResponseData", "subClubResponse " + response.body())
+                _feedLiveData.postValue(NetworkResult.Success(response.body()!!))
+            } else if (response.errorBody() != null) {
+                val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
 
-            _feedLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
-        } else {
-            _feedLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+                _feedLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+            } else {
+                _feedLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            }
+        }
+        catch (e: Exception){
+            _feedLiveData.postValue(NetworkResult.Error(e.localizedMessage ?: "Unknown error"))
         }
     }
 
@@ -674,18 +724,23 @@ class UserRepository @Inject constructor(
 
     suspend fun getClubById(favClientId: String) {
         _clubFavLiveData.postValue(NetworkResult.Loading())
-        val response = userAPI!!.requestFavClubById(acceptLanguage, favClientId)
-        Log.e("response", "subClubResponse " + response)
-        if (response.isSuccessful && response.body() != null) {
-            Log.e("jsonResponseData", "subClubResponse " + response.body())
-            _clubFavLiveData.postValue(NetworkResult.Success(response.body()!!))
-            //_subClubLiveData_gallery_l.postValue(response.body())
+        try {
+            val response = userAPI!!.requestFavClubById(acceptLanguage, favClientId)
+            Log.e("response", "subClubResponse " + response)
+            if (response.isSuccessful && response.body() != null) {
+                Log.e("jsonResponseData", "subClubResponse " + response.body())
+                _clubFavLiveData.postValue(NetworkResult.Success(response.body()!!))
+                //_subClubLiveData_gallery_l.postValue(response.body())
 
-        } else if (response.errorBody() != null) {
-            val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
-            _clubFavLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
-        } else {
-            _clubFavLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            } else if (response.errorBody() != null) {
+                val errorObj = JSONObject(response?.errorBody()?.charStream()?.readText())
+                _clubFavLiveData.postValue(NetworkResult.Error(errorObj.optString("title", "Unknown Error")))
+            } else {
+                _clubFavLiveData.postValue(NetworkResult.Error("Something Went Wrong"))
+            }
+        }
+        catch (e: Exception){
+            _clubFavLiveData.postValue(NetworkResult.Error(e.localizedMessage ?: "Unknown error"))
         }
 
     }
