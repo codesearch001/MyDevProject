@@ -19,10 +19,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.snofed.publicapp.R
 import com.snofed.publicapp.databinding.FragmentBuyMembershipBinding
 import com.snofed.publicapp.membership.adapter.BuyMembershipAdapter
+import com.snofed.publicapp.membership.model.BuyMembershipResponse
 import com.snofed.publicapp.ui.login.AuthViewModel
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @AndroidEntryPoint
 class BuyMembershipFragment : Fragment(),BuyMembershipAdapter.OnItemClickListener {
@@ -55,6 +59,7 @@ class BuyMembershipFragment : Fragment(),BuyMembershipAdapter.OnItemClickListene
                 is NetworkResult.Success -> {
                     var data = it.data?.data
 
+                    data= filterWithValidity(data)
                     if(clientId == ""){
                         if(isAdmin)
                             data = data?.filter { it.isAdminMembership }
@@ -64,7 +69,7 @@ class BuyMembershipFragment : Fragment(),BuyMembershipAdapter.OnItemClickListene
                     }
 
                     //Uncomment to see only active membership
-                    data = data?.filter { it.isActive }
+                    //data = data?.filter { it.isActive }
 
                     if (data.isNullOrEmpty()) {
                         buyMembershipAdapter = BuyMembershipAdapter(this)
@@ -109,6 +114,17 @@ class BuyMembershipFragment : Fragment(),BuyMembershipAdapter.OnItemClickListene
                 }
             }
         })
+    }
+
+    private fun filterWithValidity(data: List<BuyMembershipResponse>?): List<BuyMembershipResponse>? {
+
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val currentDate = Date()
+
+        return data?.filter { memberShip ->
+            val eventEndDate = dateFormat.parse(memberShip.activeTo)
+            eventEndDate?.after(currentDate) == true
+        }
     }
 
     private fun fetchResponse() {
