@@ -295,6 +295,7 @@ class StartMapRideFragment : Fragment(),WorkoutMediaReader.OnImageUriReceivedLis
                         sendWorkoutImages()
                         Toast.makeText(requireActivity(), "Ride Data Send Successfully Please wait for Images to save ", Toast.LENGTH_LONG).show()
                     }else{
+                        findNavController().popBackStack()
                         Toast.makeText(requireActivity(), "Ride Data Saved Successfully", Toast.LENGTH_LONG).show()
                     }
 

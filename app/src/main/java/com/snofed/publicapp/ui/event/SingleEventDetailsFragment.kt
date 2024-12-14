@@ -246,11 +246,26 @@ class SingleEventDetailsFragment : Fragment() {
     }
 
     private fun fetchResponse() {
-        eventDetailsViewModel.eventDetailsRequestUser(eventId)
+        var currentData = eventDetailsViewModel.eventDetailsLiveData.value
+        if (currentData is NetworkResult.Success && currentData.data != null) {
+            // LiveData already holds valid data
+            Log.d("LiveData", "Data already exists, skipping API call.")
+        } else {
+            // No valid data, make the API request
+            eventDetailsViewModel.eventDetailsRequestUser(eventId)
+        }
     }
 
     private fun getClientById(clientId: String) {
-        eventDetailsViewModel.subClubRequestUser(clientId)
+        val currentData = eventDetailsViewModel.subClubLiveData.value
+        if (currentData is NetworkResult.Success && currentData.data != null) {
+            // LiveData already holds valid data
+            Log.d("LiveData", "Data already exists, skipping API call.")
+        } else {
+            // No valid data, make the API request
+            eventDetailsViewModel.subClubRequestUser(clientId)
+        }
+
 
     }
     private fun getTrailNames(trails: List<Trail>): List<String> {

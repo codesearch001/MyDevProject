@@ -1,6 +1,7 @@
 package com.snofed.publicapp.maps
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -24,12 +25,14 @@ import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -51,6 +54,7 @@ import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
+import com.google.gson.JsonElement
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.LineString
@@ -77,12 +81,26 @@ import com.mapbox.maps.plugin.animation.CameraAnimationsPlugin
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.camera
 import com.mapbox.maps.plugin.animation.easeTo
+import com.mapbox.maps.plugin.annotation.AnnotationConfig
+import com.mapbox.maps.plugin.annotation.AnnotationManager
+import com.mapbox.maps.plugin.annotation.OnAnnotationClickListener
 import com.mapbox.maps.plugin.annotation.annotations
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotation
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
+import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotation
+import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationManager
+import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
+import com.mapbox.maps.plugin.annotation.generated.createPolylineAnnotationManager
+import com.mapbox.maps.plugin.gestures.OnMapClickListener
+import com.mapbox.maps.plugin.gestures.addOnMapClickListener
+import com.mapbox.maps.plugin.gestures.removeOnMapClickListener
 import com.mapbox.maps.plugin.locationcomponent.LocationComponentPlugin
 import com.mapbox.maps.plugin.locationcomponent.location
+import com.mapbox.maps.viewannotation.ViewAnnotationManager
+import com.mapbox.maps.viewannotation.geometry
+import com.mapbox.maps.viewannotation.viewAnnotationOptions
 import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.MapIntervalAdapter
 import com.snofed.publicapp.databinding.BottomSheetApartmentsBinding
@@ -90,6 +108,7 @@ import com.snofed.publicapp.databinding.FragmentMapExploreBinding
 import com.snofed.publicapp.databinding.MapFilterDetailsBinding
 import com.snofed.publicapp.models.interval.StatusItem
 import com.snofed.publicapp.models.realmModels.Area
+import com.snofed.publicapp.models.realmModels.Client
 import com.snofed.publicapp.models.realmModels.Poi
 import com.snofed.publicapp.models.realmModels.Resource
 import com.snofed.publicapp.models.realmModels.Trail
@@ -101,6 +120,7 @@ import com.snofed.publicapp.utils.ServiceUtil
 import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.SnofedConstants
 import com.snofed.publicapp.utils.enums.SyncActionEnum
+import com.snofed.publicapp.utils.enums.TrailsStatusEnum
 import com.snofed.publicapp.utils.enums.VisibilityEnum
 import dagger.hilt.android.AndroidEntryPoint
 import java.net.HttpURLConnection
@@ -119,7 +139,10 @@ class MapExploreFragment : Fragment() {
     private lateinit var mapView: MapView
     private lateinit var mapboxMap: MapboxMap
     private var cameraAnimationsPlugin: CameraAnimationsPlugin? = null // Nullable type
-    private var pointAnnotationManager: PointAnnotationManager? = null
+    private lateinit var pointAnnotationManager: PointAnnotationManager
+    //private lateinit var annotationClickListener: PolylineAnnotation
+    private lateinit var viewAnnotationManager: ViewAnnotationManager
+    private lateinit var polylineAnnotationManager: PolylineAnnotationManager
     val boundsBuilder = LatLngBounds.Builder()
     var hasCoordinates = false
     private lateinit var fabOpen: Animation
@@ -137,9 +160,11 @@ class MapExploreFragment : Fragment() {
     private lateinit var locationCallback: LocationCallback
 
     private lateinit var viewModelPoisType: PoisTypeViewModelRealm
+    private var currentPopupView: View? = null
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+        const val LAYER_ID = "layer-id"
     }
 
     //Map Interval
@@ -456,8 +481,10 @@ class MapExploreFragment : Fragment() {
         // Initialize MapView and MapboxMap
         mapView = binding.mapView
         mapboxMap = mapView.mapboxMap
+        viewAnnotationManager = binding.mapView.viewAnnotationManager
 
-        mapboxMap.loadStyle(Style.OUTDOORS) {
+        val styleType = if (isSatelliteViewClicked) Style.SATELLITE else Style.OUTDOORS
+        mapboxMap.loadStyle(styleType) {
             // Callback when the style has been fully loaded
             Log.d("Mapbox", "Style OUTDOORS loaded successfully.")
 
@@ -507,7 +534,6 @@ class MapExploreFragment : Fragment() {
 
         binding.satelliteToggle.setOnClickListener {
             animateFab()
-            isSatelliteViewClicked = !isSatelliteViewClicked
             SatelliteView()
             //Toast.makeText(requireContext(), "folder click", Toast.LENGTH_SHORT).show()
         }
@@ -658,15 +684,16 @@ class MapExploreFragment : Fragment() {
             // Check zone for always show on map option
             //clientZones = clientZones.filter { it.visibility == VisibilityEnum.PUBLIC.getValue() }.toMutableList()
             clientResources = clientResources.filter { it.isActive == true && it.isPublic == true }.toMutableList()
-
-            Log.d("Tag_Trails", "trails size: ${clientTrails?.size}")
-            Log.d("Tag_Zones", "zones size: ${clientZones.size}")
-            Log.d("Tag_POIs", "pois size: ${clientPois.size}")
-            Log.d("Tag_Resources", "resources size: ${clientResources.size}")
+          
 
             if (clientTrails.size > 0) {
-                addTrailsToMap(clientTrails)
-                sharedViewModel.updateSelectedTrailsIds(listOf("0"))
+                if(filteredTrails.size > 0){
+                    sharedViewModel.updateSelectedTrailsIds(listOf("0"))
+                }
+                else{
+                    addTrailsToMap(clientTrails)
+                    sharedViewModel.updateSelectedTrailsIds(listOf("0"))
+                }
                 //filteredTrails = clientTrails
             }
         })
@@ -675,120 +702,380 @@ class MapExploreFragment : Fragment() {
     /////////////////////////
 
     private fun addTrailsToMap(trails: List<Trail>) {
-        mapboxMap.getStyle { style ->
-            val lastLayerId = style.styleLayers.lastOrNull()?.id
-            val allCoordinates = mutableListOf<Point>()
+        //if(::mapView.isInitialized) {
+            mapboxMap.getStyle { style ->
+                var lastLayerId = style.styleLayers.lastOrNull()?.id
+                val allCoordinates = mutableListOf<Point>()
 
-            trails.forEach { trail ->
-                val coordinates = trail.polyLine?.features?.mapNotNull { feature ->
-                    feature.geometry?.coordinates
-                }
+                initTrailAnnotationManager()
 
-                if (!coordinates.isNullOrEmpty() && !coordinates[0].isNullOrEmpty()) {
-                    hasCoordinates = true
-
-                    // Include bounds
-                    coordinates[0]?.forEach { coord ->
-                        boundsBuilder.include(LatLng(coord[1], coord[0]))
-                        allCoordinates.add(Point.fromLngLat(coord[0], coord[1]))
+                //clearExistingTrails(style)
+                trails.forEach { trail ->
+                    val coordinates = trail.polyLine?.features?.mapNotNull { feature ->
+                        feature.geometry?.coordinates
                     }
 
-                    // Create LineString and Feature
-                    val lineString = LineString.fromLngLats(
-                        coordinates[0].map { coord ->
-                            Point.fromLngLat(coord[0], coord[1])
+                    if (!coordinates.isNullOrEmpty() && coordinates[0].isNotEmpty()) {
+                        hasCoordinates = true
+
+                        // Include bounds
+                        coordinates[0].forEach { coord ->
+                            boundsBuilder.include(LatLng(coord[1], coord[0]))
+                            allCoordinates.add(Point.fromLngLat(coord[0], coord[1]))
                         }
-                    )
-                    val feature = Feature.fromGeometry(lineString)
-                    val featureCollection = FeatureCollection.fromFeatures(listOf(feature))
 
-                    // Extract properties
-                    val properties = trail.polyLine?.features?.firstOrNull()?.properties
-                    val color = properties?.color ?: "#FF0000" // Default to red
-
-                    // Define source and layer IDs
-                    val sourceId = "line-source-${trail.id}"
-                    val layerId = "line-layer-${trail.id}"
-
-                    // Add GeoJSON source
-                    if (style.getSource(sourceId) == null) {
-                        style.addSource(geoJsonSource(sourceId) {
-                            featureCollection(featureCollection)
-                        })
-                    }
-
-                    // Add line layer
-                    if (style.getLayer(layerId) == null) {
-                        style.addLayerAbove(lineLayer(layerId, sourceId) {
-                            lineColor(color)
-                            lineWidth(6.0)
-                        },lastLayerId)
-
-                    }
-
-                    // Add starting point POI
-                    val startingPoint = coordinates[0]?.firstOrNull()
-                    if (startingPoint != null) {
-                        val poiSourceId = "start-poi-source-${trail.id}"
-                        val poiLayerId = "start-poi-layer-${trail.id}"
-
-                        val poiFeature = Feature.fromGeometry(
-                            Point.fromLngLat(startingPoint[0], startingPoint[1])
+                        // Create LineString and Feature
+                        val lineString = LineString.fromLngLats(
+                            coordinates[0].map { coord ->
+                                Point.fromLngLat(coord[0], coord[1])
+                            }
                         )
-                        val poiFeatureCollection =
-                            FeatureCollection.fromFeatures(listOf(poiFeature))
+                        val feature = Feature.fromGeometry(lineString)
+                        val featureCollection = FeatureCollection.fromFeatures(listOf(feature))
 
-                        if (style.getSource(poiSourceId) == null) {
-                            style.addSource(geoJsonSource(poiSourceId) {
-                                featureCollection(poiFeatureCollection)
+                        // Extract properties
+                        val properties = trail.polyLine?.features?.firstOrNull()?.properties
+                        val color = properties?.color ?: "#FF0000" // Default to red
+
+                        // Define source and layer IDs
+                        val trailSourceId = "line-source-${trail.id}"
+                        val trailLayerId = "line-layer-${trail.id}"
+
+                        //removeTrailLayersAndSources(style, trail.id!!)
+
+                        // Add GeoJSON source
+                        if (style.getSource(trailSourceId) == null) {
+                            style.addSource(geoJsonSource(trailSourceId) {
+                                featureCollection(featureCollection)
                             })
                         }
-                        val poiIconBitmap = BitmapFactory.decodeResource(resources, R.drawable.start_pin)
-                        style.addImage("start-poi-icon", poiIconBitmap)
 
-                        if (style.getLayer(poiLayerId) == null) {
-                            style.addLayerAbove(symbolLayer(poiLayerId, poiSourceId) {
-                                iconImage("start-poi-icon") // Use an icon from your sprite or custom one
-                                iconSize(1.0)
-                            }, layerId)
+                        // Add line layer
+                        /*if (style.getLayer(trailLayerId) == null) {
+                            style.addLayerAbove(lineLayer(trailLayerId, trailSourceId) {
+                                lineColor(color)
+                                lineWidth(6.0)
+                            }, lastLayerId)
+
+                            lastLayerId = trailLayerId
+                        }*/
+
+                        // Add click listener using PolylineAnnotationManager
+                        val annotation = polylineAnnotationManager.create(
+                            PolylineAnnotationOptions()
+                                .withPoints(coordinates[0].map { cord ->
+                                    Point.fromLngLat(
+                                        cord[1],
+                                        cord[0]
+                                    )
+                                })
+                                .withGeometry(lineString)
+                                .withLineColor(color)
+                                .withLineWidth(6.0)
+                        )
+
+                        polylineAnnotationManager.addClickListener { clickedAnnotation ->
+                            if (clickedAnnotation == annotation) {
+                                showTrailPopup(trail)
+                                true
+                            } else false
                         }
+
+                        // Add starting point POI
+                        val startingPoint = coordinates[0]?.firstOrNull()
+                        if (startingPoint != null) {
+                            val startPoiSourceId = "start-poi-source-${trail.id}"
+                            val startPoiLayerId = "start-poi-layer-${trail.id}"
+
+                            val poiFeature = Feature.fromGeometry(
+                                Point.fromLngLat(startingPoint[0], startingPoint[1])
+                            )
+                            val poiFeatureCollection =
+                                FeatureCollection.fromFeatures(listOf(poiFeature))
+
+                            if (style.getSource(startPoiSourceId) == null) {
+                                style.addSource(geoJsonSource(startPoiSourceId) {
+                                    featureCollection(poiFeatureCollection)
+                                })
+                            }
+                            if (!style.hasStyleImage("start-poi-icon")) {
+                                val poiIconBitmap =
+                                    BitmapFactory.decodeResource(resources, R.drawable.start_pin)
+                                style.addImage("start-poi-icon", poiIconBitmap)
+                            }
+                            if (style.getLayer(startPoiLayerId) == null) {
+                                style.addLayerAbove(symbolLayer(startPoiLayerId, startPoiSourceId) {
+                                    iconImage("start-poi-icon") // Use an icon from your sprite or custom one
+                                    iconSize(1.0)
+                                }, lastLayerId)
+                            }
+                        }
+                        //Update the last added trail layer ID
+                        lastTrailLayerId = trailLayerId
                     }
-                    //Update the last added trail layer ID
-                    lastTrailLayerId = layerId
+                }
+
+                //setupAnnotationManager(trails)
+
+                // Adjust camera bounds if coordinates exist
+                if (allCoordinates.isNotEmpty()) {
+                    val cameraOptions = mapboxMap.cameraForCoordinates(
+                        allCoordinates,
+                        EdgeInsets(100.0, 100.0, 100.0, 100.0) // Padding around the edges
+                    )
+                    mapView.camera.easeTo(
+                        cameraOptions,
+                        MapAnimationOptions.Builder().duration(2000).build()
+                    )
+                } else {
+                    Log.e("MapError", "No coordinates available to adjust camera bounds.")
                 }
             }
+        //}
+    }
 
-            // Adjust camera bounds if coordinates exist
-            if (allCoordinates.isNotEmpty()) {
-                val cameraOptions = mapboxMap.cameraForCoordinates(
-                    allCoordinates,
-                    EdgeInsets(100.0, 100.0, 100.0, 100.0) // Padding around the edges
-                )
-                mapView.camera.easeTo(
-                    cameraOptions,
-                    MapAnimationOptions.Builder().duration(2000).build()
-                )
-                
-               /* val latLngBounds = boundsBuilder.build()
-                //val centerPoint = latLngBounds.center
-                val centerPoint =
-                    Point.fromLngLat(latLngBounds.center.longitude, latLngBounds.center.latitude)
-                mapView.camera.easeTo(
-                    CameraOptions.Builder()
-                        .center(centerPoint)
-                        .zoom(8.0)
-                        .build(),
-                    MapAnimationOptions.Builder().duration(2000).build()
-                )*/
-            } else {
-                /*Toast.makeText(
-                    requireContext(),
-                    "No trails available for these selections.",
-                    Toast.LENGTH_SHORT
-                ).show()*/
-                Log.e("MapError", "No coordinates available to adjust camera bounds.")
+    private fun initTrailAnnotationManager() {
+        /*if (::polylineAnnotationManager.isInitialized) {
+            // Clean up the existing manager
+            polylineAnnotationManager.deleteAll() // Clear existing annotations
+            //polylineAnnotationManager.annotations.cleanup() // Dispose of the manager resources if supported
+        }*/
+        //polylineAnnotationManager = mapView.annotations.createPolylineAnnotationManager()
+        // Create a new PolylineAnnotationManager
+        val annotationPlugin = mapView.annotations
+        polylineAnnotationManager = annotationPlugin.createPolylineAnnotationManager(annotationConfig = AnnotationConfig(LAYER_ID))
+    }
+
+    private fun setupAnnotationManager(trails: List<Trail>) {
+
+        // Click listener to show the custom info window
+        polylineAnnotationManager.addClickListener { clickedAnnotation ->
+            showCustomInfoWindow(clickedAnnotation)
+            true
+        }
+
+    }
+
+    private fun showCustomInfoWindow(annotation: PolylineAnnotation) {
+
+        val trailJson  = annotation.getData()
+        val gson = Gson()
+        val trail = gson.fromJson(trailJson.toString(), Trail::class.java)
+        val sourceId = "line-source-${trail.id}"
+        val layerId = "line-layer-${trail.id}"
+        // Remove any existing annotation views
+        viewAnnotationManager.removeAllViewAnnotations()
+        val coordinates = trail.polyLine?.features?.mapNotNull { feature ->
+            feature.geometry?.coordinates
+        }
+
+        //var allCoordinates = mutableListOf<Point>()
+
+        /*coordinates?.forEach { cord ->
+            allCoordinates.add(Point.fromLngLat(cord.latitude(), cord.longitude()))
+        }*/
+
+        // Create and configure the custom info window
+        // Inflate your custom layout properly
+        val popupView = LayoutInflater.from(requireContext()).inflate(R.layout.trails_map_popup_layout, null)
+        val displayMetrics = resources.displayMetrics
+        val widthInDp = 250 // Desired width in dp
+        val heightInDp = 170 // Desired height in dp
+
+        val widthInPx = (widthInDp * displayMetrics.density).toInt()
+        val heightInPx = (heightInDp * displayMetrics.density).toInt()
+
+        popupView.layoutParams = ViewGroup.LayoutParams(widthInPx, heightInPx)
+
+
+        val lastPreparedDate = dateTimeConverter.isValidDate(trail.lastPreparedDate)
+
+        if(!lastPreparedDate)
+            popupView.findViewById<TextView>(R.id.last_prepared_date).text = resources.getString(R.string.trail_info_preparation_datete_not_yet_prepared)
+        else
+            popupView.findViewById<TextView>(R.id.last_prepared_date).text = resources.getString(R.string.t_last_prepared)+": " + "" + dateTimeConverter.ConvertToDateTime(trail.lastPreparedDate!!)
+
+        //val view = LayoutInflater.from(requireContext()).inflate(R.layout.map_popup_layout, null)
+        popupView.findViewById<TextView>(R.id.trail_name).text = trail?.name?.trimStart()?.trimEnd()
+        //popupView.findViewById<TextView>(R.id.club_main_name).text = resources.getString(R.string.t_last_prepared)+": " + "" +  trail?.lastPreparedDate
+        popupView.findViewById<TextView>(R.id.rating_text).text = trail.averageRating.toString()
+        popupView.findViewById<TextView>(R.id.review_count).text ="(${trail.trailRatings?.count()})"
+
+        if (trail.status == TrailsStatusEnum.OPEN.statusValue) {
+            popupView.findViewById<TextView>(R.id.idOpen).isVisible = true
+            popupView.findViewById<TextView>(R.id.idClose).isVisible = false
+        } else {
+            popupView.findViewById<TextView>(R.id.idClose).isVisible = true
+            popupView.findViewById<TextView>(R.id.idOpen).isVisible = false
+        }
+
+        //popupView.findViewById<TextView>(R.id.statusBadge).text = TrailsStatusEnum.fromValue(trail.status!!).toString()
+
+        popupView.findViewById<TextView>(R.id.view_trail_page_button).setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("trailId", trail.id)
+            val destination = R.id.resortSingleTrailsStatusDetailsFragment
+            findNavController().navigate(destination, bundle)
+        }
+        //Bind favorite
+        /*if (trailData.isInWishlist) {
+            popupView.findViewById<ImageView>(R.id.heart_icon)
+                .setImageResource(R.drawable.hearth_filled)
+        }else{
+            popupView.findViewById<ImageView>(R.id.heart_icon)
+                .setImageResource(R.drawable.hearth_empty)
+        }*/
+
+       val adjustedCoordinates = Point.fromLngLat(trail.startLongitude!!, trail.startLatitude!!
+                                        - calculateOffset(mapboxMap.cameraState.zoom) // Dynamic latitude offset
+        )
+        /*"Longitude: ${coordinates.longitude()}, Latitude: ${coordinates.latitude()}"*/
+
+        // Add the custom view as an annotation
+        viewAnnotationManager.addViewAnnotation(
+            popupView,
+            viewAnnotationOptions {
+                geometry(adjustedCoordinates)
+                //anchor(ViewAnnotationAnchor.BOTTOM) // Attach popup at the bottom of the POI
+                allowOverlap(true)     // Allow overlapping with other annotations (optional)
+                ignoreCameraPadding(true)  // Optionally ignore camera padding
+                allowOverlapWithPuck(true)
+            }
+        )
+        val currentPoint = fromLngLat(trail.startLongitude!!, trail.startLatitude!!)
+
+        val cameraOptions = CameraOptions.Builder()
+            .center(currentPoint)
+            //.zoom(12.0) // Adjust zoom level as needed
+            .build()
+
+        //mapboxMap.easeTo(cameraOptions)
+
+        mapboxMap.easeTo(cameraOptions, MapAnimationOptions.mapAnimationOptions {
+            duration(1000)
+        })
+
+        /*MapAnimationOptions.mapAnimationOptions {
+            duration(1500)
+        }*/
+        // Dismiss popup when clicking outside
+        mapboxMap.addOnMapClickListener {
+            viewAnnotationManager.removeAllViewAnnotations()
+            true
+        }
+    }
+
+    private fun showTrailPopup(trail: Trail) {
+
+        currentPopupView?.let { openPopup ->
+            viewAnnotationManager.removeViewAnnotation(openPopup)
+            currentPopupView = null
+        }
+        // Create and configure the custom info window
+        // Inflate your custom layout properly
+        val popupView = LayoutInflater.from(requireContext()).inflate(R.layout.trails_map_popup_layout, null)
+        val displayMetrics = resources.displayMetrics
+        val widthInDp = 250 // Desired width in dp
+        val heightInDp = 170 // Desired height in dp
+
+        val widthInPx = (widthInDp * displayMetrics.density).toInt()
+        val heightInPx = (heightInDp * displayMetrics.density).toInt()
+
+        popupView.layoutParams = ViewGroup.LayoutParams(widthInPx, heightInPx)
+
+
+        val lastPreparedDate = dateTimeConverter.isValidDate(trail.lastPreparedDate)
+
+        if(!lastPreparedDate)
+            popupView.findViewById<TextView>(R.id.last_prepared_date).text = resources.getString(R.string.trail_info_preparation_datete_not_yet_prepared)
+        else
+            popupView.findViewById<TextView>(R.id.last_prepared_date).text = resources.getString(R.string.t_last_prepared)+": " + "" + dateTimeConverter.ConvertToDateTime(trail.lastPreparedDate!!)
+
+        //val view = LayoutInflater.from(requireContext()).inflate(R.layout.map_popup_layout, null)
+        popupView.findViewById<TextView>(R.id.trail_name).text = trail?.name?.trimStart()?.trimEnd()
+        //popupView.findViewById<TextView>(R.id.club_main_name).text = resources.getString(R.string.t_last_prepared)+": " + "" +  trail?.lastPreparedDate
+        popupView.findViewById<TextView>(R.id.rating_text).text = trail.averageRating.toString()
+        popupView.findViewById<TextView>(R.id.review_count).text ="(${trail.trailRatings?.count()})"
+
+        if (trail.status == TrailsStatusEnum.OPEN.statusValue) {
+            popupView.findViewById<TextView>(R.id.idOpen).isVisible = true
+            popupView.findViewById<TextView>(R.id.idClose).isVisible = false
+        } else {
+            popupView.findViewById<TextView>(R.id.idClose).isVisible = true
+            popupView.findViewById<TextView>(R.id.idOpen).isVisible = false
+        }
+
+        //popupView.findViewById<TextView>(R.id.statusBadge).text = TrailsStatusEnum.fromValue(trail.status!!).toString()
+
+        popupView.findViewById<TextView>(R.id.view_trail_page_button).setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("trailId", trail.id)
+            val destination = R.id.resortSingleTrailsStatusDetailsFragment
+            findNavController().navigate(destination, bundle)
+        }
+
+        val adjustedCoordinates = Point.fromLngLat(trail.startLongitude!!, trail.startLatitude!!
+                - calculateOffset(mapboxMap.cameraState.zoom) // Dynamic latitude offset
+        )
+        /*"Longitude: ${coordinates.longitude()}, Latitude: ${coordinates.latitude()}"*/
+
+        // Add the custom view as an annotation
+        val newPopupView = viewAnnotationManager.addViewAnnotation(
+            popupView,
+            viewAnnotationOptions {
+                geometry(adjustedCoordinates)
+                //anchor(ViewAnnotationAnchor.BOTTOM) // Attach popup at the bottom of the POI
+                allowOverlap(true)     // Allow overlapping with other annotations (optional)
+                ignoreCameraPadding(true)  // Optionally ignore camera padding
+                allowOverlapWithPuck(true)
+            }
+        )
+        currentPopupView = popupView
+
+        val currentPoint = fromLngLat(trail.startLongitude!!, trail.startLatitude!!)
+
+        val cameraOptions = CameraOptions.Builder()
+            .center(currentPoint)
+            //.zoom(12.0) // Adjust zoom level as needed
+            .build()
+
+        //mapboxMap.easeTo(cameraOptions)
+
+        mapboxMap.easeTo(cameraOptions, MapAnimationOptions.mapAnimationOptions {
+            duration(1000)
+        })
+
+        // Add a temporary click listener to dismiss the popup
+        val clickListener = object : OnMapClickListener {
+            override fun onMapClick(point: Point): Boolean {
+                currentPopupView?.let { openPopup ->
+                    // Remove the popup
+                    viewAnnotationManager.removeViewAnnotation(openPopup)
+                    currentPopupView = null
+
+                    // Remove this click listener to avoid unnecessary rebindings
+                    mapboxMap.removeOnMapClickListener(this)
+                }
+                return true // Click handled
             }
         }
+
+        // Attach the listener
+        mapboxMap.addOnMapClickListener(clickListener)
+    }
+
+    /*private fun calculateOffset(zoom: Double): Double {
+        return when {
+            zoom < 10 -> 0.01
+            zoom < 15 -> 0.005
+            else -> 0.002
+        }
+    }*/
+
+    private fun calculateOffset(zoom: Double): Double {
+        // Base offset multiplier - adjust this based on your needs
+        val baseOffset = 0.0300
+        return baseOffset / Math.pow(2.0, zoom - 10) // Adjust offset based on zoom level
     }
 
     ///////////////////////
@@ -832,107 +1119,135 @@ class MapExploreFragment : Fragment() {
     }
 
     private fun addPoisToMap(pois: List<Poi>) {
-        mapboxMap.getStyle { style ->
+        //if(::mapView.isInitialized) {
+            mapboxMap.getStyle { style ->
+                initializePointAnnotationManager(style)
+                //initTrailAnnotationManager()
+                // Retrieve the last layer ID dynamically
+                val lastLayerId = style.styleLayers.lastOrNull()?.id
+                //pointAnnotationManager.deleteAll()
+                val markerCoordinates: List<Feature> = ArrayList()
+                //pointAnnotationManager.let { manager ->
+                    // Clear existing annotations
+                    //manager.deleteAll()
 
-            // Retrieve the last layer ID dynamically
-            val lastLayerId = style.styleLayers.lastOrNull()?.id
 
-            val markerCoordinates: List<Feature> = ArrayList()
-            pointAnnotationManager?.let { manager ->
-                // Clear existing annotations
-                manager.deleteAll()
+                    pois.forEach { poi ->
+                        //removePoisLayersAndSources(style,poi.id!!)
+                        val point = Point.fromLngLat(poi.longitude!!, poi.latitude!!)
+                        val poisTypeImage =
+                            viewModelPoisType.getIconPathByPoiTypeId(poi.poiTypeId!!)
+                        //val poisColor = poi.lastPoiStatus?.color ?: "#97D1FF"
 
-                pois.forEach { poi ->
-                    val point = Point.fromLngLat(poi.longitude!!, poi.latitude!!)
-                    val poisTypeImage = viewModelPoisType.getIconPathByPoiTypeId(poi.poiTypeId!!)
-                    //val poisColor = poi.lastPoiStatus?.color ?: "#97D1FF"
+                        val poiStatusOpenOrCloseColor = poi.poiStatusHistories
+                            ?.sortedByDescending { it.statusDate } // Sort by status date in descending order
+                            ?.firstOrNull { it.poiTypeStatus != null } // Get the first non-null PoiTypeStatus
+                            ?.poiTypeStatus?.color
 
-                    val poiStatusOpenOrCloseColor = poi.poiStatusHistories
-                        ?.sortedByDescending { it.statusDate } // Sort by status date in descending order
-                        ?.firstOrNull { it.poiTypeStatus != null } // Get the first non-null PoiTypeStatus
-                        ?.poiTypeStatus?.color
+                        var poiStatusColor = when (poiStatusOpenOrCloseColor) {
+                            "#00FF00" -> "#97D1FF" // If green, return a specific blue color
+                            "#FF0000" -> "#FFA5C9" // If red, return a specific pink color
+                            null -> "#CDD8E1"      // If null, default to grey
+                            else -> poiStatusOpenOrCloseColor // Otherwise, keep the original color
+                        }
 
-                    var poiStatusColor = when (poiStatusOpenOrCloseColor) {
-                        "#00FF00" -> "#97D1FF" // If green, return a specific blue color
-                        "#FF0000" -> "#FFA5C9" // If red, return a specific pink color
-                        null -> "#CDD8E1"      // If null, default to grey
-                        else -> poiStatusOpenOrCloseColor // Otherwise, keep the original color
-                    }
+                        // Fetch and create custom POI icons asynchronously
+                        if (!poisTypeImage.isNullOrEmpty()) {
+                            val executor = Executors.newSingleThreadExecutor()
+                            val handler = Handler(Looper.getMainLooper())
+                            executor.execute {
+                                try {
+                                    val urlBitmap = fetchBitmapFromURL(poisTypeImage)
+                                    val markerBase = when (poiStatusOpenOrCloseColor) {
+                                        "#00FF00" -> BitmapFactory.decodeResource(
+                                            resources,
+                                            R.drawable.location_blue
+                                        )
+                                        "#FF0000" -> BitmapFactory.decodeResource(
+                                            resources,
+                                            R.drawable.location_red
+                                        )
+                                        null -> BitmapFactory.decodeResource(
+                                            resources,
+                                            R.drawable.location_grey
+                                        )
+                                        else -> BitmapFactory.decodeResource(
+                                            resources,
+                                            R.drawable.location_blue
+                                        )
+                                    }
+                                            val finalBitmap =
+                                                createCustomPoiBitmap(
+                                                    markerBase,
+                                                    urlBitmap,
+                                                    poiStatusColor
+                                                )
+                                            handler.post {
+                                                style.addImage("poi-icon-${poi.id}", finalBitmap)
+                                            }
 
-                    // Fetch and create custom POI icons asynchronously
-                    if (!poisTypeImage.isNullOrEmpty()) {
-                        val executor = Executors.newSingleThreadExecutor()
-                        val handler = Handler(Looper.getMainLooper())
-                        executor.execute {
-                            try {
-                                val urlBitmap = fetchBitmapFromURL(poisTypeImage)
-                                val markerBase = when (poiStatusOpenOrCloseColor) {
-                                    "#00FF00" -> BitmapFactory.decodeResource(resources, R.drawable.location_blue)
-                                    "#FF0000" -> BitmapFactory.decodeResource(resources, R.drawable.location_red)
-                                    null -> BitmapFactory.decodeResource(resources, R.drawable.location_grey)
-                                    else -> BitmapFactory.decodeResource(resources, R.drawable.location_blue)
+
+                                } catch (e: Exception) {
+                                    Log.e("POI Error", "Error fetching image: ${e.message}")
                                 }
-
-                                val finalBitmap = createCustomPoiBitmap(markerBase, urlBitmap, poiStatusColor)
-                                handler.post {
-                                    style.addImage("poi-icon-${poi.id}", finalBitmap)
-                                }
-                            } catch (e: Exception) {
-                                Log.e("POI Error", "Error fetching image: ${e.message}")
                             }
                         }
-                    }
 
-                    val feature = Feature.fromGeometry(fromLngLat(poi.longitude!!, poi.latitude!!))
-                    feature.addStringProperty("MARKER_ICONS", poi.name)
-                    feature.addStringProperty("POI_ID", poi.id.toString())
+                        val feature =
+                            Feature.fromGeometry(fromLngLat(poi.longitude!!, poi.latitude!!))
+                        feature.addStringProperty("MARKER_ICONS", poi.name)
+                        feature.addStringProperty("POI_ID", poi.id.toString())
 
-                    // Add POI layer
-                    val poiLayerId = "poi-layer-${poi.id}"
-                    val poiSourceId = "poi-source-${poi.id}"
-                    if (style.getSource(poiSourceId) == null) {
-                        style.addSource(geoJsonSource(poiSourceId) {
-                            feature(feature)
-                        })
-                    }
-
-                    if (style.getLayer(poiLayerId) == null) {
-                        val poiLayer = SymbolLayer(poiLayerId, poiSourceId)
-                            .iconImage("poi-icon-${poi.id}")
-                            .iconAllowOverlap(true)
-                            .iconAnchor(IconAnchor.BOTTOM)
-                            .iconSize(0.101)
-
-                        // Add POI layer above the last existing layer dynamically
-                        if (lastLayerId != null) {
-                            style.addLayerAbove(poiLayer, lastLayerId)
-                        } else {
-                            style.addLayer(poiLayer) // If no layers exist, add normally
+                        // Add POI layer
+                        val poiLayerId = "poi-layer-${poi.id}"
+                        val poiSourceId = "poi-source-${poi.id}"
+                        if (style.getSource(poiSourceId) == null) {
+                            style.addSource(geoJsonSource(poiSourceId) {
+                                feature(feature)
+                            })
                         }
-                    }
 
-                    // Add POI as a PointAnnotation
-                    val options = PointAnnotationOptions()
-                        .withPoint(point)
-                        .withIconImage("poi-icon-${poi.id}")
-                        .withIconSize(0.101)
-                        .withIconAnchor(IconAnchor.BOTTOM)
-                        .withDraggable(false)
+                        /*if (style.getLayer(poiLayerId) == null) {
+                            val poiLayer = SymbolLayer(poiLayerId, poiSourceId)
+                                .iconImage("poi-icon-${poi.id}")
+                                .iconAllowOverlap(true)
+                                .iconAnchor(IconAnchor.BOTTOM)
+                                .iconSize(0.101)
 
-                    val annotation = manager.create(options)
-                    manager.addClickListener { clickedAnnotation ->
-                        if (clickedAnnotation == annotation) {
-                            showCustomPoisDialog(poi)
-                            true
-                        } else false
+                            // Add POI layer above the last existing layer dynamically
+                            if (lastLayerId != null) {
+                                style.addLayerAbove(poiLayer, lastLayerId)
+                            } else {
+                                style.addLayer(poiLayer) // If no layers exist, add normally
+                            }
+                       }*/
+
+
+                        // Add POI as a PointAnnotation
+                        val options = PointAnnotationOptions()
+                            .withPoint(point)
+                            .withIconImage("poi-icon-${poi.id}")
+                            .withIconSize(0.101)
+                            .withIconAnchor(IconAnchor.BOTTOM)
+                            .withDraggable(false)
+
+                        //val manager = pointAnnotationManager
+                        val annotation = pointAnnotationManager.create(options)
+                        pointAnnotationManager.addClickListener { clickedAnnotation ->
+                            if (clickedAnnotation == annotation) {
+                                showCustomPoisDialog(poi)
+                                true
+                            } else false
+                        }
+                        //annotation.setData(Gson().toJsonTree(poi))
                     }
-                }
-            } ?: run {
-                Log.e("MapError", "PointAnnotationManager is not initialized.")
+                //}
+                   /* ?: run {
+                    Log.e("MapError", "PointAnnotationManager is not initialized.")
+                }*/
+                //initializePointAnnotationManager(style)
             }
-
-            initializePointAnnotationManager(style)
-        }
+        //}
     }
 
     private fun fetchAndAddPoiIcon(style: Style, iconUrl: String, color: String, poiId: String) {
@@ -1071,12 +1386,6 @@ class MapExploreFragment : Fragment() {
             // Add the ImageView to the container
             imagesContainer.addView(imageView)
         }
-        /*      Log.d("poiImages" ," sssss" +poisImages)
-              Glide.with(bottomSheetViewBinding.backgroundImage)
-                  .load(poisImages?.get(0)).diskCacheStrategy(
-                      DiskCacheStrategy.ALL
-                  ).fitCenter().error(R.drawable.clubs)
-                  .into(bottomSheetViewBinding.backgroundImage)*/
         Log.d("poiTypeIcon", " sssss" + poiTypeIcon)
 
         Glide.with(bottomSheetViewBinding.poisTypeIcon)
@@ -1105,9 +1414,14 @@ class MapExploreFragment : Fragment() {
 
 
     private fun initializePointAnnotationManager(style: Style) {
-        if (pointAnnotationManager == null) {
-            pointAnnotationManager = mapView.annotations.createPointAnnotationManager()
-        }
+        // Check if the manager is already initialized and clean up if necessary
+        /*if (::pointAnnotationManager.isInitialized) {
+            pointAnnotationManager.deleteAll() // Clear existing annotations
+            //pointAnnotationManager.annotations.cleanup() // Properly dispose of the existing manager
+        }*/
+
+        // Create a new PointAnnotationManager
+        pointAnnotationManager = mapView.annotations.createPointAnnotationManager()
     }
 
     private fun addZonesToMap(zones: List<Zone>) {
@@ -1230,11 +1544,13 @@ class MapExploreFragment : Fragment() {
     ////MAP
 
     fun SatelliteView(){
+        isSatelliteViewClicked = !isSatelliteViewClicked
         if (isSatelliteViewClicked) {
             toggleMapStyle(true)
         } else {
             toggleMapStyle(false)
         }
+
     }
 
     fun toggleMapStyle(isSatellite: Boolean) {
@@ -1244,7 +1560,7 @@ class MapExploreFragment : Fragment() {
             // Remove old layers and sources (if necessary)
 
             // Remove Trails
-            removeTrailsOnMap(clientTrails)
+            removeTrailsOnMap(filteredTrails)
             // Add Trails
 
             if(selectedTrailsIds.isNotEmpty())
@@ -1262,43 +1578,99 @@ class MapExploreFragment : Fragment() {
         }
     }
 
-    private fun removeTrailsOnMap(clientTrails: MutableList<Trail>) {
-        mapboxMap.getStyle { style ->
-            clientTrails.forEach { trail ->
-                // Remove Trails from MAP
-                val sourceId = "line-source-${trail.id}"
-                val layerId = "line-layer-${trail.id}"
+    private fun removeTrailsOnMap(clientTrails: List<Trail>) {
+        Log.e("JAGGU", "removeTrailsOnMap")
+        //if(::mapView.isInitialized) {
+            mapboxMap.getStyle { style ->
+                //if(::mapView.isInitialized) {
+                    /*if (::polylineAnnotationManager.isInitialized) {
+                        polylineAnnotationManager.deleteAll() // Clear existing annotations
+                    }*/
 
-                style.getLayer(layerId)?.let {
-                    style.removeStyleLayer(it.layerId)
+                    // Only delete all annotations when polylineAnnotationManager is initialized
+                    if (::polylineAnnotationManager.isInitialized) {
+                        polylineAnnotationManager?.annotations?.forEach { annotation ->
+                            try {
+                                //val trailData =Gson().fromJson(annotation.getData(), Trail::class.java)
+                               // if (clientTrails.any { it.id == trailData.id }) {
+                                    polylineAnnotationManager.delete(annotation)
+
+                                //}
+                            } catch (e: Exception) {
+                                Log.e(
+                                    "AnnotationError",
+                                    "Error processing annotation: ${e.message}"
+                                )
+                            }
+                        }
+                    }
+                //}
+                //polylineAnnotationManager.deleteAll()
+                clientTrails.forEach { trail ->
+                    // Remove Trails from MAP
+                    val sourceId = "line-source-${trail.id}"
+                    val layerId = "line-layer-${trail.id}"
+
+                    style.getLayer(layerId)?.let {
+                        style.removeStyleLayer(layerId)
+                    }
+                    style.getSource(sourceId)?.let {
+                        style.removeStyleSource(sourceId)
+                    }
+
+                    val startPoiLayerId = "start-poi-layer-${trail.id}"
+                    val startPoiSourceId = "start-poi-source-${trail.id}"
+
+                    style.getLayer(startPoiLayerId)?.let { style.removeStyleLayer(startPoiLayerId) }
+                    style.getSource(startPoiSourceId)
+                        ?.let { style.removeStyleSource(startPoiSourceId) }
+
+                    //removeTrailLayersAndSources(style, trail.id!!)
                 }
-                style.getSource(sourceId)?.let {
-                    style.removeStyleSource(it.sourceId)
-                }
-
-                val poiLayerId = "start-poi-layer-${trail.id}"
-                val poiSourceId = "start-poi-source-${trail.id}"
-
-                style.getLayer(poiLayerId)?.let { style.removeStyleLayer(it.layerId) }
-                style.getSource(poiSourceId)?.let { style.removeStyleSource(it.sourceId) }
             }
-        }
+        //}
     }
 
-    private fun removePoisOnMap(clientPois: List<Poi>) {
-        mapboxMap.getStyle { style ->
-            clientPois.forEach { poi ->
-                val poiLayerId = "poi-layer-${poi.id}"
-                val poiSourceId = "poi-source-${poi.id}"
+    private fun removePoisOnMap(pois: List<Poi>) {
+        //if(::mapView.isInitialized) {
+            Log.e("JAGGU", "removePoisOnMap")
+            mapboxMap.getStyle { style ->
+                //if(::mapView.isInitialized) {
+                    /*if (::pointAnnotationManager.isInitialized) {
+                        pointAnnotationManager.deleteAll() // Clear existing annotations
+                    }*/
+                    if (::pointAnnotationManager.isInitialized) {
+                        pointAnnotationManager.annotations.forEach { annotation ->
+                            try {
+                                //val poiData = Gson().fromJson(annotation.getData(), Poi::class.java)
+                                //if (pois.any { it.id == poiData.id }) {
+                                    pointAnnotationManager.delete(annotation)
 
-                style.getLayer(poiLayerId)?.let {
-                    style.removeStyleLayer(it.layerId)
-                }
-                style.getSource(poiSourceId)?.let {
-                    style.removeStyleSource(it.sourceId)
+                                //}
+                            } catch (e: Exception) {
+                                Log.e(
+                                    "AnnotationError",
+                                    "Error processing annotation: ${e.message}"
+                                )
+                            }
+                        }
+                    }
+                //}
+                //pointAnnotationManager.deleteAll()
+                pois.forEach { poi ->
+                    val poiLayerId = "poi-layer-${poi.id}"
+                    val poiSourceId = "poi-source-${poi.id}"
+
+                    style.getLayer(poiLayerId)?.let {
+                        style.removeStyleLayer(poiLayerId)
+                    }
+                    style.getSource(poiSourceId)?.let {
+                        style.removeStyleSource(poiSourceId)
+                    }
+                    //removePoisLayersAndSources(style, poi.id!!)
                 }
             }
-        }
+        //}
     }
 
     private fun removeZonesOnMap(clientZones: MutableList<Zone>) {

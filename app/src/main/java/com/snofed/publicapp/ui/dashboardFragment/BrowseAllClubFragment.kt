@@ -126,7 +126,23 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
 
 
     private fun fetchResponse() {
-        clubViewModel.clubRequestUser()
+        try {
+            clubViewModel.clubRequestUser()
+        }
+        catch (e: Exception) {
+            Log.e("Exception", e.toString())
+        }
+
+
+        /*val currentData = clubViewModel.clubLiveData.value
+        if (currentData is NetworkResult.Success && currentData.data != null) {
+            Log.d("LiveData", "Data already exists, skipping API call.")
+        }
+        else{
+            clubViewModel.clubRequestUser()
+        }*/
+
+
     }
 
     override fun onItemClick(clientId: String) {
