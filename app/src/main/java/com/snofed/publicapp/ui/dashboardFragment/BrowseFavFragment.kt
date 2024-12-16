@@ -31,93 +31,103 @@ import com.snofed.publicapp.utils.AppPreference
 import com.snofed.publicapp.utils.ClientPrefrences
 import com.snofed.publicapp.utils.NetworkResult
 import com.snofed.publicapp.utils.SharedPreferenceKeys
+import com.snofed.publicapp.utils.SharedViewModel
 import com.snofed.publicapp.utils.TokenManager
+import com.snofed.publicapp.viewModel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class BrowseFavFragment : Fragment(), ClubFavAdapter.OnItemClickListener{
+class BrowseFavFragment : Fragment(), ClubFavAdapter.OnItemClickListener {
     private var _binding: FragmentBrowseFavBinding? = null
     private val binding get() = _binding!!
 
-    private val viewFavClubModel by viewModels<AuthViewModel>()
-    private val clubViewModel by viewModels<AuthViewModel>()
+    private lateinit var viewFavClubModel: AuthViewModel
+    private lateinit var sharedViewModel: SharedViewModel
     private lateinit var clubAdapter: ClubFavAdapter
-    var clientIdList: List<String> = listOf()
-    var allClubResponses = mutableListOf<NewClubData>()
-    var favClubResponses = mutableListOf<Client>() // Replace `ClubFavResponseType` with the actual data type of `clubFavResponse.data`
 
-    private lateinit var viewModelUserRealm: UserViewModelRealm
+    private lateinit var userViewModel: UserViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-       // return inflater.inflate(R.layout.fragment_browse_fav, container, false)
         _binding = FragmentBrowseFavBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModelUserRealm = ViewModelProvider(this).get(UserViewModelRealm::class.java)
-        fetchResponse()
-        // Bind the adapter to the RecyclerView
-        viewFavClubModel.clubLiveData.observe(viewLifecycleOwner) { result ->
-            val allClubs = when (result) {
-                is NetworkResult.Success -> {
 
-                    val gson = Gson()
-                    val json = gson.toJson(result.data) // Convert the object to JSON string
-                    Log.d("BrowseClubResponse", json)
+        // Initialize ViewModels
+        viewFavClubModel = ViewModelProvider(this).get(AuthViewModel::class.java)
+        sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+        userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
+
+        setupObservers()
+        fetchResponseData() // Trigger API or use cached data
+    }
+
+    private fun setupObservers() {
+        // Observe updates to the favorites list from the shared ViewModel
+        sharedViewModel.favoriteClients.observe(viewLifecycleOwner) { isUpdated ->
+                fetchResponseData()
+        }
+
+        // Observe data from `clubLiveData` in the AuthViewModel
+        viewFavClubModel.clubLiveData.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is NetworkResult.Success -> {
+                    Log.d("BrowseFavFragment", "Data fetched successfully.")
                     val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
 
-                    val userRealm = viewModelUserRealm.getUserById(userId!!)
-                    val getFavClients: List<String> = userRealm?.favouriteClients ?: emptyList()
+                    val favoriteClients = userViewModel.getFavouriteClients(userId) ?: emptyList()
 
-//                    result.data?.let { data ->
-//                        // Add the response to the list
-//                        allClubResponses.add(data)
-//                    }
+                    // Filter only favorite and visible clients
                     val filteredClients = result.data?.data?.clients?.filter { client ->
-                        client.visibility == 0 //true 1->false
-                    }
-                    Log.e("ClubResponses", "AllClubs $allClubResponses")
-                    favClubResponses.clear()
+                        client.visibility == 0 && client.id in favoriteClients
+                    } ?: emptyList()
 
-
-                    for (club in filteredClients!!.toList()) {
-                        // Check if any client in club.data.clients is in getFavClients
-                            if (club.id in getFavClients) {
-                                // If a match is found, add the club to favClubResponses
-                                favClubResponses.add(club)
-                        }
-                    }
-
-                    Log.e("ClubResponses", "AllClubs $favClubResponses")
-                    // Initialize the adapter once
-                    clubAdapter = ClubFavAdapter(requireContext(),this,clubViewModel)
-                    binding.recyclerView.layoutManager = GridLayoutManager(requireActivity(), 2)
-                    binding.recyclerView.adapter = clubAdapter
-                    binding.recyclerView.isVisible = true
-                    clubAdapter.setClubs(favClubResponses)
+                    bindAdapter(filteredClients) // Update the adapter with new data
                 }
-
                 is NetworkResult.Error -> {
-                    Log.e("Error", "Failed to fetch clubs: ${result.message}")
-                    favClubResponses
+                    Log.e("BrowseFavFragment", "Error fetching data: ${result.message}")
                 }
-
                 is NetworkResult.Loading -> {
-                    Log.d("Loading", "Clubs are being loaded")
-                    favClubResponses
-                }
-
-                null -> {
-                    Log.e("Error", "LiveData is null")
-                    favClubResponses
+                    Log.d("BrowseFavFragment", "Loading data...")
                 }
             }
         }
+    }
+
+    private fun fetchResponseData() {
+        val currentData = viewFavClubModel.clubLiveData.value
+        if (currentData is NetworkResult.Success && currentData.data != null) {
+            Log.d("BrowseFavFragment", "Using cached data.")
+            // Reuse cached data if available
+            val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
+
+            val favoriteClients = userViewModel.getFavouriteClients(userId) ?: emptyList()
+
+            val filteredClients = currentData.data.data?.clients?.filter { client ->
+                client.visibility == 0 && client.id in favoriteClients
+            } ?: emptyList()
+
+            bindAdapter(filteredClients)
+        } else {
+            try {
+                viewFavClubModel.clubRequestUser() // Trigger API call
+            } catch (e: Exception) {
+                Log.e("BrowseFavFragment", "Exception during API call: ${e.message}")
+            }
+        }
+    }
+
+    private fun bindAdapter(favClients: List<Client>) {
+
+        clubAdapter = ClubFavAdapter(requireContext(), this, viewFavClubModel)
+        binding.recyclerView.layoutManager = GridLayoutManager(requireActivity(), 2)
+        binding.recyclerView.adapter = clubAdapter
+
+        clubAdapter.setClubs(favClients)
+        clubAdapter.notifyDataSetChanged() // Ensure the adapter updates its view
     }
 
     override fun onItemClick(clientId: String) {
@@ -127,8 +137,8 @@ class BrowseFavFragment : Fragment(), ClubFavAdapter.OnItemClickListener{
         findNavController().navigate(destination, bundle)
     }
 
-    private fun fetchResponse() {
-        clubViewModel.clubRequestUser()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
-
 }

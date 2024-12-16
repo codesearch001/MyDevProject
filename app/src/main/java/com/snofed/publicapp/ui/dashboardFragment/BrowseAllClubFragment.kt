@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.BrowseClubListAdapter
 import com.snofed.publicapp.databinding.FragmentBrowseAllClubBinding
-import com.snofed.publicapp.models.Client
+import com.snofed.publicapp.models.realmModels.Client
 import com.snofed.publicapp.repository.UserRepository
 import com.snofed.publicapp.ui.User.UserViewModelRealm
 import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.ActivityViewModelRealm
@@ -42,9 +42,7 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
     private val clubViewModel by viewModels<AuthViewModel>()
     private lateinit var clubAdapter: BrowseClubListAdapter
     private val sharedViewModel by activityViewModels<SharedViewModel>()
-
-    //private lateinit var viewModelUserRealm: UserViewModelRealm
-    private  lateinit var userViewModel: UserViewModel
+    private lateinit var userViewModel: UserViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentBrowseAllClubBinding.inflate(inflater, container, false)
@@ -62,57 +60,8 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
             binding.progressBar.isVisible = false
             when (it) {
                 is NetworkResult.Success -> {
-                    // Log.i("it.data?.clients","it.data?.clients "+it.data?.data?.clients)
-                    //val data = it.data?.data?.clients
-
-                    sharedViewModel.browseClubResponse.value = it.data
-
-                    val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
-
-                    val userFavClientsRealm =  userViewModel.getFavouriteClients(userId)
-
-                    val getFavClients: List<String> = userFavClientsRealm
-
-                    val filteredClients = it.data?.data?.clients?.filter { client ->
-                        client.visibility == 0 //true 1->false
-                    }
-
-                    filteredClients?.forEach { client ->
-                        if (getFavClients.contains(client.id)) {
-                            client.isInWishlist = true
-                        }
-                    }
-
-                    Log.e("filter","filterSize " +filteredClients)
-
-                    if (filteredClients.isNullOrEmpty()){
-                        clubAdapter = BrowseClubListAdapter(requireContext(),this, clubViewModel )
-                        // Set up the RecyclerView with GridLayoutManager
-                        binding.recyclerView.layoutManager = GridLayoutManager(requireActivity(), 2)
-                        binding.recyclerView.adapter = clubAdapter
-                        clubAdapter.setClubs(filteredClients)
-                    }else{
-                        clubAdapter = BrowseClubListAdapter(requireContext(),this, clubViewModel)
-                        // Set up the RecyclerView with GridLayoutManager
-                        binding.recyclerView.layoutManager = GridLayoutManager(requireActivity(), 2)
-                        binding.recyclerView.adapter = clubAdapter
-                        clubAdapter.setClubs(filteredClients)
-                    }
-
-                    //Apply search Filter
-                    binding.editTextClubSearch.addTextChangedListener(object : TextWatcher {
-                        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-                        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                            clubAdapter.getFilter().filter(s)
-                        }
-
-                        override fun afterTextChanged(s: Editable?) {
-                            // Trigger filter on the adapter based on the updated text
-                            clubAdapter.getFilter().filter(s)
-
-                        }
-                    })
+                    val clubs :  List<Client> = it.data?.data?.clients ?: emptyList()
+                    setupClubList(clubs)
                 }
                 is NetworkResult.Error -> {
                     Toast.makeText(requireActivity(), it.message.toString(), Toast.LENGTH_SHORT).show()
@@ -124,6 +73,42 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
         })
     }
 
+    private fun setupClubList(clients: List<Client>?) {
+        val userId = AppPreference.getPreference(requireActivity(), SharedPreferenceKeys.USER_USER_ID).toString()
+        val userFavClients = userViewModel.getFavouriteClients(userId)
+        val filteredClients = clients?.filter { it.visibility == 0 } ?: listOf()
+
+        sharedViewModel.updateFavorites(userFavClients)
+
+        filteredClients.forEach { client ->
+            if (userFavClients.contains(client.id)) {
+                client.isInWishlist = true
+            }
+        }
+
+        clubAdapter = BrowseClubListAdapter(requireContext(), this, clubViewModel)
+        binding.recyclerView.layoutManager = GridLayoutManager(requireActivity(), 2)
+        binding.recyclerView.adapter = clubAdapter
+        clubAdapter.setClubs(filteredClients)
+
+        sharedViewModel.favoriteClients.observe(viewLifecycleOwner, Observer { favClients ->
+            filteredClients.forEach { client ->
+                client.isInWishlist = favClients.contains(client.id)
+            }
+            clubAdapter.notifyDataSetChanged()
+        })
+
+
+        binding.editTextClubSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                clubAdapter.getFilter().filter(s)
+            }
+            override fun afterTextChanged(s: Editable?) {
+                clubAdapter.getFilter().filter(s)
+            }
+        })
+    }
 
     private fun fetchResponse() {
         try {
@@ -132,17 +117,6 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
         catch (e: Exception) {
             Log.e("Exception", e.toString())
         }
-
-
-        /*val currentData = clubViewModel.clubLiveData.value
-        if (currentData is NetworkResult.Success && currentData.data != null) {
-            Log.d("LiveData", "Data already exists, skipping API call.")
-        }
-        else{
-            clubViewModel.clubRequestUser()
-        }*/
-
-
     }
 
     override fun onItemClick(clientId: String) {
@@ -160,17 +134,11 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
         val userId = AppPreference.getPreference(context, SharedPreferenceKeys.USER_USER_ID).toString()
         if (isWishlisted) {
             userViewModel.addFavouriteClient(userId,clientId)
+            sharedViewModel.addToFavorites(clientId)
 
         } else {
             userViewModel.removeFavouriteClient(userId,clientId)
+            sharedViewModel.removeFromFavorites(clientId)
         }
-
-        Log.d("BrowseAllClubFragment","save me as  " + ClientPrefrences.getClientIds(requireContext()) )
-        requestWistlistResonse(clientId)
-
-    }
-
-    private fun requestWistlistResonse(clientId: String) {
-
     }
 }

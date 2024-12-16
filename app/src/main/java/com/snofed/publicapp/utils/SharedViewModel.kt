@@ -88,4 +88,24 @@ class SharedViewModel : ViewModel() {
     fun clearSelectedZoneIds() {
         _selectedZoneId.value = emptyList()
     }
+
+    //fav Clients
+    private val _favoriteClients = MutableLiveData<Set<String>>(emptySet())
+    val favoriteClients: LiveData<Set<String>> = _favoriteClients
+
+    fun updateFavorites(favClients: List<String>) {
+        _favoriteClients.value = favClients.toSet()
+    }
+
+    fun addToFavorites(clientId: String) {
+        val updatedFavorites = _favoriteClients.value?.toMutableSet() ?: mutableSetOf()
+        updatedFavorites.add(clientId)
+        _favoriteClients.value = updatedFavorites
+    }
+
+    fun removeFromFavorites(clientId: String) {
+        val updatedFavorites = _favoriteClients.value?.toMutableSet() ?: mutableSetOf()
+        updatedFavorites.remove(clientId)
+        _favoriteClients.value = updatedFavorites
+    }
 }
