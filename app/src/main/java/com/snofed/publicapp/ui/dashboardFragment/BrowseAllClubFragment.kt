@@ -61,6 +61,7 @@ class BrowseAllClubFragment : Fragment(),BrowseClubListAdapter.OnItemClickListen
             when (it) {
                 is NetworkResult.Success -> {
                     val clubs :  List<Client> = it.data?.data?.clients ?: emptyList()
+                    sharedViewModel.browseClubResponse.value = it.data
                     setupClubList(clubs)
                 }
                 is NetworkResult.Error -> {

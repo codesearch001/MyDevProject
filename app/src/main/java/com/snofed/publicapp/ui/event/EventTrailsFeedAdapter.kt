@@ -20,6 +20,7 @@ import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.EventClubFeedAdapter
 import com.snofed.publicapp.models.realmModels.Event
 import com.snofed.publicapp.utils.DateTimeConverter
+import com.snofed.publicapp.utils.ServiceUtil
 
 class EventTrailsFeedAdapter(private val listener: OnItemClickListener) : RecyclerView.Adapter<EventTrailsFeedAdapter.ClubViewHolder>() {
 
@@ -48,29 +49,30 @@ class EventTrailsFeedAdapter(private val listener: OnItemClickListener) : Recycl
     @SuppressLint("DefaultLocale", "SetTextI18n")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ClubViewHolder, position: Int) {
-        val reslult = feedArray[position]
+        val event = feedArray[position]
 
-        holder.textEventTrailsName.text = reslult.name
+        holder.textEventTrailsName.text = event.name
 
-        val formattedDateTime = dateTimeConverter.convertDateTime(reslult.startDate!!)
+        val formattedDateTime = dateTimeConverter.convertDateTime(event.startDate!!)
 
         holder.textEventDate.text = dateTimeConverter.datePart +"," + dateTimeConverter.timePart
 
-        println("Parsed LocalDateTime: ${formattedDateTime}")
+        println("Parsed LocalDateTime: ${event.coverImagePath}")
 
-        if (reslult.iconPath.equals("")) {
+        if (event.coverImagePath.isNullOrEmpty()) {
             Glide.with(holder.imgActivitesIcon).load(R.drawable.resort_card_bg)
                 .into(holder.imgActivitesIcon)
         } else {
 
-            Glide.with(holder.imgActivitesIcon).load(reslult.coverImagePath).diskCacheStrategy(
+            Glide.with(holder.imgActivitesIcon)
+                .load(ServiceUtil.BASE_URL_IMAGE + event.coverImagePath).diskCacheStrategy(
                 DiskCacheStrategy.ALL
             ).fitCenter().into(holder.imgActivitesIcon)
         }
 
         holder.eventCardId.setOnClickListener {
             Log.e("click..", "clickClubItem")
-            listener.onItemClick(reslult.id!!) // Assuming Client has an 'id' property
+            listener.onItemClick(event.id!!) // Assuming Client has an 'id' property
         }
     }
 
