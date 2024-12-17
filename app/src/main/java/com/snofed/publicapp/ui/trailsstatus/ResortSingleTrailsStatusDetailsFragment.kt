@@ -30,6 +30,8 @@ import com.google.gson.Gson
 import com.snofed.publicapp.R
 import com.snofed.publicapp.adapter.EventClubFeedAdapter
 import com.snofed.publicapp.databinding.FragmentResortSingleTrailsStatusDetailsBinding
+import com.snofed.publicapp.models.events.EventResponseList
+import com.snofed.publicapp.models.realmModels.Event
 import com.snofed.publicapp.models.realmModels.Trail
 import com.snofed.publicapp.ui.clubsubmember.ViewModelClub.IntervalViewModelRealm
 import com.snofed.publicapp.ui.event.EventTrailsFeedAdapter
@@ -42,6 +44,9 @@ import com.snofed.publicapp.utils.TokenManager
 import com.snofed.publicapp.utils.enums.PageType
 import com.snofed.publicapp.utils.enums.SyncActionEnum
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -115,25 +120,34 @@ class ResortSingleTrailsStatusDetailsFragment : Fragment(),EventTrailsFeedAdapte
 
         // Observe the SharedViewModel for data updates
         sharedViewModel.browseSubClubResponse.observe(viewLifecycleOwner) { response ->
-            val events = response?.data?.events ?: emptyList()
+            var events = response?.data?.events ?: emptyList()
 
-            Log.d("Tag_Events", "EventsSize: ${events.size}")
+            //Filter event, show only active events
+            events = filterActiveEvents(events)
+
+            //filter event if this is for current trail
+            events = events.filter { it.trailId.contains(trailId) }
+
+            Log.d("Tag_Events", "EventsSize 2: ${events.size}")
 
             if (events.isEmpty()) {
-
                 // Show the "Data Not data" message and hide RecyclerView
-               // binding.tvSplashText.visibility = View.VISIBLE
                 binding.recyclerView.visibility = View.GONE
-
             } else {
-
                 // Hide the "No data" message and show RecyclerView
-               // binding.tvSplashText.visibility = View.GONE
                 binding.recyclerView.visibility = View.VISIBLE
-                val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-                binding.recyclerView.layoutManager = layoutManager
                 feedAdapter.setEvent(events)
             }
+        }
+    }
+
+    fun filterActiveEvents(events: List<Event>): List<Event> {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val currentDate = Date()
+
+        return events.filter { event ->
+            val eventEndDate = dateFormat.parse(event.endDate)
+            eventEndDate?.after(currentDate) == true
         }
     }
 
